@@ -1,8 +1,10 @@
-package com.usal.jorgeav.sportapp;
+package com.usal.jorgeav.sportapp.data;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import com.usal.jorgeav.sportapp.R;
 
 /**
  * Created by Jorge Avila on 23/04/2017.
