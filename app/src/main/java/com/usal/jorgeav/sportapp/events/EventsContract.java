@@ -8,7 +8,7 @@ import java.util.List;
  * Created by Jorge Avila on 23/04/2017.
  */
 
-public class EventsContract {
+public abstract class EventsContract {
 
     public interface Presenter {
         void loadEvents();

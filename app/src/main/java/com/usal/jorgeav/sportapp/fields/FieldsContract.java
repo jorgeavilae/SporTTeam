@@ -8,7 +8,7 @@ import java.util.List;
  * Created by Jorge Avila on 25/04/2017.
  */
 
-public class FieldsContract {
+public abstract class FieldsContract {
 
     public interface Presenter {
         void loadFields();
