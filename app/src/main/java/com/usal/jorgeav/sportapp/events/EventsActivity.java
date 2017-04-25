@@ -15,9 +15,9 @@ public class EventsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
 
-//        if (savedInstanceState == null) {
+        if (savedInstanceState == null) {
             initFragment(EventsFragment.newInstance());
-//        }
+        }
     }
 
     private void initFragment(Fragment fragment) {

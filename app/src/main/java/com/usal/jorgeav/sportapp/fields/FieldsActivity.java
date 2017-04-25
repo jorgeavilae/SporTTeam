@@ -1,48 +1,29 @@
 package com.usal.jorgeav.sportapp.fields;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.data.Field;
-import com.usal.jorgeav.sportapp.data.FieldRepository;
 
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-public class FieldsActivity extends AppCompatActivity implements FieldsContract.View {
-    FieldsContract.Presenter mFieldsPresenter;
-    FieldsAdapter mFieldsRecyclerAdapter;
-
-    @BindView(R.id.fields_list)
-    RecyclerView fieldsRecyclerList;
+public class FieldsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_field);
-        ButterKnife.bind(this);
+        setContentView(R.layout.activity_fields);
 
-        mFieldsPresenter = new FieldsPresenter(new FieldRepository(), this);
-        mFieldsRecyclerAdapter = new FieldsAdapter(null);
-
-        fieldsRecyclerList.setAdapter(mFieldsRecyclerAdapter);
-        fieldsRecyclerList.setHasFixedSize(true);
-        fieldsRecyclerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        if (savedInstanceState == null) {
+            initFragment(FieldsFragment.newInstance());
+        }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mFieldsPresenter.loadFields();
-    }
-
-    @Override
-    public void showFields(List<Field> fields) {
-        mFieldsRecyclerAdapter.replaceData(fields);
+    private void initFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.contentFrame, fragment);
+        transaction.commit();
     }
 }
