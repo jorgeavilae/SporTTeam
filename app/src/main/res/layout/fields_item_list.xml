@@ -7,89 +7,87 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/events_item_id"
+        android:id="@+id/fields_item_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         tools:text="ididididididididdid"
-        app:layout_constraintLeft_toRightOf="@+id/events_item_sport"
+        app:layout_constraintLeft_toRightOf="@+id/fields_item_name"
         android:layout_marginLeft="24dp"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp" />
 
     <TextView
-        android:id="@+id/events_item_sport"
+        android:id="@+id/fields_item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        tools:text="Sport"
+        tools:text="Name"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp" />
 
     <TextView
-        android:id="@+id/events_item_place"
+        android:id="@+id/fields_item_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        tools:text="Place"
+        tools:text="Address Street, nº 10, 37007"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/events_item_sport" />
+        app:layout_constraintTop_toBottomOf="@+id/fields_item_name" />
 
     <TextView
-        android:id="@+id/events_item_date"
+        android:id="@+id/fields_item_rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
-        app:layout_constraintLeft_toRightOf="@+id/events_item_place"
-        tools:text="da/te/1992"
+        app:layout_constraintLeft_toRightOf="@+id/fields_item_address"
+        tools:text="3.5"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/events_item_sport" />
+        app:layout_constraintTop_toBottomOf="@+id/fields_item_name" />
 
     <TextView
-        android:id="@+id/events_item_time"
+        android:id="@+id/fields_item_sport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        tools:text="ti:me"
-        app:layout_constraintLeft_toRightOf="@+id/events_item_date"
+        tools:text="Sport"
+        app:layout_constraintLeft_toRightOf="@+id/fields_item_rating"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/events_item_sport" />
+        app:layout_constraintTop_toBottomOf="@+id/fields_item_name" />
 
     <TextView
-        android:id="@+id/events_item_total"
+        android:id="@+id/fields_item_opening"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:text="10"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/events_item_empty"
+        app:layout_constraintRight_toLeftOf="@+id/fields_item_closing"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.516"
-        tools:text="10" />
+        tools:text="op:en" />
 
     <TextView
-        android:id="@+id/events_item_empty"
+        android:id="@+id/fields_item_closing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
-        android:text="10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.516"
-        tools:text="10" />
+        tools:text="cl:se" />
 
     <View
         android:layout_width="0dp"

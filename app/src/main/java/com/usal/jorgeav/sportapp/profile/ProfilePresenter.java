@@ -1,27 +1,27 @@
 package com.usal.jorgeav.sportapp.profile;
 
-import com.usal.jorgeav.sportapp.data.UserManager;
+import com.usal.jorgeav.sportapp.data.UsuarioManager;
 
 /**
  * Created by Jorge Avila on 23/04/2017.
  */
 
 public class ProfilePresenter implements ProfileContract.Presenter {
-    private UserManager mUserManager;
+    private UsuarioManager mUsuarioManager;
     private ProfileContract.View mUserView;
 
-    public ProfilePresenter(UserManager userManager, ProfileContract.View userView) {
-        mUserManager = userManager;
+    public ProfilePresenter(UsuarioManager usuarioManager, ProfileContract.View userView) {
+        mUsuarioManager = usuarioManager;
         mUserView = userView;
     }
 
     @Override
     public void loadUser() {
-        mUserManager.loadNewUser(mUserView.getContext());
+        mUsuarioManager.loadNewUser(mUserView.getContext());
 
-        mUserView.showUserImage(mUserManager.User().getImageProfile());
-        mUserView.showUserName(mUserManager.User().getName());
-        mUserView.showUserCity(mUserManager.User().getCity());
-        mUserView.showUserAge(mUserManager.User().getAge());
+        mUserView.showUserImage(mUsuarioManager.User().getImageProfile());
+        mUserView.showUserName(mUsuarioManager.User().getName());
+        mUserView.showUserCity(mUsuarioManager.User().getCity());
+        mUserView.showUserAge(mUsuarioManager.User().getAge());
     }
 }

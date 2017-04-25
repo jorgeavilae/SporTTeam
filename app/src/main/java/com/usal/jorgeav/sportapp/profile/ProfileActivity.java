@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.data.UserManager;
+import com.usal.jorgeav.sportapp.data.UsuarioManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +34,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         setContentView(R.layout.activity_user);
         ButterKnife.bind(this);
 
-        mUserPresenter = new ProfilePresenter(new UserManager(), this);
+        mUserPresenter = new ProfilePresenter(new UsuarioManager(), this);
     }
 
     @Override

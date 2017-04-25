@@ -10,7 +10,7 @@ import com.usal.jorgeav.sportapp.R;
  * Created by Jorge Avila on 23/04/2017.
  */
 
-public class UserManager {
+public class UsuarioManager {
     private Usuario mCurrentUser;
 
     public void loadNewUser(Context context) {
