@@ -1,12 +1,15 @@
 package com.usal.jorgeav.sportapp.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.UUID;
 
 /**
  * Created by Jorge Avila on 23/04/2017.
  */
 
-public class Event {
+public class Event implements Parcelable {
     String mId;
     String mSport;
     String mPlace;
@@ -81,6 +84,44 @@ public class Event {
         result = 31 * result + mEmptyPlayers;
         return result;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.mId);
+        dest.writeString(this.mSport);
+        dest.writeString(this.mPlace);
+        dest.writeString(this.mDate);
+        dest.writeString(this.mTime);
+        dest.writeInt(this.mTotalPlayers);
+        dest.writeInt(this.mEmptyPlayers);
+    }
+
+    protected Event(Parcel in) {
+        this.mId = in.readString();
+        this.mSport = in.readString();
+        this.mPlace = in.readString();
+        this.mDate = in.readString();
+        this.mTime = in.readString();
+        this.mTotalPlayers = in.readInt();
+        this.mEmptyPlayers = in.readInt();
+    }
+
+    public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel source) {
+            return new Event(source);
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
 }
 
 
