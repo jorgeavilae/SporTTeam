@@ -2,9 +2,11 @@ package com.usal.jorgeav.sportapp.events;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
@@ -21,10 +23,15 @@ import butterknife.ButterKnife;
  */
 
 class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
-    private List<Event> mDataset;
+    private static final String TAG = EventsAdapter.class.getSimpleName();
 
-    public EventsAdapter(List<Event> mDataset) {
+    private List<Event> mDataset;
+    private OnEventItemClickListener mClickListener;
+
+    public EventsAdapter(List<Event> mDataset, OnEventItemClickListener clickListener) {
+        Log.d(TAG, "EventsAdapter");
         this.mDataset = mDataset;
+        this.mClickListener = clickListener;
     }
 
     @Override
@@ -65,7 +72,7 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
         else return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener{
         @BindView(R.id.events_item_id)
         TextView textViewEventId;
         @BindView(R.id.events_item_sport)
@@ -84,6 +91,18 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            Log.d(TAG, "onClick");
+            int position = getAdapterPosition();
+            mClickListener.onEventClick(mDataset.get(position));
+        }
+    }
+
+    public interface OnEventItemClickListener {
+        void onEventClick(Event event);
     }
 }
