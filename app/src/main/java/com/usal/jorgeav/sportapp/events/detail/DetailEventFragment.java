@@ -68,7 +68,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-        // Inflate the layout for this fragment
+
         View root = inflater.inflate(R.layout.fragment_detail_event, container, false);
         ButterKnife.bind(this, root);
 
