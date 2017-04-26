@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
@@ -22,9 +23,11 @@ import butterknife.ButterKnife;
 
 public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder> {
     private List<Field> mDataset;
+    private OnFieldItemClickListener mClickListener;
 
-    public FieldsAdapter(List<Field> mDataset) {
+    public FieldsAdapter(List<Field> mDataset, OnFieldItemClickListener listener) {
         this.mDataset = mDataset;
+        this.mClickListener = listener;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
         else return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
         @BindView(R.id.fields_item_id)
         TextView textViewFieldId;
         @BindView(R.id.fields_item_name)
@@ -84,6 +87,17 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            mClickListener.onFieldClick(mDataset.get(position));
+        }
+    }
+
+    public interface OnFieldItemClickListener {
+        void onFieldClick(Field field);
     }
 }

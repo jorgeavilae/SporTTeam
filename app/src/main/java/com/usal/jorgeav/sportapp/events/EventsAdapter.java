@@ -72,7 +72,7 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
         else return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
         @BindView(R.id.events_item_id)
         TextView textViewEventId;
         @BindView(R.id.events_item_sport)
