@@ -84,7 +84,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
 
     @Override
     public Context getContext() {
-        return getContext();
+        return getActivity();
     }
 
 }
