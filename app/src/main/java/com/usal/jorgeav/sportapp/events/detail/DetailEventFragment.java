@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.events.detail;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
 
@@ -24,6 +26,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
     private Event mEvent = null;
     private DetailEventContract.Presenter mPresenter;
+    private MainActivityContract.ActionBarChangeIcon mActionBarChangeIconListener;
 
     @BindView(R.id.event_detail_id)
     TextView textViewEventId;
@@ -39,6 +42,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     TextView textViewEventTotal;
     @BindView(R.id.event_detail_empty)
     TextView textViewEventEmpty;
+
 
     public DetailEventFragment() {
         // Required empty public constructor
@@ -72,7 +76,28 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         View root = inflater.inflate(R.layout.fragment_detail_event, container, false);
         ButterKnife.bind(this, root);
 
+        mActionBarChangeIconListener.setToolbarAsUp();
+
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mActionBarChangeIconListener.setToolbarAsNav();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof MainActivityContract.ActionBarChangeIcon)
+            mActionBarChangeIconListener = (MainActivityContract.ActionBarChangeIcon) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActionBarChangeIconListener = null;
     }
 
     @Override

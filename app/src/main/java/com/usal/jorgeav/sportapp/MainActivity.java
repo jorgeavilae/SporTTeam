@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -13,13 +14,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        MainActivityContract.ActionBarChangeIcon {
 
     Toolbar mToolbar;
     DrawerLayout mDrawer;
@@ -61,6 +64,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        mToggle.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -93,5 +108,31 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.contentFrame, fragment);
         transaction.commit();
+    }
+
+    @Override
+    public void setToolbarAsNav() {
+        if (mToolbar != null) {
+            mToolbar.setNavigationIcon(R.drawable.ic_hamburger);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDrawer.openDrawer(GravityCompat.START);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void setToolbarAsUp() {
+        if (mToolbar != null) {
+            mToolbar.setNavigationIcon(R.drawable.ic_up);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBackPressed();
+                }
+            });
+        }
     }
 }
