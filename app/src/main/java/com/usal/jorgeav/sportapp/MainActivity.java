@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -141,7 +142,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void setToolbarAsNav() {
         if (mToolbar != null) {
-            mToolbar.setNavigationIcon(R.drawable.ic_hamburger);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -149,13 +149,12 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
-        mToggle.syncState();
+        toolbarIconTransition.postDelayed(transitionToNav, 0);
     }
 
     @Override
     public void setToolbarAsUp() {
         if (mToolbar != null) {
-            mToolbar.setNavigationIcon(R.drawable.ic_up);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -163,5 +162,46 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+        toolbarIconTransition.postDelayed(transitionToUp, 0);
+    }
+
+    Handler toolbarIconTransition = new Handler();
+    float currentOffset = 0;
+    Runnable transitionToUp = new Runnable() {
+        @Override
+        public void run() {
+            float offset = currentOffset + 0.1f;
+            if (offset > 1f) {
+                mToggle.onDrawerOpened(mDrawer);
+                currentOffset = 1f;
+                toolbarIconTransition.removeCallbacks(transitionToUp);
+            } else {
+                mToggle.onDrawerSlide(mDrawer, offset);
+                currentOffset = offset;
+                toolbarIconTransition.postDelayed(this, 19);
+            }
+        }
+    };
+    Runnable transitionToNav = new Runnable() {
+        @Override
+        public void run() {
+            float offset = currentOffset - 0.1f;
+            if (offset < 0f) {
+                mToggle.onDrawerClosed(mDrawer);
+                currentOffset = 0f;
+                toolbarIconTransition.removeCallbacks(transitionToNav);
+            } else {
+                mToggle.onDrawerSlide(mDrawer, offset);
+                currentOffset = offset;
+                toolbarIconTransition.postDelayed(this, 19);
+            }
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        toolbarIconTransition.removeCallbacks(transitionToNav);
+        toolbarIconTransition.removeCallbacks(transitionToUp);
+        super.onPause();
     }
 }
