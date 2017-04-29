@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void setCurrentDisplayedFragment(String title, Fragment fragment) {
+        //TODO a veces no se pone el titulo
         mToolbar.setTitle(title);
         mDisplayedFragment = fragment;
     }
