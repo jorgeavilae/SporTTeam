@@ -1,12 +1,14 @@
 package com.usal.jorgeav.sportapp;
 
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,11 +24,15 @@ import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        MainActivityContract.ActionBarChangeIcon {
+        MainActivityContract.ActionBarChangeIcon,
+        MainActivityContract.FragmentManagement {
+
+    private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
 
     Toolbar mToolbar;
     DrawerLayout mDrawer;
     NavigationView mNavigationView;
+    Fragment mDisplayedFragment;
 
     ActionBarDrawerToggle mToggle;
 
@@ -45,13 +51,33 @@ public class MainActivity extends AppCompatActivity
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
-        onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
+
+        mDisplayedFragment = null;
+        if (savedInstanceState != null) {
+            mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
+
+        }
+        if (mDisplayedFragment == null) {
+            onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mToggle.syncState();
+        //TODO toggle default icon smaller than mine
+        Drawable upIcon = ContextCompat.getDrawable(this, R.drawable.ic_up);
+        Drawable icon = mToolbar.getNavigationIcon();
+        if (icon == null || !upIcon.getConstantState().equals(icon.getConstantState())) {
+            mToggle.syncState();
+        }
     }
 
     @Override
@@ -71,8 +97,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        mToggle.onOptionsItemSelected(item);
-        return super.onOptionsItemSelected(item);
+        return mToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -86,28 +111,31 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         mNavigationView.setCheckedItem(id);
 
-        String title = "";
         if (id == R.id.nav_profile) {
-            title = getString(R.string.profile);
-            initFragment(ProfileFragment.newInstance());
+            initFragment(ProfileFragment.newInstance(), false);
         } else if (id == R.id.nav_events) {
-            title = getString(R.string.events);
-            initFragment(EventsFragment.newInstance());
+            initFragment(EventsFragment.newInstance(), false);
         } else if (id == R.id.nav_fields) {
-            title = getString(R.string.fields);
-            initFragment(FieldsFragment.newInstance());
+            initFragment(FieldsFragment.newInstance(), false);
         }
 
-        mToolbar.setTitle(title);
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void initFragment(Fragment fragment) {
+    @Override
+    public void initFragment(Fragment fragment, boolean isOnBackStack) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.contentFrame, fragment);
+        if (isOnBackStack) transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void setCurrentDisplayedFragment(String title, Fragment fragment) {
+        mToolbar.setTitle(title);
+        mDisplayedFragment = fragment;
     }
 
     @Override
@@ -121,6 +149,7 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+        mToggle.syncState();
     }
 
     @Override

@@ -4,7 +4,6 @@ package com.usal.jorgeav.sportapp.events.detail;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +26,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     private Event mEvent = null;
     private DetailEventContract.Presenter mPresenter;
     private MainActivityContract.ActionBarChangeIcon mActionBarChangeIconListener;
+    private MainActivityContract.FragmentManagement mFragmentManagementListener;
 
     @BindView(R.id.event_detail_id)
     TextView textViewEventId;
@@ -49,7 +49,6 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     }
 
     public static DetailEventFragment newInstance(Event event) {
-        Log.d(TAG, "newInstance");
         DetailEventFragment fragment = new DetailEventFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_EVENT, event);
@@ -59,7 +58,6 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mEvent = getArguments().getParcelable(ARG_EVENT);
@@ -71,10 +69,11 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView");
 
         View root = inflater.inflate(R.layout.fragment_detail_event, container, false);
         ButterKnife.bind(this, root);
+        //TODO should i add event.name?
+        mFragmentManagementListener.setCurrentDisplayedFragment(mEvent.getmId(), this);
 
         mActionBarChangeIconListener.setToolbarAsUp();
 
@@ -90,19 +89,21 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.ActionBarChangeIcon)
+        if (context instanceof MainActivityContract.ActionBarChangeIcon) {
             mActionBarChangeIconListener = (MainActivityContract.ActionBarChangeIcon) context;
+            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mActionBarChangeIconListener = null;
+        mFragmentManagementListener = null;
     }
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume");
         super.onResume();
         mPresenter.openEvent();
     }

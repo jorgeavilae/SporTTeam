@@ -19,11 +19,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DetailFieldFragment extends Fragment implements DetailFieldContract.View{
+    private static final String TAG = DetailFieldFragment.class.getSimpleName();
     private static final String ARG_FIELD = "param-field";
 
     private Field mField = null;
     private DetailFieldContract.Presenter mPresenter;
     private MainActivityContract.ActionBarChangeIcon mActionBarChangeIconListener;
+    private MainActivityContract.FragmentManagement mFragmentManagementListener;
 
     @BindView(R.id.field_detail_id)
     TextView textViewFieldId;
@@ -68,6 +70,7 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_detail_field, container, false);
         ButterKnife.bind(this, root);
+        mFragmentManagementListener.setCurrentDisplayedFragment(mField.getmName(), this);
 
         mActionBarChangeIconListener.setToolbarAsUp();
 
@@ -83,14 +86,17 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.ActionBarChangeIcon)
+        if (context instanceof MainActivityContract.ActionBarChangeIcon) {
             mActionBarChangeIconListener = (MainActivityContract.ActionBarChangeIcon) context;
+            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mActionBarChangeIconListener = null;
+        mFragmentManagementListener = null;
     }
 
     @Override

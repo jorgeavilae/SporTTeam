@@ -1,16 +1,15 @@
 package com.usal.jorgeav.sportapp.events;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.EventsRepository;
@@ -26,6 +25,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
 
     EventsContract.Presenter mEventsPresenter;
     EventsAdapter mEventsRecyclerAdapter;
+    private MainActivityContract.FragmentManagement mFragmentManagementListener;
 
     @BindView(R.id.events_list)
     RecyclerView eventsRecyclerList;
@@ -40,7 +40,6 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
         mEventsPresenter = new EventsPresenter(new EventsRepository(), this);
@@ -49,9 +48,9 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView");
         View root = inflater.inflate(R.layout.fragment_events, container, false);
         ButterKnife.bind(this, root);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
 
         eventsRecyclerList.setAdapter(mEventsRecyclerAdapter);
         eventsRecyclerList.setHasFixedSize(true);
@@ -61,9 +60,21 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume");
         super.onResume();
         mEventsPresenter.loadEvents();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof MainActivityContract.ActionBarChangeIcon)
+            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mFragmentManagementListener = null;
     }
 
     @Override
@@ -73,13 +84,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
 
     @Override
     public void onEventClick(Event event) {
-        Log.d(TAG, "onEventClick");
         Fragment newFragment = DetailEventFragment.newInstance(event);
-
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.contentFrame, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        mFragmentManagementListener.initFragment(newFragment, true);
     }
 }

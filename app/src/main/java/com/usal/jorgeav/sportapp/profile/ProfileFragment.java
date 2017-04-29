@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.UsuarioManager;
 
@@ -21,6 +22,8 @@ import butterknife.ButterKnife;
 public class ProfileFragment extends Fragment implements ProfileContract.View {
 
     private ProfileContract.Presenter mProfilePresenter;
+    private MainActivityContract.FragmentManagement mFragmentManagementListener;
+
     @BindView(R.id.user_image)
     ImageView userImage;
     @BindView(R.id.user_name)
@@ -50,6 +53,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, root);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.profile), this);
 
         return root;
     }
@@ -58,6 +62,19 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     public void onResume() {
         super.onResume();
         mProfilePresenter.loadUser();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof MainActivityContract.ActionBarChangeIcon)
+            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mFragmentManagementListener = null;
     }
 
     @Override
