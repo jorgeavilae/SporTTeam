@@ -69,11 +69,6 @@ public class SportteamContract {
         public static Uri buildUserUriWith(long id) {
             return ContentUris.withAppendedId(CONTENT_USER_URI, id);
         }
-
-        /* URI for all users */
-        public static Uri buildUsersUri() {
-            return CONTENT_USER_URI.buildUpon().build();
-        }
     }
 
 
@@ -90,14 +85,14 @@ public class SportteamContract {
                 .build();
 
         /* Column names */
-        public static final String EVENT_ID = "event-id";
+        public static final String EVENT_ID = "eventId";
         public static final String SPORT = "sport";
         public static final String FIELD = "field";
         public static final String CITY = "city";
         public static final String DATE = "date";
         public static final String OWNER = "owner";
-        public static final String TOTAL_PLAYERS = "total-players";
-        public static final String EMPTY_PLAYERS = "empty-players";
+        public static final String TOTAL_PLAYERS = "totalPlayers";
+        public static final String EMPTY_PLAYERS = "emptyPlayers";
 
         /* All column projection */
         public static final String[] EVENT_COLUMNS = {
@@ -124,13 +119,8 @@ public class SportteamContract {
         public static final int COLUMN_EMPTY_PLAYERS = 8;
 
         /* URI for one event */
-        public static Uri buildUserUriWith(long id) {
+        public static Uri buildEventUriWith(long id) {
             return ContentUris.withAppendedId(CONTENT_EVENT_URI, id);
-        }
-
-        /* URI for all events */
-        public static Uri buildUsersUri() {
-            return CONTENT_EVENT_URI.buildUpon().build();
         }
     }
 
@@ -148,15 +138,15 @@ public class SportteamContract {
                 .build();
 
         /* Column names */
-        public static final String FIELD_ID = "field-id";
+        public static final String FIELD_ID = "fieldId";
         public static final String NAME = "name";
         public static final String SPORT = "sport";
         public static final String ADDRRESS = "address";
         public static final String CITY = "city";
         public static final String PUNTUATION = "puntuation";
         public static final String VOTES = "votes";
-        public static final String OPENING_TIME = "opening-time";
-        public static final String CLOSING_TIME = "closing-time";
+        public static final String OPENING_TIME = "openingTime";
+        public static final String CLOSING_TIME = "closingTime";
 
         /* All column projection */
         public static final String[] EVENT_COLUMNS = {
@@ -185,13 +175,8 @@ public class SportteamContract {
         public static final int COLUMN_CLOSING_TIME = 9;
 
         /* URI for one field */
-        public static Uri buildUserUriWith(long id) {
+        public static Uri buildFieldUriWith(long id) {
             return ContentUris.withAppendedId(CONTENT_FIELD_URI, id);
-        }
-
-        /* URI for all field */
-        public static Uri buildUsersUri() {
-            return CONTENT_FIELD_URI.buildUpon().build();
         }
     }
 }

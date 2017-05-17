@@ -1,8 +1,8 @@
 package com.usal.jorgeav.sportapp.events;
 
-import com.usal.jorgeav.sportapp.data.Event;
-
-import java.util.List;
+import android.content.Context;
+import android.database.Cursor;
+import android.support.v4.app.LoaderManager;
 
 /**
  * Created by Jorge Avila on 23/04/2017.
@@ -12,9 +12,12 @@ public abstract class EventsContract {
 
     public interface Presenter {
         void loadEvents();
+        LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
     }
 
     public interface View {
-        void showEvents(List<Event> events);
+        void showEvents(Cursor cursor);
+
+        Context getContext();
     }
 }

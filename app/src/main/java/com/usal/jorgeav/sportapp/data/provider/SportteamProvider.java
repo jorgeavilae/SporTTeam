@@ -2,11 +2,63 @@ package com.usal.jorgeav.sportapp.data.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 public class SportteamProvider extends ContentProvider {
-    public SportteamProvider() {
+
+    public static final int CODE_EVENTS = 100;
+
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
+    private SportteamDBHelper mOpenHelper;
+
+    public static UriMatcher buildUriMatcher() {
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+        final String authority = SportteamContract.CONTENT_AUTHORITY;
+
+        // This URI is content://com.usal.jorgeav.sportapp/events/
+        matcher.addURI(authority, SportteamContract.PATH_EVENTS, CODE_EVENTS);
+
+        return matcher;
+    }
+
+    @Override
+    public boolean onCreate() {
+        mOpenHelper = new SportteamDBHelper(getContext());
+        return false;
+    }
+
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        switch (sUriMatcher.match(uri)) {
+            case CODE_EVENTS:
+                db.beginTransaction();
+                int rowsInserted = 0;
+                try {
+                    for (ContentValues value : values) {
+                        long _id = db.insert(SportteamContract.TABLE_EVENT, null, value);
+                        if (_id != -1) {
+                            rowsInserted++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+
+                return rowsInserted;
+
+            default:
+                return super.bulkInsert(uri, values);
+        }
     }
 
     @Override
@@ -29,16 +81,27 @@ public class SportteamProvider extends ContentProvider {
     }
 
     @Override
-    public boolean onCreate() {
-        // TODO: Implement this to initialize your content provider on startup.
-        return false;
-    }
-
-    @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        // TODO: Implement this to handle query requests from clients.
-        throw new UnsupportedOperationException("Not yet implemented");
+        Cursor cursor;
+        switch (sUriMatcher.match(uri)) {
+            case CODE_EVENTS: {
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        SportteamContract.TABLE_EVENT,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            }
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
     @Override

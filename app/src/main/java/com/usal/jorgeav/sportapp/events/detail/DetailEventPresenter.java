@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.events.detail;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.Event;
 
 /**
@@ -25,9 +26,9 @@ public class DetailEventPresenter implements DetailEventContract.Presenter {
     public void openEvent() {
         mView.showEventId(mEvent.getmId());
         mView.showEventSport(mEvent.getmSport());
-        mView.showEventPlace(mEvent.getmPlace());
-        mView.showEventDate(mEvent.getmDate());
-        mView.showEventTime(mEvent.getmTime());
+        mView.showEventPlace(mEvent.getmField());
+        mView.showEventDate(Utiles.millisToDateTimeString(mEvent.getmDate()));
+        mView.showEventTime(mEvent.getmOwner());
         mView.showEventTotalPlayers(mEvent.getmTotalPlayers());
         mView.showEventEmptyPlayers(mEvent.getmEmptyPlayers());
     }

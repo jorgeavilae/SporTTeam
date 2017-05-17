@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.events;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,13 +16,12 @@ import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.EventsRepository;
 import com.usal.jorgeav.sportapp.events.detail.DetailEventFragment;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class EventsFragment extends Fragment implements EventsContract.View, EventsAdapter.OnEventItemClickListener  {
     private static final String TAG = EventsFragment.class.getSimpleName();
+    public static final int LOADER_EVENTS_ID = 1001;
 
     EventsContract.Presenter mEventsPresenter;
     EventsAdapter mEventsRecyclerAdapter;
@@ -44,6 +44,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
 
         mEventsPresenter = new EventsPresenter(new EventsRepository(), this);
         mEventsRecyclerAdapter = new EventsAdapter(null, this);
+
     }
 
     @Override
@@ -55,6 +56,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
         eventsRecyclerList.setAdapter(mEventsRecyclerAdapter);
         eventsRecyclerList.setHasFixedSize(true);
         eventsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
         return root;
     }
 
@@ -62,6 +64,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     public void onResume() {
         super.onResume();
         mEventsPresenter.loadEvents();
+        getLoaderManager().initLoader(LOADER_EVENTS_ID, null, mEventsPresenter.getLoaderInstance());
     }
 
     @Override
@@ -78,13 +81,18 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     }
 
     @Override
-    public void showEvents(List<Event> events) {
-        mEventsRecyclerAdapter.replaceData(events);
+    public void showEvents(Cursor cursor) {
+        mEventsRecyclerAdapter.replaceData(cursor);
     }
 
     @Override
     public void onEventClick(Event event) {
         Fragment newFragment = DetailEventFragment.newInstance(event);
         mFragmentManagementListener.initFragment(newFragment, true);
+    }
+
+    @Override
+    public Context getContext() {
+        return getActivity();
     }
 }

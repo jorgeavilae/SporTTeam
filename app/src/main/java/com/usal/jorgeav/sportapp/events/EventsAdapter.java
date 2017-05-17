@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.events;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,9 +11,10 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.Event;
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
-import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -25,10 +27,10 @@ import butterknife.ButterKnife;
 class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
     private static final String TAG = EventsAdapter.class.getSimpleName();
 
-    private List<Event> mDataset;
+    private Cursor mDataset;
     private OnEventItemClickListener mClickListener;
 
-    public EventsAdapter(List<Event> mDataset, OnEventItemClickListener clickListener) {
+    public EventsAdapter(Cursor mDataset, OnEventItemClickListener clickListener) {
         Log.d(TAG, "EventsAdapter");
         this.mDataset = mDataset;
         this.mClickListener = clickListener;
@@ -45,30 +47,32 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Event event = mDataset.get(position);
-        if (event != null) {
-            holder.textViewEventId.setText(event.getmId());
-            holder.textViewEventSport.setText(event.getmSport());
-            holder.textViewEventPlace.setText(event.getmPlace());
-            holder.textViewEventDate.setText(event.getmDate());
-            holder.textViewEventTime.setText(event.getmTime());
-            holder.textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d",event.getmTotalPlayers()));
-            holder.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d",event.getmEmptyPlayers()));
+        if (mDataset.moveToPosition(position)) {
+            long date = mDataset.getLong(SportteamContract.EventEntry.COLUMN_DATE);
+            int totalPl = mDataset.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
+            int emptyPl = mDataset.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
+            holder.textViewEventId.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
+            holder.textViewEventSport.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_SPORT));
+            holder.textViewEventPlace.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_FIELD));
+            holder.textViewEventDate.setText(Utiles.millisToDateTimeString(date));
+            holder.textViewEventTime.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_OWNER));
+            holder.textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d",totalPl));
+            holder.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d",emptyPl));
         }
     }
 
-    public void replaceData(List<Event> events) {
+    public void replaceData(Cursor events) {
         setDataset(events);
         notifyDataSetChanged();
     }
 
-    public void setDataset(List<Event> mDataset) {
+    public void setDataset(Cursor mDataset) {
         this.mDataset = mDataset;
     }
 
     @Override
     public int getItemCount() {
-        if (mDataset != null) return mDataset.size();
+        if (mDataset != null) return mDataset.getCount();
         else return 0;
     }
 
@@ -98,7 +102,17 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
         public void onClick(View view) {
             Log.d(TAG, "onClick");
             int position = getAdapterPosition();
-            mClickListener.onEventClick(mDataset.get(position));
+            mDataset.moveToPosition(position);
+            Event event = new Event(
+                    mDataset.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID),
+                    mDataset.getString(SportteamContract.EventEntry.COLUMN_SPORT),
+                    mDataset.getString(SportteamContract.EventEntry.COLUMN_FIELD),
+                    mDataset.getString(SportteamContract.EventEntry.COLUMN_CITY),
+                    mDataset.getLong(SportteamContract.EventEntry.COLUMN_DATE),
+                    mDataset.getString(SportteamContract.EventEntry.COLUMN_OWNER),
+                    mDataset.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS),
+                    mDataset.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
+            mClickListener.onEventClick(event);
         }
     }
 
