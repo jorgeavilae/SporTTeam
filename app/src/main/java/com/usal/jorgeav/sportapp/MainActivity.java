@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         FirebaseDatabaseActions.loadFields(this); //Intalaciones: una vez
-        //FirebaseDatabaseActions; //Mi perfil: cuando cambie
+        FirebaseDatabaseActions.loadProfile(this); //Mi perfil: cuando cambie
         FirebaseDatabaseActions.loadEvents(this); //Eventos de mi ciudad: cuando cambie (para la alarma)
         super.onResume();
     }

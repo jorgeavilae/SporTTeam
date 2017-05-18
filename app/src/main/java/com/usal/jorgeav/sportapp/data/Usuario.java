@@ -1,37 +1,47 @@
 package com.usal.jorgeav.sportapp.data;
 
-import android.graphics.Bitmap;
-
 /**
  * Created by Jorge Avila on 23/04/2017.
  */
 
 public class Usuario {
-    Bitmap imageProfile;
-    String name;
-    String city;
-    String age;
+    String mId;
+    String mEmail;
+    String mName;
+    String mCity;
+    int mAge;
+    String mPhotoUrl;
 
-    public Usuario(Bitmap imageProfile, String name, String city, String age) {
-        this.imageProfile = imageProfile;
-        this.name = name;
-        this.city = city;
-        this.age = age;
+    public Usuario(String mId, String mEmail, String mName, String mCity, int mAge, String mPhotoUrl) {
+        this.mId = mId;
+        this.mEmail = mEmail;
+        this.mName = mName;
+        this.mCity = mCity;
+        this.mAge = mAge;
+        this.mPhotoUrl = mPhotoUrl;
     }
 
-    public Bitmap getImageProfile() {
-        return imageProfile;
+    public String getmId() {
+        return mId;
     }
 
-    public String getName() {
-        return name;
+    public String getmEmail() {
+        return mEmail;
     }
 
-    public String getCity() {
-        return city;
+    public String getmName() {
+        return mName;
     }
 
-    public String getAge() {
-        return age;
+    public String getmCity() {
+        return mCity;
+    }
+
+    public int getmAge() {
+        return mAge;
+    }
+
+    public String getmPhotoUrl() {
+        return mPhotoUrl;
     }
 }

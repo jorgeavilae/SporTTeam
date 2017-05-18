@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 
 public class EventsFragment extends Fragment implements EventsContract.View, EventsAdapter.OnEventItemClickListener  {
     private static final String TAG = EventsFragment.class.getSimpleName();
-    public static final int LOADER_EVENTS_ID = 1001;
+    public static final int LOADER_EVENTS_ID = 2000;
 
     EventsContract.Presenter mEventsPresenter;
     EventsAdapter mEventsRecyclerAdapter;
@@ -62,7 +62,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     @Override
     public void onResume() {
         super.onResume();
-        mEventsPresenter.loadEvents();
+//        mEventsPresenter.loadEvents();
         getLoaderManager().initLoader(LOADER_EVENTS_ID, null, mEventsPresenter.getLoaderInstance());
     }
 

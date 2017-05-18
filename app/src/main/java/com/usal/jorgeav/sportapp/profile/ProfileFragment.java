@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.profile;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import butterknife.ButterKnife;
 
 public class ProfileFragment extends Fragment implements ProfileContract.View {
 
+    public static final int LOADER_MYPROFILE_ID = 1001;
     private ProfileContract.Presenter mProfilePresenter;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
 
@@ -60,7 +62,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     @Override
     public void onResume() {
         super.onResume();
-        mProfilePresenter.loadUser();
+//        mProfilePresenter.loadUser();
+        getLoaderManager().initLoader(LOADER_MYPROFILE_ID, null, mProfilePresenter.getLoaderInstance());
     }
 
     @Override
@@ -77,8 +80,9 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     }
 
     @Override
-    public void showUserImage(Bitmap image) {
-        userImage.setImageDrawable(new BitmapDrawable(getResources(), image));
+    public void showUserImage(String image) {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.android_cheer);
+        userImage.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
     }
 
     @Override

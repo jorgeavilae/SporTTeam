@@ -13,6 +13,7 @@ public class SportteamProvider extends ContentProvider {
 
     public static final int CODE_EVENTS = 100;
     public static final int CODE_FIELDS = 200;
+    public static final int CODE_USERS = 300;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private SportteamDBHelper mOpenHelper;
@@ -25,6 +26,8 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, SportteamContract.PATH_EVENTS, CODE_EVENTS);
         // This URI is content://com.usal.jorgeav.sportapp/fields/
         matcher.addURI(authority, SportteamContract.PATH_FIELDS, CODE_FIELDS);
+        // This URI is content://com.usal.jorgeav.sportapp/users/
+        matcher.addURI(authority, SportteamContract.PATH_USERS, CODE_USERS);
 
         return matcher;
     }
@@ -100,8 +103,19 @@ public class SportteamProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        // TODO: Implement this to handle requests to insert a new row.
-        throw new UnsupportedOperationException("Not yet implemented");
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        Uri returnUri = null;
+        switch (sUriMatcher.match(uri)) {
+            case CODE_USERS:
+                long _id = db.insert(SportteamContract.TABLE_USER, null, values);
+                if ( _id > 0 )
+                    returnUri = SportteamContract.UserEntry.buildUserUriWith(_id);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return returnUri;
     }
 
     @Override
@@ -109,6 +123,16 @@ public class SportteamProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         Cursor cursor;
         switch (sUriMatcher.match(uri)) {
+            case CODE_USERS:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        SportteamContract.TABLE_USER,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
             case CODE_FIELDS:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         SportteamContract.TABLE_FIELD,

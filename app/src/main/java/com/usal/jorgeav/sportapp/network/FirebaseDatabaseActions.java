@@ -75,4 +75,29 @@ public class FirebaseDatabaseActions {
         context.getContentResolver()
                 .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, contentValues);
     }
+
+    public static void loadProfile(Context context) {
+        //With FirebaseUser.getUID()
+        Log.d(TAG, "loadMiProfile (Network Call)");
+        //On callback: load friends, events, and get notifications
+
+        //And with the data...
+        String mId = "67ht67ty9hi485g94u5hi";
+        String mEmail = "email@email.com";
+        String mName = "Nombre Apellido";
+        String mCity = "Ciudad, Pais";
+        int mAge = 30;
+        String mPhotoUrl = "cadena de texto que es una url";
+
+        ContentValues cv = new ContentValues();
+        cv.put(SportteamContract.UserEntry.USER_ID, mId);
+        cv.put(SportteamContract.UserEntry.EMAIL, mEmail);
+        cv.put(SportteamContract.UserEntry.NAME, mName);
+        cv.put(SportteamContract.UserEntry.CITY, mCity);
+        cv.put(SportteamContract.UserEntry.AGE, mAge);
+        cv.put(SportteamContract.UserEntry.PHOTO, mPhotoUrl);
+
+        context.getContentResolver()
+                .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cv);
+    }
 }

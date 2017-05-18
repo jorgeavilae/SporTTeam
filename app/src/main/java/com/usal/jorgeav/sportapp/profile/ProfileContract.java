@@ -1,7 +1,8 @@
 package com.usal.jorgeav.sportapp.profile;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.database.Cursor;
+import android.support.v4.app.LoaderManager;
 
 /**
  * Created by Jorge Avila on 23/04/2017.
@@ -10,7 +11,7 @@ import android.graphics.Bitmap;
 public abstract class ProfileContract {
 
     public interface View {
-        void showUserImage(Bitmap image);
+        void showUserImage(String image);
         void showUserName(String name);
         void showUserCity(String city);
         void showUserAge(String age);
@@ -20,5 +21,6 @@ public abstract class ProfileContract {
 
     public interface Presenter {
        void loadUser();
+        LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
     }
 }
