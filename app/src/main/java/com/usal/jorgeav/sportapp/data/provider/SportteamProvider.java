@@ -109,7 +109,17 @@ public class SportteamProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         Cursor cursor;
         switch (sUriMatcher.match(uri)) {
-            case CODE_EVENTS: {
+            case CODE_FIELDS:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        SportteamContract.TABLE_FIELD,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_EVENTS:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         SportteamContract.TABLE_EVENT,
                         projection,
@@ -119,8 +129,6 @@ public class SportteamProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
-            }
-
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

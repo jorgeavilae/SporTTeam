@@ -11,7 +11,7 @@ import java.util.Locale;
 public class Utiles {
 
     public static String millisToDateTimeString(long millis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MMMM/yy\thh:mm", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MMMM/yy hh:mm", Locale.getDefault());
         return sdf.format(new Date(millis));
     }
 
@@ -26,6 +26,6 @@ public class Utiles {
         long min = millis/(60*1000);
         long hor = min/60;
         min -= hor*60;
-        return String.format(Locale.getDefault(), "%2d:%2d", hor,min);
+        return String.format(Locale.getDefault(), "%02d:%02d", hor,min);
     }
 }

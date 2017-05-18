@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.fields.detail;
 
 import android.support.annotation.NonNull;
 
+import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.Field;
 
 /**
@@ -24,7 +25,7 @@ public class DetailFieldPresenter implements DetailFieldContract.Presenter {
         mView.showFieldAddress(mField.getmAddress());
         mView.showFieldRating(mField.getmRating());
         mView.showFieldSport(mField.getmSport());
-        mView.showFieldOpeningTime(mField.getmOpeningTime());
-        mView.showFieldClosingTime(mField.getmClosingTime());
+        mView.showFieldOpeningTime(Utiles.millisToTimeString(mField.getmOpeningTime()));
+        mView.showFieldClosingTime(Utiles.millisToTimeString(mField.getmClosingTime()));
     }
 }

@@ -44,7 +44,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mProfilePresenter = new ProfilePresenter(new UsuarioManager(), this);
+        mProfilePresenter = new ProfilePresenter(this);
     }
 
     @Override

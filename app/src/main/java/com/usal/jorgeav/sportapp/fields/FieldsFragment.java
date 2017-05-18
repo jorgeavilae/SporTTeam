@@ -64,6 +64,7 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     public void onResume() {
         super.onResume();
         mFieldsPresenter.loadFields();
+        getLoaderManager().initLoader(LOADER_FIELDS_ID, null, mFieldsPresenter.getLoaderInstance());
     }
 
     @Override
