@@ -17,7 +17,6 @@ public abstract class EventsContract {
 
     public interface View {
         void showEvents(Cursor cursor);
-
         Context getContext();
     }
 }

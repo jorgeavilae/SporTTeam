@@ -3,8 +3,6 @@ package com.usal.jorgeav.sportapp.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.UUID;
-
 /**
  * Created by Jorge Avila on 25/04/2017.
  */
@@ -12,18 +10,22 @@ import java.util.UUID;
 public class Field implements Parcelable {
     String mId;
     String mName;
-    String mAddress;
-    Float mRating;
     String mSport;
-    String mOpeningTime;
-    String mClosingTime;
+    String mAddress;
+    String mCity;
+    float mRating;
+    int mVotes;
+    long mOpeningTime;
+    long mClosingTime;
 
-    public Field(String mName, String mAddress, Float mRrating, String mSsport, String mOpeningTime, String mClosingTime) {
-        this.mId = UUID.randomUUID().toString();
+    public Field(String mId, String mName, String mSport, String mAddress, String mCity, float mRating, int mVotes, long mOpeningTime, long mClosingTime) {
+        this.mId = mId;
         this.mName = mName;
+        this.mSport = mSport;
         this.mAddress = mAddress;
-        this.mRating = mRrating;
-        this.mSport = mSsport;
+        this.mCity = mCity;
+        this.mRating = mRating;
+        this.mVotes = mVotes;
         this.mOpeningTime = mOpeningTime;
         this.mClosingTime = mClosingTime;
     }
@@ -36,25 +38,34 @@ public class Field implements Parcelable {
         return mName;
     }
 
-    public String getmAddress() {
-        return mAddress;
-    }
-
-    public Float getmRating() {
-        return mRating;
-    }
-
     public String getmSport() {
         return mSport;
     }
 
-    public String getmOpeningTime() {
+    public String getmAddress() {
+        return mAddress;
+    }
+
+    public String getmCity() {
+        return mCity;
+    }
+
+    public float getmRating() {
+        return mRating;
+    }
+
+    public int getmVotes() {
+        return mVotes;
+    }
+
+    public long getmOpeningTime() {
         return mOpeningTime;
     }
 
-    public String getmClosingTime() {
+    public long getmClosingTime() {
         return mClosingTime;
     }
+
 
     @Override
     public int describeContents() {
@@ -65,24 +76,28 @@ public class Field implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.mId);
         dest.writeString(this.mName);
-        dest.writeString(this.mAddress);
-        dest.writeValue(this.mRating);
         dest.writeString(this.mSport);
-        dest.writeString(this.mOpeningTime);
-        dest.writeString(this.mClosingTime);
+        dest.writeString(this.mAddress);
+        dest.writeString(this.mCity);
+        dest.writeFloat(this.mRating);
+        dest.writeInt(this.mVotes);
+        dest.writeLong(this.mOpeningTime);
+        dest.writeLong(this.mClosingTime);
     }
 
     protected Field(Parcel in) {
         this.mId = in.readString();
         this.mName = in.readString();
-        this.mAddress = in.readString();
-        this.mRating = (Float) in.readValue(Float.class.getClassLoader());
         this.mSport = in.readString();
-        this.mOpeningTime = in.readString();
-        this.mClosingTime = in.readString();
+        this.mAddress = in.readString();
+        this.mCity = in.readString();
+        this.mRating = in.readFloat();
+        this.mVotes = in.readInt();
+        this.mOpeningTime = in.readLong();
+        this.mClosingTime = in.readLong();
     }
 
-    public static final Parcelable.Creator<Field> CREATOR = new Parcelable.Creator<Field>() {
+    public static final Creator<Field> CREATOR = new Creator<Field>() {
         @Override
         public Field createFromParcel(Parcel source) {
             return new Field(source);

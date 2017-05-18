@@ -1,23 +1,58 @@
 package com.usal.jorgeav.sportapp.fields;
 
-import com.usal.jorgeav.sportapp.data.FieldRepository;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 /**
  * Created by Jorge Avila on 25/04/2017.
  */
 
-public class FieldsPresenter implements FieldsContract.Presenter {
+public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
 
     FieldsContract.View mFieldsView;
-    FieldRepository mFieldsRepository;
 
-    public FieldsPresenter(FieldRepository fieldsRepository, FieldsContract.View fieldsView) {
-        this.mFieldsRepository = fieldsRepository;
+    public FieldsPresenter(FieldsContract.View fieldsView) {
         this.mFieldsView = fieldsView;
     }
 
     @Override
     public void loadFields() {
-        mFieldsView.showFields(mFieldsRepository.getDataset());
+        FirebaseDatabaseActions.loadFields(mFieldsView.getContext());
+    }
+
+    @Override
+    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
+        return this;
+    }
+
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case FieldsFragment.LOADER_FIELDS_ID:
+                return new CursorLoader(
+                        this.mFieldsView.getContext(),
+                        SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                        SportteamContract.FieldEntry.FIELDS_COLUMNS,
+                        null,
+                        null,
+                        SportteamContract.FieldEntry.COLUMN_PUNTUATION + " DESC");
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mFieldsView.showFields(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+        mFieldsView.showFields(null);
     }
 }

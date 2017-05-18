@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.fields;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +10,10 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
-import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -22,10 +24,10 @@ import butterknife.ButterKnife;
  */
 
 public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder> {
-    private List<Field> mDataset;
+    private Cursor mDataset;
     private OnFieldItemClickListener mClickListener;
 
-    public FieldsAdapter(List<Field> mDataset, OnFieldItemClickListener listener) {
+    public FieldsAdapter(Cursor mDataset, OnFieldItemClickListener listener) {
         this.mDataset = mDataset;
         this.mClickListener = listener;
     }
@@ -41,30 +43,32 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(FieldsAdapter.ViewHolder holder, int position) {
-        Field field = mDataset.get(position);
-        if (field != null) {
-            holder.textViewFieldId.setText(field.getmId());
-            holder.textViewFieldName.setText(field.getmName());
-            holder.textViewFieldAddress.setText(field.getmAddress());
-            holder.textViewFieldRating.setText(String.format(Locale.getDefault(), "%2.2f", field.getmRating()));
-            holder.textViewFieldSport.setText(field.getmSport());
-            holder.textViewFieldOpening.setText(field.getmOpeningTime());
-            holder.textViewFieldClosing.setText(field.getmClosingTime());
+        if (mDataset.moveToPosition(position)) {
+            float rate = mDataset.getFloat(SportteamContract.FieldEntry.COLUMN_PUNTUATION);
+            long opening = mDataset.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
+            long closing = mDataset.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
+            holder.textViewFieldId.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID));
+            holder.textViewFieldName.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_NAME));
+            holder.textViewFieldAddress.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_ADDRRESS));
+            holder.textViewFieldRating.setText(String.format(Locale.getDefault(), "%2.2f", rate));
+            holder.textViewFieldSport.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT));
+            holder.textViewFieldOpening.setText(Utiles.millisToTimeString(opening));
+            holder.textViewFieldClosing.setText(Utiles.millisToTimeString(closing));
         }
     }
 
-    public void replaceData(List<Field> fields) {
+    public void replaceData(Cursor fields) {
         setDataset(fields);
         notifyDataSetChanged();
     }
 
-    public void setDataset(List<Field> mDataset) {
+    public void setDataset(Cursor mDataset) {
         this.mDataset = mDataset;
     }
 
     @Override
     public int getItemCount() {
-        if (mDataset != null) return mDataset.size();
+        if (mDataset != null) return mDataset.getCount();
         else return 0;
     }
 
@@ -93,7 +97,18 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
-            mClickListener.onFieldClick(mDataset.get(position));
+            mDataset.moveToPosition(position);
+            Field field = new Field(
+                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID),
+                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_NAME),
+                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT),
+                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_ADDRRESS),
+                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_CITY),
+                    mDataset.getFloat(SportteamContract.FieldEntry.COLUMN_PUNTUATION),
+                    mDataset.getInt(SportteamContract.FieldEntry.COLUMN_VOTES),
+                    mDataset.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME),
+                    mDataset.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME));
+            mClickListener.onFieldClick(field);
         }
     }
 

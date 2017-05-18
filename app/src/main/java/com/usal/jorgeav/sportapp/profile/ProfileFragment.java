@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.data.UsuarioManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

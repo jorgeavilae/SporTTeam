@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
-import com.usal.jorgeav.sportapp.data.EventsRepository;
 import com.usal.jorgeav.sportapp.events.detail.DetailEventFragment;
 
 import butterknife.BindView;
@@ -42,7 +41,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mEventsPresenter = new EventsPresenter(new EventsRepository(), this);
+        mEventsPresenter = new EventsPresenter(this);
         mEventsRecyclerAdapter = new EventsAdapter(null, this);
 
     }

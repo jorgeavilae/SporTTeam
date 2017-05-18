@@ -21,6 +21,7 @@ import android.view.View;
 
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -198,6 +199,14 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
+    @Override
+    protected void onResume() {
+        FirebaseDatabaseActions.loadFields(this); //Intalaciones: una vez
+        //FirebaseDatabaseActions; //Mi perfil: cuando cambie
+        FirebaseDatabaseActions.loadEvents(this); //Eventos de mi ciudad: cuando cambie (para la alarma)
+        super.onResume();
+    }
 
     @Override
     protected void onPause() {

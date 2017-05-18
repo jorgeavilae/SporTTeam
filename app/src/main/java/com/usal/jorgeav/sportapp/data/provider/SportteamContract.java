@@ -149,7 +149,7 @@ public class SportteamContract {
         public static final String CLOSING_TIME = "closingTime";
 
         /* All column projection */
-        public static final String[] EVENT_COLUMNS = {
+        public static final String[] FIELDS_COLUMNS = {
                 FieldEntry._ID,
                 FieldEntry.FIELD_ID,
                 FieldEntry.NAME,

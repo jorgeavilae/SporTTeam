@@ -6,8 +6,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
-import com.usal.jorgeav.sportapp.data.EventsRepository;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 /**
  * Created by Jorge Avila on 23/04/2017.
@@ -16,18 +16,17 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 public class EventsPresenter implements EventsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
 
     EventsContract.View mEventsView;
-    EventsRepository mEventsRepository;
 
-    public EventsPresenter(EventsRepository eventsRepository, EventsContract.View eventsView) {
-        this.mEventsRepository = eventsRepository;
+    public EventsPresenter(EventsContract.View eventsView) {
         this.mEventsView = eventsView;
     }
 
     @Override
     public void loadEvents() {
-        mEventsRepository.loadEvents(this.mEventsView.getContext());
+        FirebaseDatabaseActions.loadEvents(mEventsView.getContext());
     }
 
+    @Override
     public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {return this;}
 
     @Override

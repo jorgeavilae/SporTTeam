@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.fields;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,16 +14,14 @@ import android.view.ViewGroup;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
-import com.usal.jorgeav.sportapp.data.FieldRepository;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class FieldsFragment extends Fragment implements FieldsContract.View, FieldsAdapter.OnFieldItemClickListener {
     private static final String TAG = FieldsFragment.class.getSimpleName();
+    public static final int LOADER_FIELDS_ID = 2001;
 
     FieldsContract.Presenter mFieldsPresenter;
     FieldsAdapter mFieldsRecyclerAdapter;
@@ -43,7 +42,7 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mFieldsPresenter = new FieldsPresenter(new FieldRepository(), this);
+        mFieldsPresenter = new FieldsPresenter(this);
         mFieldsRecyclerAdapter = new FieldsAdapter(null, this);
     }
 
@@ -81,7 +80,7 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     }
 
     @Override
-    public void showFields(List<Field> fields) {
+    public void showFields(Cursor fields) {
         mFieldsRecyclerAdapter.replaceData(fields);
     }
 
