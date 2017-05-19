@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         MainActivityContract.ActionBarChangeIcon,
         MainActivityContract.FragmentManagement {
-
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
 
     Toolbar mToolbar;
@@ -204,7 +203,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         FirebaseDatabaseActions.loadFields(this); //Intalaciones: una vez
         FirebaseDatabaseActions.loadProfile(this); //Mi perfil: cuando cambie
-        FirebaseDatabaseActions.loadEvents(this); //Eventos de mi ciudad: cuando cambie (para la alarma)
+        FirebaseDatabaseActions.loadEvents(getApplicationContext()); //Eventos de mi ciudad: cuando cambie (para la alarma)
         super.onResume();
     }
 

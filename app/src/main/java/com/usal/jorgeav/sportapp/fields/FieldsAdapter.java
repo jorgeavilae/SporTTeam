@@ -44,12 +44,12 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
     @Override
     public void onBindViewHolder(FieldsAdapter.ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
-            float rate = mDataset.getFloat(SportteamContract.FieldEntry.COLUMN_PUNTUATION);
+            float rate = mDataset.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);
             long opening = mDataset.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
             long closing = mDataset.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
             holder.textViewFieldId.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID));
             holder.textViewFieldName.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_NAME));
-            holder.textViewFieldAddress.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_ADDRRESS));
+            holder.textViewFieldAddress.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS));
             holder.textViewFieldRating.setText(String.format(Locale.getDefault(), "%2.2f", rate));
             holder.textViewFieldSport.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT));
             holder.textViewFieldOpening.setText(Utiles.millisToTimeString(opening));
@@ -102,9 +102,9 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
                     mDataset.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID),
                     mDataset.getString(SportteamContract.FieldEntry.COLUMN_NAME),
                     mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT),
-                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_ADDRRESS),
+                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS),
                     mDataset.getString(SportteamContract.FieldEntry.COLUMN_CITY),
-                    mDataset.getFloat(SportteamContract.FieldEntry.COLUMN_PUNTUATION),
+                    mDataset.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION),
                     mDataset.getInt(SportteamContract.FieldEntry.COLUMN_VOTES),
                     mDataset.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME),
                     mDataset.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME));

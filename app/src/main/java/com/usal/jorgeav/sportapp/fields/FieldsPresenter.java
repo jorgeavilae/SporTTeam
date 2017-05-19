@@ -41,7 +41,7 @@ public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.
                         SportteamContract.FieldEntry.FIELDS_COLUMNS,
                         null,
                         null,
-                        SportteamContract.FieldEntry.COLUMN_PUNTUATION + " DESC");
+                        SportteamContract.FieldEntry.COLUMN_PUNCTUATION + " DESC");
         }
         return null;
     }

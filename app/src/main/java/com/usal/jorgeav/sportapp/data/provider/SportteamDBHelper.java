@@ -14,12 +14,12 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
      * This is the name of our database. Database names should be descriptive and end with the
      * .db extension.
      */
-    public static final String DATABASE_NAME = "movie.db";
+    public static final String DATABASE_NAME = "sportteam.db";
     /*
      * If you change the database schema, you must increment the database version or the onUpgrade
      * method will not be called.
      */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -54,9 +54,9 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.FieldEntry.FIELD_ID           + " TEXT NOT NULL,"      +
                 SportteamContract.FieldEntry.NAME               + " TEXT NOT NULL,"      +
                 SportteamContract.FieldEntry.SPORT              + " TEXT NOT NULL,"             +
-                SportteamContract.FieldEntry.ADDRRESS           + " TEXT,"                      +
+                SportteamContract.FieldEntry.ADDRESS + " TEXT,"                      +
                 SportteamContract.FieldEntry.CITY               + " TEXT,"                      +
-                SportteamContract.FieldEntry.PUNTUATION         + " REAL,"                      +
+                SportteamContract.FieldEntry.PUNCTUATION + " REAL,"                      +
                 SportteamContract.FieldEntry.VOTES              + " INTEGER,"                   +
                 SportteamContract.FieldEntry.OPENING_TIME       + " INTEGER,"                   +
                 SportteamContract.FieldEntry.CLOSING_TIME       + " INTEGER,"                   +

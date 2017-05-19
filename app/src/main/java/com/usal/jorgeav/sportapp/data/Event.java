@@ -132,6 +132,20 @@ public class Event implements Parcelable {
             return new Event[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "mId='" + mId + '\'' +
+                ", mSport='" + mSport + '\'' +
+                ", mField='" + mField + '\'' +
+                ", mCity='" + mCity + '\'' +
+                ", mDate=" + mDate +
+                ", mOwner='" + mOwner + '\'' +
+                ", mTotalPlayers=" + mTotalPlayers +
+                ", mEmptyPlayers=" + mEmptyPlayers +
+                '}';
+    }
 }
 
 

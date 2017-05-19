@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
  * Created by Jorge Avila on 17/05/2017.
  */
 
-public class SportteamContract {
+public final class SportteamContract {
 
     /*
      * The "Content authority" is a name for the entire content provider, similar to the
@@ -141,9 +141,9 @@ public class SportteamContract {
         public static final String FIELD_ID = "fieldId";
         public static final String NAME = "name";
         public static final String SPORT = "sport";
-        public static final String ADDRRESS = "address";
+        public static final String ADDRESS = "address";
         public static final String CITY = "city";
-        public static final String PUNTUATION = "puntuation";
+        public static final String PUNCTUATION = "punctuation";
         public static final String VOTES = "votes";
         public static final String OPENING_TIME = "openingTime";
         public static final String CLOSING_TIME = "closingTime";
@@ -154,9 +154,9 @@ public class SportteamContract {
                 FieldEntry.FIELD_ID,
                 FieldEntry.NAME,
                 FieldEntry.SPORT,
-                FieldEntry.ADDRRESS,
+                FieldEntry.ADDRESS,
                 FieldEntry.CITY,
-                FieldEntry.PUNTUATION,
+                FieldEntry.PUNCTUATION,
                 FieldEntry.VOTES,
                 FieldEntry.OPENING_TIME,
                 FieldEntry.CLOSING_TIME
@@ -167,9 +167,9 @@ public class SportteamContract {
         public static final int COLUMN_FIELD_ID = 1;
         public static final int COLUMN_NAME = 2;
         public static final int COLUMN_SPORT = 3;
-        public static final int COLUMN_ADDRRESS = 4;
+        public static final int COLUMN_ADDRESS = 4;
         public static final int COLUMN_CITY = 5;
-        public static final int COLUMN_PUNTUATION = 6;
+        public static final int COLUMN_PUNCTUATION = 6;
         public static final int COLUMN_VOTES = 7;
         public static final int COLUMN_OPENING_TIME = 8;
         public static final int COLUMN_CLOSING_TIME = 9;
