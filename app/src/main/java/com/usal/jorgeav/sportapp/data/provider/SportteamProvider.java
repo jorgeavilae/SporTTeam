@@ -105,11 +105,17 @@ public class SportteamProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         Uri returnUri = null;
+        long _id = 0;
         switch (sUriMatcher.match(uri)) {
             case CODE_USERS:
-                long _id = db.insert(SportteamContract.TABLE_USER, null, values);
+                _id = db.insert(SportteamContract.TABLE_USER, null, values);
                 if ( _id > 0 )
                     returnUri = SportteamContract.UserEntry.buildUserUriWith(_id);
+                break;
+            case CODE_EVENTS:
+                _id = db.insert(SportteamContract.TABLE_EVENT, null, values);
+                if ( _id > 0 )
+                    returnUri = SportteamContract.EventEntry.buildEventUriWith(_id);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity
                 if (user != null) {
                     // User is signed in
                     mDisplayedFragment = null;
-                    if (savedInstanceState != null) {
+                    if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
                         mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
 
                     } else {
@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void reiniciarContentProviderYSalir() {
+        FirebaseAuth.getInstance().signOut();
         SportteamDBHelper db = new SportteamDBHelper(this);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD);

@@ -31,7 +31,6 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
     private OnEventItemClickListener mClickListener;
 
     public EventsAdapter(Cursor mDataset, OnEventItemClickListener clickListener) {
-        Log.d(TAG, "EventsAdapter");
         this.mDataset = mDataset;
         this.mClickListener = clickListener;
     }

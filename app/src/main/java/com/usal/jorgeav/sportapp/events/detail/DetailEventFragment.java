@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -110,41 +111,48 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
     @Override
     public void showEventId(String id) {
+        ((MainActivity)getActivity()).showContent();
         this.textViewEventId.setText(id);
     }
 
     @Override
     public void showEventSport(String sport) {
+        ((MainActivity)getActivity()).showContent();
         this.textViewEventSport.setText(sport);
 
     }
 
     @Override
     public void showEventPlace(String place) {
+        ((MainActivity)getActivity()).showContent();
         this.textViewEventPlace.setText(place);
 
     }
 
     @Override
     public void showEventDate(String date) {
+        ((MainActivity)getActivity()).showContent();
         this.textViewEventDate.setText(date);
 
     }
 
     @Override
     public void showEventTime(String time) {
+        ((MainActivity)getActivity()).showContent();
         this.textViewEventTime.setText(time);
 
     }
 
     @Override
     public void showEventTotalPlayers(int totalPlayers) {
+        ((MainActivity)getActivity()).showContent();
         this.textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d", totalPlayers));
 
     }
 
     @Override
     public void showEventEmptyPlayers(int emptyPlayers) {
+        ((MainActivity)getActivity()).showContent();
         this.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));
 
     }

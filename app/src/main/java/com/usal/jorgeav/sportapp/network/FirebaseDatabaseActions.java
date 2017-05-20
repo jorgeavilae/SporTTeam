@@ -13,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.Utiles;
+import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
@@ -92,20 +93,18 @@ public class FirebaseDatabaseActions {
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
 
+        Log.d(TAG, filter+"="+city);
         eventsRef.orderByChild(filter).equalTo(city).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d("ASD", dataSnapshot.toString());
-//                if (dataSnapshot.exists()) {
-//                    ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
-//                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-//                        Event event = Utiles.datasnapshotToEvent(data);
-//                        cvArray.add(Utiles.eventToContentValues(event));
-//                    }
-//                    context.getContentResolver()
-//                            .bulkInsert(SportteamContract.EventEntry.CONTENT_EVENT_URI,
-//                                    cvArray.toArray(new ContentValues[cvArray.size()]));
-//                }
+                Log.d(TAG, dataSnapshot.toString());
+                Log.d(TAG, dataSnapshot.exists()+"");
+                if (dataSnapshot.exists()) {
+                    Event event = Utiles.datasnapshotToEvent(dataSnapshot);
+                    ContentValues cv = Utiles.eventToContentValues(event);
+                    Log.d(TAG, context.getContentResolver()
+                            .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv).toString());
+                }
 
             }
 
