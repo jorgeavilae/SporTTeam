@@ -59,8 +59,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     }
 
     private void showUser(Cursor data) {
-        if(data != null) {
-            data.moveToFirst();
+        if(data != null && data.moveToFirst()) {
             mUserView.showUserImage(data.getString(SportteamContract.UserEntry.COLUMN_PHOTO));
             mUserView.showUserName(data.getString(SportteamContract.UserEntry.COLUMN_NAME));
             mUserView.showUserCity(data.getString(SportteamContract.UserEntry.COLUMN_CITY));

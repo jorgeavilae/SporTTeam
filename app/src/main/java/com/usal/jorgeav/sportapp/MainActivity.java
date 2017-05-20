@@ -1,9 +1,11 @@
 package com.usal.jorgeav.sportapp;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -19,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
 import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
@@ -28,14 +32,19 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         MainActivityContract.ActionBarChangeIcon,
         MainActivityContract.FragmentManagement {
+    private final static String TAG = MainActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
+    private final static int LOGIN_ACTIVITY_REQUEST = 123;
 
     Toolbar mToolbar;
     DrawerLayout mDrawer;
     NavigationView mNavigationView;
     Fragment mDisplayedFragment;
-
     ActionBarDrawerToggle mToggle;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +58,23 @@ public class MainActivity extends AppCompatActivity
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(mToggle);
 
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    FirebaseDatabaseActions.loadProfile(getApplicationContext()); //Mi perfil: cuando cambie
+                    FirebaseDatabaseActions.loadFields(getApplicationContext()); //Intalaciones: una vez
+                    FirebaseDatabaseActions.loadEvents(getApplicationContext()); //Eventos de mi ciudad: cuando cambie (para la alarma)
+                } else {
+                    // User is signed out
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                }
+            }
+        };
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
@@ -118,6 +144,8 @@ public class MainActivity extends AppCompatActivity
             initFragment(EventsFragment.newInstance(), false);
         } else if (id == R.id.nav_fields) {
             initFragment(FieldsFragment.newInstance(), false);
+        } else if (id == R.id.nav_sign_out) {
+            mAuth.signOut();
         }
 
         mDrawer.closeDrawer(GravityCompat.START);
@@ -201,9 +229,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        FirebaseDatabaseActions.loadFields(this); //Intalaciones: una vez
-        FirebaseDatabaseActions.loadProfile(this); //Mi perfil: cuando cambie
-        FirebaseDatabaseActions.loadEvents(getApplicationContext()); //Eventos de mi ciudad: cuando cambie (para la alarma)
         super.onResume();
     }
 
@@ -212,5 +237,19 @@ public class MainActivity extends AppCompatActivity
         toolbarIconTransition.removeCallbacks(transitionToNav);
         toolbarIconTransition.removeCallbacks(transitionToUp);
         super.onPause();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 }
