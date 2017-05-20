@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
@@ -81,8 +82,9 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     }
 
     @Override
-    public void showFields(Cursor fields) {
-        mFieldsRecyclerAdapter.replaceData(fields);
+    public void showFields(Cursor cursor) {
+        mFieldsRecyclerAdapter.replaceData(cursor);
+        if (cursor != null) ((MainActivity)getActivity()).showContent();
     }
 
     @Override

@@ -6,6 +6,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
@@ -17,6 +19,7 @@ import java.util.Locale;
 
 public class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     private ProfileContract.View mUserView;
+    private User mUser;
 
     public ProfilePresenter(ProfileContract.View userView) {
         mUserView = userView;
@@ -24,7 +27,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void loadUser() {
-        FirebaseDatabaseActions.loadProfile(mUserView.getContext());
+        FirebaseDatabaseActions.loadMyProfile(mUserView.getContext());
     }
 
     @Override
@@ -36,7 +39,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case ProfileFragment.LOADER_MYPROFILE_ID:
-                String currentUserID = "67ht67ty9hi485g94u5hi";
+                String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 return new CursorLoader(
                         this.mUserView.getContext(),
                         SportteamContract.UserEntry.CONTENT_USER_URI,
@@ -50,7 +53,8 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            showUser(data);
+        mUser = cursorToUser(data);
+        showUser(mUser);
     }
 
     @Override
@@ -58,15 +62,27 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
             showUser(null);
     }
 
-    private void showUser(Cursor data) {
-        if(data != null && data.moveToFirst()) {
-            mUserView.showUserImage(data.getString(SportteamContract.UserEntry.COLUMN_PHOTO));
-            mUserView.showUserName(data.getString(SportteamContract.UserEntry.COLUMN_NAME));
-            mUserView.showUserCity(data.getString(SportteamContract.UserEntry.COLUMN_CITY));
-            int age = data.getInt(SportteamContract.UserEntry.COLUMN_AGE);
-            mUserView.showUserAge(String.format(Locale.getDefault(), "%2d", age));
+    private void showUser(User user) {
+        if (user != null) {
+            mUserView.showUserImage(user.getmPhotoUrl());
+            mUserView.showUserName(user.getmName());
+            mUserView.showUserCity(user.getmCity());
+            mUserView.showUserAge(String.format(Locale.getDefault(), "%2d", user.getmAge()));
         }
+    }
 
+    private User cursorToUser(Cursor data) {
+        if(data != null && data.moveToFirst()) {
+            String id = data.getString(SportteamContract.UserEntry.COLUMN_USER_ID);
+            String email = data.getString(SportteamContract.UserEntry.COLUMN_EMAIL);
+            String name = data.getString(SportteamContract.UserEntry.COLUMN_NAME);
+            String city = data.getString(SportteamContract.UserEntry.COLUMN_CITY);
+            String ageStr = data.getString(SportteamContract.UserEntry.COLUMN_AGE);
+            int age = Integer.valueOf(ageStr);
+            String photoUrl = data.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
 
+            return new User(id, email, name, city, age, photoUrl);
+        }
+        return null;
     }
 }

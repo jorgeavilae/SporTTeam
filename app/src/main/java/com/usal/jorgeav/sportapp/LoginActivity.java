@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +137,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 Toast.makeText(LoginActivity.this, R.string.error_incorrect_password,
                                         Toast.LENGTH_SHORT).show();
                             } else {
+                                FirebaseDatabaseActions.loadMyProfile(getApplicationContext()); //Mi perfil: cuando cambie
                                 finish();
                             }
                         }

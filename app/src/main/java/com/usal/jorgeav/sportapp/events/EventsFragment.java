@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -82,6 +83,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     @Override
     public void showEvents(Cursor cursor) {
         mEventsRecyclerAdapter.replaceData(cursor);
+        if (cursor != null) ((MainActivity)getActivity()).showContent();
     }
 
     @Override

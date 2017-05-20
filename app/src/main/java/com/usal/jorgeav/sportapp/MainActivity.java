@@ -17,15 +17,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -34,20 +39,23 @@ public class MainActivity extends AppCompatActivity
         MainActivityContract.FragmentManagement {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
-    private final static int LOGIN_ACTIVITY_REQUEST = 123;
+
+    public static User myLoggedUser;
 
     Toolbar mToolbar;
     DrawerLayout mDrawer;
     NavigationView mNavigationView;
     Fragment mDisplayedFragment;
     ActionBarDrawerToggle mToggle;
+    FrameLayout mContentFrame;
+    ProgressBar mProgressbar;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -58,6 +66,16 @@ public class MainActivity extends AppCompatActivity
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(mToggle);
 
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+
+
+        mContentFrame = (FrameLayout) findViewById(R.id.contentFrame);
+        mProgressbar = (ProgressBar) findViewById(R.id.main_activity_progressbar);
+
+        //TODO borrar
+//        reiniciarContentProviderYSalir();
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -65,9 +83,15 @@ public class MainActivity extends AppCompatActivity
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    FirebaseDatabaseActions.loadProfile(getApplicationContext()); //Mi perfil: cuando cambie
-                    FirebaseDatabaseActions.loadFields(getApplicationContext()); //Intalaciones: una vez
-                    FirebaseDatabaseActions.loadEvents(getApplicationContext()); //Eventos de mi ciudad: cuando cambie (para la alarma)
+                    mDisplayedFragment = null;
+                    if (savedInstanceState != null) {
+                        mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
+
+                    } else {
+                        //TODO se crea un fragment q llama a showContent
+                        onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
+                    }
+
                 } else {
                     // User is signed out
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -75,31 +99,28 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
+    }
 
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        mNavigationView.setNavigationItemSelectedListener(this);
-
-        mDisplayedFragment = null;
-        if (savedInstanceState != null) {
-            mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
-
-        }
-        if (mDisplayedFragment == null) {
-            onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
-        }
+    private void reiniciarContentProviderYSalir() {
+        SportteamDBHelper db = new SportteamDBHelper(this);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER);
+        finish();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
+        if (mDisplayedFragment != null)
+            getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        //TODO toggle default icon smaller than mine
+        //TODO toggle default icon smaller
         Drawable upIcon = ContextCompat.getDrawable(this, R.drawable.ic_up);
         Drawable icon = mToolbar.getNavigationIcon();
         if (icon == null || !upIcon.getConstantState().equals(icon.getConstantState())) {
@@ -154,6 +175,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void initFragment(Fragment fragment, boolean isOnBackStack) {
+        hideContent();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.contentFrame, fragment);
@@ -251,5 +273,17 @@ public class MainActivity extends AppCompatActivity
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    public void showContent() {
+        Log.d("ASD", "showContent");
+        mContentFrame.setVisibility(View.VISIBLE);
+        mProgressbar.setVisibility(View.INVISIBLE);
+    }
+
+    public void hideContent() {
+        Log.d("ASD", "hideContent");
+        mContentFrame.setVisibility(View.INVISIBLE);
+        mProgressbar.setVisibility(View.VISIBLE);
     }
 }

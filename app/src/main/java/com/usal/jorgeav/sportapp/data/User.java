@@ -4,7 +4,7 @@ package com.usal.jorgeav.sportapp.data;
  * Created by Jorge Avila on 23/04/2017.
  */
 
-public class Usuario {
+public class User {
     String mId;
     String mEmail;
     String mName;
@@ -12,7 +12,7 @@ public class Usuario {
     int mAge;
     String mPhotoUrl;
 
-    public Usuario(String mId, String mEmail, String mName, String mCity, int mAge, String mPhotoUrl) {
+    public User(String mId, String mEmail, String mName, String mCity, int mAge, String mPhotoUrl) {
         this.mId = mId;
         this.mEmail = mEmail;
         this.mName = mName;

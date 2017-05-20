@@ -2,14 +2,17 @@ package com.usal.jorgeav.sportapp.network;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.Utiles;
-import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
@@ -23,25 +26,27 @@ import java.util.List;
 public class FirebaseDatabaseActions {
     public static final String TAG = FirebaseDatabaseActions.class.getSimpleName();
 
-    public static void loadEvents(final Context context/*, query arguments*/) {
-        String myCity = FirebaseDBContract.MyCity;
-
+    public static void loadMyProfile(final Context context) {
+        final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
-        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
-        eventsRef.orderByChild(filter).equalTo(myCity).addListenerForSingleValueEvent(new ValueEventListener() {
+        myUserRef.child(myUserID + "/" + FirebaseDBContract.DATA)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        Event event = Utiles.datasnapshotToEvent(data);
-                        cvArray.add(Utiles.eventToContentValues(event));
-                    }
+                    MainActivity.myLoggedUser = Utiles.datasnapshotToUser(dataSnapshot, myUserID);
+                    ContentValues cv = Utiles.userToContentValues(MainActivity.myLoggedUser);
                     context.getContentResolver()
-                            .bulkInsert(SportteamContract.EventEntry.CONTENT_EVENT_URI,
-                                    cvArray.toArray(new ContentValues[cvArray.size()]));
+                            .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cv);
+
+                    loadFieldsFromCity(context, MainActivity.myLoggedUser.getmCity()); //Intalaciones: una vez
+                    loadEventsFromCity(context, MainActivity.myLoggedUser.getmCity()); //Eventos de mi ciudad: cuando cambie (para la alarma)
+                } else {
+                    new Exception
+                            ("User with UID: " + myUserID + " does not exists")
+                            .printStackTrace();
                 }
             }
 
@@ -50,13 +55,17 @@ public class FirebaseDatabaseActions {
 
             }
         });
+//        On callback: load friends, events, and get notifications
+//        FirebaseDatabaseActions.loadFields(getApplicationContext()); //Intalaciones: una vez
+//        FirebaseDatabaseActions.loadEvents(getApplicationContext()); //Eventos de mi ciudad: cuando cambie (para la alarma)
     }
 
-    public static void loadFields(final Context context) {
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static void loadFieldsFromCity(final Context context, String city) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference fieldsRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
+        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
 
-        fieldsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        fieldsRef.orderByChild(filter).equalTo(city).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -78,28 +87,47 @@ public class FirebaseDatabaseActions {
         });
     }
 
-    public static void loadProfile(Context context) {
-//        //With FirebaseUser.getUID()
-//        Log.d(TAG, "loadMiProfile (Network Call)");
-//        //On callback: load friends, events, and get notifications
-//
-//        //And with the data...
-//        String mId = "67ht67ty9hi485g94u5hi";
-//        String mEmail = "email@email.com";
-//        String mName = "Nombre Apellido";
-//        String mCity = "Ciudad, Pais";
-//        int mAge = 30;
-//        String mPhotoUrl = "cadena de texto que es una url";
-//
-//        ContentValues cv = new ContentValues();
-//        cv.put(SportteamContract.UserEntry.USER_ID, mId);
-//        cv.put(SportteamContract.UserEntry.EMAIL, mEmail);
-//        cv.put(SportteamContract.UserEntry.NAME, mName);
-//        cv.put(SportteamContract.UserEntry.CITY, mCity);
-//        cv.put(SportteamContract.UserEntry.AGE, mAge);
-//        cv.put(SportteamContract.UserEntry.PHOTO, mPhotoUrl);
-//
-//        context.getContentResolver()
-//                .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cv);
+    public static void loadEventsFromCity(final Context context, String city) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
+
+        eventsRef.orderByChild(filter).equalTo(city).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.d("ASD", dataSnapshot.toString());
+//                if (dataSnapshot.exists()) {
+//                    ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
+//                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+//                        Event event = Utiles.datasnapshotToEvent(data);
+//                        cvArray.add(Utiles.eventToContentValues(event));
+//                    }
+//                    context.getContentResolver()
+//                            .bulkInsert(SportteamContract.EventEntry.CONTENT_EVENT_URI,
+//                                    cvArray.toArray(new ContentValues[cvArray.size()]));
+//                }
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

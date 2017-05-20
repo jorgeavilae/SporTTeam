@@ -7,7 +7,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 /**
  * Created by Jorge Avila on 25/04/2017.
@@ -23,7 +22,7 @@ public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.
 
     @Override
     public void loadFields() {
-        FirebaseDatabaseActions.loadFields(mFieldsView.getContext());
+//        FirebaseDatabaseActions.loadFields(mFieldsView.getContext());
     }
 
     @Override

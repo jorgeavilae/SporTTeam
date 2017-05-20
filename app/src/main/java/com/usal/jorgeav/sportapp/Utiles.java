@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import com.google.firebase.database.DataSnapshot;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
 
@@ -110,5 +111,27 @@ public class Utiles {
             cvArray.add(cv);
         }
         return cvArray;
+    }
+
+    public static User datasnapshotToUser (DataSnapshot data, String userID) {
+        String id = userID;
+        String email = data.child(FirebaseDBContract.User.EMAIL).getValue().toString();
+        String name = data.child(FirebaseDBContract.User.ALIAS).getValue().toString();
+        String city = data.child(FirebaseDBContract.User.CITY).getValue().toString();
+        String ageStr = data.child(FirebaseDBContract.User.AGE).getValue().toString();
+        int age = Integer.valueOf(ageStr);
+        String photoUrl = data.child(FirebaseDBContract.User.PROFILE_PICTURE).getValue().toString();
+
+        return new User(id,email,name,city,age,photoUrl);
+    }
+    public static ContentValues userToContentValues (User user) {
+        ContentValues cv = new ContentValues();
+        cv.put(SportteamContract.UserEntry.USER_ID, user.getmId());
+        cv.put(SportteamContract.UserEntry.EMAIL, user.getmEmail());
+        cv.put(SportteamContract.UserEntry.NAME, user.getmName());
+        cv.put(SportteamContract.UserEntry.CITY, user.getmCity());
+        cv.put(SportteamContract.UserEntry.AGE, user.getmAge());
+        cv.put(SportteamContract.UserEntry.PHOTO, user.getmPhotoUrl());
+        return cv;
     }
 }

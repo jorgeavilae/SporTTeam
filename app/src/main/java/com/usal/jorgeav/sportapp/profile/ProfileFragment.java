@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 
@@ -81,6 +82,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
 
     @Override
     public void showUserImage(String image) {
+        ((MainActivity)getActivity()).showContent();
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.android_cheer);
         userImage.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
     }
@@ -88,17 +90,20 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     @Override
     public void showUserName(String name) {
         userName.setText(name);
+        ((MainActivity)getActivity()).showContent();
     }
 
     @Override
     public void showUserCity(String city) {
         userCity.setText(city);
+        ((MainActivity)getActivity()).showContent();
 
     }
 
     @Override
     public void showUserAge(String age) {
         userAge.setText(age);
+        ((MainActivity)getActivity()).showContent();
 
     }
 
