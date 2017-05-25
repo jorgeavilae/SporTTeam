@@ -5,10 +5,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+
+import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Jorge Avila on 25/05/2017.
@@ -25,7 +31,7 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
     @Override
     public ProfileSportsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout., parent, false);
+        View view = inflater.inflate(R.layout.sport_item_list, parent, false);
         return new ProfileSportsAdapter.ViewHolder(view);
     }
 
@@ -34,8 +40,8 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         if (mDataset.moveToPosition(position)) {
             String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
             float level = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);
-            holder.textViewFieldId.setText();
-            holder.textViewFieldName.setText();
+            holder.textViewSportName.setText(name);
+            holder.textViewSportLevel.setText(String.format(Locale.getDefault(), "%.2f", level));
         }
     }
 
@@ -54,15 +60,17 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         this.mDataset = mDataset;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.sport_item_icon)
+        ImageView imageViewSportIcon;
+        @BindView(R.id.sport_item_name)
+        TextView textViewSportName;
+        @BindView(R.id.sport_item_level)
+        TextView textViewSportLevel;
 
         public ViewHolder(View itemView) {
             super(itemView);
-        }
-
-        @Override
-        public void onClick(View view) {
-
+            ButterKnife.bind(this, itemView);
         }
     }
 }

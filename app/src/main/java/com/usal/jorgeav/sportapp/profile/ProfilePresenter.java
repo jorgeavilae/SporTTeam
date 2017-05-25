@@ -61,15 +61,17 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
             case ProfileFragment.LOADER_MYPROFILE_ID:
-                String photoUrl = data.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
-                String name = data.getString(SportteamContract.UserEntry.COLUMN_NAME);
-                String city = data.getString(SportteamContract.UserEntry.COLUMN_CITY);
-                String ageStr = data.getString(SportteamContract.UserEntry.COLUMN_AGE);
-                int age = Integer.valueOf(ageStr);
-                mUserView.showUserImage(photoUrl);
-                mUserView.showUserName(name);
-                mUserView.showUserCity(city);
-                mUserView.showUserAge(age);
+                if(data != null && data.moveToFirst()) {
+                    String photoUrl = data.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
+                    String name = data.getString(SportteamContract.UserEntry.COLUMN_NAME);
+                    String city = data.getString(SportteamContract.UserEntry.COLUMN_CITY);
+                    String ageStr = data.getString(SportteamContract.UserEntry.COLUMN_AGE);
+                    int age = Integer.valueOf(ageStr);
+                    mUserView.showUserImage(photoUrl);
+                    mUserView.showUserName(name);
+                    mUserView.showUserCity(city);
+                    mUserView.showUserAge(age);
+                }
                 break;
             case ProfileFragment.LOADER_MYPROFILE_SPORTS_ID:
                 mUserView.showSports(data);
