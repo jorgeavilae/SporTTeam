@@ -105,12 +105,9 @@ public class FirebaseDatabaseActions {
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
 
-        Log.d(TAG, filter+"="+city);
         eventsRef.orderByChild(filter).equalTo(city).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d(TAG, dataSnapshot.toString());
-                Log.d(TAG, dataSnapshot.exists()+"");
                 if (dataSnapshot.exists()) {
                     Event event = Utiles.datasnapshotToEvent(dataSnapshot);
                     ContentValues cv = Utiles.eventToContentValues(event);

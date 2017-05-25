@@ -151,6 +151,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         SportteamDBHelper db = new SportteamDBHelper(this);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER_SPORTS);
     }
 
     private boolean isEmailValid(String email) {
