@@ -7,13 +7,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 public class SportteamProvider extends ContentProvider {
 
     public static final int CODE_EVENTS = 100;
     public static final int CODE_FIELDS = 200;
     public static final int CODE_USERS = 300;
+    public static final int CODE_USER_SPORT = 400;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private SportteamDBHelper mOpenHelper;
@@ -28,6 +28,8 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, SportteamContract.PATH_FIELDS, CODE_FIELDS);
         // This URI is content://com.usal.jorgeav.sportapp/users/
         matcher.addURI(authority, SportteamContract.PATH_USERS, CODE_USERS);
+        // This URI is content://com.usal.jorgeav.sportapp/userSport/
+        matcher.addURI(authority, SportteamContract.PATH_USER_SPORT, CODE_USER_SPORT);
 
         return matcher;
     }
@@ -35,7 +37,6 @@ public class SportteamProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         mOpenHelper = new SportteamDBHelper(getContext());
-        Log.d("CONTENT", "creado provider");
         return false;
     }
 
@@ -82,7 +83,19 @@ public class SportteamProvider extends ContentProvider {
                 }
 
                 return rowsInserted;
-
+            case CODE_USER_SPORT:
+                db.beginTransaction();
+                try {
+                    for (ContentValues value : values) {
+                        long _id = db.insert(SportteamContract.TABLE_USER_SPORTS, null, value);
+                        if (_id != -1) rowsInserted++;
+                    }
+                    db.setTransactionSuccessful();
+                } finally { db.endTransaction(); }
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return rowsInserted;
             default:
                 return super.bulkInsert(uri, values);
         }
@@ -152,6 +165,16 @@ public class SportteamProvider extends ContentProvider {
             case CODE_EVENTS:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         SportteamContract.TABLE_EVENT,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_USER_SPORT:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        SportteamContract.TABLE_USER_SPORTS,
                         projection,
                         selection,
                         selectionArgs,
