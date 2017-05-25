@@ -27,6 +27,7 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     FieldsContract.Presenter mFieldsPresenter;
     FieldsAdapter mFieldsRecyclerAdapter;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
+    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.fields_list)
     RecyclerView fieldsRecyclerList;
@@ -63,6 +64,7 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.fields), this);
+        mActionBarIconManagementListener.setToolbarAsNav();
     }
 
     @Override
@@ -75,14 +77,17 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.ActionBarIconManagement)
+        if (context instanceof MainActivityContract.FragmentManagement)
             mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
+        if (context instanceof MainActivityContract.ActionBarIconManagement)
+            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mFragmentManagementListener = null;
+        mActionBarIconManagementListener = null;
     }
 
     @Override

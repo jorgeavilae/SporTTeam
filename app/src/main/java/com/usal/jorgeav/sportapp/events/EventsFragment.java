@@ -26,6 +26,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     EventsContract.Presenter mEventsPresenter;
     EventsAdapter mEventsRecyclerAdapter;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
+    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.events_list)
     RecyclerView eventsRecyclerList;
@@ -63,6 +64,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
+        mActionBarIconManagementListener.setToolbarAsNav();
     }
 
     @Override
@@ -75,14 +77,17 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.ActionBarIconManagement)
+        if (context instanceof MainActivityContract.FragmentManagement)
             mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
+        if (context instanceof MainActivityContract.ActionBarIconManagement)
+            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mFragmentManagementListener = null;
+        mActionBarIconManagementListener = null;
     }
 
     @Override

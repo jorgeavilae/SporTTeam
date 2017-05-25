@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
 
-
         mContentFrame = (FrameLayout) findViewById(R.id.contentFrame);
         mProgressbar = (ProgressBar) findViewById(R.id.main_activity_progressbar);
 
@@ -115,7 +114,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         if (mDisplayedFragment != null)
             getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
     }
@@ -124,10 +122,14 @@ public class MainActivity extends AppCompatActivity
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         //TODO toggle default icon smaller
+        // mToggle.syncState(); pone el icono que le corresponde al DrawerLayout
+        // Si esta cerrado este icono es ic_hamburguer.
+        // Si el icono ahora es ic_up no quiero que ponga ic_hamburguer aunque este cerrado
         Drawable upIcon = ContextCompat.getDrawable(this, R.drawable.ic_up);
         Drawable icon = mToolbar.getNavigationIcon();
         if (icon == null || !upIcon.getConstantState().equals(icon.getConstantState())) {
             mToggle.syncState();
+            Log.d(TAG, "syncState");
         }
     }
 
@@ -148,7 +150,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+
+        if (mToggle.onOptionsItemSelected(item)) {
+            Log.d(TAG, "toogle");
+            return true;
+        }
+        Log.d(TAG, "default");
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -188,8 +198,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void setCurrentDisplayedFragment(String title, Fragment fragment) {
-        Log.d(TAG, "title "+title);
-        mToolbar.setTitle(title);
+        getSupportActionBar().setTitle(title);
         mDisplayedFragment = fragment;
     }
 
