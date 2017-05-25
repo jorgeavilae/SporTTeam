@@ -130,7 +130,7 @@ public class Utiles {
 
         return new User(id,email,name,city,age,photoUrl,arraySports);
     }
-    public static ContentValues userToContentValues (User user) {
+    public static ContentValues dataUserToContentValues (User user) {
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.UserEntry.USER_ID, user.getmId());
         cv.put(SportteamContract.UserEntry.EMAIL, user.getmEmail());
@@ -139,5 +139,16 @@ public class Utiles {
         cv.put(SportteamContract.UserEntry.AGE, user.getmAge());
         cv.put(SportteamContract.UserEntry.PHOTO, user.getmPhotoUrl());
         return cv;
+    }
+    public static ArrayList<ContentValues> sportUserToContentValues(User user) {
+        ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
+        for (Sport s : user.getmSportList()) {
+            ContentValues cv = new ContentValues();
+            cv.put(SportteamContract.UserSportEntry.USER_ID, user.getmId());
+            cv.put(SportteamContract.UserSportEntry.SPORT, s.getmName());
+            cv.put(SportteamContract.UserSportEntry.LEVEL, s.getmLevel());
+            cvArray.add(cv);
+        }
+        return cvArray;
     }
 }

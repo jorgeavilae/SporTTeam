@@ -48,4 +48,8 @@ public class User {
     public String getmPhotoUrl() {
         return mPhotoUrl;
     }
+
+    public List<Sport> getmSportList() {
+        return mSportList;
+    }
 }

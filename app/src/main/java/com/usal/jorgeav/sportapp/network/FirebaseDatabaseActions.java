@@ -38,9 +38,14 @@ public class FirebaseDatabaseActions {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     User myLoggedUser = Utiles.datasnapshotToUser(dataSnapshot, myUserID);
-                    ContentValues cv = Utiles.userToContentValues(myLoggedUser);
+                    ContentValues cvData = Utiles.dataUserToContentValues(myLoggedUser);
                     context.getContentResolver()
-                            .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cv);
+                            .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
+
+                    List<ContentValues> cvSports = Utiles.sportUserToContentValues(myLoggedUser);
+                    context.getContentResolver()
+                            .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                    cvSports.toArray(new ContentValues[cvSports.size()]));
 
                     //Cargar Instalaciones de mi ciudad (una vez) inmutable)
                     loadFieldsFromCity(context, myLoggedUser.getmCity());
