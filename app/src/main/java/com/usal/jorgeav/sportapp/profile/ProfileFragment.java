@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     public static final int LOADER_MYPROFILE_ID = 1001;
     private ProfileContract.Presenter mProfilePresenter;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
+    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.user_event_requests)
     Button userEventRequestsButton;
@@ -67,7 +67,6 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, root);
-        final Fragment f = this;
         userEventRequestsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,8 +96,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG+" onActivityCreated", getActivity().toString());
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.profile), this);
+        mActionBarIconManagementListener.setToolbarAsNav();
     }
 
     @Override
@@ -111,15 +110,17 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG+" onAttach", getActivity().toString());
         if (context instanceof MainActivityContract.FragmentManagement)
             mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
+        if (context instanceof MainActivityContract.ActionBarIconManagement)
+            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mFragmentManagementListener = null;
+        mActionBarIconManagementListener = null;
     }
 
     @Override
