@@ -71,6 +71,44 @@ public final class SportteamContract {
         }
     }
 
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_USER_SPORT = "userSport";
+    /* Used internally as the name of our user sports table. */
+    public static final String TABLE_USER_SPORTS = "userSport";
+    /* Inner class that defines the table contents of the user sport table
+     * This table store a row for every sport practiced by every user in the user table */
+    public static final class UserSportEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the userSport table from the content provider */
+        public static final Uri CONTENT_USER_SPORT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_USER_SPORT)
+                .build();
+
+        /* Column names */
+        public static final String USER_ID = "uid";
+        public static final String SPORT = "sport";
+        public static final String LEVEL = "level";
+
+        /* All column projection */
+        public static final String[] USER_SPORT_COLUMNS = {
+                UserSportEntry._ID,
+                UserSportEntry.USER_ID,
+                UserSportEntry.SPORT,
+                UserSportEntry.LEVEL,
+        };
+
+        /* Column indexes */
+        public static final int COLUMN_ID = 0;
+        public static final int COLUMN_USER_ID = 1;
+        public static final int COLUMN_SPORT = 2;
+        public static final int COLUMN_LEVEL = 3;
+
+        /* URI for one userSport */
+        public static Uri buildUserSportUriWith(long id) {
+            return ContentUris.withAppendedId(CONTENT_USER_SPORT_URI, id);
+        }
+    }
+
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_EVENTS = "events";
