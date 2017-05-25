@@ -80,8 +80,8 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
             String ageStr = data.getString(SportteamContract.UserEntry.COLUMN_AGE);
             int age = Integer.valueOf(ageStr);
             String photoUrl = data.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
-
-            return new User(id, email, name, city, age, photoUrl);
+return null;
+//            return new User(id, email, name, city, age, photoUrl);
         }
         return null;
     }

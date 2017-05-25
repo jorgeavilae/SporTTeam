@@ -11,10 +11,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
 import java.util.ArrayList;
@@ -32,18 +32,25 @@ public class FirebaseDatabaseActions {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
-        myUserRef.child(myUserID + "/" + FirebaseDBContract.DATA)
+        myUserRef.child(myUserID)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    MainActivity.myLoggedUser = Utiles.datasnapshotToUser(dataSnapshot, myUserID);
-                    ContentValues cv = Utiles.userToContentValues(MainActivity.myLoggedUser);
+                    User myLoggedUser = Utiles.datasnapshotToUser(dataSnapshot, myUserID);
+                    ContentValues cv = Utiles.userToContentValues(myLoggedUser);
                     context.getContentResolver()
                             .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cv);
 
-                    loadFieldsFromCity(context, MainActivity.myLoggedUser.getmCity()); //Intalaciones: una vez
-                    loadEventsFromCity(context, MainActivity.myLoggedUser.getmCity()); //Eventos de mi ciudad: cuando cambie (para la alarma)
+                    //Cargar Instalaciones de mi ciudad (una vez) inmutable)
+                    loadFieldsFromCity(context, myLoggedUser.getmCity());
+                    //Cargar Eventos de mi ciudad (cuando cambie) para alarma)
+                    loadEventsFromCity(context, myLoggedUser.getmCity());
+                    //TODO Cargar Usuarios de mis amigos (cuando cambie)
+                    //TODO Cargar Usuarios de mis peticiones de amistad (cuando cambie)
+                    //TODO Cargar Eventos de mis eventos creados (cuando cambie)
+                    //TODO Cargar Eventos de mis eventos a los que asisto (cuando cambie)
+                    //TODO Cargar Eventos de mis invitaciones a eventos (cuando cambie)
                 } else {
                     new Exception
                             ("User with UID: " + myUserID + " does not exists")

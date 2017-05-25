@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import com.google.firebase.database.DataSnapshot;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
@@ -114,15 +115,20 @@ public class Utiles {
     }
 
     public static User datasnapshotToUser (DataSnapshot data, String userID) {
+        String datakey = FirebaseDBContract.DATA + "/";
         String id = userID;
-        String email = data.child(FirebaseDBContract.User.EMAIL).getValue().toString();
-        String name = data.child(FirebaseDBContract.User.ALIAS).getValue().toString();
-        String city = data.child(FirebaseDBContract.User.CITY).getValue().toString();
-        String ageStr = data.child(FirebaseDBContract.User.AGE).getValue().toString();
+        String email = data.child(datakey + FirebaseDBContract.User.EMAIL).getValue().toString();
+        String name = data.child(datakey + FirebaseDBContract.User.ALIAS).getValue().toString();
+        String city = data.child(datakey + FirebaseDBContract.User.CITY).getValue().toString();
+        String ageStr = data.child(datakey + FirebaseDBContract.User.AGE).getValue().toString();
         int age = Integer.valueOf(ageStr);
-        String photoUrl = data.child(FirebaseDBContract.User.PROFILE_PICTURE).getValue().toString();
+        String photoUrl = data.child(datakey + FirebaseDBContract.User.PROFILE_PICTURE).getValue().toString();
 
-        return new User(id,email,name,city,age,photoUrl);
+        ArrayList<Sport> arraySports = new ArrayList<>();
+        for (DataSnapshot d : data.child(FirebaseDBContract.User.SPORTS_PRACTICED).getChildren())
+            arraySports.add(new Sport(d.getKey(), ((Number)d.getValue()).floatValue(), 0));
+
+        return new User(id,email,name,city,age,photoUrl,arraySports);
     }
     public static ContentValues userToContentValues (User user) {
         ContentValues cv = new ContentValues();

@@ -5,24 +5,6 @@ package com.usal.jorgeav.sportapp.network;
  */
 
 public final class FirebaseDBContract {
-
-    /*
-    *  TODO Borrar cuando tenga auth implementado
-    *
-    *
-    *
-    */
-
-    public final static String MyCity = "-KkV2r8UD7cAHbJluw-O";
-    /*
-    *
-    *
-    *
-    *
-    *
-    *
-    *
-     */
     public static final String DATA = "data";
     public static final String TABLE_USERS = "users";
     public static final String TABLE_FIELDS = "fields";
