@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +35,7 @@ import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        MainActivityContract.ActionBarChangeIcon,
+        MainActivityContract.ActionBarIconManagement,
         MainActivityContract.FragmentManagement {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity
         mToggle = new ActionBarDrawerToggle(
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(mToggle);
+        //https://stackoverflow.com/questions/17025957/disable-gesture-listener-on-drawerlayout
+        mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
@@ -174,7 +177,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void initFragment(Fragment fragment, boolean isOnBackStack) {
+    public void initFragment(@NonNull Fragment fragment, boolean isOnBackStack) {
         hideContent();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -185,7 +188,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void setCurrentDisplayedFragment(String title, Fragment fragment) {
-        //TODO a veces no se pone el titulo
+        Log.d(TAG, "title "+title);
         mToolbar.setTitle(title);
         mDisplayedFragment = fragment;
     }
@@ -275,11 +278,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
     public void showContent() {
         mContentFrame.setVisibility(View.VISIBLE);
         mProgressbar.setVisibility(View.INVISIBLE);
     }
 
+    @Override
     public void hideContent() {
         mContentFrame.setVisibility(View.INVISIBLE);
         mProgressbar.setVisibility(View.VISIBLE);

@@ -4,6 +4,7 @@ package com.usal.jorgeav.sportapp.fields;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
@@ -53,12 +53,16 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
         View root = inflater.inflate(R.layout.fragment_fields, container, false);
         ButterKnife.bind(this, root);
 
-        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.fields), this);
-
         fieldsRecyclerList.setAdapter(mFieldsRecyclerAdapter);
         fieldsRecyclerList.setHasFixedSize(true);
         fieldsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.fields), this);
     }
 
     @Override
@@ -71,7 +75,7 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.ActionBarChangeIcon)
+        if (context instanceof MainActivityContract.ActionBarIconManagement)
             mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
     }
 
@@ -84,7 +88,7 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     @Override
     public void showFields(Cursor cursor) {
         mFieldsRecyclerAdapter.replaceData(cursor);
-        if (cursor != null) ((MainActivity)getActivity()).showContent();
+        if (cursor != null) mFragmentManagementListener.showContent();
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.events.detail;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
     private Event mEvent = null;
     private DetailEventContract.Presenter mPresenter;
-    private MainActivityContract.ActionBarChangeIcon mActionBarChangeIconListener;
+    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
 
     @BindView(R.id.event_detail_id)
@@ -73,25 +74,29 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
         View root = inflater.inflate(R.layout.fragment_detail_event, container, false);
         ButterKnife.bind(this, root);
-        //TODO should i add event.name?
-        mFragmentManagementListener.setCurrentDisplayedFragment(mEvent.getmId(), this);
-
-        mActionBarChangeIconListener.setToolbarAsUp();
 
         return root;
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //TODO should I add event.name?
+        mFragmentManagementListener.setCurrentDisplayedFragment(mEvent.getmId(), this);
+        mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mActionBarChangeIconListener.setToolbarAsNav();
+        mActionBarIconManagementListener.setToolbarAsNav();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.ActionBarChangeIcon) {
-            mActionBarChangeIconListener = (MainActivityContract.ActionBarChangeIcon) context;
+        if (context instanceof MainActivityContract.ActionBarIconManagement) {
+            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
             mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
         }
     }
@@ -99,7 +104,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void onDetach() {
         super.onDetach();
-        mActionBarChangeIconListener = null;
+        mActionBarIconManagementListener = null;
         mFragmentManagementListener = null;
     }
 

@@ -11,6 +11,14 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/events" />
         <item
+            android:id="@+id/nav_friends"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/friends" />
+        <item
+            android:id="@+id/nav_alarms"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/alarms" />
+        <item
             android:id="@+id/nav_fields"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/fields" />

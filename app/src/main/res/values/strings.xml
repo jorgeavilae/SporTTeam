@@ -4,6 +4,8 @@
     <string name="profile">Profile</string>
     <string name="events">Events</string>
     <string name="fields">Fields</string>
+    <string name="friends">Friends</string>
+    <string name="alarms">Alarms</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -21,4 +23,7 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
