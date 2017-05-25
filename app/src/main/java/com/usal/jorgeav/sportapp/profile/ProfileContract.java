@@ -14,8 +14,8 @@ public abstract class ProfileContract {
         void showUserImage(String image);
         void showUserName(String name);
         void showUserCity(String city);
-        void showUserAge(String age);
-        //TODO show sport list
+        void showUserAge(int age);
+        void showSports(Cursor cursor);
 
         Context getContext();
     }

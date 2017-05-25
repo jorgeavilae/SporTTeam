@@ -36,9 +36,9 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
     public FieldsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View eventView = inflater.inflate(R.layout.fields_item_list, parent, false);
+        View view = inflater.inflate(R.layout.fields_item_list, parent, false);
 
-        return new FieldsAdapter.ViewHolder(eventView);
+        return new FieldsAdapter.ViewHolder(view);
     }
 
     @Override
