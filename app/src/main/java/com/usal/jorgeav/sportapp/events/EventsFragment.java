@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.events;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -26,6 +26,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     EventsContract.Presenter mEventsPresenter;
     EventsAdapter mEventsRecyclerAdapter;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
+    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.events_list)
     RecyclerView eventsRecyclerList;
@@ -51,13 +52,19 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_events, container, false);
         ButterKnife.bind(this, root);
-        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
 
         eventsRecyclerList.setAdapter(mEventsRecyclerAdapter);
         eventsRecyclerList.setHasFixedSize(true);
         eventsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
+        mActionBarIconManagementListener.setToolbarAsNav();
     }
 
     @Override
@@ -70,20 +77,23 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.ActionBarChangeIcon)
+        if (context instanceof MainActivityContract.FragmentManagement)
             mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
+        if (context instanceof MainActivityContract.ActionBarIconManagement)
+            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mFragmentManagementListener = null;
+        mActionBarIconManagementListener = null;
     }
 
     @Override
     public void showEvents(Cursor cursor) {
         mEventsRecyclerAdapter.replaceData(cursor);
-        if (cursor != null) ((MainActivity)getActivity()).showContent();
+        if (cursor != null) mFragmentManagementListener.showContent();
     }
 
     @Override

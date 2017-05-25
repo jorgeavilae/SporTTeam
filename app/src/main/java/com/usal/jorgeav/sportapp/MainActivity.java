@@ -34,7 +34,7 @@ import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        MainActivityContract.ActionBarChangeIcon,
+        MainActivityContract.ActionBarIconManagement,
         MainActivityContract.FragmentManagement {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
@@ -62,10 +62,11 @@ public class MainActivity extends AppCompatActivity
         mToggle = new ActionBarDrawerToggle(
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(mToggle);
+        //https://stackoverflow.com/questions/17025957/disable-gesture-listener-on-drawerlayout
+        mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
-
 
         mContentFrame = (FrameLayout) findViewById(R.id.contentFrame);
         mProgressbar = (ProgressBar) findViewById(R.id.main_activity_progressbar);
@@ -110,7 +111,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         if (mDisplayedFragment != null)
             getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
     }
@@ -119,10 +119,14 @@ public class MainActivity extends AppCompatActivity
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         //TODO toggle default icon smaller
+        // mToggle.syncState(); pone el icono que le corresponde al DrawerLayout
+        // Si esta cerrado este icono es ic_hamburguer.
+        // Si el icono ahora es ic_up no quiero que ponga ic_hamburguer aunque este cerrado
         Drawable upIcon = ContextCompat.getDrawable(this, R.drawable.ic_up);
         Drawable icon = mToolbar.getNavigationIcon();
         if (icon == null || !upIcon.getConstantState().equals(icon.getConstantState())) {
             mToggle.syncState();
+            Log.d(TAG, "syncState");
         }
     }
 
@@ -143,7 +147,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+
+        if (mToggle.onOptionsItemSelected(item)) {
+            Log.d(TAG, "toogle");
+            return true;
+        }
+        Log.d(TAG, "default");
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -172,7 +184,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void initFragment(Fragment fragment, boolean isOnBackStack) {
+    public void initFragment(@NonNull Fragment fragment, boolean isOnBackStack) {
         hideContent();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -183,8 +195,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void setCurrentDisplayedFragment(String title, Fragment fragment) {
-        //TODO a veces no se pone el titulo
-        mToolbar.setTitle(title);
+        getSupportActionBar().setTitle(title);
         mDisplayedFragment = fragment;
     }
 
@@ -273,14 +284,14 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
     public void showContent() {
-        Log.d("ASD", "showContent");
         mContentFrame.setVisibility(View.VISIBLE);
         mProgressbar.setVisibility(View.INVISIBLE);
     }
 
+    @Override
     public void hideContent() {
-        Log.d("ASD", "hideContent");
         mContentFrame.setVisibility(View.INVISIBLE);
         mProgressbar.setVisibility(View.VISIBLE);
     }

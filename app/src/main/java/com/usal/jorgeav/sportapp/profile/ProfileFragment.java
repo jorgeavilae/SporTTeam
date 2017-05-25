@@ -6,14 +6,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 
@@ -21,11 +23,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ProfileFragment extends Fragment implements ProfileContract.View {
+    private final static String TAG = ProfileFragment.class.getSimpleName();
 
     public static final int LOADER_MYPROFILE_ID = 1001;
     private ProfileContract.Presenter mProfilePresenter;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
+    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
 
+    @BindView(R.id.user_event_requests)
+    Button userEventRequestsButton;
+    @BindView(R.id.user_friend_requests)
+    Button userFriendRequestsButton;
     @BindView(R.id.user_image)
     ImageView userImage;
     @BindView(R.id.user_name)
@@ -34,6 +42,10 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     TextView userCity;
     @BindView(R.id.user_age)
     TextView userAge;
+    @BindView(R.id.user_sport_list)
+    RecyclerView userSportList;
+    @BindView(R.id.user_edit_sport)
+    Button userEditSportListButton;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -55,9 +67,37 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, root);
-        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.profile), this);
+        userEventRequestsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new EventRequestsFragment();
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
+        });
+        userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new FriendRequestsFragment();
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
+        });
+        userEditSportListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new SportsListFragment();
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
+        });
+
 
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.profile), this);
+        mActionBarIconManagementListener.setToolbarAsNav();
     }
 
     @Override
@@ -70,19 +110,22 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.ActionBarChangeIcon)
+        if (context instanceof MainActivityContract.FragmentManagement)
             mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
+        if (context instanceof MainActivityContract.ActionBarIconManagement)
+            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mFragmentManagementListener = null;
+        mActionBarIconManagementListener = null;
     }
 
     @Override
     public void showUserImage(String image) {
-        ((MainActivity)getActivity()).showContent();
+        mFragmentManagementListener.showContent();
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.android_cheer);
         userImage.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
     }
@@ -90,20 +133,20 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     @Override
     public void showUserName(String name) {
         userName.setText(name);
-        ((MainActivity)getActivity()).showContent();
+        mFragmentManagementListener.showContent();
     }
 
     @Override
     public void showUserCity(String city) {
         userCity.setText(city);
-        ((MainActivity)getActivity()).showContent();
+        mFragmentManagementListener.showContent();
 
     }
 
     @Override
     public void showUserAge(String age) {
         userAge.setText(age);
-        ((MainActivity)getActivity()).showContent();
+        mFragmentManagementListener.showContent();
 
     }
 
