@@ -19,7 +19,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
      * If you change the database schema, you must increment the database version or the onUpgrade
      * method will not be called.
      */
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -50,22 +50,31 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 " UNIQUE (" + SportteamContract.EventEntry.EVENT_ID + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_FIELD_TABLE = "CREATE TABLE " + SportteamContract.TABLE_FIELD + " (" +
-                SportteamContract.FieldEntry._ID                + " INTEGER PRIMARY KEY,"       +
-                SportteamContract.FieldEntry.FIELD_ID           + " TEXT NOT NULL,"      +
-                SportteamContract.FieldEntry.NAME               + " TEXT NOT NULL,"      +
-                SportteamContract.FieldEntry.SPORT              + " TEXT NOT NULL,"             +
-                SportteamContract.FieldEntry.ADDRESS + " TEXT,"                      +
-                SportteamContract.FieldEntry.CITY               + " TEXT,"                      +
-                SportteamContract.FieldEntry.PUNCTUATION + " REAL,"                      +
-                SportteamContract.FieldEntry.VOTES              + " INTEGER,"                   +
-                SportteamContract.FieldEntry.OPENING_TIME       + " INTEGER,"                   +
-                SportteamContract.FieldEntry.CLOSING_TIME       + " INTEGER,"                   +
+                SportteamContract.FieldEntry._ID                + " INTEGER PRIMARY KEY,"   +
+                SportteamContract.FieldEntry.FIELD_ID           + " TEXT NOT NULL,"         +
+                SportteamContract.FieldEntry.NAME               + " TEXT NOT NULL,"         +
+                SportteamContract.FieldEntry.SPORT              + " TEXT NOT NULL,"         +
+                SportteamContract.FieldEntry.ADDRESS            + " TEXT,"                  +
+                SportteamContract.FieldEntry.CITY               + " TEXT,"                  +
+                SportteamContract.FieldEntry.PUNCTUATION        + " REAL,"                  +
+                SportteamContract.FieldEntry.VOTES              + " INTEGER,"               +
+                SportteamContract.FieldEntry.OPENING_TIME       + " INTEGER,"               +
+                SportteamContract.FieldEntry.CLOSING_TIME       + " INTEGER,"               +
                 " UNIQUE (" + SportteamContract.FieldEntry.FIELD_ID + ", "
                             + SportteamContract.FieldEntry.SPORT    + ") ON CONFLICT REPLACE);";
+
+        final String SQL_CREATE_USER_SPORT_TABLE = "CREATE TABLE " + SportteamContract.TABLE_USER_SPORTS + " (" +
+                SportteamContract.UserSportEntry._ID            + " INTEGER PRIMARY KEY,"       +
+                SportteamContract.UserSportEntry.USER_ID        + " TEXT NOT NULL,"             +
+                SportteamContract.UserSportEntry.SPORT          + " TEXT NOT NULL,"             +
+                SportteamContract.UserSportEntry.LEVEL          + " REAL NOT NULL,"             +
+                " UNIQUE (" + SportteamContract.UserSportEntry.USER_ID + ", "
+                            + SportteamContract.UserSportEntry.SPORT    + ") ON CONFLICT REPLACE);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_EVENT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FIELD_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_USER_SPORT_TABLE);
     }
 
     @Override
@@ -73,6 +82,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_USER);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_EVENT);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_FIELD);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_USER_SPORTS);
         onCreate(sqLiteDatabase);
     }
 }
