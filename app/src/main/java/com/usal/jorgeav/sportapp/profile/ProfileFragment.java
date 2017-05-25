@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.profile;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -26,6 +29,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     private final static String TAG = ProfileFragment.class.getSimpleName();
 
     public static final int LOADER_MYPROFILE_ID = 1001;
+    public static final int LOADER_MYPROFILE_SPORTS_ID = 1002;
     private ProfileContract.Presenter mProfilePresenter;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
@@ -44,6 +48,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     TextView userAge;
     @BindView(R.id.user_sport_list)
     RecyclerView userSportList;
+    ProfileSportsAdapter sportsAdapter;
     @BindView(R.id.user_edit_sport)
     Button userEditSportListButton;
 
@@ -67,6 +72,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, root);
+        sportsAdapter = new ProfileSportsAdapter(null);
+        userSportList.setAdapter(sportsAdapter);
         userEventRequestsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,6 +112,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         super.onResume();
 //        mProfilePresenter.loadUser();
         getLoaderManager().initLoader(LOADER_MYPROFILE_ID, null, mProfilePresenter.getLoaderInstance());
+        getLoaderManager().initLoader(LOADER_MYPROFILE_SPORTS_ID, null, mProfilePresenter.getLoaderInstance());
     }
 
     @Override
@@ -144,10 +152,17 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     }
 
     @Override
-    public void showUserAge(String age) {
-        userAge.setText(age);
-        mFragmentManagementListener.showContent();
+    public void showUserAge(int age) {
+        if (age > -1) {
+            userAge.setText(String.format(Locale.getDefault(), "%2d", age));
+            mFragmentManagementListener.showContent();
+        }
 
+    }
+
+    @Override
+    public void showSports(Cursor cursor) {
+        sportsAdapter.replaceData(cursor);
     }
 
     @Override
