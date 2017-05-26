@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
@@ -95,7 +96,8 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
 
     @Override
     public void showFriends(Cursor cursor) {
-
+        mFriendsRecyclerAdapter.replaceData(cursor);
+        mFragmentManagementListener.showContent();
     }
 
     @Override
@@ -110,6 +112,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
 
     @Override
     public void onUserClick(User user) {
-
+        //TODO manage this properly
+        Toast.makeText(getActivity(), "onUserClick not implemented yet.", Toast.LENGTH_SHORT).show();
     }
 }
