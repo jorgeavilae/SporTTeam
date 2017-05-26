@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.profile;
+package com.usal.jorgeav.sportapp.adapters;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;

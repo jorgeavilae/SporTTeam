@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.events.detail.DetailEventFragment;
 

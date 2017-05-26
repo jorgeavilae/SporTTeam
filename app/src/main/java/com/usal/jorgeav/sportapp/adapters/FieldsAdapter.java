@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.fields;
+package com.usal.jorgeav.sportapp.adapters;
 
 import android.content.Context;
 import android.database.Cursor;

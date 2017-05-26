@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.events;
+package com.usal.jorgeav.sportapp.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 23/04/2017.
  */
 
-class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
+public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
     private static final String TAG = EventsAdapter.class.getSimpleName();
 
     private Cursor mDataset;
