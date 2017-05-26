@@ -6,7 +6,10 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+
+import java.util.ArrayList;
 
 /**
  * Created by Jorge Avila on 26/05/2017.
@@ -14,6 +17,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
 public class FriendRequestsPresenter implements FriendRequestsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String SENDERID_KEY = "SENDERID_KEY";
     FriendRequestsContract.View mFriendRequestsView;
     //TODO friend requests
     private String[] friendRequestsUserIDs;
@@ -34,15 +38,24 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
+        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         switch (id) {
             case FriendRequestsFragment.LOADER_FRIENDS_REQUESTS_ID:
-            return new CursorLoader(
+                return new CursorLoader(
+                        this.mFriendRequestsView.getActivityContext(),
+                        SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
+                        SportteamContract.FriendRequestEntry.FRIEND_REQUESTS_COLUMNS,
+                        SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
+                        new String[]{currentUserID},
+                        SportteamContract.FriendRequestEntry.DATE + " ASC");
+
+            case FriendRequestsFragment.LOADER_FRIENDS_REQUESTS_USERS_ID:
+                return new CursorLoader(
                         this.mFriendRequestsView.getActivityContext(),
                         SportteamContract.UserEntry.CONTENT_USER_URI,
                         SportteamContract.UserEntry.USER_COLUMNS,
                         SportteamContract.UserEntry.USER_ID + " = ?",
-                        friendRequestsUserIDs,
-                    /*Deberia ordenarse por fecha de la peticion de amistad*/
+                        args.getStringArray(SENDERID_KEY),
                         SportteamContract.UserEntry.NAME + " DESC");
         }
         return null;
@@ -50,7 +63,26 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mFriendRequestsView.showFriendRequests(data);
+        switch (loader.getId()) {
+            case FriendRequestsFragment.LOADER_FRIENDS_REQUESTS_ID:
+                String usersId[] = cursorFriendRequestsToSenderStringArray(data);
+                Bundle args = new Bundle();
+                args.putStringArray(SENDERID_KEY, usersId);
+                mFriendRequestsView.getThis().getLoaderManager()
+                        .initLoader(FriendRequestsFragment.LOADER_FRIENDS_REQUESTS_USERS_ID, args, this);
+                break;
+            case FriendRequestsFragment.LOADER_FRIENDS_REQUESTS_USERS_ID:
+                mFriendRequestsView.showFriendRequests(data);
+                break;
+        }
+    }
+
+    private String[] cursorFriendRequestsToSenderStringArray(Cursor data) {
+        ArrayList<String> arrayList = new ArrayList<>();
+        while (data.moveToNext())
+            arrayList.add(data.getString(SportteamContract.FriendRequestEntry.COLUMN_SENDER_ID));
+        data.close();
+        return arrayList.toArray(new String[arrayList.size()]);
     }
 
     @Override
