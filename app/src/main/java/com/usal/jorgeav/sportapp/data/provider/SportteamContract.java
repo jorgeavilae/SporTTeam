@@ -147,6 +147,44 @@ public final class SportteamContract {
         }
     }
 
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_FRIENDS = "friends";
+    /* Used internally as the name of our friends table. */
+    public static final String TABLE_FRIENDS = "friends";
+    /* Inner class that defines the table contents of the friends table
+     * This table store a row for every connection between two users */
+    public static final class FriendsEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the friends table from the content provider */
+        public static final Uri CONTENT_FRIENDS_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_FRIENDS)
+                .build();
+
+        /* Column names */
+        public static final String MY_USER_ID = "myUserId";
+        public static final String USER_ID = "userId";
+        public static final String DATE = "date";
+
+        /* All column projection */
+        public static final String[] FRIENDS_COLUMNS = {
+                FriendsEntry._ID,
+                FriendsEntry.MY_USER_ID,
+                FriendsEntry.USER_ID,
+                FriendsEntry.DATE
+        };
+
+        /* Column indexes */
+        public static final int COLUMN_ID = 0;
+        public static final int COLUMN_MY_USER_ID = 1;
+        public static final int COLUMN_USER_ID = 2;
+        public static final int COLUMN_DATE = 3;
+
+        /* URI for one friend */
+        public static Uri buildFriendsUriWith(long id) {
+            return ContentUris.withAppendedId(CONTENT_FRIENDS_URI, id);
+        }
+    }
+
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_EVENTS = "events";
