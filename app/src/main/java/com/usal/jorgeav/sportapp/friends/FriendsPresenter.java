@@ -52,10 +52,10 @@ public class FriendsPresenter implements FriendsContract.Presenter, LoaderManage
                         this.mFriendsView.getActivityContext(),
                         SportteamContract.UserEntry.CONTENT_USER_URI,
                         SportteamContract.UserEntry.USER_COLUMNS,
-                        SportteamContract.UserEntry.USER_ID + " = ?",
-                        args.getStringArray(FRIEND_KEY),
-//                        null,
-//                        null,
+//                        SportteamContract.UserEntry.USER_ID + " = ?",
+//                        args.getStringArray(FRIEND_KEY),
+                        null,
+                        null,
                         SportteamContract.UserEntry.NAME + " DESC");
         }
         return null;
