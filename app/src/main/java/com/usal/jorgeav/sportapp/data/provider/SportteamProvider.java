@@ -15,6 +15,7 @@ public class SportteamProvider extends ContentProvider {
     public static final int CODE_USERS = 300;
     public static final int CODE_USER_SPORT = 400;
     public static final int CODE_FRIEND_REQUEST = 500;
+    public static final int CODE_FRIEND = 600;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private SportteamDBHelper mOpenHelper;
@@ -33,6 +34,8 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, SportteamContract.PATH_USER_SPORT, CODE_USER_SPORT);
         // This URI is content://com.usal.jorgeav.sportapp/friendRequests/
         matcher.addURI(authority, SportteamContract.PATH_FRIENDS_REQUESTS, CODE_FRIEND_REQUEST);
+        // This URI is content://com.usal.jorgeav.sportapp/friends/
+        matcher.addURI(authority, SportteamContract.PATH_FRIENDS, CODE_FRIEND);
 
         return matcher;
     }
@@ -112,6 +115,19 @@ public class SportteamProvider extends ContentProvider {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
                 return rowsInserted;
+            case CODE_FRIEND:
+                db.beginTransaction();
+                try {
+                    for (ContentValues value : values) {
+                        long _id = db.insert(SportteamContract.TABLE_FRIENDS, null, value);
+                        if (_id != -1) rowsInserted++;
+                    }
+                    db.setTransactionSuccessful();
+                } finally { db.endTransaction(); }
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return rowsInserted;
             default:
                 return super.bulkInsert(uri, values);
         }
@@ -150,6 +166,11 @@ public class SportteamProvider extends ContentProvider {
                 _id = db.insert(SportteamContract.TABLE_FRIENDS_REQUESTS, null, values);
                 if ( _id > 0 )
                     returnUri = SportteamContract.FriendRequestEntry.buildFriendRequestsUriWith(_id);
+                break;
+            case CODE_FRIEND:
+                _id = db.insert(SportteamContract.TABLE_FRIENDS, null, values);
+                if ( _id > 0 )
+                    returnUri = SportteamContract.FriendsEntry.buildFriendsUriWith(_id);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -206,6 +227,16 @@ public class SportteamProvider extends ContentProvider {
             case CODE_FRIEND_REQUEST:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         SportteamContract.TABLE_FRIENDS_REQUESTS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_FRIEND:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        SportteamContract.TABLE_FRIENDS,
                         projection,
                         selection,
                         selectionArgs,
