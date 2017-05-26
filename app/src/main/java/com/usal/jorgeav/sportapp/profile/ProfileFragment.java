@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 
 import java.util.Locale;
 
