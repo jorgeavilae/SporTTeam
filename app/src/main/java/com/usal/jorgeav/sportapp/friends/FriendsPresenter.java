@@ -8,6 +8,13 @@ import android.support.v4.app.LoaderManager;
  */
 
 public class FriendsPresenter implements FriendsContract.Presenter {
+
+    FriendsContract.View mFriendsView;
+
+    public FriendsPresenter(FriendsContract.View friendsView) {
+        this.mFriendsView = friendsView;
+    }
+
     @Override
     public void loadFriends() {
 

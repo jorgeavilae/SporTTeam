@@ -28,7 +28,7 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
         UsersAdapter.OnUserItemClickListener {
     private static final String TAG = FriendRequestsFragment.class.getSimpleName();
     public static final int LOADER_FRIENDS_REQUESTS_ID = 5000;
-    public static final int LOADER_FRIENDS_REQUESTS_USERS_ID = 6000;
+    public static final int LOADER_FRIENDS_REQUESTS_USERS_ID = 5001;
 
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
