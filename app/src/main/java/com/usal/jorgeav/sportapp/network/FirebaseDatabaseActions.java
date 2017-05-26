@@ -52,14 +52,11 @@ public class FirebaseDatabaseActions {
                     //Cargar Eventos de mi ciudad (cuando cambie) para alarma)
                     loadEventsFromCity(context, myLoggedUser.getmCity());
                     //TODO Cargar Usuarios de mis amigos (cuando cambie)
-                    //TODO Cargar Usuarios de mis peticiones de amistad (cuando cambie)
                     //TODO Cargar Eventos de mis eventos creados (cuando cambie)
                     //TODO Cargar Eventos de mis eventos a los que asisto (cuando cambie)
                     //TODO Cargar Eventos de mis invitaciones a eventos (cuando cambie)
                 } else {
-                    new Exception
-                            ("User with UID: " + myUserID + " does not exists")
-                            .printStackTrace();
+                    new Exception("User with UID: " + myUserID + " does not exists").printStackTrace();
                 }
             }
 
@@ -68,9 +65,9 @@ public class FirebaseDatabaseActions {
 
             }
         });
-//        On callback: load friends, events, and get notifications
-//        FirebaseDatabaseActions.loadFields(getApplicationContext()); //Intalaciones: una vez
-//        FirebaseDatabaseActions.loadEvents(getApplicationContext()); //Eventos de mi ciudad: cuando cambie (para la alarma)
+
+        //TODO Cargar Usuarios de mis peticiones de amistad (cuando cambie)
+        loadUsersFromFriendsRequests(context);
     }
 
     public static void loadFieldsFromCity(final Context context, String city) {
@@ -137,6 +134,71 @@ public class FirebaseDatabaseActions {
 
             }
         });
+    }
+
+    private static void loadUsersFromFriendsRequests(final Context context) {
+        final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+
+        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        loadOtherProfile(context, dataSnapshot.getKey());
+
+                        ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID);
+                        context.getContentResolver()
+                                .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private static void loadOtherProfile(final Context context, final String userID) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+
+        myUserRef.child(userID)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User anUser = Utiles.datasnapshotToUser(dataSnapshot, userID);
+                        ContentValues cvData = Utiles.dataUserToContentValues(anUser);
+                        context.getContentResolver()
+                                .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
+
+                        List<ContentValues> cvSports = Utiles.sportUserToContentValues(anUser);
+                        context.getContentResolver()
+                                .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                        cvSports.toArray(new ContentValues[cvSports.size()]));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
     }
 
     public static void loadEventsRequests() {
