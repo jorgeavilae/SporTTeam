@@ -51,7 +51,6 @@ public class FirebaseDatabaseActions {
                     loadFieldsFromCity(context, myLoggedUser.getmCity());
                     //Cargar Eventos de mi ciudad (cuando cambie) para alarma)
                     loadEventsFromCity(context, myLoggedUser.getmCity());
-                    //TODO Cargar Usuarios de mis amigos (cuando cambie)
                     //TODO Cargar Eventos de mis eventos creados (cuando cambie)
                     //TODO Cargar Eventos de mis eventos a los que asisto (cuando cambie)
                     //TODO Cargar Eventos de mis invitaciones a eventos (cuando cambie)
@@ -66,6 +65,8 @@ public class FirebaseDatabaseActions {
             }
         });
 
+        //TODO Cargar Usuarios de mis amigos (cuando cambie)
+        loadUsersFromFriends(context);
         //TODO Cargar Usuarios de mis peticiones de amistad (cuando cambie)
         loadUsersFromFriendsRequests(context);
     }
@@ -174,6 +175,44 @@ public class FirebaseDatabaseActions {
                 });
     }
 
+    private static void loadUsersFromFriends(final Context context) {
+        final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+
+        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.FRIENDS)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        loadOtherProfile(context, dataSnapshot.getKey());
+
+                        ContentValues cvData = Utiles.datasnapshotFriendToContentValues(dataSnapshot, myUserID);
+                        context.getContentResolver()
+                                .insert(SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI, cvData);
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
     private static void loadOtherProfile(final Context context, final String userID) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
@@ -199,8 +238,5 @@ public class FirebaseDatabaseActions {
                     }
                 });
 
-    }
-
-    public static void loadEventsRequests() {
     }
 }

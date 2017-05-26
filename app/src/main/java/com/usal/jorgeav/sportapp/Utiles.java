@@ -163,4 +163,16 @@ public class Utiles {
         cv.put(SportteamContract.FriendRequestEntry.DATE, date);
         return cv;
     }
+
+    public static ContentValues datasnapshotFriendToContentValues(DataSnapshot dataSnapshot, String myUserID) {
+        String myUserId = myUserID;
+        String userId = dataSnapshot.getKey();
+        long date = ((Number)dataSnapshot.getValue()).longValue();
+
+        ContentValues cv = new ContentValues();
+        cv.put(SportteamContract.FriendsEntry.MY_USER_ID, myUserId);
+        cv.put(SportteamContract.FriendsEntry.USER_ID, userId);
+        cv.put(SportteamContract.FriendsEntry.DATE, date);
+        return cv;
+    }
 }
