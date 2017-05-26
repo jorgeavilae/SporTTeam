@@ -19,7 +19,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
      * If you change the database schema, you must increment the database version or the onUpgrade
      * method will not be called.
      */
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -79,11 +79,19 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.FriendRequestEntry.DATE               + " INTEGER NOT NULL,"             +
                 " UNIQUE (" + SportteamContract.FriendRequestEntry.SENDER_ID + ") ON CONFLICT REPLACE);";
 
+        final String SQL_CREATE_FRIENDS_TABLE = "CREATE TABLE " + SportteamContract.TABLE_FRIENDS + " (" +
+                SportteamContract.FriendsEntry._ID              + " INTEGER PRIMARY KEY,"       +
+                SportteamContract.FriendsEntry.MY_USER_ID       + " TEXT NOT NULL,"             +
+                SportteamContract.FriendsEntry.USER_ID          + " TEXT NOT NULL,"             +
+                SportteamContract.FriendsEntry.DATE             + " INTEGER NOT NULL,"             +
+                " UNIQUE (" + SportteamContract.FriendsEntry.USER_ID + ") ON CONFLICT REPLACE);";
+
         sqLiteDatabase.execSQL(SQL_CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_EVENT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FIELD_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_USER_SPORT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FRIEND_REQUESTS_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_FRIENDS_TABLE);
     }
 
     @Override
@@ -93,6 +101,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_FIELD);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_USER_SPORTS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_FRIENDS_REQUESTS);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_FRIENDS);
         onCreate(sqLiteDatabase);
     }
 }
