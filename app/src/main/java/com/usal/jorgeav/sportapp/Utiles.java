@@ -151,4 +151,16 @@ public class Utiles {
         }
         return cvArray;
     }
+
+    public static ContentValues datasnapshotFriendRequestToContentValues(DataSnapshot dataSnapshot, String myUserID) {
+        String receiverId = myUserID;
+        String senderId = dataSnapshot.getKey();
+        long date = ((Number)dataSnapshot.getValue()).longValue();
+
+        ContentValues cv = new ContentValues();
+        cv.put(SportteamContract.FriendRequestEntry.RECEIVER_ID, receiverId);
+        cv.put(SportteamContract.FriendRequestEntry.SENDER_ID, senderId);
+        cv.put(SportteamContract.FriendRequestEntry.DATE, date);
+        return cv;
+    }
 }

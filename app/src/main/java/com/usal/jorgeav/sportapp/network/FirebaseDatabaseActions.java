@@ -146,6 +146,10 @@ public class FirebaseDatabaseActions {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         loadOtherProfile(context, dataSnapshot.getKey());
+
+                        ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID);
+                        context.getContentResolver()
+                                .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
                     }
 
                     @Override
