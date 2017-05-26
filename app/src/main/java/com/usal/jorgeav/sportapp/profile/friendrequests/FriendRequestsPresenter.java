@@ -16,6 +16,7 @@ import java.util.ArrayList;
  */
 
 public class FriendRequestsPresenter implements FriendRequestsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String TAG = FriendRequestsPresenter.class.getSimpleName();
 
     private static final String SENDERID_KEY = "SENDERID_KEY";
     FriendRequestsContract.View mFriendRequestsView;
@@ -54,8 +55,10 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
                         this.mFriendRequestsView.getActivityContext(),
                         SportteamContract.UserEntry.CONTENT_USER_URI,
                         SportteamContract.UserEntry.USER_COLUMNS,
-                        SportteamContract.UserEntry.USER_ID + " = ?",
-                        args.getStringArray(SENDERID_KEY),
+//                        SportteamContract.UserEntry.USER_ID + " = ?",
+//                        args.getStringArray(SENDERID_KEY),
+                        null,
+                        null,
                         SportteamContract.UserEntry.NAME + " DESC");
         }
         return null;

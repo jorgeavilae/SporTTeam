@@ -22,6 +22,8 @@ import butterknife.ButterKnife;
  */
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
+    private static final String TAG = UsersAdapter.class.getSimpleName();
+
     private Cursor mDataset;
     private OnUserItemClickListener mClickListener;
 
@@ -62,7 +64,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return 0;
+        if (mDataset != null) return mDataset.getCount();
+        else return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
