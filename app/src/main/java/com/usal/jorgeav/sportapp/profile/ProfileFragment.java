@@ -140,7 +140,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
 
     @Override
     public void showUserImage(String image) {
-        mFragmentManagementListener.showContent();
+//        mFragmentManagementListener.showContent();
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.android_cheer);
         userImage.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
     }

@@ -6,6 +6,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
 /**
@@ -30,14 +31,15 @@ public class EventsPresenter implements EventsContract.Presenter, LoaderManager.
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         switch (id) {
             case EventsFragment.LOADER_EVENTS_ID:
                 return new CursorLoader(
                         this.mEventsView.getContext(),
                         SportteamContract.EventEntry.CONTENT_EVENT_URI,
                         SportteamContract.EventEntry.EVENT_COLUMNS,
-                        null,
-                        null,
+                        SportteamContract.EventEntry.OWNER + " = ?",
+                        new String[]{currentUserID},
                         SportteamContract.EventEntry.COLUMN_DATE + " ASC");
         }
         return null;
