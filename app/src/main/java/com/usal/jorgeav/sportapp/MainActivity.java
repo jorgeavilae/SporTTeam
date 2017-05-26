@@ -30,6 +30,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
+import com.usal.jorgeav.sportapp.friends.FriendsFragment;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -179,6 +180,8 @@ public class MainActivity extends AppCompatActivity
             initFragment(EventsFragment.newInstance(), false);
         } else if (id == R.id.nav_fields) {
             initFragment(FieldsFragment.newInstance(), false);
+        } else if (id == R.id.nav_friends) {
+            initFragment(FriendsFragment.newInstance(), false);
         } else if (id == R.id.nav_sign_out) {
             mAuth.signOut();
         }

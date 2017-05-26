@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?android:attr/actionBarSize"
-    tools:context="com.usal.jorgeav.sportapp.events.EventsFragment">
+    tools:context="com.usal.jorgeav.sportapp.friends.FriendsFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/events_list"
+        android:id="@+id/friends_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
