@@ -11,7 +11,7 @@ public abstract class DetailEventContract {
         void showEventSport(String sport);
         void showEventPlace(String place);
         void showEventDate(String date);
-        void showEventTime(String time);
+        void showEventOwner(String time);
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);
 

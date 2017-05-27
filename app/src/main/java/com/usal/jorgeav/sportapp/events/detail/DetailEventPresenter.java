@@ -28,7 +28,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter {
         mView.showEventSport(mEvent.getmSport());
         mView.showEventPlace(mEvent.getmField());
         mView.showEventDate(Utiles.millisToDateTimeString(mEvent.getmDate()));
-        mView.showEventTime(mEvent.getmOwner());
+        mView.showEventOwner(mEvent.getmOwner());
         mView.showEventTotalPlayers(mEvent.getmTotalPlayers());
         mView.showEventEmptyPlayers(mEvent.getmEmptyPlayers());
     }

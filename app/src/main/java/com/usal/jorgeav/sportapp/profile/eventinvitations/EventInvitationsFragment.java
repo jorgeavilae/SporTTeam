@@ -11,12 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.data.Event;
+import com.usal.jorgeav.sportapp.events.detail.DetailEventFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -108,7 +108,7 @@ public class EventInvitationsFragment extends Fragment implements EventInvitatio
 
     @Override
     public void onEventClick(Event event) {
-        //TODO manage this properly
-        Toast.makeText(getActivity(), "onEventClick not implemented yet.", Toast.LENGTH_SHORT).show();
+        Fragment newFragment = DetailEventFragment.newInstance(event);
+        mFragmentManagementListener.initFragment(newFragment, true);
     }
 }

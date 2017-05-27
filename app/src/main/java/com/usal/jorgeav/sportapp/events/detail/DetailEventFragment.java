@@ -2,18 +2,24 @@ package com.usal.jorgeav.sportapp.events.detail;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
+import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 
 import java.util.Locale;
 
@@ -26,6 +32,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     private static final String ARG_EVENT = "param-event";
 
     private Event mEvent = null;
+    private boolean isMyEvent = false;
     private DetailEventContract.Presenter mPresenter;
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
@@ -35,7 +42,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @BindView(R.id.event_detail_sport)
     TextView textViewEventSport;
     @BindView(R.id.event_detail_place)
-    TextView textViewEventPlace;
+    Button buttonEventPlace;
     @BindView(R.id.event_detail_date)
     TextView textViewEventDate;
     @BindView(R.id.event_detail_time)
@@ -44,6 +51,14 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     TextView textViewEventTotal;
     @BindView(R.id.event_detail_empty)
     TextView textViewEventEmpty;
+    @BindView(R.id.event_detail_user_requests)
+    Button buttonUserRequests;
+    @BindView(R.id.event_detail_send_invitation)
+    Button buttonSendInvitation;
+    @BindView(R.id.event_detail_unanswered_invitations)
+    Button buttonUnansweredInvitations;
+    @BindView(R.id.event_detail_send_request)
+    Button buttonSendRequest;
 
 
     public DetailEventFragment() {
@@ -63,6 +78,9 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mEvent = getArguments().getParcelable(ARG_EVENT);
+            if (mEvent != null) {
+                isMyEvent = FirebaseAuth.getInstance().getCurrentUser().getUid().equals(mEvent.getmOwner());
+            }
         }
 
         mPresenter = new DetailEventPresenter(mEvent, this);
@@ -74,6 +92,14 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
         View root = inflater.inflate(R.layout.fragment_detail_event, container, false);
         ButterKnife.bind(this, root);
+
+        if (isMyEvent) {
+            buttonUserRequests.setVisibility(View.VISIBLE);
+            buttonSendInvitation.setVisibility(View.VISIBLE);
+            buttonUnansweredInvitations.setVisibility(View.VISIBLE);
+        } else {
+            buttonSendRequest.setVisibility(View.VISIBLE);
+        }
 
         return root;
     }
@@ -124,7 +150,33 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void showEventPlace(String place) {
         ((MainActivity)getActivity()).showContent();
-        this.textViewEventPlace.setText(place);
+        this.buttonEventPlace.setText(place);
+        buttonEventPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Cursor c = getActivity().getContentResolver().query(
+                        SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                        SportteamContract.FieldEntry.FIELDS_COLUMNS,
+                        SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? ",
+                        new String[]{buttonEventPlace.getText().toString(), textViewEventSport.getText().toString()},
+                        null);
+                if (c != null) {
+                    c.moveToFirst();
+                    Field field = new Field(
+                            c.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID),
+                            c.getString(SportteamContract.FieldEntry.COLUMN_NAME),
+                            c.getString(SportteamContract.FieldEntry.COLUMN_SPORT),
+                            c.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS),
+                            c.getString(SportteamContract.FieldEntry.COLUMN_CITY),
+                            c.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION),
+                            c.getInt(SportteamContract.FieldEntry.COLUMN_VOTES),
+                            c.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME),
+                            c.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME));
+                    Fragment newFragment = DetailFieldFragment.newInstance(field);
+                    mFragmentManagementListener.initFragment(newFragment, true);
+                }
+            }
+        });
 
     }
 
@@ -136,9 +188,9 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     }
 
     @Override
-    public void showEventTime(String time) {
+    public void showEventOwner(String owner) {
         ((MainActivity)getActivity()).showContent();
-        this.textViewEventTime.setText(time);
+        this.textViewEventTime.setText(owner);
 
     }
 
