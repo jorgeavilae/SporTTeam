@@ -179,7 +179,7 @@ public class Utiles {
     public static ContentValues datasnapshotEventsParticipationToContentValues(DataSnapshot dataSnapshot, String myUserID) {
         String userId = myUserID;
         String eventId = dataSnapshot.getKey();
-        boolean participation = (Boolean) dataSnapshot.getValue();
+        int participation = ((Boolean) dataSnapshot.getValue()) ? 1 : 0;
 
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.EventsParticipationEntry.USER_ID, userId);

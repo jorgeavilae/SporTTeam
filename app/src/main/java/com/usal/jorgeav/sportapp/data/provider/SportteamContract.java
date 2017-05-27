@@ -204,7 +204,7 @@ public final class SportteamContract {
         public static final String PARTICIPATES = "participates";
 
         /* All column projection */
-        public static final String[] FRIEND_REQUESTS_COLUMNS = {
+        public static final String[] EVENTS_PARTICIPATION_COLUMNS = {
                 EventsParticipationEntry._ID,
                 EventsParticipationEntry.USER_ID,
                 EventsParticipationEntry.EVENT_ID,

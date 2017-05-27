@@ -22,7 +22,9 @@ import butterknife.ButterKnife;
 
 public class EventsFragment extends Fragment implements EventsContract.View, EventsAdapter.OnEventItemClickListener  {
     private static final String TAG = EventsFragment.class.getSimpleName();
-    public static final int LOADER_EVENTS_ID = 2000;
+    public static final int LOADER_MY_EVENTS_ID = 2000;
+    public static final int LOADER_EVENTS_PARTICIPATION_ID = 2001;
+    public static final int LOADER_EVENTS_DATA_FROM_PARTICIPATION_ID = 2002;
 
     EventsContract.Presenter mEventsPresenter;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
@@ -31,7 +33,9 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     EventsAdapter mMyOwnEventsRecyclerAdapter;
     @BindView(R.id.my_own_events_list)
     RecyclerView myOwnEventsRecyclerList;
-    //TODO add another list & adapter for myAssistantsEvents
+    EventsAdapter mEventsParticipationRecyclerAdapter;
+    @BindView(R.id.my_events_participation_list)
+    RecyclerView eventsParticipationRecyclerList;
 
     public EventsFragment() {
         // Required empty public constructor
@@ -47,6 +51,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
 
         mEventsPresenter = new EventsPresenter(this);
         mMyOwnEventsRecyclerAdapter = new EventsAdapter(null, this);
+        mEventsParticipationRecyclerAdapter = new EventsAdapter(null, this);
 
     }
 
@@ -58,6 +63,10 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
         myOwnEventsRecyclerList.setAdapter(mMyOwnEventsRecyclerAdapter);
         myOwnEventsRecyclerList.setHasFixedSize(true);
         myOwnEventsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
+        eventsParticipationRecyclerList.setAdapter(mEventsParticipationRecyclerAdapter);
+        eventsParticipationRecyclerList.setHasFixedSize(true);
+        eventsParticipationRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         return root;
     }
@@ -73,7 +82,8 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     public void onResume() {
         super.onResume();
 //        mEventsPresenter.loadEvents();
-        getLoaderManager().initLoader(LOADER_EVENTS_ID, null, mEventsPresenter.getLoaderInstance());
+        getLoaderManager().initLoader(LOADER_MY_EVENTS_ID, null, mEventsPresenter.getLoaderInstance());
+        getLoaderManager().initLoader(LOADER_EVENTS_PARTICIPATION_ID, null, mEventsPresenter.getLoaderInstance());
     }
 
     @Override
@@ -99,20 +109,24 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     }
 
     @Override
-    public void showMyOtherEvents(Cursor cursor) {
-        //TODO
-//        mMyOwnEventsRecyclerAdapter.replaceData(cursor);
-//        if (cursor != null) mFragmentManagementListener.showContent();
+    public void showParticipatesEvents(Cursor cursor) {
+        mEventsParticipationRecyclerAdapter.replaceData(cursor);
+        if (cursor != null) mFragmentManagementListener.showContent();
+    }
+
+    @Override
+    public Context getActivityContext() {
+        return getActivity();
+    }
+
+    @Override
+    public Fragment getThis() {
+        return this;
     }
 
     @Override
     public void onEventClick(Event event) {
         Fragment newFragment = DetailEventFragment.newInstance(event);
         mFragmentManagementListener.initFragment(newFragment, true);
-    }
-
-    @Override
-    public Context getContext() {
-        return getActivity();
     }
 }
