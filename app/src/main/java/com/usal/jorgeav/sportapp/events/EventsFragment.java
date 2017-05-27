@@ -25,12 +25,13 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     public static final int LOADER_EVENTS_ID = 2000;
 
     EventsContract.Presenter mEventsPresenter;
-    EventsAdapter mEventsRecyclerAdapter;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
 
+    EventsAdapter mEventsRecyclerAdapter;
     @BindView(R.id.events_list)
     RecyclerView eventsRecyclerList;
+    //TODO add another list & adapter for myAssistantsEvents
 
     public EventsFragment() {
         // Required empty public constructor
