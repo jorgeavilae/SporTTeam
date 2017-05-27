@@ -68,6 +68,7 @@ public class FirebaseDatabaseActions {
         //TODO Cargar Eventos de mis eventos creados (cuando cambie)
         loadEventsFromMyOwnEvents(context);
         //TODO Cargar Eventos de mis eventos a los que asisto (cuando cambie)
+        loadEventsFromMyNextEvents(context);
         //TODO Cargar Eventos de mis invitaciones a eventos (cuando cambie)
     }
 
@@ -107,7 +108,9 @@ public class FirebaseDatabaseActions {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
-                    loadAnEvent(context, dataSnapshot);
+                    ContentValues cv = Utiles.eventToContentValues(Utiles.datasnapshotToEvent(dataSnapshot));
+                    context.getContentResolver()
+                            .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
                 }
             }
 
@@ -251,7 +254,7 @@ public class FirebaseDatabaseActions {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         if(dataSnapshot.exists()) {
-                            loadAnEvent(context, dataSnapshot);
+                            loadAnEvent(context, dataSnapshot.getKey());
                         }
 
                     }
@@ -278,9 +281,66 @@ public class FirebaseDatabaseActions {
                 });
     }
 
-    private static void loadAnEvent(Context context, DataSnapshot data) {
-        ContentValues cv = Utiles.eventToContentValues(Utiles.datasnapshotToEvent(data));
-        context.getContentResolver()
-                .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+    private static void loadEventsFromMyNextEvents(final Context context) {
+        final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+
+        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.NEXT_EVENTS)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if(dataSnapshot.exists()) {
+                            loadAnEvent(context, dataSnapshot.getKey());
+
+//                            ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID);
+//                            context.getContentResolver()
+//                                    .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private static void loadAnEvent(final Context context, String key) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+
+        myUserRef.child(key)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            ContentValues cv = Utiles.eventToContentValues(Utiles.datasnapshotToEvent(dataSnapshot));
+                            context.getContentResolver()
+                                    .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 }
