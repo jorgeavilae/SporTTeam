@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
+import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 
 import java.util.Locale;
@@ -37,7 +38,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
 
-    @BindView(R.id.user_event_requests)
+    @BindView(R.id.user_event_invitations)
     Button userEventRequestsButton;
     @BindView(R.id.user_friend_requests)
     Button userFriendRequestsButton;
@@ -84,7 +85,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         userEventRequestsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = new EventRequestsFragment();
+                Fragment fragment = new EventInvitationsFragment();
                 mFragmentManagementListener.initFragment(fragment, true);
             }
         });

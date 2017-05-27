@@ -1,4 +1,5 @@
-package com.usal.jorgeav.sportapp.profile.friendrequests;
+package com.usal.jorgeav.sportapp.profile.eventinvitations;
+
 
 import android.content.Context;
 import android.database.Cursor;
@@ -14,31 +15,26 @@ import android.widget.Toast;
 
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
+import com.usal.jorgeav.sportapp.data.Event;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 25/05/2017.
- */
-
-public class FriendRequestsFragment extends Fragment implements FriendRequestsContract.View,
-        UsersAdapter.OnUserItemClickListener {
-    private static final String TAG = FriendRequestsFragment.class.getSimpleName();
-    public static final int LOADER_FRIENDS_REQUESTS_ID = 5000;
-    public static final int LOADER_FRIENDS_REQUESTS_USERS_ID = 5001;
+public class EventInvitationsFragment extends Fragment implements EventInvitationsContract.View, EventsAdapter.OnEventItemClickListener {
+    private static final String TAG = EventInvitationsFragment.class.getSimpleName();
+    public static final int LOADER_EVENT_INVITATIONS_ID = 7000;
+    public static final int LOADER_EVENT_DATA_FROM_INVITATIONS_ID = 7001;
 
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
-    FriendRequestsContract.Presenter mFriendRequestsPresenter;
-    UsersAdapter mUsersRecyclerAdapter;
+    EventInvitationsContract.Presenter mEventInvitationsPresenter;
+    EventsAdapter mEventsRecyclerAdapter;
 
     @BindView(R.id.recycler_list)
-    RecyclerView friendRequestsList;
+    RecyclerView eventInvitationsList;
 
-    public FriendRequestsFragment() {
+    public EventInvitationsFragment() {
         // Required empty public constructor
     }
 
@@ -46,8 +42,8 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mFriendRequestsPresenter = new FriendRequestsPresenter(this);
-        mUsersRecyclerAdapter = new UsersAdapter(null, this);
+        mEventInvitationsPresenter = new EventInvitationsPresenter(this);
+        mEventsRecyclerAdapter = new EventsAdapter(null, this);
     }
 
     @Override
@@ -56,9 +52,9 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
 
-        friendRequestsList.setAdapter(mUsersRecyclerAdapter);
-        friendRequestsList.setHasFixedSize(true);
-        friendRequestsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        eventInvitationsList.setAdapter(mEventsRecyclerAdapter);
+        eventInvitationsList.setHasFixedSize(true);
+        eventInvitationsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         return root;
     }
@@ -66,16 +62,16 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(FriendRequestsFragment.class.getSimpleName(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(EventInvitationsFragment.class.getSimpleName(), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        mFriendRequestsPresenter.loadFriendRequests();
-        getLoaderManager().initLoader(LOADER_FRIENDS_REQUESTS_ID, null, mFriendRequestsPresenter.getLoaderInstance());
+        getLoaderManager().initLoader(LOADER_EVENT_INVITATIONS_ID, null, mEventInvitationsPresenter.getLoaderInstance());
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -94,16 +90,11 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     }
 
     @Override
-    public void onUserClick(User user) {
-        //TODO manage this properly
-        Toast.makeText(getActivity(), "onUserClick not implemented yet.", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showFriendRequests(Cursor cursor) {
-        mUsersRecyclerAdapter.replaceData(cursor);
+    public void showEventInvitations(Cursor cursor) {
+        mEventsRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }
+
 
     @Override
     public Context getActivityContext() {
@@ -111,8 +102,13 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     }
 
     @Override
-    public FriendRequestsFragment getThis() {
+    public EventInvitationsFragment getThis() {
         return this;
     }
 
+    @Override
+    public void onEventClick(Event event) {
+        //TODO manage this properly
+        Toast.makeText(getActivity(), "onEventClick not implemented yet.", Toast.LENGTH_SHORT).show();
+    }
 }

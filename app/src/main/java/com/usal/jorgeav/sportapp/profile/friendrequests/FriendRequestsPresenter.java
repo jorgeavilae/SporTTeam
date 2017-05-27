@@ -20,8 +20,6 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
 
     private static final String SENDERID_KEY = "SENDERID_KEY";
     FriendRequestsContract.View mFriendRequestsView;
-    //TODO friend requests
-    private String[] friendRequestsUserIDs;
 
     public FriendRequestsPresenter(FriendRequestsContract.View friendRequestsView) {
         this.mFriendRequestsView = friendRequestsView;
