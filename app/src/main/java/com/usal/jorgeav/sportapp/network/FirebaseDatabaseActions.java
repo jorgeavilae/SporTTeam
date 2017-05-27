@@ -293,9 +293,10 @@ public class FirebaseDatabaseActions {
                         if(dataSnapshot.exists()) {
                             loadAnEvent(context, dataSnapshot.getKey());
 
-//                            ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID);
-//                            context.getContentResolver()
-//                                    .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
+                            ContentValues cvData = Utiles
+                                    .datasnapshotEventsParticipationToContentValues(dataSnapshot, myUserID);
+                            context.getContentResolver()
+                                    .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
                         }
 
                     }
