@@ -187,4 +187,16 @@ public class Utiles {
         cv.put(SportteamContract.EventsParticipationEntry.PARTICIPATES, participation);
         return cv;
     }
+
+    public static ContentValues datasnapshotEventInvitationsToContentValues(DataSnapshot dataSnapshot, String myUserID) {
+        String userId = myUserID;
+        String eventId = dataSnapshot.getKey();
+        long date = ((Number) dataSnapshot.getValue()).longValue();
+
+        ContentValues cv = new ContentValues();
+        cv.put(SportteamContract.EventsInvitationEntry.USER_ID, userId);
+        cv.put(SportteamContract.EventsInvitationEntry.EVENT_ID, eventId);
+        cv.put(SportteamContract.EventsInvitationEntry.DATE, date);
+        return cv;
+    }
 }
