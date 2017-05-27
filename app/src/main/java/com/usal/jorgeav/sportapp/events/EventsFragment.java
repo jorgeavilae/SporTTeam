@@ -28,9 +28,9 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
 
-    EventsAdapter mEventsRecyclerAdapter;
-    @BindView(R.id.events_list)
-    RecyclerView eventsRecyclerList;
+    EventsAdapter mMyOwnEventsRecyclerAdapter;
+    @BindView(R.id.my_own_events_list)
+    RecyclerView myOwnEventsRecyclerList;
     //TODO add another list & adapter for myAssistantsEvents
 
     public EventsFragment() {
@@ -46,7 +46,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
         super.onCreate(savedInstanceState);
 
         mEventsPresenter = new EventsPresenter(this);
-        mEventsRecyclerAdapter = new EventsAdapter(null, this);
+        mMyOwnEventsRecyclerAdapter = new EventsAdapter(null, this);
 
     }
 
@@ -55,9 +55,9 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
         View root = inflater.inflate(R.layout.fragment_events, container, false);
         ButterKnife.bind(this, root);
 
-        eventsRecyclerList.setAdapter(mEventsRecyclerAdapter);
-        eventsRecyclerList.setHasFixedSize(true);
-        eventsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        myOwnEventsRecyclerList.setAdapter(mMyOwnEventsRecyclerAdapter);
+        myOwnEventsRecyclerList.setHasFixedSize(true);
+        myOwnEventsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         return root;
     }
@@ -93,9 +93,16 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     }
 
     @Override
-    public void showEvents(Cursor cursor) {
-        mEventsRecyclerAdapter.replaceData(cursor);
+    public void showMyOwnEvents(Cursor cursor) {
+        mMyOwnEventsRecyclerAdapter.replaceData(cursor);
         if (cursor != null) mFragmentManagementListener.showContent();
+    }
+
+    @Override
+    public void showMyOtherEvents(Cursor cursor) {
+        //TODO
+//        mMyOwnEventsRecyclerAdapter.replaceData(cursor);
+//        if (cursor != null) mFragmentManagementListener.showContent();
     }
 
     @Override

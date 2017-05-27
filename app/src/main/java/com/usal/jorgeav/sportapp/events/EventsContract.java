@@ -16,7 +16,8 @@ public abstract class EventsContract {
     }
 
     public interface View {
-        void showEvents(Cursor cursor);
+        void showMyOwnEvents(Cursor cursor);
+        void showMyOtherEvents(Cursor cursor);
         Context getContext();
     }
 }

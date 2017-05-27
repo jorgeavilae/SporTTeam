@@ -48,11 +48,19 @@ public class EventsPresenter implements EventsContract.Presenter, LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mEventsView.showEvents(data);
+        switch (loader.getId()) {
+            case EventsFragment.LOADER_EVENTS_ID:
+                mEventsView.showMyOwnEvents(data);
+                break;
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mEventsView.showEvents(null);
+        switch (loader.getId()) {
+            case EventsFragment.LOADER_EVENTS_ID:
+                mEventsView.showMyOwnEvents(null);
+                break;
+        }
     }
 }
