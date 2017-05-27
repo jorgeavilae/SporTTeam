@@ -17,6 +17,7 @@ public class SportteamProvider extends ContentProvider {
     public static final int CODE_FRIEND_REQUEST = 500;
     public static final int CODE_FRIEND = 600;
     public static final int CODE_EVENTS_PARTICIPATION = 700;
+    public static final int CODE_EVENT_INVITATIONS = 800;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private SportteamDBHelper mOpenHelper;
@@ -39,6 +40,8 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, SportteamContract.PATH_FRIENDS, CODE_FRIEND);
         // This URI is content://com.usal.jorgeav.sportapp/eventsParticipation/
         matcher.addURI(authority, SportteamContract.PATH_EVENTS_PARTICIPATION, CODE_EVENTS_PARTICIPATION);
+        // This URI is content://com.usal.jorgeav.sportapp/eventInvitations/
+        matcher.addURI(authority, SportteamContract.PATH_EVENT_INVITATIONS, CODE_EVENT_INVITATIONS);
 
         return matcher;
     }
@@ -65,6 +68,8 @@ public class SportteamProvider extends ContentProvider {
                 return bulkInsert(uri, values, db, SportteamContract.TABLE_FRIENDS);
             case CODE_EVENTS_PARTICIPATION:
                 return bulkInsert(uri, values, db, SportteamContract.TABLE_EVENTS_PARTICIPATION);
+            case CODE_EVENT_INVITATIONS:
+                return bulkInsert(uri, values, db, SportteamContract.TABLE_EVENT_INVITATIONS);
             default:
                 return super.bulkInsert(uri, values);
         }
@@ -113,6 +118,10 @@ public class SportteamProvider extends ContentProvider {
                 _id = db.insert(SportteamContract.TABLE_EVENT, null, values);
                 if ( _id > 0 ) returnUri = SportteamContract.EventEntry.buildEventUriWith(_id);
                 break;
+            case CODE_FIELDS:
+                _id = db.insert(SportteamContract.TABLE_FIELD, null, values);
+                if ( _id > 0 ) returnUri = SportteamContract.FieldEntry.buildFieldUriWith(_id);
+                break;
             case CODE_FRIEND_REQUEST:
                 _id = db.insert(SportteamContract.TABLE_FRIENDS_REQUESTS, null, values);
                 if ( _id > 0 ) returnUri = SportteamContract.FriendRequestEntry.buildFriendRequestsUriWith(_id);
@@ -124,6 +133,10 @@ public class SportteamProvider extends ContentProvider {
             case CODE_EVENTS_PARTICIPATION:
                 _id = db.insert(SportteamContract.TABLE_EVENTS_PARTICIPATION, null, values);
                 if ( _id > 0 ) returnUri = SportteamContract.EventsParticipationEntry.buildEventsParticipationUriWith(_id);
+                break;
+            case CODE_EVENT_INVITATIONS:
+                _id = db.insert(SportteamContract.TABLE_EVENT_INVITATIONS, null, values);
+                if ( _id > 0 ) returnUri = SportteamContract.EventsInvitationEntry.buildEventInvitationUriWith(_id);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -200,6 +213,16 @@ public class SportteamProvider extends ContentProvider {
             case CODE_EVENTS_PARTICIPATION:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         SportteamContract.TABLE_EVENTS_PARTICIPATION,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_EVENT_INVITATIONS:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        SportteamContract.TABLE_EVENT_INVITATIONS,
                         projection,
                         selection,
                         selectionArgs,

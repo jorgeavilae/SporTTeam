@@ -68,8 +68,9 @@ public class FirebaseDatabaseActions {
         //TODO Cargar Eventos de mis eventos creados (cuando cambie)
         loadEventsFromMyOwnEvents(context);
         //TODO Cargar Eventos de mis eventos a los que asisto (cuando cambie)
-        loadEventsFromMyNextEvents(context);
+        loadEventsFromEventsParticipation(context);
         //TODO Cargar Eventos de mis invitaciones a eventos (cuando cambie)
+//        loadEventsFromInvitations(context);
     }
 
     public static void loadFieldsFromCity(final Context context, String city) {
@@ -255,6 +256,7 @@ public class FirebaseDatabaseActions {
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         if(dataSnapshot.exists()) {
                             loadAnEvent(context, dataSnapshot.getKey());
+                            //TODO comprobar si alguient quiere entrar a este evento USER_REQUESTS
                         }
 
                     }
@@ -281,7 +283,7 @@ public class FirebaseDatabaseActions {
                 });
     }
 
-    private static void loadEventsFromMyNextEvents(final Context context) {
+    private static void loadEventsFromEventsParticipation(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);

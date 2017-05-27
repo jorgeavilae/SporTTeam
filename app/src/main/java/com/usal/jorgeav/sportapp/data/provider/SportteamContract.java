@@ -224,6 +224,44 @@ public final class SportteamContract {
     }
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_EVENT_INVITATIONS = "eventInvitations";
+    /* Used internally as the name of our event invitations table. */
+    public static final String TABLE_EVENT_INVITATIONS = "eventInvitations";
+    /* Inner class that defines the table contents of the eventInvitations table
+     * This table store a row for every event invitation received by the user*/
+    public static final class EventsInvitationEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the eventInvitations table from the content provider */
+        public static final Uri CONTENT_EVENT_INVITATIONS_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_EVENT_INVITATIONS)
+                .build();
+
+        /* Column names */
+        public static final String USER_ID = "userId";
+        public static final String EVENT_ID = "eventId";
+        public static final String DATE = "date";
+
+        /* All column projection */
+        public static final String[] EVENT_INVITATIONS_COLUMNS = {
+                EventsInvitationEntry._ID,
+                EventsInvitationEntry.USER_ID,
+                EventsInvitationEntry.EVENT_ID,
+                EventsInvitationEntry.DATE
+        };
+
+        /* Column indexes */
+        public static final int COLUMN_ID = 0;
+        public static final int COLUMN_USER_ID = 1;
+        public static final int COLUMN_EVENT_ID = 2;
+        public static final int COLUMN_DATE = 3;
+
+        /* URI for one event invitation */
+        public static Uri buildEventInvitationUriWith(long id) {
+            return ContentUris.withAppendedId(CONTENT_EVENT_INVITATIONS_URI, id);
+        }
+    }
+
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_EVENTS = "events";
     /* Used internally as the name of our event table. */
     public static final String TABLE_EVENT = "event";

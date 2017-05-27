@@ -19,7 +19,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
      * If you change the database schema, you must increment the database version or the onUpgrade
      * method will not be called.
      */
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -96,6 +96,14 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.EventsParticipationEntry.PARTICIPATES     + " INTEGER NOT NULL,"             +
                 " UNIQUE (" + SportteamContract.EventsParticipationEntry.EVENT_ID + ") ON CONFLICT REPLACE);";
 
+        // Only have entries for my current logged user. USER_ID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String SQL_CREATE_EVENT_INVITATIONS_TABLE = "CREATE TABLE " + SportteamContract.TABLE_EVENT_INVITATIONS + " (" +
+                SportteamContract.EventsInvitationEntry._ID         + " INTEGER PRIMARY KEY,"       +
+                SportteamContract.EventsInvitationEntry.USER_ID     + " TEXT NOT NULL,"             +
+                SportteamContract.EventsInvitationEntry.EVENT_ID    + " TEXT NOT NULL,"             +
+                SportteamContract.EventsInvitationEntry.DATE        + " INTEGER NOT NULL,"             +
+                " UNIQUE (" + SportteamContract.EventsInvitationEntry.EVENT_ID + ") ON CONFLICT REPLACE);";
+
         sqLiteDatabase.execSQL(SQL_CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_EVENT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FIELD_TABLE);
@@ -103,6 +111,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_FRIEND_REQUESTS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FRIENDS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_EVENT_PARTICIPATION_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_EVENT_INVITATIONS_TABLE);
     }
 
     @Override
@@ -114,6 +123,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_FRIENDS_REQUESTS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_FRIENDS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_EVENTS_PARTICIPATION);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_EVENT_INVITATIONS);
         onCreate(sqLiteDatabase);
     }
 }
