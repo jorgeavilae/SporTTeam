@@ -286,7 +286,7 @@ public class FirebaseDatabaseActions {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
-        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.NEXT_EVENTS)
+        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION)
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {

@@ -185,6 +185,43 @@ public final class SportteamContract {
         }
     }
 
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_EVENTS_PARTICIPATION = "eventsParticipation";
+    /* Used internally as the name of our events participation table. */
+    public static final String TABLE_EVENTS_PARTICIPATION = "eventsParticipation";
+    /* Inner class that defines the table contents of the eventsParticipation table
+     * This table store a row for every participate relation between an user and an event*/
+    public static final class EventsParticipationEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the eventsParticipation table from the content provider */
+        public static final Uri CONTENT_EVENTS_PARTICIPATION_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_EVENTS_PARTICIPATION)
+                .build();
+
+        /* Column names */
+        public static final String USER_ID = "userId";
+        public static final String EVENT_ID = "eventId";
+        public static final String PARTICIPATES = "participates";
+
+        /* All column projection */
+        public static final String[] FRIEND_REQUESTS_COLUMNS = {
+                EventsParticipationEntry._ID,
+                EventsParticipationEntry.USER_ID,
+                EventsParticipationEntry.EVENT_ID,
+                EventsParticipationEntry.PARTICIPATES
+        };
+
+        /* Column indexes */
+        public static final int COLUMN_ID = 0;
+        public static final int COLUMN_USER_ID = 1;
+        public static final int COLUMN_EVENT_ID = 2;
+        public static final int COLUMN_PARTICIPATES = 3;
+
+        /* URI for one event participation */
+        public static Uri buildEventsParticipationUriWith(long id) {
+            return ContentUris.withAppendedId(CONTENT_EVENTS_PARTICIPATION_URI, id);
+        }
+    }
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_EVENTS = "events";

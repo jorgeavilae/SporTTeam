@@ -20,9 +20,22 @@ public final class FirebaseDBContract {
         public static final String FRIENDS = "friends";
         public static final String FRIENDS_REQUESTS = "friends_requests";
         public static final String EVENTS_CREATED = "events_created";
-        public static final String NEXT_EVENTS = "next_events";
-        public static final String INVITATIONS = "invitations";
+        public static final String EVENTS_PARTICIPATION = "events_participation";
+        public static final String INVITATIONS = "invitations_received";
         public static final String EVENTS_REQUESTS = "events_requests";
+    }
+
+    public static final class Event {
+        public static final String SPORT = "sport_id";
+        public static final String FIELD = "field_id";
+        public static final String CITY = "city";
+        public static final String DATE = "date";
+        public static final String TOTAL_PLAYERS = "total_players";
+        public static final String EMPTY_PLAYERS = "empty_players";
+        public static final String OWNER = "owner";
+        public static final String PARTICIPANTS = "participants";
+        public static final String INVITATIONS = "invitations_sent";
+        public static final String USER_REQUESTS = "user_requests";
     }
 
     public static final class Field {
@@ -35,18 +48,5 @@ public final class FirebaseDBContract {
         public static final String PUNCTUATION = "punctuation";
         public static final String VOTES = "votes";
         public static final String NEXT_EVENTS = "next_events";
-    }
-
-    public static final class Event {
-        public static final String SPORT = "sport_id";
-        public static final String FIELD = "field_id";
-        public static final String CITY = "city";
-        public static final String DATE = "date";
-        public static final String TOTAL_PLAYERS = "total_players";
-        public static final String EMPTY_PLAYERS = "empty_players";
-        public static final String OWNER = "owner";
-        public static final String ASSISTANTS = "assistants";
-        public static final String INVITATIONS = "invitations_sent";
-        public static final String USER_REQUESTS = "user_requests";
     }
 }

@@ -16,6 +16,7 @@ public class SportteamProvider extends ContentProvider {
     public static final int CODE_USER_SPORT = 400;
     public static final int CODE_FRIEND_REQUEST = 500;
     public static final int CODE_FRIEND = 600;
+    public static final int CODE_EVENTS_PARTICIPATION = 700;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private SportteamDBHelper mOpenHelper;
@@ -36,6 +37,8 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, SportteamContract.PATH_FRIENDS_REQUESTS, CODE_FRIEND_REQUEST);
         // This URI is content://com.usal.jorgeav.sportapp/friends/
         matcher.addURI(authority, SportteamContract.PATH_FRIENDS, CODE_FRIEND);
+        // This URI is content://com.usal.jorgeav.sportapp/eventsParticipation/
+        matcher.addURI(authority, SportteamContract.PATH_EVENTS_PARTICIPATION, CODE_EVENTS_PARTICIPATION);
 
         return matcher;
     }
@@ -49,88 +52,38 @@ public class SportteamProvider extends ContentProvider {
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        int rowsInserted = 0;
         switch (sUriMatcher.match(uri)) {
             case CODE_EVENTS:
-                db.beginTransaction();
-                try {
-                    for (ContentValues value : values) {
-                        long _id = db.insert(SportteamContract.TABLE_EVENT, null, value);
-                        if (_id != -1) {
-                            rowsInserted++;
-                        }
-                    }
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-
-                if (rowsInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-
-                return rowsInserted;
+                return bulkInsert(uri, values, db, SportteamContract.TABLE_EVENT);
             case CODE_FIELDS:
-                db.beginTransaction();
-                try {
-                    for (ContentValues value : values) {
-                        long _id = db.insert(SportteamContract.TABLE_FIELD, null, value);
-                        if (_id != -1) {
-                            rowsInserted++;
-                        }
-                    }
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-
-                if (rowsInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-
-                return rowsInserted;
+                return bulkInsert(uri, values, db, SportteamContract.TABLE_FIELD);
             case CODE_USER_SPORT:
-                db.beginTransaction();
-                try {
-                    for (ContentValues value : values) {
-                        long _id = db.insert(SportteamContract.TABLE_USER_SPORTS, null, value);
-                        if (_id != -1) rowsInserted++;
-                    }
-                    db.setTransactionSuccessful();
-                } finally { db.endTransaction(); }
-                if (rowsInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowsInserted;
+                return bulkInsert(uri, values, db, SportteamContract.TABLE_USER_SPORTS);
             case CODE_FRIEND_REQUEST:
-                db.beginTransaction();
-                try {
-                    for (ContentValues value : values) {
-                        long _id = db.insert(SportteamContract.TABLE_FRIENDS_REQUESTS, null, value);
-                        if (_id != -1) rowsInserted++;
-                    }
-                    db.setTransactionSuccessful();
-                } finally { db.endTransaction(); }
-                if (rowsInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowsInserted;
+                return bulkInsert(uri, values, db, SportteamContract.TABLE_FRIENDS_REQUESTS);
             case CODE_FRIEND:
-                db.beginTransaction();
-                try {
-                    for (ContentValues value : values) {
-                        long _id = db.insert(SportteamContract.TABLE_FRIENDS, null, value);
-                        if (_id != -1) rowsInserted++;
-                    }
-                    db.setTransactionSuccessful();
-                } finally { db.endTransaction(); }
-                if (rowsInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowsInserted;
+                return bulkInsert(uri, values, db, SportteamContract.TABLE_FRIENDS);
+            case CODE_EVENTS_PARTICIPATION:
+                return bulkInsert(uri, values, db, SportteamContract.TABLE_EVENTS_PARTICIPATION);
             default:
                 return super.bulkInsert(uri, values);
         }
+    }
+
+    private int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values, SQLiteDatabase db, String tableName) {
+        int rowsInserted = 0;
+        db.beginTransaction();
+        try {
+            for (ContentValues value : values) {
+                long _id = db.insert(tableName, null, value);
+                if (_id != -1) rowsInserted++;
+            }
+            db.setTransactionSuccessful();
+        } finally { db.endTransaction(); }
+        if (rowsInserted > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsInserted;
     }
 
     @Override
@@ -154,23 +107,23 @@ public class SportteamProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case CODE_USERS:
                 _id = db.insert(SportteamContract.TABLE_USER, null, values);
-                if ( _id > 0 )
-                    returnUri = SportteamContract.UserEntry.buildUserUriWith(_id);
+                if ( _id > 0 ) returnUri = SportteamContract.UserEntry.buildUserUriWith(_id);
                 break;
             case CODE_EVENTS:
                 _id = db.insert(SportteamContract.TABLE_EVENT, null, values);
-                if ( _id > 0 )
-                    returnUri = SportteamContract.EventEntry.buildEventUriWith(_id);
+                if ( _id > 0 ) returnUri = SportteamContract.EventEntry.buildEventUriWith(_id);
                 break;
             case CODE_FRIEND_REQUEST:
                 _id = db.insert(SportteamContract.TABLE_FRIENDS_REQUESTS, null, values);
-                if ( _id > 0 )
-                    returnUri = SportteamContract.FriendRequestEntry.buildFriendRequestsUriWith(_id);
+                if ( _id > 0 ) returnUri = SportteamContract.FriendRequestEntry.buildFriendRequestsUriWith(_id);
                 break;
             case CODE_FRIEND:
                 _id = db.insert(SportteamContract.TABLE_FRIENDS, null, values);
-                if ( _id > 0 )
-                    returnUri = SportteamContract.FriendsEntry.buildFriendsUriWith(_id);
+                if ( _id > 0 ) returnUri = SportteamContract.FriendsEntry.buildFriendsUriWith(_id);
+                break;
+            case CODE_EVENTS_PARTICIPATION:
+                _id = db.insert(SportteamContract.TABLE_EVENTS_PARTICIPATION, null, values);
+                if ( _id > 0 ) returnUri = SportteamContract.EventsParticipationEntry.buildEventsParticipationUriWith(_id);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -237,6 +190,16 @@ public class SportteamProvider extends ContentProvider {
             case CODE_FRIEND:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         SportteamContract.TABLE_FRIENDS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_EVENTS_PARTICIPATION:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        SportteamContract.TABLE_EVENTS_PARTICIPATION,
                         projection,
                         selection,
                         selectionArgs,
