@@ -92,8 +92,11 @@ public class MainActivity extends AppCompatActivity
                         startActivity(intent);
                     } else {
                         mDisplayedFragment = null;
+                        //TODO IllegalStateException: Fragment no longer exists for key BUNDLE_SAVE_FRAGMENT_INSTANCE: index 0
                         if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
-                            mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
+                            try {
+                                mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
+                            } catch (IllegalStateException e) { e.printStackTrace(); }
                         } else {
                             onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
                         }
@@ -124,7 +127,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mDisplayedFragment != null)
+        //TODO IllegalStateException: Fragment no longer exists for key BUNDLE_SAVE_FRAGMENT_INSTANCE: index 0
+        if (mDisplayedFragment != null && getSupportFragmentManager() != null)
             getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
     }
 

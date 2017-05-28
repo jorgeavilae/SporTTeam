@@ -12,6 +12,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.LoginActivity;
 import com.usal.jorgeav.sportapp.Utiles;
+import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -88,7 +89,7 @@ public class FirebaseDatabaseActions {
                 if (dataSnapshot.exists()) {
                     ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        List<Field> fields = Utiles.datasnapshotToField(data);
+                        List<Field> fields = Utiles.datasnapshotToFieldList(data);
                         cvArray.addAll(Utiles.fieldsArrayToContentValues(fields));
                     }
                     context.getContentResolver()
@@ -113,9 +114,11 @@ public class FirebaseDatabaseActions {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
-                    ContentValues cv = Utiles.eventToContentValues(Utiles.datasnapshotToEvent(dataSnapshot));
+                    Event e = Utiles.datasnapshotToEvent(dataSnapshot);
+                    ContentValues cv = Utiles.eventToContentValues(e);
                     context.getContentResolver()
                             .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                    loadAField(context, e.getmField());
                 }
             }
 
@@ -151,7 +154,7 @@ public class FirebaseDatabaseActions {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         if(dataSnapshot.exists()) {
-                            loadOtherProfile(context, dataSnapshot.getKey());
+                            loadAProfile(context, dataSnapshot.getKey());
 
                             ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID);
                             context.getContentResolver()
@@ -191,7 +194,7 @@ public class FirebaseDatabaseActions {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         if (dataSnapshot.exists()) {
-                            loadOtherProfile(context, dataSnapshot.getKey());
+                            loadAProfile(context, dataSnapshot.getKey());
                             ContentValues cvData = Utiles.datasnapshotFriendToContentValues(dataSnapshot, myUserID);
                             context.getContentResolver()
                                     .insert(SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI, cvData);
@@ -220,7 +223,7 @@ public class FirebaseDatabaseActions {
                 });
     }
 
-    private static void loadOtherProfile(final Context context, final String userID) {
+    private static void loadAProfile(final Context context, final String userID) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
@@ -380,9 +383,37 @@ public class FirebaseDatabaseActions {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            ContentValues cv = Utiles.eventToContentValues(Utiles.datasnapshotToEvent(dataSnapshot));
+                            Event e = Utiles.datasnapshotToEvent(dataSnapshot);
+                            ContentValues cv = Utiles.eventToContentValues(e);
                             context.getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                            loadAField(context, e.getmField());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private static void loadAField(final Context context, String key) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
+
+        myUserRef.child(key)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
+                            List<Field> fields = Utiles.datasnapshotToFieldList(dataSnapshot);
+                            cvArray.addAll(Utiles.fieldsArrayToContentValues(fields));
+
+                            context.getContentResolver()
+                                    .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                                            cvArray.toArray(new ContentValues[cvArray.size()]));
                         }
                     }
 

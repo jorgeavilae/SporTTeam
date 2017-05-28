@@ -117,7 +117,7 @@ public class Utiles {
         return cv;
     }
 
-    public static List<Field> datasnapshotToField (DataSnapshot data) {
+    public static List<Field> datasnapshotToFieldList (DataSnapshot data) {
         ArrayList<Field> result = new ArrayList<>();
         String id = data.getKey();
         DataSnapshot dataNode = data.child(FirebaseDBContract.DATA);

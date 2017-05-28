@@ -164,7 +164,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 Log.d(TAG, "onClick: field query "+
                                 SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? "+
                         buttonEventPlace.getText().toString()+" "+ textViewEventSport.getText().toString());
-                //TODO error c.count == 0
+                //TODO error c.count == 0 es porque al cargar el event en el CP no se trae el field de Firebase
                 if (c != null && c.moveToFirst()) {
                     Field field = new Field(
                             c.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID),
