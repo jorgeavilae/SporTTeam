@@ -7,9 +7,9 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 /**
  * Created by Jorge Avila on 23/04/2017.
@@ -25,7 +25,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void loadUser() {
-        FirebaseDatabaseActions.loadMyProfile(mUserView.getContext());
+//        FirebaseDatabaseActions.loadMyProfile(mUserView.getActivityContext());
     }
 
     @Override
@@ -35,25 +35,27 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        switch (id) {
-            case ProfileFragment.LOADER_MYPROFILE_ID:
-                return new CursorLoader(
-                        this.mUserView.getContext(),
-                        SportteamContract.UserEntry.CONTENT_USER_URI,
-                        SportteamContract.UserEntry.USER_COLUMNS,
-                        SportteamContract.UserEntry.USER_ID + " = ?",
-                        new String[]{currentUserID},
-                        null);
-            case ProfileFragment.LOADER_MYPROFILE_SPORTS_ID:
-                return new CursorLoader(
-                        this.mUserView.getContext(),
-                        SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
-                        SportteamContract.UserSportEntry.USER_SPORT_COLUMNS,
-                        SportteamContract.UserSportEntry.USER_ID + " = ?",
-                        new String[]{currentUserID},
-                        null);
-        }
+        //TODO tiene que desconectarse cuando se hace un cierre de sesion pq fuser.getuid() cambia pero el Cursor no lo sabe
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        if (fuser != null)
+            switch (id) {
+                case ProfileFragment.LOADER_MYPROFILE_ID:
+                    return new CursorLoader(
+                            this.mUserView.getActivityContext(),
+                            SportteamContract.UserEntry.CONTENT_USER_URI,
+                            SportteamContract.UserEntry.USER_COLUMNS,
+                            SportteamContract.UserEntry.USER_ID + " = ?",
+                            new String[]{args.getString(ProfileFragment.BUNDLE_INSTANCE_UID)},
+                            null);
+                case ProfileFragment.LOADER_MYPROFILE_SPORTS_ID:
+                    return new CursorLoader(
+                            this.mUserView.getActivityContext(),
+                            SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                            SportteamContract.UserSportEntry.USER_SPORT_COLUMNS,
+                            SportteamContract.UserSportEntry.USER_ID + " = ?",
+                            new String[]{args.getString(ProfileFragment.BUNDLE_INSTANCE_UID)},
+                            null);
+            }
         return null;
     }
 
@@ -74,7 +76,8 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
                 }
                 break;
             case ProfileFragment.LOADER_MYPROFILE_SPORTS_ID:
-                mUserView.showSports(data);
+                if(data != null && data.moveToFirst()) //Todos los usuarios tienen al menos un deporte
+                    mUserView.showSports(data);
                 break;
         }
     }

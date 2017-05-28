@@ -17,7 +17,7 @@ public abstract class ProfileContract {
         void showUserAge(int age);
         void showSports(Cursor cursor);
 
-        Context getContext();
+        Context getActivityContext();
     }
 
     public interface Presenter {

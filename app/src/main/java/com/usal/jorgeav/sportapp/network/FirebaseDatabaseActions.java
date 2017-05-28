@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.usal.jorgeav.sportapp.LoginActivity;
 import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
@@ -25,7 +26,7 @@ import java.util.List;
 public class FirebaseDatabaseActions {
     public static final String TAG = FirebaseDatabaseActions.class.getSimpleName();
 
-    public static void loadMyProfile(final Context context) {
+    public static void loadMyProfile(final Context context, final LoginActivity loginActivity) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
@@ -37,6 +38,7 @@ public class FirebaseDatabaseActions {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     User myLoggedUser = Utiles.datasnapshotToUser(dataSnapshot, myUserID);
+
                     ContentValues cvData = Utiles.dataUserToContentValues(myLoggedUser);
                     context.getContentResolver()
                             .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
@@ -45,6 +47,8 @@ public class FirebaseDatabaseActions {
                     context.getContentResolver()
                             .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
                                     cvSports.toArray(new ContentValues[cvSports.size()]));
+
+                    loginActivity.finishLoadMyProfile();
 
                     //TODO Cargar Instalaciones de mi ciudad (una vez) inmutable)
                     loadFieldsFromCity(context, myLoggedUser.getmCity());

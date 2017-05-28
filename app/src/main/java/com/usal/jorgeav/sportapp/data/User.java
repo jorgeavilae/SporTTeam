@@ -52,4 +52,17 @@ public class User {
     public List<Sport> getmSportList() {
         return mSportList;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "mId='" + mId + '\'' +
+                ", mEmail='" + mEmail + '\'' +
+                ", mName='" + mName + '\'' +
+                ", mCity='" + mCity + '\'' +
+                ", mAge=" + mAge +
+                ", mPhotoUrl='" + mPhotoUrl + '\'' +
+                ", mSportList=" + mSportList +
+                '}';
+    }
 }

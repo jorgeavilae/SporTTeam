@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -80,6 +79,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        //Si la activity ha girado mientras se completaba la descarga de datos de Firebase
+        if(mAuth.getCurrentUser() != null) showProgress(true);
     }
 
     private void populateAutoComplete() {
@@ -130,21 +132,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
+            final LoginActivity loginActivity = this;
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (!task.isSuccessful()) {
+                                showProgress(false);
                                 Toast.makeText(LoginActivity.this, R.string.error_incorrect_password,
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 deleteContentProvider();
-                                FirebaseDatabaseActions.loadMyProfile(getApplicationContext()); //Mi perfil: cuando cambie
-                                finish();
+                                FirebaseDatabaseActions.loadMyProfile(getApplicationContext(), loginActivity); //Mi perfil: cuando cambie
                             }
                         }
                     });
         }
+    }
+
+    public void finishLoadMyProfile() {
+        finish();
     }
 
     private void deleteContentProvider() {
@@ -220,11 +227,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            Log.d("ASD", cursor.getString(0));
             emails.add(cursor.getString(0));
             cursor.moveToNext();
         }
-
         addEmailsToAutoComplete(emails);
     }
 

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,8 +161,11 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                         SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? ",
                         new String[]{buttonEventPlace.getText().toString(), textViewEventSport.getText().toString()},
                         null);
-                if (c != null) {
-                    c.moveToFirst();
+                Log.d(TAG, "onClick: field query "+
+                                SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? "+
+                        buttonEventPlace.getText().toString()+" "+ textViewEventSport.getText().toString());
+                //TODO error c.count == 0
+                if (c != null && c.moveToFirst()) {
                     Field field = new Field(
                             c.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID),
                             c.getString(SportteamContract.FieldEntry.COLUMN_NAME),

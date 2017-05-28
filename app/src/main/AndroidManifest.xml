@@ -31,9 +31,11 @@
             android:authorities="com.usal.jorgeav.sportapp"
             android:exported="false" />
 
+        <!--https://stackoverflow.com/questions/10530760/android-stop-recreating-the-activity-on-orientation-change-->
         <activity
             android:name=".LoginActivity"
             android:parentActivityName=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

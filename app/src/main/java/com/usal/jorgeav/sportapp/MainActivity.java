@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private User mLoggedUser = null;
 
 
     @Override
@@ -79,20 +81,23 @@ public class MainActivity extends AppCompatActivity
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                FirebaseUser fuser = firebaseAuth.getCurrentUser();
+                if (fuser != null) {
                     // User is signed in
-                    Log.d(TAG, "userID: "+user.getUid());
-                    //TODO if user no esta en CP es porque se ha reiniciado el CP (new version) ==> signOut(); y startLogin();
-                    mDisplayedFragment = null;
-                    if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
-                        mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
-
+                    Log.d(TAG, "userID: "+fuser.getUid());
+                    mLoggedUser = Utiles.getUserFromContentProvider(getApplicationContext(), fuser.getUid());
+                    if (mLoggedUser == null) {
+                        firebaseAuth.signOut();
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);
                     } else {
-                        //TODO se crea un fragment q llama a showContent
-                        onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
+                        mDisplayedFragment = null;
+                        if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
+                            mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
+                        } else {
+                            onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
+                        }
                     }
-
                 } else {
                     // User is signed out
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -158,6 +163,8 @@ public class MainActivity extends AppCompatActivity
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
 
+        Log.d(TAG, "onOptionsItemSelected: mLoggeduser"+ mLoggedUser.toString());
+
         if (mToggle.onOptionsItemSelected(item)) {
             Log.d(TAG, "toogle");
             return true;
@@ -173,12 +180,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         mNavigationView.setCheckedItem(id);
 
-        if (id == R.id.nav_profile) {
-            initFragment(ProfileFragment.newInstance(), false);
+        if (id == R.id.nav_profile && mLoggedUser != null){
+                initFragment(ProfileFragment.newInstance(mLoggedUser.getmId()), false);
         } else if (id == R.id.nav_events) {
             initFragment(EventsFragment.newInstance(), false);
         } else if (id == R.id.nav_fields) {
@@ -186,7 +193,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_friends) {
             initFragment(FriendsFragment.newInstance(), false);
         } else if (id == R.id.nav_sign_out) {
+            getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
+            mDisplayedFragment = null;
             mAuth.signOut();
+        } else if (id == R.id.nav_other) {
+            //TODO Borrar
         }
 
         mDrawer.closeDrawer(GravityCompat.START);

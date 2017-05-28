@@ -1,6 +1,8 @@
 package com.usal.jorgeav.sportapp;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 
 import com.google.firebase.database.DataSnapshot;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -21,6 +23,48 @@ import java.util.Locale;
  */
 
 public class Utiles {
+
+    public static User getUserFromContentProvider(Context context, String uid) {
+        Cursor cUser = context.getContentResolver().query(
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.UserEntry.USER_ID + " = ?",
+                new String[]{uid},
+                null);
+        if (cUser != null) {
+            Cursor cSports = context.getContentResolver().query(
+                    SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                    SportteamContract.UserSportEntry.USER_SPORT_COLUMNS,
+                    SportteamContract.UserSportEntry.USER_ID + " = ?",
+                    new String[]{uid},
+                    SportteamContract.UserSportEntry.LEVEL + " DESC");
+            ArrayList<Sport> sportsArray = new ArrayList<>();
+            if (cSports != null) {
+                while (cSports.moveToNext()) {
+                    Sport s = new Sport(
+                            cSports.getString(SportteamContract.UserSportEntry.COLUMN_SPORT),
+                            cSports.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL),
+                            0);
+                    sportsArray.add(s);
+                }
+                cSports.close();
+            }
+            if (cUser.moveToFirst()) {
+                User user = new User(
+                        cUser.getString(SportteamContract.UserEntry.COLUMN_USER_ID),
+                        cUser.getString(SportteamContract.UserEntry.COLUMN_EMAIL),
+                        cUser.getString(SportteamContract.UserEntry.COLUMN_NAME),
+                        cUser.getString(SportteamContract.UserEntry.COLUMN_CITY),
+                        cUser.getInt(SportteamContract.UserEntry.COLUMN_AGE),
+                        cUser.getString(SportteamContract.UserEntry.COLUMN_PHOTO),
+                        sportsArray);
+                cUser.close();
+                return user;
+            }
+            cUser.close();
+        }
+        return null;
+    }
 
     public static String millisToDateTimeString(long millis) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MMMM/yy hh:mm", Locale.getDefault());

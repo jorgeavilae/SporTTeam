@@ -32,8 +32,10 @@ import butterknife.ButterKnife;
 public class ProfileFragment extends Fragment implements ProfileContract.View {
     private final static String TAG = ProfileFragment.class.getSimpleName();
 
+    public static final String BUNDLE_INSTANCE_UID = "BUNDLE_INSTANCE_UID";
     public static final int LOADER_MYPROFILE_ID = 1001;
     public static final int LOADER_MYPROFILE_SPORTS_ID = 1002;
+    private static String mUserUid = "";
     private ProfileContract.Presenter mProfilePresenter;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
@@ -60,13 +62,19 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         // Required empty public constructor
     }
 
-    public static ProfileFragment newInstance() {
-        return new ProfileFragment();
+    public static ProfileFragment newInstance(String uid) {
+        Bundle b = new Bundle();
+        b.putString(BUNDLE_INSTANCE_UID, uid);
+        ProfileFragment pf = new ProfileFragment();
+        pf.setArguments(b);
+        return pf;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
+            mUserUid = getArguments().getString(BUNDLE_INSTANCE_UID);
 
         mProfilePresenter = new ProfilePresenter(this);
     }
@@ -80,7 +88,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         sportsAdapter = new ProfileSportsAdapter(null);
         userSportList.setAdapter(sportsAdapter);
         userSportList.setHasFixedSize(true);
-        userSportList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        userSportList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.HORIZONTAL, false));
 
         userEventRequestsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,8 +127,10 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     public void onResume() {
         super.onResume();
 //        mProfilePresenter.loadUser();
-        getLoaderManager().initLoader(LOADER_MYPROFILE_ID, null, mProfilePresenter.getLoaderInstance());
-        getLoaderManager().initLoader(LOADER_MYPROFILE_SPORTS_ID, null, mProfilePresenter.getLoaderInstance());
+        Bundle b = new Bundle();
+        b.putString(BUNDLE_INSTANCE_UID, mUserUid);
+        getLoaderManager().initLoader(LOADER_MYPROFILE_ID, b, mProfilePresenter.getLoaderInstance());
+        getLoaderManager().initLoader(LOADER_MYPROFILE_SPORTS_ID, b, mProfilePresenter.getLoaderInstance());
     }
 
     @Override
@@ -174,7 +184,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     }
 
     @Override
-    public Context getContext() {
+    public Context getActivityContext() {
         return getActivity();
     }
 
