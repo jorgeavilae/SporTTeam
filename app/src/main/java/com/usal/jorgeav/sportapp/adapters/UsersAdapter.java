@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
 import java.util.Locale;
@@ -90,12 +89,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
         @Override
         public void onClick(View view) {
-            //TODO manage this properly
-            mClickListener.onUserClick(null);
+            int position = getAdapterPosition();
+            if (mDataset.moveToPosition(position))
+                mClickListener.onUserClick(mDataset.getString(SportteamContract.UserEntry.COLUMN_USER_ID));
         }
     }
 
     public interface OnUserItemClickListener {
-        void onUserClick(User user);
+        void onUserClick(String uid);
     }
 }

@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
@@ -40,10 +41,10 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
 
-    @BindView(R.id.user_event_invitations)
-    Button userEventRequestsButton;
-    @BindView(R.id.user_friend_requests)
-    Button userFriendRequestsButton;
+    @BindView(R.id.user_send_invitation)
+    Button userSendInvitationButton;
+    @BindView(R.id.user_add_friend)
+    Button userAddFriendButton;
     @BindView(R.id.user_image)
     ImageView userImage;
     @BindView(R.id.user_name)
@@ -57,6 +58,10 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     ProfileSportsAdapter sportsAdapter;
     @BindView(R.id.user_edit_sport)
     Button userEditSportListButton;
+    @BindView(R.id.user_event_invitations)
+    Button userEventRequestsButton;
+    @BindView(R.id.user_friend_requests)
+    Button userFriendRequestsButton;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -90,27 +95,46 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         userSportList.setHasFixedSize(true);
         userSportList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        userEventRequestsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new EventInvitationsFragment();
-                mFragmentManagementListener.initFragment(fragment, true);
-            }
-        });
-        userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new FriendRequestsFragment();
-                mFragmentManagementListener.initFragment(fragment, true);
-            }
-        });
-        userEditSportListButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new SportsListFragment();
-                mFragmentManagementListener.initFragment(fragment, true);
-            }
-        });
+
+        if (mUserUid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            userEventRequestsButton.setVisibility(View.VISIBLE);
+            userEventRequestsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Fragment fragment = new EventInvitationsFragment();
+                    mFragmentManagementListener.initFragment(fragment, true);
+                }
+            });
+            userFriendRequestsButton.setVisibility(View.VISIBLE);
+            userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Fragment fragment = new FriendRequestsFragment();
+                    mFragmentManagementListener.initFragment(fragment, true);
+                }
+            });
+            userEditSportListButton.setVisibility(View.VISIBLE);
+            userEditSportListButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Fragment fragment = new SportsListFragment();
+                    mFragmentManagementListener.initFragment(fragment, true);
+                }
+            });
+        } else {
+            userSendInvitationButton.setVisibility(View.VISIBLE);
+            userSendInvitationButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                }
+            });
+            userAddFriendButton.setVisibility(View.VISIBLE);
+            userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                }
+            });
+        }
 
 
         return root;
@@ -120,7 +144,11 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.profile), this);
-        mActionBarIconManagementListener.setToolbarAsNav();
+        if (mUserUid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+            mActionBarIconManagementListener.setToolbarAsNav();
+        else
+            mActionBarIconManagementListener.setToolbarAsUp();
+
     }
 
     @Override

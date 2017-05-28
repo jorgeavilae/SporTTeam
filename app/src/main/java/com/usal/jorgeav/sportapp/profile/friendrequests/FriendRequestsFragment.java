@@ -10,12 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,9 +93,9 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     }
 
     @Override
-    public void onUserClick(User user) {
-        //TODO manage this properly
-        Toast.makeText(getActivity(), "onUserClick not implemented yet.", Toast.LENGTH_SHORT).show();
+    public void onUserClick(String uid) {
+        Fragment newFragment = ProfileFragment.newInstance(uid);
+        mFragmentManagementListener.initFragment(newFragment, true);
     }
 
     @Override
