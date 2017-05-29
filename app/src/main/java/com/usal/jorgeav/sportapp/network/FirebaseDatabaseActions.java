@@ -80,72 +80,6 @@ public class FirebaseDatabaseActions {
         loadEventsFromEventsRequests(context);
     }
 
-    private static void loadFieldsFromCity(final Context context, String city) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference fieldsRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
-        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
-
-        fieldsRef.orderByChild(filter).equalTo(city).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        List<Field> fields = Utiles.datasnapshotToFieldList(data);
-                        cvArray.addAll(Utiles.fieldsArrayToContentValues(fields));
-                    }
-                    context.getContentResolver()
-                            .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                                    cvArray.toArray(new ContentValues[cvArray.size()]));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private static void loadEventsFromCity(final Context context, String city) {
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
-        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
-
-        eventsRef.orderByChild(filter).equalTo(city).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.exists()) {
-                    Event e = Utiles.datasnapshotToEvent(dataSnapshot);
-                    ContentValues cv = Utiles.eventToContentValues(e);
-                    context.getContentResolver()
-                            .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                    loadAField(context, e.getmField());
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     private static void loadUsersFromFriendsRequests(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -201,77 +135,6 @@ public class FirebaseDatabaseActions {
                             context.getContentResolver()
                                     .insert(SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI, cvData);
                         }
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-    }
-
-    private static void loadAProfile(final Context context, final String userID) {
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
-
-        myUserRef.child(userID)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            User anUser = Utiles.datasnapshotToUser(dataSnapshot, userID);
-                            ContentValues cvData = Utiles.dataUserToContentValues(anUser);
-                            context.getContentResolver()
-                                    .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
-
-                            List<ContentValues> cvSports = Utiles.sportUserToContentValues(anUser);
-                            context.getContentResolver()
-                                    .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
-                                            cvSports.toArray(new ContentValues[cvSports.size()]));
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-    }
-
-    private static void loadEventsFromMyOwnEvents(final Context context) {
-        final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
-
-        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.EVENTS_CREATED)
-                .addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        if(dataSnapshot.exists()) {
-                            loadAnEvent(context, dataSnapshot.getKey());
-
-                            //TODO cargar Usuarios que quieren entrar a este evento USER_REQUESTS
-                            loadUsersFromUserRequests(context, dataSnapshot.getKey());
-                            //TODO cargar Usuarios que no contestaron a invitaciones para este evento INVITATIONS
-                            loadUsersFromInvitationsSent(context, dataSnapshot.getKey());
-                        }
-
                     }
 
                     @Override
@@ -376,7 +239,89 @@ public class FirebaseDatabaseActions {
                 });
     }
 
-    //TODO Crear contrario para los eventos y asi conformar lista de participantes. Comprobar UNIQUE
+    private static void loadUsersFromParticipants(final Context context, final String key) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+
+        myUserRef.child(key + "/" + FirebaseDBContract.Event.PARTICIPANTS)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if(dataSnapshot.exists()) {
+                            loadAProfile(context, dataSnapshot.getKey());
+
+                            ContentValues cvData = Utiles
+                                    .datasnapshotEventsParticipationToContentValues(dataSnapshot, key, false);
+                            context.getContentResolver()
+                                    .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private static void loadEventsFromMyOwnEvents(final Context context) {
+        final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+
+        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.EVENTS_CREATED)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if(dataSnapshot.exists()) {
+                            loadAnEvent(context, dataSnapshot.getKey());
+
+                            //TODO cargar Usuarios que quieren entrar a este evento USER_REQUESTS
+                            loadUsersFromUserRequests(context, dataSnapshot.getKey());
+                            //TODO cargar Usuarios que no contestaron a invitaciones para este evento INVITATIONS
+                            loadUsersFromInvitationsSent(context, dataSnapshot.getKey());
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
     private static void loadEventsFromEventsParticipation(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -390,7 +335,7 @@ public class FirebaseDatabaseActions {
                             loadAnEvent(context, dataSnapshot.getKey());
 
                             ContentValues cvData = Utiles
-                                    .datasnapshotEventsParticipationToContentValues(dataSnapshot, myUserID);
+                                    .datasnapshotEventsParticipationToContentValues(dataSnapshot, myUserID, true);
                             context.getContentResolver()
                                     .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
                         }
@@ -503,6 +448,35 @@ public class FirebaseDatabaseActions {
                 });
     }
 
+    private static void loadAProfile(final Context context, final String userID) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+
+        myUserRef.child(userID)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            User anUser = Utiles.datasnapshotToUser(dataSnapshot, userID);
+                            ContentValues cvData = Utiles.dataUserToContentValues(anUser);
+                            context.getContentResolver()
+                                    .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
+
+                            List<ContentValues> cvSports = Utiles.sportUserToContentValues(anUser);
+                            context.getContentResolver()
+                                    .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                            cvSports.toArray(new ContentValues[cvSports.size()]));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
     private static void loadAnEvent(final Context context, String key) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
@@ -517,6 +491,8 @@ public class FirebaseDatabaseActions {
                             context.getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
                             loadAField(context, e.getmField());
+                            //TODO cargar Usuarios que participan en este evento PARTICIPANTS
+                            loadUsersFromParticipants(context, dataSnapshot.getKey());
                         }
                     }
 
@@ -551,5 +527,71 @@ public class FirebaseDatabaseActions {
 
                     }
                 });
+    }
+
+
+    private static void loadFieldsFromCity(final Context context, String city) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference fieldsRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
+        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
+
+        fieldsRef.orderByChild(filter).equalTo(city).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        List<Field> fields = Utiles.datasnapshotToFieldList(data);
+                        cvArray.addAll(Utiles.fieldsArrayToContentValues(fields));
+                    }
+                    context.getContentResolver()
+                            .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                                    cvArray.toArray(new ContentValues[cvArray.size()]));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private static void loadEventsFromCity(final Context context, String city) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
+
+        eventsRef.orderByChild(filter).equalTo(city).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.exists()) {
+                    Event e = Utiles.datasnapshotToEvent(dataSnapshot);
+                    ContentValues cv = Utiles.eventToContentValues(e);
+                    context.getContentResolver()
+                            .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                    loadAField(context, e.getmField());
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

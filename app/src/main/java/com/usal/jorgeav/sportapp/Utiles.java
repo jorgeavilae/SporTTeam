@@ -220,9 +220,15 @@ public class Utiles {
         return cv;
     }
 
-    public static ContentValues datasnapshotEventsParticipationToContentValues(DataSnapshot dataSnapshot, String myUserID) {
-        String userId = myUserID;
-        String eventId = dataSnapshot.getKey();
+    public static ContentValues datasnapshotEventsParticipationToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheParticipant) {
+        String userId, eventId;
+        if(iAmTheParticipant) {
+            eventId = dataSnapshot.getKey();
+            userId = key;
+        } else {
+            eventId = key;
+            userId = dataSnapshot.getKey();
+        }
         int participation = ((Boolean) dataSnapshot.getValue()) ? 1 : 0;
 
         ContentValues cv = new ContentValues();
