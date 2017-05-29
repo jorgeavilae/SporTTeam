@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -91,15 +91,7 @@ public class MainActivity extends AppCompatActivity
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(intent);
                     } else {
-                        mDisplayedFragment = null;
-                        //TODO IllegalStateException: Fragment no longer exists for key BUNDLE_SAVE_FRAGMENT_INSTANCE: index 0
-                        if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
-                            try {
-                                mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
-                            } catch (IllegalStateException e) { e.printStackTrace(); }
-                        } else {
-                            onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
-                        }
+                        onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
                     }
                 } else {
                     // User is signed out
@@ -131,6 +123,22 @@ public class MainActivity extends AppCompatActivity
         //TODO IllegalStateException: Fragment no longer exists for key BUNDLE_SAVE_FRAGMENT_INSTANCE: index 0
         if (mDisplayedFragment != null && getSupportFragmentManager() != null)
             getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d(TAG, "onRestoreInstanceState: ");
+        mDisplayedFragment = null;
+        //TODO IllegalStateException: Fragment no longer exists for key BUNDLE_SAVE_FRAGMENT_INSTANCE: index 0
+        // arreglado al mover el codigo a este metodo??
+        if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
+            try {
+                mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
+            } catch (IllegalStateException e) { e.printStackTrace(); }
+        } else {
+            onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
+        }
     }
 
     @Override
@@ -188,6 +196,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         mNavigationView.setCheckedItem(id);
+        Log.d(TAG, "onNavigationItemSelected: "+item.getTitle());
 
         if (id == R.id.nav_profile && mLoggedUser != null){
                 initFragment(ProfileFragment.newInstance(mLoggedUser.getmId()), false);
