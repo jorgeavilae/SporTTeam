@@ -232,9 +232,15 @@ public class Utiles {
         return cv;
     }
 
-    public static ContentValues datasnapshotEventInvitationsToContentValues(DataSnapshot dataSnapshot, String myUserID) {
-        String userId = myUserID;
-        String eventId = dataSnapshot.getKey();
+    public static ContentValues datasnapshotEventInvitationsToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheReceiver) {
+        String userId, eventId;
+        if(iAmTheReceiver) {
+            eventId = dataSnapshot.getKey();
+            userId = key;
+        } else {
+            eventId = key;
+            userId = dataSnapshot.getKey();
+        }
         long date = ((Number) dataSnapshot.getValue()).longValue();
 
         ContentValues cv = new ContentValues();

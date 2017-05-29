@@ -238,6 +238,7 @@ public class SportteamProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
+                break;
             case CODE_EVENTS_REQUESTS:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         SportteamContract.TABLE_EVENTS_REQUESTS,

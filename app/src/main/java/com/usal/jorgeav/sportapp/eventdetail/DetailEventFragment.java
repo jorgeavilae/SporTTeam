@@ -20,6 +20,8 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.eventdetail.sendinvitation.SendInvitationFragment;
+import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 
@@ -112,6 +114,8 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 @Override
                 public void onClick(View view) {
                     //TODO ver lista de amigos para enviarles invitaciones
+                    Fragment fragment = SendInvitationFragment.newInstance();
+                    mFragmentManagementListener.initFragment(fragment, true);
                 }
             });
             buttonUnansweredInvitations.setVisibility(View.VISIBLE);
@@ -119,6 +123,10 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 @Override
                 public void onClick(View view) {
                     //TODO ver invitaciones enviadas y no contestadas
+                    if(mEvent != null) {
+                        Fragment fragment = InvitationsSentFragment.newInstance(mEvent.getmId());
+                        mFragmentManagementListener.initFragment(fragment, true);
+                    }
                 }
             });
         } else {

@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +62,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     @BindView(R.id.user_edit_sport)
     Button userEditSportListButton;
     @BindView(R.id.user_event_invitations)
-    Button userEventRequestsButton;
+    Button userEventInvitationsButton;
     @BindView(R.id.user_friend_requests)
     Button userFriendRequestsButton;
 
@@ -99,8 +100,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
 
 
         if (mUserUid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-            userEventRequestsButton.setVisibility(View.VISIBLE);
-            userEventRequestsButton.setOnClickListener(new View.OnClickListener() {
+            userEventInvitationsButton.setVisibility(View.VISIBLE);
+            userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Fragment fragment = new EventInvitationsFragment();
