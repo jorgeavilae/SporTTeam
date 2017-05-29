@@ -15,7 +15,7 @@ import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.data.Event;
-import com.usal.jorgeav.sportapp.events.detail.DetailEventFragment;
+import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

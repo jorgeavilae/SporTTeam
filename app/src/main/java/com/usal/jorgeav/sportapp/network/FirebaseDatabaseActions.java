@@ -76,6 +76,8 @@ public class FirebaseDatabaseActions {
         loadEventsFromEventsParticipation(context);
         //TODO Cargar Eventos de mis invitaciones a eventos (cuando cambie)
         loadEventsFromEventInvitations(context);
+        //TODO Cargar Eventos de mis peticiones de asistencia a eventos enviadas (cuando cambie)
+        loadEventsFromEventsRequests(context);
     }
 
     public static void loadFieldsFromCity(final Context context, String city) {
@@ -264,6 +266,7 @@ public class FirebaseDatabaseActions {
                         if(dataSnapshot.exists()) {
                             loadAnEvent(context, dataSnapshot.getKey());
                             //TODO comprobar si alguient quiere entrar a este evento USER_REQUESTS
+                            loadUsersFromUserRequests(context, dataSnapshot.getKey());
                         }
 
                     }
@@ -289,6 +292,47 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
+
+    private static void loadUsersFromUserRequests(final Context context, final String key) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+
+        myUserRef.child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if(dataSnapshot.exists()) {
+                            loadAProfile(context, dataSnapshot.getKey());
+
+                            ContentValues cvData = Utiles
+                                    .datasnapshotEventsRequestsToContentValues(dataSnapshot, key, false);
+                            context.getContentResolver()
+                                    .insert(SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI, cvData);
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
 
     private static void loadEventsFromEventsParticipation(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -348,6 +392,48 @@ public class FirebaseDatabaseActions {
                                     .datasnapshotEventInvitationsToContentValues(dataSnapshot, myUserID);
                             context.getContentResolver()
                                     .insert(SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI, cvData);
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private static void loadEventsFromEventsRequests(final Context context) {
+        final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+
+        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.EVENTS_REQUESTS)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if (dataSnapshot.exists()) {
+                            loadAnEvent(context, dataSnapshot.getKey());
+
+                            ContentValues cvData = Utiles
+                                    .datasnapshotEventsRequestsToContentValues(dataSnapshot, myUserID, true);
+                            context.getContentResolver()
+                                    .insert(SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI, cvData);
                         }
 
                     }

@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.events.detail;
+package com.usal.jorgeav.sportapp.eventdetail;
 
 /**
  * Created by Jorge Avila on 26/04/2017.

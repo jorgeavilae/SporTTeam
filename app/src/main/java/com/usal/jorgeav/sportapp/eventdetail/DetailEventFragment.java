@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.events.detail;
+package com.usal.jorgeav.sportapp.eventdetail;
 
 
 import android.content.Context;
@@ -20,6 +20,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 
 import java.util.Locale;
@@ -96,10 +97,38 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
         if (isMyEvent) {
             buttonUserRequests.setVisibility(View.VISIBLE);
+            buttonUserRequests.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO ver peticiones para entrar en este evento
+                    if(mEvent != null) {
+                        Fragment fragment = UsersRequestsFragment.newInstance(mEvent.getmId());
+                        mFragmentManagementListener.initFragment(fragment, true);
+                    }
+                }
+            });
             buttonSendInvitation.setVisibility(View.VISIBLE);
+            buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO ver lista de amigos para enviarles invitaciones
+                }
+            });
             buttonUnansweredInvitations.setVisibility(View.VISIBLE);
+            buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO ver invitaciones enviadas y no contestadas
+                }
+            });
         } else {
             buttonSendRequest.setVisibility(View.VISIBLE);
+            buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO enviar peticion para participar
+                }
+            });
         }
 
         return root;

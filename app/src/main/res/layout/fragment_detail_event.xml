@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?android:attr/actionBarSize"
-    tools:context="com.usal.jorgeav.sportapp.events.detail.DetailEventFragment">
+    tools:context="com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

@@ -262,6 +262,45 @@ public final class SportteamContract {
     }
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_EVENTS_REQUESTS = "eventRequests";
+    /* Used internally as the name of our event requests table. */
+    public static final String TABLE_EVENTS_REQUESTS = "eventRequest";
+    /* Inner class that defines the table contents of the eventRequest table
+     * This table store a row for every event request from any user to one of our user events
+     * and a row for every event request sended by our user*/
+    public static final class EventRequestsEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the eventRequest table from the content provider */
+        public static final Uri CONTENT_EVENTS_REQUESTS_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_EVENTS_REQUESTS)
+                .build();
+
+        /* Column names */
+        public static final String EVENT_ID = "eventId";
+        public static final String SENDER_ID = "senderId";
+        public static final String DATE = "date";
+
+        /* All column projection */
+        public static final String[] EVENTS_REQUESTS_COLUMNS = {
+                EventRequestsEntry._ID,
+                EventRequestsEntry.EVENT_ID,
+                EventRequestsEntry.SENDER_ID,
+                EventRequestsEntry.DATE
+        };
+
+        /* Column indexes */
+        public static final int COLUMN_ID = 0;
+        public static final int COLUMN_EVENT_ID = 1;
+        public static final int COLUMN_SENDER_ID = 2;
+        public static final int COLUMN_DATE = 3;
+
+        /* URI for one event request */
+        public static Uri buildEventRequestsUriWith(long id) {
+            return ContentUris.withAppendedId(CONTENT_EVENTS_REQUESTS_URI, id);
+        }
+    }
+
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_EVENTS = "events";
     /* Used internally as the name of our event table. */
     public static final String TABLE_EVENT = "event";

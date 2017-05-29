@@ -243,4 +243,22 @@ public class Utiles {
         cv.put(SportteamContract.EventsInvitationEntry.DATE, date);
         return cv;
     }
+
+    public static ContentValues datasnapshotEventsRequestsToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheSender) {
+        String eventId, senderId;
+        if(iAmTheSender) {
+            eventId = dataSnapshot.getKey();
+            senderId = key;
+        } else {
+            eventId = key;
+            senderId = dataSnapshot.getKey();
+        }
+        long date = ((Number)dataSnapshot.getValue()).longValue();
+
+        ContentValues cv = new ContentValues();
+        cv.put(SportteamContract.EventRequestsEntry.EVENT_ID, eventId);
+        cv.put(SportteamContract.EventRequestsEntry.SENDER_ID, senderId);
+        cv.put(SportteamContract.EventRequestsEntry.DATE, date);
+        return cv;
+    }
 }

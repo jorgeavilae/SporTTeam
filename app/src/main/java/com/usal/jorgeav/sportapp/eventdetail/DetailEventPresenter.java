@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.events.detail;
+package com.usal.jorgeav.sportapp.eventdetail;
 
 import android.support.annotation.NonNull;
 import android.util.Log;

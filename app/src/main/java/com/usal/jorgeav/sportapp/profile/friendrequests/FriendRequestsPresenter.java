@@ -36,7 +36,7 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
     }
 
     @Override
-    public Loader onCreateLoader(int id, Bundle args) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         switch (id) {
             case FriendRequestsFragment.LOADER_FRIENDS_REQUESTS_ID:
@@ -87,7 +87,7 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
     }
 
     @Override
-    public void onLoaderReset(Loader loader) {
+    public void onLoaderReset(Loader<Cursor> loader) {
         mFriendRequestsView.showFriendRequests(null);
     }
 }
