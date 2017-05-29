@@ -24,6 +24,8 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
+import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
+import com.usal.jorgeav.sportapp.profile.sportpractice.SportsListFragment;
 
 import java.util.Locale;
 
@@ -126,6 +128,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
             userSendInvitationButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Fragment fragment = new SendInvitationFragment();
+                    mFragmentManagementListener.initFragment(fragment, true);
                 }
             });
             userAddFriendButton.setVisibility(View.VISIBLE);

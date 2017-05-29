@@ -35,7 +35,7 @@ public class EventInvitationsPresenter implements EventInvitationsContract.Prese
         return this;
     }
     @Override
-    public Loader onCreateLoader(int id, Bundle args) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         switch (id) {
             case EventInvitationsFragment.LOADER_EVENT_INVITATIONS_ID:

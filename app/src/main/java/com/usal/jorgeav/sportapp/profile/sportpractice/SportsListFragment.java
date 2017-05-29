@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.profile;
+package com.usal.jorgeav.sportapp.profile.sportpractice;
 
 import android.content.Context;
 import android.os.Bundle;
