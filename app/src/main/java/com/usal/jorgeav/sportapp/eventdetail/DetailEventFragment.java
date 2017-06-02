@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
@@ -79,8 +80,18 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         if (getArguments() != null) {
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
             if (mEventId != null) {
-                //TODO Cambiar
-                isMyEvent = true;
+                Cursor c = getActivity().getContentResolver().query(
+                        SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                        SportteamContract.EventEntry.EVENT_COLUMNS,
+                        SportteamContract.EventEntry.EVENT_ID + " = ?",
+                        new String[]{mEventId},
+                        null);
+                if (c != null && c.moveToFirst()) {
+                    String ownerId = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
+                    isMyEvent = FirebaseAuth.getInstance().getCurrentUser().getUid().equals(ownerId);
+                    c.close();
+                } else
+                    isMyEvent = false;
             }
         }
 
@@ -202,6 +213,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                     String sportId = c.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
                     Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
                     mFragmentManagementListener.initFragment(newFragment, true);
+                    c.close();
                 }
             }
         });
