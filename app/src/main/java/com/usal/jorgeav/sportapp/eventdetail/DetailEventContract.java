@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.eventdetail;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -18,7 +19,9 @@ public abstract class DetailEventContract {
         void showEventOwner(String time);
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);
+        void showParticipants(Cursor cursor);
         Context getActivityContext();
+        Fragment getThis();
 
     }
 

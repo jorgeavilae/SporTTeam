@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.eventdetail.sendinvitation.SendInvitationFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
@@ -31,6 +34,8 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     private static final String TAG = DetailEventFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
     public static final int LOADER_EVENT_ID = 11000;
+    public static final int LOADER_EVENTS_PARTICIPANTS_ID = 11001;
+    public static final int LOADER_USER_DATA_FROM_PARTICIPANTS_ID = 11002;
 
     private static String mEventId = "";
     private boolean isMyEvent = false;
@@ -60,7 +65,9 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     Button buttonUnansweredInvitations;
     @BindView(R.id.event_detail_send_request)
     Button buttonSendRequest;
-
+    @BindView(R.id.event_detail_participants_list)
+    RecyclerView eventParticipantsList;
+    UsersAdapter usersAdapter;
 
     public DetailEventFragment() {
         // Required empty public constructor
@@ -104,6 +111,11 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
         View root = inflater.inflate(R.layout.fragment_detail_event, container, false);
         ButterKnife.bind(this, root);
+
+        usersAdapter = new UsersAdapter(null, null);
+        eventParticipantsList.setAdapter(usersAdapter);
+        eventParticipantsList.setHasFixedSize(true);
+        eventParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
 
         if (isMyEvent) {
             buttonUserRequests.setVisibility(View.VISIBLE);
@@ -180,6 +192,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         Bundle b = new Bundle();
         b.putString(BUNDLE_EVENT_ID, mEventId);
         getLoaderManager().initLoader(LOADER_EVENT_ID, b, mPresenter.getLoaderInstance());
+        getLoaderManager().initLoader(LOADER_EVENTS_PARTICIPANTS_ID, b, mPresenter.getLoaderInstance());
     }
 
     @Override
@@ -253,7 +266,17 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     }
 
     @Override
+    public void showParticipants(Cursor cursor) {
+        usersAdapter.replaceData(cursor);
+    }
+
+    @Override
     public Context getActivityContext() {
         return getActivity();
+    }
+
+    @Override
+    public Fragment getThis() {
+        return this;
     }
 }
