@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
-import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 
 import butterknife.BindView;
@@ -107,8 +106,8 @@ public class EventInvitationsFragment extends Fragment implements EventInvitatio
     }
 
     @Override
-    public void onEventClick(Event event) {
-        Fragment newFragment = DetailEventFragment.newInstance(event);
+    public void onEventClick(String eventId) {
+        Fragment newFragment = DetailEventFragment.newInstance(eventId);
         mFragmentManagementListener.initFragment(newFragment, true);
     }
 }

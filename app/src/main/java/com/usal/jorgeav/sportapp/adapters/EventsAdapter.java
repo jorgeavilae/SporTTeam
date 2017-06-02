@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.Utiles;
-import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
 import java.util.Locale;
@@ -102,20 +101,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             Log.d(TAG, "onClick");
             int position = getAdapterPosition();
             mDataset.moveToPosition(position);
-            Event event = new Event(
-                    mDataset.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID),
-                    mDataset.getString(SportteamContract.EventEntry.COLUMN_SPORT),
-                    mDataset.getString(SportteamContract.EventEntry.COLUMN_FIELD),
-                    mDataset.getString(SportteamContract.EventEntry.COLUMN_CITY),
-                    mDataset.getLong(SportteamContract.EventEntry.COLUMN_DATE),
-                    mDataset.getString(SportteamContract.EventEntry.COLUMN_OWNER),
-                    mDataset.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS),
-                    mDataset.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
-            mClickListener.onEventClick(event);
+            mClickListener.onEventClick(mDataset.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
         }
     }
 
     public interface OnEventItemClickListener {
-        void onEventClick(Event event);
+        void onEventClick(String eventId);
     }
 }

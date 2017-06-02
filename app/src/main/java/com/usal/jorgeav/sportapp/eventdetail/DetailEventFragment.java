@@ -6,19 +6,15 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.data.Event;
-import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.eventdetail.sendinvitation.SendInvitationFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
@@ -32,10 +28,10 @@ import butterknife.ButterKnife;
 
 public class DetailEventFragment extends Fragment implements DetailEventContract.View {
     private static final String TAG = DetailEventFragment.class.getSimpleName();
+    public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
+    public static final int LOADER_EVENT_ID = 11000;
 
-    private static final String ARG_EVENT = "param-event";
-
-    private Event mEvent = null;
+    private static String mEventId = "";
     private boolean isMyEvent = false;
     private DetailEventContract.Presenter mPresenter;
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
@@ -69,10 +65,10 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         // Required empty public constructor
     }
 
-    public static DetailEventFragment newInstance(Event event) {
+    public static DetailEventFragment newInstance(String eventId) {
         DetailEventFragment fragment = new DetailEventFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_EVENT, event);
+        args.putString(BUNDLE_EVENT_ID, eventId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,13 +77,14 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mEvent = getArguments().getParcelable(ARG_EVENT);
-            if (mEvent != null) {
-                isMyEvent = FirebaseAuth.getInstance().getCurrentUser().getUid().equals(mEvent.getmOwner());
+            mEventId = getArguments().getString(BUNDLE_EVENT_ID);
+            if (mEventId != null) {
+                //TODO Cambiar
+                isMyEvent = true;
             }
         }
 
-        mPresenter = new DetailEventPresenter(mEvent, this);
+        mPresenter = new DetailEventPresenter(this);
     }
 
     @Override
@@ -102,9 +99,9 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
             buttonUserRequests.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO ver peticiones para entrar en este evento
-                    if(mEvent != null) {
-                        Fragment fragment = UsersRequestsFragment.newInstance(mEvent.getmId());
+                    //DONE ver peticiones para entrar en este evento
+                    if(mEventId != null) {
+                        Fragment fragment = UsersRequestsFragment.newInstance(mEventId);
                         mFragmentManagementListener.initFragment(fragment, true);
                     }
                 }
@@ -113,7 +110,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
             buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO ver lista de amigos para enviarles invitaciones
+                    //DONE ver lista de amigos para enviarles invitaciones
                     Fragment fragment = SendInvitationFragment.newInstance();
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
@@ -122,9 +119,9 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
             buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO ver invitaciones enviadas y no contestadas
-                    if(mEvent != null) {
-                        Fragment fragment = InvitationsSentFragment.newInstance(mEvent.getmId());
+                    //DONE ver invitaciones enviadas y no contestadas
+                    if(mEventId != null) {
+                        Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
                         mFragmentManagementListener.initFragment(fragment, true);
                     }
                 }
@@ -146,7 +143,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //TODO should I add event.name?
-        mFragmentManagementListener.setCurrentDisplayedFragment(mEvent.getmId(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(mEventId, this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -169,7 +166,9 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.openEvent();
+        Bundle b = new Bundle();
+        b.putString(BUNDLE_EVENT_ID, mEventId);
+        getLoaderManager().initLoader(LOADER_EVENT_ID, b, mPresenter.getLoaderInstance());
     }
 
     @Override
@@ -198,22 +197,10 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                         SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? ",
                         new String[]{buttonEventPlace.getText().toString(), textViewEventSport.getText().toString()},
                         null);
-                Log.d(TAG, "onClick: field query "+
-                                SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? "+
-                        buttonEventPlace.getText().toString()+" "+ textViewEventSport.getText().toString());
-                //TODO error c.count == 0 es porque al cargar el event en el CP no se trae el field de Firebase
                 if (c != null && c.moveToFirst()) {
-                    Field field = new Field(
-                            c.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID),
-                            c.getString(SportteamContract.FieldEntry.COLUMN_NAME),
-                            c.getString(SportteamContract.FieldEntry.COLUMN_SPORT),
-                            c.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS),
-                            c.getString(SportteamContract.FieldEntry.COLUMN_CITY),
-                            c.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION),
-                            c.getInt(SportteamContract.FieldEntry.COLUMN_VOTES),
-                            c.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME),
-                            c.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME));
-                    Fragment newFragment = DetailFieldFragment.newInstance(field);
+                    String fieldId = c.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
+                    String sportId = c.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
+                    Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
                     mFragmentManagementListener.initFragment(newFragment, true);
                 }
             }
@@ -237,15 +224,24 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
     @Override
     public void showEventTotalPlayers(int totalPlayers) {
-        ((MainActivity)getActivity()).showContent();
-        this.textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d", totalPlayers));
+        if(totalPlayers > -1) {
+            ((MainActivity) getActivity()).showContent();
+            this.textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d", totalPlayers));
+        }
 
     }
 
     @Override
     public void showEventEmptyPlayers(int emptyPlayers) {
-        ((MainActivity)getActivity()).showContent();
-        this.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));
+        if(emptyPlayers > -1) {
+            ((MainActivity) getActivity()).showContent();
+            this.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));
+        }
 
+    }
+
+    @Override
+    public Context getActivityContext() {
+        return getActivity();
     }
 }

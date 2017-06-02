@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.FieldsAdapter;
-import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 
 import butterknife.BindView;
@@ -98,8 +97,8 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     }
 
     @Override
-    public void onFieldClick(Field field) {
-        Fragment newFragment = DetailFieldFragment.newInstance(field);
+    public void onFieldClick(String fieldId, String sportId) {
+        Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
         mFragmentManagementListener.initFragment(newFragment, true);
     }
 }

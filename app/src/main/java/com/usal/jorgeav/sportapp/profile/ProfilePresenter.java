@@ -63,17 +63,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
             case ProfileFragment.LOADER_MYPROFILE_ID:
-                if(data != null && data.moveToFirst()) {
-                    String photoUrl = data.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
-                    String name = data.getString(SportteamContract.UserEntry.COLUMN_NAME);
-                    String city = data.getString(SportteamContract.UserEntry.COLUMN_CITY);
-                    String ageStr = data.getString(SportteamContract.UserEntry.COLUMN_AGE);
-                    int age = Integer.valueOf(ageStr);
-                    mUserView.showUserImage(photoUrl);
-                    mUserView.showUserName(name);
-                    mUserView.showUserCity(city);
-                    mUserView.showUserAge(age);
-                }
+                showUser(data);
                 break;
             case ProfileFragment.LOADER_MYPROFILE_SPORTS_ID:
                 if(data != null && data.moveToFirst()) //Todos los usuarios tienen al menos un deporte
@@ -86,10 +76,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
             case ProfileFragment.LOADER_MYPROFILE_ID:
-                mUserView.showUserImage("");
-                mUserView.showUserName("");
-                mUserView.showUserCity("");
-                mUserView.showUserAge(-1);
+                showUser(null);
                 break;
             case ProfileFragment.LOADER_MYPROFILE_SPORTS_ID:
                 mUserView.showSports(null);
@@ -97,12 +84,22 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
         }
     }
 
-    private void showUser(User user) {
-        if (user != null) {
-            mUserView.showUserImage(user.getmPhotoUrl());
-            mUserView.showUserName(user.getmName());
-            mUserView.showUserCity(user.getmCity());
-            mUserView.showUserAge(user.getmAge());
+    private void showUser(Cursor data) {
+        if(data != null && data.moveToFirst()) {
+            String photoUrl = data.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
+            String name = data.getString(SportteamContract.UserEntry.COLUMN_NAME);
+            String city = data.getString(SportteamContract.UserEntry.COLUMN_CITY);
+            String ageStr = data.getString(SportteamContract.UserEntry.COLUMN_AGE);
+            int age = Integer.valueOf(ageStr);
+            mUserView.showUserImage(photoUrl);
+            mUserView.showUserName(name);
+            mUserView.showUserCity(city);
+            mUserView.showUserAge(age);
+        } else {
+            mUserView.showUserImage("");
+            mUserView.showUserName("");
+            mUserView.showUserCity("");
+            mUserView.showUserAge(-1);
         }
     }
 

@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.Utiles;
-import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
 import java.util.Locale;
@@ -98,21 +97,13 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
         public void onClick(View view) {
             int position = getAdapterPosition();
             mDataset.moveToPosition(position);
-            Field field = new Field(
-                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID),
-                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_NAME),
-                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT),
-                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS),
-                    mDataset.getString(SportteamContract.FieldEntry.COLUMN_CITY),
-                    mDataset.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION),
-                    mDataset.getInt(SportteamContract.FieldEntry.COLUMN_VOTES),
-                    mDataset.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME),
-                    mDataset.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME));
-            mClickListener.onFieldClick(field);
+            String fieldId = mDataset.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
+            String sportId = mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
+            mClickListener.onFieldClick(fieldId, sportId);
         }
     }
 
     public interface OnFieldItemClickListener {
-        void onFieldClick(Field field);
+        void onFieldClick(String fieldId, String sportId);
     }
 }

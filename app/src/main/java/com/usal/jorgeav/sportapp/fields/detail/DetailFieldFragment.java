@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.data.Field;
 
 import java.util.Locale;
 
@@ -22,9 +21,12 @@ import butterknife.ButterKnife;
 
 public class DetailFieldFragment extends Fragment implements DetailFieldContract.View{
     private static final String TAG = DetailFieldFragment.class.getSimpleName();
-    private static final String ARG_FIELD = "param-field";
+    public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
+    public static final String BUNDLE_SPORT_ID = "BUNDLE_SPORT_ID";
+    public static final int LOADER_FIELD_ID = 10000;
 
-    private Field mField = null;
+    private static String mFieldId = "";
+    private static String mSportId = "";
     private DetailFieldContract.Presenter mPresenter;
     private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
     private MainActivityContract.FragmentManagement mFragmentManagementListener;
@@ -49,10 +51,11 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
         // Required empty public constructor
     }
 
-    public static DetailFieldFragment newInstance(Field field) {
+    public static DetailFieldFragment newInstance(String fieldId, String sportId) {
         DetailFieldFragment fragment = new DetailFieldFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_FIELD, field);
+        args.putString(BUNDLE_FIELD_ID, fieldId);
+        args.putString(BUNDLE_SPORT_ID, sportId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,10 +64,11 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mField = getArguments().getParcelable(ARG_FIELD);
+            mFieldId = getArguments().getString(BUNDLE_FIELD_ID);
+            mSportId = getArguments().getString(BUNDLE_SPORT_ID);
         }
 
-        mPresenter = new DetailFieldPresenter(mField, this);
+        mPresenter = new DetailFieldPresenter(this);
     }
 
     @Override
@@ -79,7 +83,7 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(mField.getmName(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(mFieldId, this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -102,7 +106,10 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.openField();
+        Bundle b = new Bundle();
+        b.putString(BUNDLE_FIELD_ID, mFieldId);
+        b.putString(BUNDLE_SPORT_ID, mSportId);
+        getLoaderManager().initLoader(LOADER_FIELD_ID, b, mPresenter.getLoaderInstance());
     }
 
     @Override
@@ -125,8 +132,10 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
 
     @Override
     public void showFieldRating(Float rating) {
-        ((MainActivity)getActivity()).showContent();
-        this.textViewFieldRating.setText(String.format(Locale.getDefault(), "%2.2f", rating));
+        if (rating > -1) {
+            ((MainActivity) getActivity()).showContent();
+            this.textViewFieldRating.setText(String.format(Locale.getDefault(), "%2.2f", rating));
+        }
     }
 
     @Override
@@ -145,5 +154,10 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     public void showFieldClosingTime(String closing) {
         ((MainActivity)getActivity()).showContent();
         this.textViewFieldClosing.setText(closing);
+    }
+
+    @Override
+    public Context getActivityContext() {
+        return getActivity();
     }
 }

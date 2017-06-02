@@ -16,7 +16,6 @@ public abstract class ProfileContract {
         void showUserCity(String city);
         void showUserAge(int age);
         void showSports(Cursor cursor);
-
         Context getActivityContext();
     }
 
