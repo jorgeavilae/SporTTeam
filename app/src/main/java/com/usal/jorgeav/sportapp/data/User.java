@@ -1,6 +1,10 @@
 package com.usal.jorgeav.sportapp.data;
 
+import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Jorge Avila on 23/04/2017.
@@ -64,5 +68,36 @@ public class User {
                 ", mPhotoUrl='" + mPhotoUrl + '\'' +
                 ", mSportList=" + mSportList +
                 '}';
+    }
+
+    public Object toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put(FirebaseDBContract.DATA, dataToMap());
+        result.put(FirebaseDBContract.User.SPORTS_PRACTICED, sportsToMap());
+        result.put(FirebaseDBContract.User.FRIENDS, new HashMap<String, Long>());
+        result.put(FirebaseDBContract.User.FRIENDS_REQUESTS, new HashMap<String, Long>());
+        result.put(FirebaseDBContract.User.EVENTS_CREATED, new HashMap<String, Long>());
+        result.put(FirebaseDBContract.User.EVENTS_PARTICIPATION, new HashMap<String, Boolean>());
+        result.put(FirebaseDBContract.User.EVENTS_INVITATIONS, new HashMap<String, Long>());
+        result.put(FirebaseDBContract.User.EVENTS_REQUESTS, new HashMap<String, Long>());
+        return result;
+    }
+
+    private Map<String, Object> dataToMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put(FirebaseDBContract.User.ALIAS, this.mName);
+        result.put(FirebaseDBContract.User.EMAIL, this.mEmail);
+        result.put(FirebaseDBContract.User.AGE, this.mAge);
+        result.put(FirebaseDBContract.User.PROFILE_PICTURE, this.mPhotoUrl);
+        result.put(FirebaseDBContract.User.CITY, this.mCity);
+        return result;
+    }
+
+    private Map<String, Float> sportsToMap() {
+        HashMap<String, Float> result = new HashMap<>();
+        for (Sport sport : mSportList) {
+            result.put(sport.getmName(), sport.getmLevel());
+        }
+        return result;
     }
 }

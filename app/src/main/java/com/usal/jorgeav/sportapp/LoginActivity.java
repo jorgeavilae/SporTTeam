@@ -10,7 +10,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -41,7 +41,7 @@ import java.util.List;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-    // UI references.
+    private static final String TAG = LoginActivity.class.getSimpleName();
     private Toolbar mToolbar;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -94,9 +94,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void showNewUserDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        NewUserFragment newUserFragment = NewUserFragment.newInstance("Some Title");
-        newUserFragment.show(fm, null);
+        NewUserFragment newUserFragment = new NewUserFragment();
+
+        // The device is smaller, so show the fragment fullscreen
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // For a little polish, specify a transition animation
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        // To make it fullscreen, use the 'content' root view as the container
+        // for the fragment, which is always the root view for the activity
+        transaction.replace(android.R.id.content, newUserFragment)
+                .addToBackStack(null).commit();
     }
 
     private void populateAutoComplete() {
