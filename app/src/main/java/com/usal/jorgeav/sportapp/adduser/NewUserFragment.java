@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.usal.jorgeav.sportapp.LoginActivity;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
@@ -205,8 +206,8 @@ public class NewUserFragment extends DialogFragment {
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Toast.makeText(getContext(), "Log in is Successful", Toast.LENGTH_SHORT).show();
                         if (task.isSuccessful()) {
+                            Toast.makeText(getContext(), "Log in is Successful", Toast.LENGTH_SHORT).show();
                             User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                                     newUserEmail.getText().toString(),
                                     newUserName.getText().toString(),
@@ -217,10 +218,11 @@ public class NewUserFragment extends DialogFragment {
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             DatabaseReference myRef = database.getReference(FirebaseDBContract.TABLE_USERS);
                             myRef.child(user.getmId()).setValue(user.toMap());
-                            //TODO ahora que?
-                            showContent();
+
+                            ((LoginActivity)getActivity()).loadMyProfile(((LoginActivity)getActivity()));
                         } else {
-                            //TODO error show content
+                            showContent();
+                            Toast.makeText(getContext(), "Error Login in", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

@@ -153,8 +153,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
             final LoginActivity loginActivity = this;
+            showProgress(true);
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -164,14 +164,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 Toast.makeText(LoginActivity.this, R.string.error_incorrect_password,
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                deleteContentProvider();
-                                FirebaseDatabaseActions.loadMyProfile(getApplicationContext(), loginActivity); //Mi perfil: cuando cambie
+                                loadMyProfile(loginActivity);
                             }
                         }
                     });
         }
     }
 
+    public void loadMyProfile(LoginActivity loginActivity) {
+        deleteContentProvider();
+        FirebaseDatabaseActions.loadMyProfile(getApplicationContext(), loginActivity); //Mi perfil: cuando cambie
+    }
     public void finishLoadMyProfile() {
         finish();
     }
