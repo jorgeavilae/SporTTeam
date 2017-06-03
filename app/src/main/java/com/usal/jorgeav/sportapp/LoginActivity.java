@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -28,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.usal.jorgeav.sportapp.adduser.NewUserFragment;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
@@ -76,12 +78,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 attemptLogin();
             }
         });
+        Button mNewUserButton = (Button) findViewById(R.id.new_user_button);
+        mNewUserButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showNewUserDialog();
+            }
+        });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
         //Si la activity ha girado mientras se completaba la descarga de datos de Firebase
         if(mAuth.getCurrentUser() != null) showProgress(true);
+    }
+
+    private void showNewUserDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        NewUserFragment newUserFragment = NewUserFragment.newInstance("Some Title");
+        newUserFragment.show(fm, null);
     }
 
     private void populateAutoComplete() {
