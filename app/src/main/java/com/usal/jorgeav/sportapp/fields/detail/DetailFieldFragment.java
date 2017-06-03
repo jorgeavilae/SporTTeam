@@ -10,8 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.MainActivity;
-import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 
 import java.util.Locale;
@@ -28,8 +28,8 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     private static String mFieldId = "";
     private static String mSportId = "";
     private DetailFieldContract.Presenter mPresenter;
-    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
-    private MainActivityContract.FragmentManagement mFragmentManagementListener;
+    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
+    private ActivityContracts.FragmentManagement mFragmentManagementListener;
 
     @BindView(R.id.field_detail_id)
     TextView textViewFieldId;
@@ -90,10 +90,10 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.FragmentManagement)
-            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
-        if (context instanceof MainActivityContract.ActionBarIconManagement)
-            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.FragmentManagement)
+            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
+        if (context instanceof ActivityContracts.ActionBarIconManagement)
+            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
     }
 
     @Override

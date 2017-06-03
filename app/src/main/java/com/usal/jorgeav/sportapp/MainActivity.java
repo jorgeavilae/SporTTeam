@@ -36,8 +36,8 @@ import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        MainActivityContract.ActionBarIconManagement,
-        MainActivityContract.FragmentManagement {
+        ActivityContracts.ActionBarIconManagement,
+        ActivityContracts.FragmentManagement {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
 

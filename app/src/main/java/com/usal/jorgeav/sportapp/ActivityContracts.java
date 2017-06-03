@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * Created by Jorge Avila on 28/04/2017.
  */
 
-public abstract class MainActivityContract {
+public abstract class ActivityContracts {
 
     public interface FragmentManagement {
         void initFragment(@NotNull Fragment fragment, boolean isOnBackStack);

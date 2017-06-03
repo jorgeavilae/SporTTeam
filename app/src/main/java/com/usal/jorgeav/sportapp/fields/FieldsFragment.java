@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.usal.jorgeav.sportapp.MainActivityContract;
+import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.FieldsAdapter;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
@@ -26,8 +26,8 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
 
     FieldsContract.Presenter mFieldsPresenter;
     FieldsAdapter mFieldsRecyclerAdapter;
-    private MainActivityContract.FragmentManagement mFragmentManagementListener;
-    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
+    private ActivityContracts.FragmentManagement mFragmentManagementListener;
+    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.fields_list)
     RecyclerView fieldsRecyclerList;
@@ -77,10 +77,10 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.FragmentManagement)
-            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
-        if (context instanceof MainActivityContract.ActionBarIconManagement)
-            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.FragmentManagement)
+            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
+        if (context instanceof ActivityContracts.ActionBarIconManagement)
+            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
     }
 
     @Override

@@ -15,8 +15,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.MainActivity;
-import com.usal.jorgeav.sportapp.MainActivityContract;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -40,8 +40,8 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     private static String mEventId = "";
     private boolean isMyEvent = false;
     private DetailEventContract.Presenter mPresenter;
-    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
-    private MainActivityContract.FragmentManagement mFragmentManagementListener;
+    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
+    private ActivityContracts.FragmentManagement mFragmentManagementListener;
 
     @BindView(R.id.event_detail_id)
     TextView textViewEventId;
@@ -173,10 +173,10 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.FragmentManagement)
-            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
-        if (context instanceof MainActivityContract.ActionBarIconManagement)
-            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.FragmentManagement)
+            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
+        if (context instanceof ActivityContracts.ActionBarIconManagement)
+            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
     }
 
     @Override

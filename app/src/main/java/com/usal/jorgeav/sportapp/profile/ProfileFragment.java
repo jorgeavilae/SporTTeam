@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.usal.jorgeav.sportapp.MainActivityContract;
+import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
@@ -41,8 +40,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     public static final int LOADER_MYPROFILE_SPORTS_ID = 1002;
     private static String mUserUid = "";
     private ProfileContract.Presenter mProfilePresenter;
-    private MainActivityContract.FragmentManagement mFragmentManagementListener;
-    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
+    private ActivityContracts.FragmentManagement mFragmentManagementListener;
+    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.user_send_invitation)
     Button userSendInvitationButton;
@@ -169,10 +168,10 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.FragmentManagement)
-            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
-        if (context instanceof MainActivityContract.ActionBarIconManagement)
-            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.FragmentManagement)
+            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
+        if (context instanceof ActivityContracts.ActionBarIconManagement)
+            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
     }
 
     @Override

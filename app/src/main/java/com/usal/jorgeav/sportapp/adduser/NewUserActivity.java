@@ -2,14 +2,11 @@ package com.usal.jorgeav.sportapp.adduser;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,10 +24,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.usal.jorgeav.sportapp.LoginActivity;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
 
 import java.util.ArrayList;
@@ -38,19 +36,19 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 03/06/2017.
- */
-
-public class NewUserFragment extends DialogFragment {
+public class NewUserActivity extends AppCompatActivity {
 
     @BindView(R.id.new_user_toolbar)
     Toolbar newUseerToolbar;
+    @BindView(R.id.new_user_progressbar)
+    ProgressBar newUserProgressbar;
+    @BindView(R.id.new_user_content)
+    NestedScrollView newUserContent;
     @BindView(R.id.new_user_email)
     EditText newUserEmail;
     @BindView(R.id.new_user_password)
     EditText newUserPassword;
-//    @BindView(R.id.new_user_auth_button)
+    //    @BindView(R.id.new_user_auth_button)
 //    Button newUserAuthButton;
     @BindView(R.id.new_user_name)
     EditText newUserName;
@@ -60,48 +58,36 @@ public class NewUserFragment extends DialogFragment {
     EditText newUserPhoto;
     @BindView(R.id.new_user_city)
     EditText newUserCity;
+
     @BindView(R.id.new_user_spinner)
     Spinner newUserSpinner;
     @BindView(R.id.new_user_sport_rating)
     RatingBar newUserSportRating;
     @BindView(R.id.new_user_add_sport_button)
     Button newUserAddSportButton;
+
     @BindView(R.id.new_user_create_button)
     Button newUserCreateButton;
-    @BindView(R.id.new_user_content)
-    NestedScrollView newUserContent;
-    @BindView(R.id.new_user_progressbar)
-    ProgressBar newUserProgressbar;
 
     ArrayList<Sport> sports;
 
-    public NewUserFragment() {
-        // Empty constructor is required for DialogFragment
-        // Make sure not to add arguments to the constructor
-        // Use `newInstance` instead as shown below
-    }
-
-    public static NewUserFragment newInstance() {
-        NewUserFragment frag = new NewUserFragment();
-        return frag;
-    }
-
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_new_user, container, false);
-        ButterKnife.bind(this, view);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_user);
+        ButterKnife.bind(this);
 
         newUseerToolbar.setTitle("Add User");
         newUseerToolbar.setNavigationIcon(R.drawable.ic_action_close);
         newUseerToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();    }
+                setResult(RESULT_CANCELED); finish();
+            }
         });
 
         sports = new ArrayList<Sport>();
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.sport_id,
                 android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -109,9 +95,11 @@ public class NewUserFragment extends DialogFragment {
         newUserAddSportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Sport s = new Sport(newUserSpinner.getSelectedItem().toString(), newUserSportRating.getRating(), 0);
-                sports.add(s);
-                Toast.makeText(getContext(), "Sport añadido", Toast.LENGTH_SHORT).show();
+                if (newUserSportRating.getRating()>0) {
+                    Sport s = new Sport(newUserSpinner.getSelectedItem().toString(), newUserSportRating.getRating(), 0);
+                    sports.add(s);
+                    Toast.makeText(getApplicationContext(), "Sport añadido", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -155,12 +143,10 @@ public class NewUserFragment extends DialogFragment {
                     hideContent();
                     createAuthUser(newUserEmail.getText().toString(), newUserPassword.getText().toString());
                 } else
-                    Toast.makeText(getContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
             }
         });
         showContent();
-
-        return view;
     }
 
     private void checkEmailExists(String email) {
@@ -202,12 +188,13 @@ public class NewUserFragment extends DialogFragment {
     }
 
     private void createAuthUser(String email, String pass) {
+        final NewUserActivity newUserActivity = this;
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "Log in is Successful", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Log in is Successful", Toast.LENGTH_SHORT).show();
                             User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                                     newUserEmail.getText().toString(),
                                     newUserName.getText().toString(),
@@ -219,20 +206,24 @@ public class NewUserFragment extends DialogFragment {
                             DatabaseReference myRef = database.getReference(FirebaseDBContract.TABLE_USERS);
                             myRef.child(user.getmId()).setValue(user.toMap());
 
-                            ((LoginActivity)getActivity()).loadMyProfile(((LoginActivity)getActivity()));
+                            setResult(RESULT_OK); finish();
                         } else {
                             showContent();
-                            Toast.makeText(getContext(), "Error Login in", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Error Login in", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-    private void closeDialogApplyingChanges(boolean applyChanges) {
-        if(applyChanges) {
-
-        }
-        dismiss();
+    private void deleteContentProvider() {
+        SportteamDBHelper db = new SportteamDBHelper(this);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FRIENDS_REQUESTS);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FRIENDS);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENTS_PARTICIPATION);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT_INVITATIONS);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENTS_REQUESTS);
     }
 
     private void showContent() {

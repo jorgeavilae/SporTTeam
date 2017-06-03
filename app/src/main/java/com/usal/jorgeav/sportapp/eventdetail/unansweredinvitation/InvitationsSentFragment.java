@@ -11,12 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.usal.jorgeav.sportapp.MainActivityContract;
+import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.data.Event;
-import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
@@ -33,8 +30,8 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private static String mEventId = "";
-    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
-    private MainActivityContract.FragmentManagement mFragmentManagementListener;
+    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
+    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     InvitationsSentContract.Presenter mEventInvitationsPresenter;
     UsersAdapter mUsersAdapter;
 
@@ -96,10 +93,10 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.FragmentManagement)
-            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
-        if (context instanceof MainActivityContract.ActionBarIconManagement)
-            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.FragmentManagement)
+            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
+        if (context instanceof ActivityContracts.ActionBarIconManagement)
+            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
     }
 
     @Override

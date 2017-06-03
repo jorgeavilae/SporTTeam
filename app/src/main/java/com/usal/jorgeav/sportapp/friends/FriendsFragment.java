@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.usal.jorgeav.sportapp.MainActivityContract;
+import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
@@ -30,8 +30,8 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
 
     FriendsContract.Presenter mFriendsPresenter;
     UsersAdapter mFriendsRecyclerAdapter;
-    private MainActivityContract.FragmentManagement mFragmentManagementListener;
-    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
+    private ActivityContracts.FragmentManagement mFragmentManagementListener;
+    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.friends_list)
     RecyclerView friendsRecyclerList;
@@ -80,10 +80,10 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.FragmentManagement)
-            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
-        if (context instanceof MainActivityContract.ActionBarIconManagement)
-            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.FragmentManagement)
+            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
+        if (context instanceof ActivityContracts.ActionBarIconManagement)
+            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
     }
 
     @Override

@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.usal.jorgeav.sportapp.MainActivityContract;
+import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
@@ -31,8 +31,8 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     public static final int LOADER_USERS_REQUESTS_ID = 9000;
     public static final int LOADER_USERS_REQUESTS_DATA_ID = 9001;
     private static String mEventId = "";
-    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
-    private MainActivityContract.FragmentManagement mFragmentManagementListener;
+    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
+    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     UsersRequestsContract.Presenter mUsersRequestsPresenter;
     UsersAdapter mUsersRecyclerAdapter;
 
@@ -92,10 +92,10 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.FragmentManagement)
-            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
-        if (context instanceof MainActivityContract.ActionBarIconManagement)
-            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.FragmentManagement)
+            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
+        if (context instanceof ActivityContracts.ActionBarIconManagement)
+            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
     }
 
     @Override

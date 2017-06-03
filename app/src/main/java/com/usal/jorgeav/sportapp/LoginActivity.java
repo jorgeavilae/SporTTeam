@@ -5,12 +5,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -29,7 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.usal.jorgeav.sportapp.adduser.NewUserFragment;
+import com.usal.jorgeav.sportapp.adduser.NewUserActivity;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mNewUserButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                showNewUserDialog();
+                startNewUserForResult();
             }
         });
 
@@ -93,17 +93,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if(mAuth.getCurrentUser() != null) showProgress(true);
     }
 
-    private void showNewUserDialog() {
-        NewUserFragment newUserFragment = new NewUserFragment();
+    private void startNewUserForResult() {
+        Intent intent = new Intent(this, NewUserActivity.class);
+        startActivityForResult(intent, 0);
+    }
 
-        // The device is smaller, so show the fragment fullscreen
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        // For a little polish, specify a transition animation
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        // To make it fullscreen, use the 'content' root view as the container
-        // for the fragment, which is always the root view for the activity
-        transaction.replace(android.R.id.content, newUserFragment)
-                .addToBackStack(null).commit();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode) {
+            case RESULT_OK:
+                loadMyProfile(this);
+                break;
+            case RESULT_CANCELED:
+                break;
+        }
     }
 
     private void populateAutoComplete() {

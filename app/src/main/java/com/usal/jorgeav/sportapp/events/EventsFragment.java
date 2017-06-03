@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.usal.jorgeav.sportapp.MainActivityContract;
+import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
@@ -26,8 +26,8 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     public static final int LOADER_EVENTS_DATA_FROM_PARTICIPATION_ID = 2002;
 
     EventsContract.Presenter mEventsPresenter;
-    private MainActivityContract.FragmentManagement mFragmentManagementListener;
-    private MainActivityContract.ActionBarIconManagement mActionBarIconManagementListener;
+    private ActivityContracts.FragmentManagement mFragmentManagementListener;
+    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     EventsAdapter mMyOwnEventsRecyclerAdapter;
     @BindView(R.id.my_own_events_list)
@@ -88,10 +88,10 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainActivityContract.FragmentManagement)
-            mFragmentManagementListener = (MainActivityContract.FragmentManagement) context;
-        if (context instanceof MainActivityContract.ActionBarIconManagement)
-            mActionBarIconManagementListener = (MainActivityContract.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.FragmentManagement)
+            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
+        if (context instanceof ActivityContracts.ActionBarIconManagement)
+            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
     }
 
     @Override
