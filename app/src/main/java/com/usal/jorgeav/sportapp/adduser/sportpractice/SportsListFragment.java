@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.profile.sportpractice;
+package com.usal.jorgeav.sportapp.adduser.sportpractice;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.data.Sport;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,9 +23,11 @@ import butterknife.ButterKnife;
  */
 
 public class SportsListFragment extends Fragment {
+    public static final String BUNDLE_INSTANCE_LISTENER = "BUNDLE_INSTANCE_LISTENER";
 
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
+    private OnSportsSelected mOnSportsSelectedListener;
 
     @BindView(R.id.recycler_list)
     RecyclerView sportsList;
@@ -31,6 +36,15 @@ public class SportsListFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public void setOnSportSelectedLister(OnSportsSelected listener) {
+        this.mOnSportsSelectedListener = listener;
+    }
+
+    public static SportsListFragment newInstance(OnSportsSelected listener) {
+        SportsListFragment fragment = new SportsListFragment();
+        fragment.setOnSportSelectedLister(listener);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,7 +61,7 @@ public class SportsListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(SportsListFragment.class.getSimpleName(), this);
-        mActionBarIconManagementListener.setToolbarAsUp();
+        if (mActionBarIconManagementListener != null) mActionBarIconManagementListener.setToolbarAsUp();
     }
 
     @Override
@@ -64,5 +78,10 @@ public class SportsListFragment extends Fragment {
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
+        mOnSportsSelectedListener.retrieveSportsSelected(null);
+    }
+    
+    public interface OnSportsSelected {
+        void retrieveSportsSelected(List<Sport> sportsSelected);
     }
 }
