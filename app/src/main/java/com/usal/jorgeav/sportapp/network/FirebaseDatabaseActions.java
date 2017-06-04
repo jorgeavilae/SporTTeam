@@ -594,4 +594,37 @@ public class FirebaseDatabaseActions {
             }
         });
     }
+
+    public static void loadProfilesWithName(final Context context, String username) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference usersRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.ALIAS;
+
+        /* https://stackoverflow.com/a/40633692/4235666
+         * https://firebase.google.com/docs/database/admin/retrieve-data */
+        usersRef.orderByChild(filter).startAt(username).endAt(username+"\uf8ff")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        User anUser = Utiles.datasnapshotToUser(data, data.getKey());
+                        ContentValues cvData = Utiles.dataUserToContentValues(anUser);
+                        context.getContentResolver()
+                                .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
+
+                        List<ContentValues> cvSports = Utiles.sportUserToContentValues(anUser);
+                        context.getContentResolver()
+                                .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                        cvSports.toArray(new ContentValues[cvSports.size()]));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

@@ -54,8 +54,7 @@ public class FriendsPresenter implements FriendsContract.Presenter, LoaderManage
                         SportteamContract.UserEntry.USER_COLUMNS,
 //                        SportteamContract.UserEntry.USER_ID + " = ?",
 //                        args.getStringArray(FRIEND_KEY),
-                        null,
-                        null,
+                        null, null,
                         SportteamContract.UserEntry.NAME + " DESC");
         }
         return null;

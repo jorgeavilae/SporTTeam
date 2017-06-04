@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.friends;
+package com.usal.jorgeav.sportapp.friends.searchuser;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -15,62 +15,55 @@ import android.widget.Button;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.friends.searchuser.SearchUsersFragment;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Jorge Avila on 26/05/2017.
+ * Created by Jorge Avila on 04/06/2017.
  */
 
-public class FriendsFragment extends Fragment implements FriendsContract.View, UsersAdapter.OnUserItemClickListener {
-    private static final String TAG = FriendsFragment.class.getSimpleName();
-    public static final int LOADER_FRIENDS_ID = 6000;
-    public static final int LOADER_FRIENDS_AS_USERS_ID = 6001;
+public class SearchUsersFragment extends Fragment implements SearchUsersContract.View, UsersAdapter.OnUserItemClickListener  {
+    private static final String TAG = SearchUsersFragment.class.getSimpleName();
+    public static final int LOADER_USERS_FROM_CITY = 12000;
 
-    FriendsContract.Presenter mFriendsPresenter;
-    UsersAdapter mFriendsRecyclerAdapter;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
+    private ActivityContracts.FragmentManagement mFragmentManagementListener;
+    SearchUsersContract.Presenter mSearchUsersPresenter;
+    UsersAdapter mUsersRecyclerAdapter;
 
-    @BindView(R.id.friends_search)
-    Button friendsSearchButton;
-    @BindView(R.id.friends_list)
-    RecyclerView friendsRecyclerList;
+    @BindView(R.id.search_users_list)
+    RecyclerView searchUsersList;
+    @BindView(R.id.search_users_button)
+    Button searchUsersButton;
 
-    public FriendsFragment() {
+    public SearchUsersFragment() {
         // Required empty public constructor
-    }
-
-    public static FriendsFragment newInstance() {
-        return new FriendsFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mFriendsPresenter = new FriendsPresenter(this);
-        mFriendsRecyclerAdapter = new UsersAdapter(null, this);
+        mSearchUsersPresenter = new SearchUsersPresenter(this);
+        mUsersRecyclerAdapter = new UsersAdapter(null, this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_users, container, false);
+        View root = inflater.inflate(R.layout.fragment_search_users, container, false);
         ButterKnife.bind(this, root);
 
-        friendsRecyclerList.setAdapter(mFriendsRecyclerAdapter);
-        friendsRecyclerList.setHasFixedSize(true);
-        friendsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-
-        friendsSearchButton.setOnClickListener(new View.OnClickListener() {
+        searchUsersList.setAdapter(mUsersRecyclerAdapter);
+        searchUsersList.setHasFixedSize(true);
+        searchUsersList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        searchUsersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = new SearchUsersFragment();
-                mFragmentManagementListener.initFragment(fragment, true);
+                UsernameDialog dialog = new UsernameDialog();
+                dialog.show(getActivity().getSupportFragmentManager(), null);
             }
         });
         return root;
@@ -79,15 +72,16 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.friends), this);
-        mActionBarIconManagementListener.setToolbarAsNav();
+        mFragmentManagementListener.setCurrentDisplayedFragment(SearchUsersFragment.class.getSimpleName(), this);
+        mActionBarIconManagementListener.setToolbarAsUp();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, mFriendsPresenter.getLoaderInstance());
+        getLoaderManager().initLoader(LOADER_USERS_FROM_CITY, null, mSearchUsersPresenter.getLoaderInstance());
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -106,8 +100,8 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
     }
 
     @Override
-    public void showFriends(Cursor cursor) {
-        mFriendsRecyclerAdapter.replaceData(cursor);
+    public void showUsers(Cursor cursor) {
+        mUsersRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }
 
@@ -117,7 +111,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
     }
 
     @Override
-    public Fragment getThis() {
+    public SearchUsersFragment getThis() {
         return this;
     }
 

@@ -273,4 +273,19 @@ public class Utiles {
         cv.put(SportteamContract.EventRequestsEntry.DATE, date);
         return cv;
     }
+
+    public static String getCurrentCity(Context context, String currentUserID) {
+        String result = null;
+        Cursor c = context.getContentResolver().query(
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.UserEntry.USER_ID + " = ?",
+                new String[]{currentUserID},
+                null);
+        if (c != null && c.moveToFirst()) {
+            result = c.getString(SportteamContract.UserEntry.COLUMN_CITY);
+            c.close();
+        }
+        return result;
+    }
 }
