@@ -103,7 +103,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_age"
-            tools:listitem="@layout/sport_item_list"
+            tools:listitem="@layout/sport_profile_item_list"
             tools:orientation="horizontal" />
 
         <Button

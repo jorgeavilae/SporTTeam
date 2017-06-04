@@ -9,8 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -31,7 +33,7 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
     @Override
     public ProfileSportsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.sport_item_list, parent, false);
+        View view = inflater.inflate(R.layout.sport_profile_item_list, parent, false);
         return new ProfileSportsAdapter.ViewHolder(view);
     }
 
@@ -60,12 +62,23 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         this.mDataset = mDataset;
     }
 
+    public ArrayList<Sport> getDataAsArrayList() {
+        if (mDataset == null) return null;
+        ArrayList<Sport> result = new ArrayList<Sport>();
+        for(mDataset.moveToFirst(); !mDataset.isAfterLast(); mDataset.moveToNext()) {
+            String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
+            float level = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);
+            result.add(new Sport(name, level, 0));
+        }
+        return result;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.sport_item_icon)
+        @BindView(R.id.sport_profile_item_icon)
         ImageView imageViewSportIcon;
-        @BindView(R.id.sport_item_name)
+        @BindView(R.id.sport_profile_item_name)
         TextView textViewSportName;
-        @BindView(R.id.sport_item_level)
+        @BindView(R.id.sport_profile_item_level)
         TextView textViewSportLevel;
 
         public ViewHolder(View itemView) {

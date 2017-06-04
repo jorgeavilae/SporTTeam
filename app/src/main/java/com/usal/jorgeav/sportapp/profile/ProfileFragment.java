@@ -23,16 +23,18 @@ import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
+import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
 
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProfileFragment extends Fragment implements ProfileContract.View {
+public class ProfileFragment extends Fragment implements ProfileContract.View, SportsListFragment.OnSportsSelected {
     private final static String TAG = ProfileFragment.class.getSimpleName();
 
     public static final String BUNDLE_INSTANCE_UID = "BUNDLE_INSTANCE_UID";
@@ -116,10 +118,11 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                 }
             });
             userEditSportListButton.setVisibility(View.VISIBLE);
+            final ProfileFragment profileFragment = this;
             userEditSportListButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Fragment fragment = new SportsListFragment();
+                    Fragment fragment = SportsListFragment.newInstance(sportsAdapter.getDataAsArrayList(), profileFragment);
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });
@@ -220,4 +223,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         return getActivity();
     }
 
+    @Override
+    public void retrieveSportsSelected(List<Sport> sportsSelected) {
+        //TODO update sports in firebase
+    }
 }

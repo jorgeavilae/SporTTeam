@@ -10,13 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -68,11 +65,6 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     EditText newUserPhoto;
     @BindView(R.id.new_user_city)
     EditText newUserCity;
-
-    @BindView(R.id.new_user_spinner)
-    Spinner newUserSpinner;
-    @BindView(R.id.new_user_sport_rating)
-    RatingBar newUserSportRating;
     @BindView(R.id.new_user_add_sport_button)
     Button newUserAddSportButton;
 
@@ -99,21 +91,10 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
 
         sports = new ArrayList<Sport>();
 
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.sport_id,
-                android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        newUserSpinner.setAdapter(adapter);
-
-        final SportsListFragment slf = SportsListFragment.newInstance(this);
+        final SportsListFragment slf = SportsListFragment.newInstance(null, this);
         newUserAddSportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (newUserSportRating.getRating()>0) {
-//                    Sport s = new Sport(newUserSpinner.getSelectedItem().toString(), newUserSportRating.getRating(), 0);
-//                    sports.add(s);
-//                    Toast.makeText(getApplicationContext(), "Sport añadido", Toast.LENGTH_SHORT).show();
-//                }
                 initFragment(slf, true);
             }
         });

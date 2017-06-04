@@ -5,13 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Sport;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,6 +22,7 @@ import butterknife.ButterKnife;
  */
 
 public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.ViewHolder> {
+    public static final String TAG = "AddSportsAdapter";
 
     private List<Sport> mDataset;
 
@@ -31,7 +33,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
     @Override
     public AddSportsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout., parent, false);
+        View view = inflater.inflate(R.layout.sport_add_item_list, parent, false);
         return new AddSportsAdapter.ViewHolder(view);
     }
 
@@ -42,7 +44,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
             String name = s.getmName();
             float level = s.getmLevel();
             holder.textViewSportName.setText(name);
-            holder.textViewSportLevel.setText(String.format(Locale.getDefault(), "%.2f", level));
+            holder.ratingBarSportLevel.setRating(level);
         }
     }
 
@@ -61,17 +63,32 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
         this.mDataset = mDataset;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.sport_item_icon)
-        ImageView imageViewSportIcon;
-        @BindView(R.id.sport_item_name)
-        TextView textViewSportName;
-        @BindView(R.id.sport_item_level)
-        TextView textViewSportLevel;
+    public List<Sport> getDataAsArrayList() {
+        ArrayList<Sport> result = new ArrayList<>();
+        for (Sport s : mDataset)
+            if (s.getmLevel() > 0)
+                result.add(s);
+        return result;
+    }
 
-        public ViewHolder(View itemView) {
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.sport_add_item_icon)
+        ImageView imageViewSportIcon;
+        @BindView(R.id.sport_add_item_name)
+        TextView textViewSportName;
+        @BindView(R.id.sport_add_item_level)
+        RatingBar ratingBarSportLevel;
+
+        public ViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            ratingBarSportLevel.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                    mDataset.get(getAdapterPosition()).setmLevel(v);
+                }
+            });
         }
     }
 }
