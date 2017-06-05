@@ -15,6 +15,7 @@ import android.widget.Button;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
@@ -24,9 +25,12 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 04/06/2017.
  */
 
-public class SearchUsersFragment extends Fragment implements SearchUsersContract.View, UsersAdapter.OnUserItemClickListener  {
+public class SearchUsersFragment extends Fragment implements SearchUsersContract.View, UsersAdapter.OnUserItemClickListener, UsernameDialog.UsernameDialogListener  {
     private static final String TAG = SearchUsersFragment.class.getSimpleName();
     public static final int LOADER_USERS_FROM_CITY = 12000;
+    public static final int LOADER_USERS_WITH_NAME = 12001;
+    public static final String BUNDLE_USERNAME = "BUNDLE_USERNAME";
+    public final SearchUsersFragment mThis = this;
 
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -63,6 +67,7 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
             @Override
             public void onClick(View view) {
                 UsernameDialog dialog = new UsernameDialog();
+                dialog.setTargetFragment(mThis, 1);
                 dialog.show(getActivity().getSupportFragmentManager(), null);
             }
         });
@@ -119,5 +124,15 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
     public void onUserClick(String uid) {
         Fragment newFragment = ProfileFragment.newInstance(uid);
         mFragmentManagementListener.initFragment(newFragment, true);
+    }
+
+    @Override
+    public void onDialogPositiveClick(String username) {
+        mUsersRecyclerAdapter.replaceData(null);
+        FirebaseDatabaseActions.loadProfilesWithName(getActivityContext(), username);
+        getLoaderManager().destroyLoader(LOADER_USERS_FROM_CITY);
+        Bundle b = new Bundle();
+        b.putString(BUNDLE_USERNAME, username);
+        getLoaderManager().restartLoader(LOADER_USERS_WITH_NAME, b, mSearchUsersPresenter.getLoaderInstance());
     }
 }

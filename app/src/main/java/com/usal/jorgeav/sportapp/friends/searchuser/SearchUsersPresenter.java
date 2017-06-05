@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.Utiles;
@@ -45,6 +46,17 @@ public class SearchUsersPresenter implements SearchUsersContract.Presenter, Load
                         SportteamContract.UserEntry.CITY + " = ?",
                         new String[]{Utiles.getCurrentCity(mSearchUsersView.getActivityContext(), currentUserID)},
                         SportteamContract.UserEntry.NAME + " ASC");
+            case SearchUsersFragment.LOADER_USERS_WITH_NAME:
+                Log.d(TAG, "onCreateLoader: "+args.getString(SearchUsersFragment.BUNDLE_USERNAME));
+                if (args.containsKey(SearchUsersFragment.BUNDLE_USERNAME)) {
+                    return new CursorLoader(
+                            this.mSearchUsersView.getActivityContext(),
+                            SportteamContract.UserEntry.CONTENT_USER_URI,
+                            SportteamContract.UserEntry.USER_COLUMNS,
+                            SportteamContract.UserEntry.NAME + " = ?",
+                            new String[]{args.getString(SearchUsersFragment.BUNDLE_USERNAME)},
+                            null);
+                }
         }
         return null;
     }

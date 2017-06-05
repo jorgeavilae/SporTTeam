@@ -29,6 +29,9 @@ public class UsernameDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (getTargetFragment() instanceof UsernameDialogListener)
+            mListener = (UsernameDialogListener) getTargetFragment();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Username?");
         builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
@@ -38,11 +41,7 @@ public class UsernameDialog extends DialogFragment {
                     mListener.onDialogPositiveClick(mUsernameEditText.getText().toString());
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-            }
-        });
+        builder.setNegativeButton("Cancel", null);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.search_dialog, null);
         mUsernameEditText = (EditText) view.findViewById(R.id.dialog_username);
