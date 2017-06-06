@@ -17,6 +17,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
+import com.usal.jorgeav.sportapp.events.searchevent.SearchEventsFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,6 +84,8 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
         eventsSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Fragment fragment = SearchEventsFragment.newInstance();
+                mFragmentManagementListener.initFragment(fragment, true);
 
             }
         });
