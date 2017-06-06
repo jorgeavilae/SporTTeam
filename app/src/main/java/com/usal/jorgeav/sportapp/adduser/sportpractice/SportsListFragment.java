@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.adduser.sportpractice;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,7 +25,6 @@ import butterknife.ButterKnife;
 
 public class SportsListFragment extends Fragment {
     private final static String TAG = SportsListFragment.class.getSimpleName();
-    public static final String BUNDLE_INSTANCE_LISTENER = "BUNDLE_INSTANCE_LISTENER";
     public static final String BUNDLE_INSTANCE_SPORT_LIST = "BUNDLE_INSTANCE_SPORT_LIST";
 
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
@@ -39,13 +39,13 @@ public class SportsListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void setOnSportSelectedLister(OnSportsSelected listener) {
-        this.mOnSportsSelectedListener = listener;
+    public void setmOnSportsSelectedListener(OnSportsSelected mOnSportsSelectedListener) {
+        this.mOnSportsSelectedListener = mOnSportsSelectedListener;
     }
 
-    public static SportsListFragment newInstance(ArrayList<Sport> sportsList, OnSportsSelected listener) {
+    public static SportsListFragment newInstance(ArrayList<Sport> sportsList, @NonNull OnSportsSelected listener) {
         SportsListFragment fragment = new SportsListFragment();
-        fragment.setOnSportSelectedLister(listener);
+        fragment.setmOnSportsSelectedListener(listener);
         if (sportsList != null) {
             Bundle args = new Bundle();
             args.putParcelableArrayList(BUNDLE_INSTANCE_SPORT_LIST, sportsList);

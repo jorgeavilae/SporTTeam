@@ -12,6 +12,7 @@ import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +24,33 @@ import java.util.Locale;
  */
 
 public class Utiles {
+
+    public static String calendarToDate(Date time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+        return sdf.format(time.getTime());
+    }
+
+    public static String calendarToTime(Date time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return sdf.format(time.getTime());
+    }
+
+    public static long stringDateToMillis(String s) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+        try {
+            return sdf.parse(s).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public static long stringTimeToMillis(String time) {
+        int quoteInd = time.indexOf(":");
+        int hor = Integer.valueOf(time.substring(0, quoteInd));
+        int min = Integer.valueOf(time.substring(++quoteInd, time.length()));
+        return (((hor * 60) + min) * 60 * 1000);
+    }
 
     public static User getUserFromContentProvider(Context context, String uid) {
         Cursor cUser = context.getContentResolver().query(

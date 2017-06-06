@@ -10,11 +10,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
+import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +31,10 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
+    @BindView(R.id.events_create_button)
+    Button eventsCreateButton;
+    @BindView(R.id.events_search_button)
+    Button eventsSearchButton;
     EventsAdapter mMyOwnEventsRecyclerAdapter;
     @BindView(R.id.my_own_events_list)
     RecyclerView myOwnEventsRecyclerList;
@@ -67,6 +73,19 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
         eventsParticipationRecyclerList.setHasFixedSize(true);
         eventsParticipationRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
+        eventsCreateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = NewEventFragment.newInstance();
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
+        });
+        eventsSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         return root;
     }
 

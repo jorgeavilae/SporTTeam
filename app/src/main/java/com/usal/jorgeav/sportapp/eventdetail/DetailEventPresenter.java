@@ -90,7 +90,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         while (data.moveToNext())
             if (data.getInt(SportteamContract.EventsParticipationEntry.COLUMN_PARTICIPATES) == 1)
                 arrayList.add(data.getString(SportteamContract.EventsParticipationEntry.COLUMN_USER_ID));
-        data.close();
+        //data.close();
         return arrayList.toArray(new String[arrayList.size()]);
     }
 

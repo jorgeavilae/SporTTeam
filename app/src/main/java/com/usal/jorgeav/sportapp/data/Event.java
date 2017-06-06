@@ -3,6 +3,11 @@ package com.usal.jorgeav.sportapp.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Jorge Avila on 23/04/2017.
  */
@@ -27,6 +32,10 @@ public class Event implements Parcelable {
         this.mOwner = mOwner;
         this.mTotalPlayers = mTotalPlayers;
         this.mEmptyPlayers = mEmptyPlayers;
+    }
+
+    public void setmId(String mId) {
+        this.mId = mId;
     }
 
     public String getmId() {
@@ -59,6 +68,28 @@ public class Event implements Parcelable {
 
     public int getmEmptyPlayers() {
         return mEmptyPlayers;
+    }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put(FirebaseDBContract.DATA, dataToMap());
+        result.put(FirebaseDBContract.Event.PARTICIPANTS, new HashMap<String, Boolean>());
+        result.put(FirebaseDBContract.Event.INVITATIONS, new HashMap<String, Long>());
+        result.put(FirebaseDBContract.Event.USER_REQUESTS, new HashMap<String, Long>());
+        return result;
+    }
+
+    private Map<String, Object> dataToMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put(FirebaseDBContract.Event.SPORT, this.mSport);
+        result.put(FirebaseDBContract.Event.FIELD, this.mField);
+        result.put(FirebaseDBContract.Event.CITY, this.mCity);
+        result.put(FirebaseDBContract.Event.OWNER, this.mOwner);
+        result.put(FirebaseDBContract.Event.DATE, this.mDate);
+        result.put(FirebaseDBContract.Event.TOTAL_PLAYERS, this.mTotalPlayers);
+        result.put(FirebaseDBContract.Event.EMPTY_PLAYERS, this.mEmptyPlayers);
+        return result;
+
     }
 
     @Override
