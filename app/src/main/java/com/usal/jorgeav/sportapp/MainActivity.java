@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(intent);
                     } else {
-                        onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
+                        if(mDisplayedFragment == null)
+                            onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
                     }
                 } else {
                     // User is signed out
