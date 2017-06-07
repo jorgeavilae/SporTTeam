@@ -23,17 +23,6 @@ import java.lang.annotation.RetentionPolicy;
 
 public class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
 
-    // Define the list of accepted constants and declare the NavigationMode annotation
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_FRIENDS, RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_REQUEST})
-    public @interface RelationType {}
-    // Declare the constants
-    public static final int RELATION_TYPE_ERROR = -1;
-    public static final int RELATION_TYPE_NONE = 0;
-    public static final int RELATION_TYPE_FRIENDS = 1;
-    public static final int RELATION_TYPE_I_SEND_REQUEST = 2;
-    public static final int RELATION_TYPE_I_RECEIVE_REQUEST = 3;
-
     private ProfileContract.View mUserView;
     private User mUser;
 
@@ -120,6 +109,15 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
         }
     }
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_FRIENDS,
+            RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_REQUEST})
+    @interface RelationType {}
+    static final int RELATION_TYPE_ERROR = -1;
+    static final int RELATION_TYPE_NONE = 0;
+    static final int RELATION_TYPE_FRIENDS = 1;
+    static final int RELATION_TYPE_I_SEND_REQUEST = 2;
+    static final int RELATION_TYPE_I_RECEIVE_REQUEST = 3;
     @Override
     @RelationType
     public int getRelationTypeBetweenThisUserAndI() {
@@ -185,16 +183,22 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void acceptFriendRequest(String uid) {
+        if (!TextUtils.isEmpty(uid))
+            FirebaseDatabaseActions.acceptFriendRequest(uid);
 
     }
 
     @Override
     public void declineFriendRequest(String uid) {
+        if (!TextUtils.isEmpty(uid))
+            FirebaseDatabaseActions.declineFriendRequest(uid);
 
     }
 
     @Override
     public void deleteFriend(String uid) {
+        if (!TextUtils.isEmpty(uid))
+            FirebaseDatabaseActions.deleteFriend(uid);
 
     }
 }

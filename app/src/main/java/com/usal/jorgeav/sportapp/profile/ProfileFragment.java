@@ -219,6 +219,9 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
                     }
                 });
                 break;
+            case ProfilePresenter.RELATION_TYPE_ERROR:
+                userAddFriendButton.setText("Error");
+                break;
         }
     }
 

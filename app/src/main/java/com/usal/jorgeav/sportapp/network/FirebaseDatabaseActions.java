@@ -661,39 +661,73 @@ public class FirebaseDatabaseActions {
         });
     }
 
+    //TODO checks if childs exists
     public static void sendFriendRequest(String otherUid) {
-
-        //TODO checks: si la request no se ha hecho ya. Ahora si no la hay la crea, y si la hay la sobreescribe
-
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference myUserFriendRequestSent = FirebaseDatabase.getInstance()
-                .getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT);
-        DatabaseReference otherUserFriendRequestReceived = FirebaseDatabase.getInstance()
-                .getReference(FirebaseDBContract.TABLE_USERS)
-                .child(otherUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED);
-
         long currentTime = System.currentTimeMillis();
-        myUserFriendRequestSent.child(otherUid).setValue(currentTime);
-        otherUserFriendRequestReceived.child(myUid).setValue(currentTime);
+
+        //Set Friend Request Sent in my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT)
+                .child(otherUid).setValue(currentTime);
+
+        //Set Friend Request Received in other User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED)
+                .child(myUid).setValue(currentTime);
     }
     public static void cancelFriendRequest(String otherUid) {
-
-        //TODO checks: si la request existe
-
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference myUserFriendRequestSent = FirebaseDatabase.getInstance()
-                .getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT);
-        DatabaseReference otherUserFriendRequestReceived = FirebaseDatabase.getInstance()
-                .getReference(FirebaseDBContract.TABLE_USERS)
-                .child(otherUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED);
 
-        myUserFriendRequestSent.child(otherUid).removeValue();
-        otherUserFriendRequestReceived.child(myUid).removeValue();
+        //Delete Friend Request Sent in my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT).child(otherUid).removeValue();
+
+        //Delete Friend Request Received in other User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED).child(myUid).removeValue();
+    }
+    public static void acceptFriendRequest(String otherUid) {
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        long currentTime = System.currentTimeMillis();
+
+        //Add Friend to my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
+                .child(FirebaseDBContract.User.FRIENDS).child(otherUid).setValue(currentTime);
+
+        //Add Friend to other User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
+                .child(FirebaseDBContract.User.FRIENDS).child(myUid).setValue(currentTime);
+
+        //Delete Friend Request Received in my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED).child(otherUid).removeValue();
+
+        //Delete Friend Request Sent in other User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT).child(myUid).removeValue();
+    }
+    public static void declineFriendRequest(String otherUid) {
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        //Delete Friend Request Received in my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED).child(otherUid).removeValue();
+
+        //Delete Friend Request Sent in other User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT).child(myUid).removeValue();
+    }
+    public static void deleteFriend(String otherUid) {
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        //Delete Friend to my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
+                .child(FirebaseDBContract.User.FRIENDS).child(otherUid).removeValue();
+
+        //Delete Friend to other User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
+                .child(FirebaseDBContract.User.FRIENDS).child(myUid).removeValue();
+
     }
 }

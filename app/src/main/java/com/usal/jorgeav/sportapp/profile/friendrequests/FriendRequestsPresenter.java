@@ -53,10 +53,9 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
                         this.mFriendRequestsView.getActivityContext(),
                         SportteamContract.UserEntry.CONTENT_USER_URI,
                         SportteamContract.UserEntry.USER_COLUMNS,
-//                        SportteamContract.UserEntry.USER_ID + " = ?",
-//                        args.getStringArray(SENDERID_KEY),
-                        null,
-                        null,
+                        SportteamContract.UserEntry.USER_ID + " = ?",
+                        args.getStringArray(SENDERID_KEY),
+//                        null, null,
                         SportteamContract.UserEntry.NAME + " DESC");
         }
         return null;
