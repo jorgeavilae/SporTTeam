@@ -23,6 +23,11 @@ public abstract class ProfileContract {
     public interface Presenter {
        void loadUser();
         @ProfilePresenter.RelationType int getRelationTypeBetweenThisUserAndI();
+        void sendFriendRequest(String uid);
+        void cancelFriendRequest(String uid);
+        void acceptFriendRequest(String uid);
+        void declineFriendRequest(String uid);
+        void deleteFriend(String uid);
         LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
     }
 }

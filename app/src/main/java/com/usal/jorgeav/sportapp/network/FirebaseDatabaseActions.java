@@ -121,7 +121,6 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-
     private static void loadUsersFromFriendsRequestsReceived(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -161,7 +160,6 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-
     private static void loadUsersFromFriends(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -200,7 +198,6 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-
     private static void loadUsersFromUserRequests(final Context context, final String key) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
@@ -240,7 +237,6 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-
     private static void loadUsersFromInvitationsSent(final Context context, final String key) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
@@ -280,7 +276,6 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-
     private static void loadUsersFromParticipants(final Context context, final String key) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
@@ -321,7 +316,6 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-
     private static void loadEventsFromMyOwnEvents(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -363,7 +357,6 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-
     private static void loadEventsFromEventsParticipation(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -405,7 +398,6 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-
     private static void loadEventsFromInvitationsReceived(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -447,7 +439,6 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-
     private static void loadEventsFromEventsRequests(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -518,7 +509,6 @@ public class FirebaseDatabaseActions {
                 });
 
     }
-
     private static void loadAnEvent(final Context context, String key) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
@@ -544,7 +534,6 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-
     private static void loadAField(final Context context, String key) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
@@ -577,7 +566,8 @@ public class FirebaseDatabaseActions {
         DatabaseReference fieldsRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
 
-        fieldsRef.orderByChild(filter).equalTo(city).addListenerForSingleValueEvent(new ValueEventListener() {
+        fieldsRef.orderByChild(filter).equalTo(city)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -603,7 +593,8 @@ public class FirebaseDatabaseActions {
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
 
-        eventsRef.orderByChild(filter).equalTo(city).addChildEventListener(new ChildEventListener() {
+        eventsRef.orderByChild(filter).equalTo(city)
+                .addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
@@ -687,5 +678,22 @@ public class FirebaseDatabaseActions {
         long currentTime = System.currentTimeMillis();
         myUserFriendRequestSent.child(otherUid).setValue(currentTime);
         otherUserFriendRequestReceived.child(myUid).setValue(currentTime);
+    }
+    public static void cancelFriendRequest(String otherUid) {
+
+        //TODO checks: si la request existe
+
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference myUserFriendRequestSent = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT);
+        DatabaseReference otherUserFriendRequestReceived = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_USERS)
+                .child(otherUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED);
+
+        myUserFriendRequestSent.child(otherUid).removeValue();
+        otherUserFriendRequestReceived.child(myUid).removeValue();
     }
 }

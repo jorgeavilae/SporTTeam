@@ -6,11 +6,13 @@ import android.support.annotation.IntDef;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,9 +25,10 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     // Define the list of accepted constants and declare the NavigationMode annotation
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({RELATION_TYPE_NONE, RELATION_TYPE_FRIENDS, RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_REQUEST})
+    @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_FRIENDS, RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_REQUEST})
     public @interface RelationType {}
     // Declare the constants
+    public static final int RELATION_TYPE_ERROR = -1;
     public static final int RELATION_TYPE_NONE = 0;
     public static final int RELATION_TYPE_FRIENDS = 1;
     public static final int RELATION_TYPE_I_SEND_REQUEST = 2;
@@ -41,40 +44,6 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     @Override
     public void loadUser() {
 //        FirebaseDatabaseActions.loadMyProfile(mUserView.getActivityContext());
-    }
-
-    @Override
-    @RelationType
-    public int getRelationTypeBetweenThisUserAndI() {
-        //Friends?
-        Cursor cursorFriends = mUserView.getActivityContext().getContentResolver().query(
-                SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI,
-                SportteamContract.FriendsEntry.FRIENDS_COLUMNS,
-                SportteamContract.FriendsEntry.MY_USER_ID + " = ? AND " + SportteamContract.FriendsEntry.USER_ID + " = ?",
-                new String[]{FirebaseAuth.getInstance().getCurrentUser().getUid(), mUserView.getUserID()},
-                null);
-        if (cursorFriends != null && cursorFriends.getCount() > 0) return RELATION_TYPE_FRIENDS;
-
-        //I have received a FriendRequest?
-        Cursor cursorReceiver = mUserView.getActivityContext().getContentResolver().query(
-                SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
-                SportteamContract.FriendRequestEntry.FRIEND_REQUESTS_COLUMNS,
-                SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND " + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
-                new String[]{mUserView.getUserID(), FirebaseAuth.getInstance().getCurrentUser().getUid()},
-                null);
-        if (cursorReceiver != null && cursorReceiver.getCount() > 0) return RELATION_TYPE_I_RECEIVE_REQUEST;
-
-        //I have sent a FriendRequest?
-        Cursor cursorSender = mUserView.getActivityContext().getContentResolver().query(
-                SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
-                SportteamContract.FriendRequestEntry.FRIEND_REQUESTS_COLUMNS,
-                SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND " + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
-                new String[]{FirebaseAuth.getInstance().getCurrentUser().getUid(), mUserView.getUserID()},
-                null);
-        if (cursorSender != null && cursorSender.getCount() > 0) return RELATION_TYPE_I_SEND_REQUEST;
-
-        //Any relation
-        return RELATION_TYPE_NONE;
     }
 
     @Override
@@ -151,17 +120,81 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
         }
     }
 
-    private User cursorToUser(Cursor data) {
-        if(data != null && data.moveToFirst()) {
-            String id = data.getString(SportteamContract.UserEntry.COLUMN_USER_ID);
-            String email = data.getString(SportteamContract.UserEntry.COLUMN_EMAIL);
-            String name = data.getString(SportteamContract.UserEntry.COLUMN_NAME);
-            String city = data.getString(SportteamContract.UserEntry.COLUMN_CITY);
-            String ageStr = data.getString(SportteamContract.UserEntry.COLUMN_AGE);
-            int age = Integer.valueOf(ageStr);
-            String photoUrl = data.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
-            return new User(id, email, name, city, age, photoUrl, null);
+    @Override
+    @RelationType
+    public int getRelationTypeBetweenThisUserAndI() {
+        try {
+            String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            //Friends?
+            Cursor cursorFriends = mUserView.getActivityContext().getContentResolver().query(
+                    SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI,
+                    SportteamContract.FriendsEntry.FRIENDS_COLUMNS,
+                    SportteamContract.FriendsEntry.MY_USER_ID + " = ? AND " + SportteamContract.FriendsEntry.USER_ID + " = ?",
+                    new String[]{myUid, mUserView.getUserID()},
+                    null);
+            if (cursorFriends != null && cursorFriends.getCount() > 0) {
+                cursorFriends.close();
+                return RELATION_TYPE_FRIENDS;
+            }
+
+            //I have received a FriendRequest?
+            Cursor cursorReceiver = mUserView.getActivityContext().getContentResolver().query(
+                    SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
+                    SportteamContract.FriendRequestEntry.FRIEND_REQUESTS_COLUMNS,
+                    SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND " + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
+                    new String[]{mUserView.getUserID(), myUid},
+                    null);
+            if (cursorReceiver != null && cursorReceiver.getCount() > 0) {
+                cursorReceiver.close();
+                return RELATION_TYPE_I_RECEIVE_REQUEST;
+            }
+
+            //I have sent a FriendRequest?
+            Cursor cursorSender = mUserView.getActivityContext().getContentResolver().query(
+                    SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
+                    SportteamContract.FriendRequestEntry.FRIEND_REQUESTS_COLUMNS,
+                    SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND " + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
+                    new String[]{myUid, mUserView.getUserID()},
+                    null);
+            if (cursorSender != null && cursorSender.getCount() > 0) {
+                cursorSender.close();
+                return RELATION_TYPE_I_SEND_REQUEST;
+            }
+
+            //Any relation
+            return RELATION_TYPE_NONE;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return RELATION_TYPE_ERROR;
         }
-        return null;
+    }
+
+    @Override
+    public void sendFriendRequest(String uid) {
+        if (!TextUtils.isEmpty(uid))
+            FirebaseDatabaseActions.sendFriendRequest(uid);
+    }
+
+    @Override
+    public void cancelFriendRequest(String uid) {
+        if (!TextUtils.isEmpty(uid))
+            FirebaseDatabaseActions.cancelFriendRequest(uid);
+
+    }
+
+    @Override
+    public void acceptFriendRequest(String uid) {
+
+    }
+
+    @Override
+    public void declineFriendRequest(String uid) {
+
+    }
+
+    @Override
+    public void deleteFriend(String uid) {
+
     }
 }

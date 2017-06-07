@@ -169,7 +169,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
                         builder.setMessage("Estas seguro de que quieres borrar amigo?")
                                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        //TODO Borrar amistad amistad
+                                        mProfilePresenter.deleteFriend(mUserUid);
                                     }
                                 })
                                 .setNegativeButton("No", null);
@@ -187,12 +187,12 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
                         builder.setMessage("Aceptar como amigo?")
                                 .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        //TODO Aceptar peticion de amistad
+                                        mProfilePresenter.acceptFriendRequest(mUserUid);
                                     }
                                 })
                                 .setNegativeButton("Rechazar", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        //TODO Rechazar peticion de amistad
+                                        mProfilePresenter.declineFriendRequest(mUserUid);
                                     }
                                 });
                         builder.create().show();
@@ -205,7 +205,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
                     @Override
                     public void onClick(View view) {
                         /*borrar peticion*/
-                        //TODO cancelar peticion amistad
+                        mProfilePresenter.cancelFriendRequest(mUserUid);
                     }
                 });
                 break;
@@ -215,8 +215,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
                     @Override
                     public void onClick(View view) {
                         /*enviar peticion*/
-                        //TODO enviar peticion de amistad
-                        //FirebaseDatabaseActions.sendFriendRequest(mUserUid);
+                        mProfilePresenter.sendFriendRequest(mUserUid);
                     }
                 });
                 break;
