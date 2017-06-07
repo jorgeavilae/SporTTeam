@@ -68,8 +68,10 @@ public class FirebaseDatabaseActions {
 
         //TODO Cargar Usuarios de mis amigos (cuando cambie)
         loadUsersFromFriends(context);
-        //TODO Cargar Usuarios de mis peticiones de amistad (cuando cambie)
-        loadUsersFromFriendsRequests(context);
+        //TODO Cargar Usuarios de mis peticiones de amistad enviadas (cuando cambie)
+        loadUsersFromFriendsRequestsSent(context);
+        //TODO Cargar Usuarios de mis peticiones de amistad recibidas (cuando cambie)
+        loadUsersFromFriendsRequestsReceived(context);
         //TODO Cargar Eventos de mis eventos creados (cuando cambie)
         loadEventsFromMyOwnEvents(context);
         //TODO Cargar Eventos de mis eventos a los que asisto (cuando cambie)
@@ -80,19 +82,59 @@ public class FirebaseDatabaseActions {
         loadEventsFromEventsRequests(context);
     }
 
-    private static void loadUsersFromFriendsRequests(final Context context) {
+    private static void loadUsersFromFriendsRequestsSent(final Context context) {
         final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
-        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS)
+        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT)
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         if(dataSnapshot.exists()) {
                             loadAProfile(context, dataSnapshot.getKey());
 
-                            ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID);
+                            ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID, true);
+                            context.getContentResolver()
+                                    .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private static void loadUsersFromFriendsRequestsReceived(final Context context) {
+        final String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+
+        myUserRef.child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if(dataSnapshot.exists()) {
+                            loadAProfile(context, dataSnapshot.getKey());
+
+                            ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID, false);
                             context.getContentResolver()
                                     .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
                         }
@@ -626,5 +668,24 @@ public class FirebaseDatabaseActions {
 
             }
         });
+    }
+
+    public static void sendFriendRequest(String otherUid) {
+
+        //TODO checks: si la request no se ha hecho ya. Ahora si no la hay la crea, y si la hay la sobreescribe
+
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference myUserFriendRequestSent = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT);
+        DatabaseReference otherUserFriendRequestReceived = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_USERS)
+                .child(otherUid)
+                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED);
+
+        long currentTime = System.currentTimeMillis();
+        myUserFriendRequestSent.child(otherUid).setValue(currentTime);
+        otherUserFriendRequestReceived.child(myUid).setValue(currentTime);
     }
 }

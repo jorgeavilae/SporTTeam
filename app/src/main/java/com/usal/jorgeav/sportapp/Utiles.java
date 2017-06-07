@@ -224,9 +224,15 @@ public class Utiles {
         return cvArray;
     }
 
-    public static ContentValues datasnapshotFriendRequestToContentValues(DataSnapshot dataSnapshot, String myUserID) {
-        String receiverId = myUserID;
-        String senderId = dataSnapshot.getKey();
+    public static ContentValues datasnapshotFriendRequestToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheSender) {
+        String senderId, receiverId;
+        if(iAmTheSender) {
+            receiverId = dataSnapshot.getKey();
+            senderId = key;
+        } else {
+            receiverId = key;
+            senderId = dataSnapshot.getKey();
+        }
         long date = ((Number)dataSnapshot.getValue()).longValue();
 
         ContentValues cv = new ContentValues();

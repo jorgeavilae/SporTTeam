@@ -75,7 +75,8 @@ public class User {
         result.put(FirebaseDBContract.DATA, dataToMap());
         result.put(FirebaseDBContract.User.SPORTS_PRACTICED, sportsToMap());
         result.put(FirebaseDBContract.User.FRIENDS, new HashMap<String, Long>());
-        result.put(FirebaseDBContract.User.FRIENDS_REQUESTS, new HashMap<String, Long>());
+        result.put(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT, new HashMap<String, Long>());
+        result.put(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED, new HashMap<String, Long>());
         result.put(FirebaseDBContract.User.EVENTS_CREATED, new HashMap<String, Long>());
         result.put(FirebaseDBContract.User.EVENTS_PARTICIPATION, new HashMap<String, Boolean>());
         result.put(FirebaseDBContract.User.EVENTS_INVITATIONS, new HashMap<String, Long>());

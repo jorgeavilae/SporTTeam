@@ -17,10 +17,12 @@ public abstract class ProfileContract {
         void showUserAge(int age);
         void showSports(Cursor cursor);
         Context getActivityContext();
+        String getUserID();
     }
 
     public interface Presenter {
        void loadUser();
+        @ProfilePresenter.RelationType int getRelationTypeBetweenThisUserAndI();
         LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
     }
 }

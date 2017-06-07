@@ -18,7 +18,8 @@ public final class FirebaseDBContract {
         public static final String CITY = "city";
         public static final String SPORTS_PRACTICED = "sports_practiced";
         public static final String FRIENDS = "friends";
-        public static final String FRIENDS_REQUESTS = "friends_requests";
+        public static final String FRIENDS_REQUESTS_SENT = "friends_requests_sent";
+        public static final String FRIENDS_REQUESTS_RECEIVED = "friends_requests_received";
         public static final String EVENTS_CREATED = "events_created";
         public static final String EVENTS_PARTICIPATION = "events_participation";
         public static final String EVENTS_INVITATIONS = "events_invitations_received";
