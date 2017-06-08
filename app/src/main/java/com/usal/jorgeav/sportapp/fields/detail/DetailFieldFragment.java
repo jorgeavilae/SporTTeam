@@ -63,10 +63,6 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mFieldId = getArguments().getString(BUNDLE_FIELD_ID);
-            mSportId = getArguments().getString(BUNDLE_SPORT_ID);
-        }
 
         mPresenter = new DetailFieldPresenter(this);
     }
@@ -76,6 +72,11 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_detail_field, container, false);
         ButterKnife.bind(this, root);
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID) && getArguments().containsKey(BUNDLE_SPORT_ID)) {
+            mFieldId = getArguments().getString(BUNDLE_FIELD_ID);
+            mSportId = getArguments().getString(BUNDLE_SPORT_ID);
+        }
 
         return root;
     }

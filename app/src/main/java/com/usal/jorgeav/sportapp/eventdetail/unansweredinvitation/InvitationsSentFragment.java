@@ -54,8 +54,6 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
-            mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
         mEventInvitationsPresenter = new InvitationsSentPresenter(this);
         mUsersAdapter = new UsersAdapter(null, this);
@@ -66,6 +64,9 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
+            mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
         userInvitationsSentList.setAdapter(mUsersAdapter);
         userInvitationsSentList.setHasFixedSize(true);

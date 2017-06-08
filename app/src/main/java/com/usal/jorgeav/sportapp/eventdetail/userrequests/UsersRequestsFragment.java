@@ -54,8 +54,6 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
-            mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
         mUsersRequestsPresenter = new UsersRequestsPresenter(this);
         mUsersRecyclerAdapter = new UsersAdapter(null, this);
@@ -66,6 +64,9 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
+            mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
         usersRequestsList.setAdapter(mUsersRecyclerAdapter);
         usersRequestsList.setHasFixedSize(true);
