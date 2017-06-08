@@ -4,6 +4,7 @@ package com.usal.jorgeav.sportapp.eventdetail;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -73,7 +74,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         // Required empty public constructor
     }
 
-    public static DetailEventFragment newInstance(String eventId) {
+    public static DetailEventFragment newInstance(@NonNull String eventId) {
         DetailEventFragment fragment = new DetailEventFragment();
         Bundle args = new Bundle();
         args.putString(BUNDLE_EVENT_ID, eventId);
@@ -84,7 +85,18 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+
+        mPresenter = new DetailEventPresenter(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View root = inflater.inflate(R.layout.fragment_detail_event, container, false);
+        ButterKnife.bind(this, root);
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID)) {
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
             if (mEventId != null) {
                 Cursor c = getActivity().getContentResolver().query(
@@ -101,16 +113,6 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                     isMyEvent = false;
             }
         }
-
-        mPresenter = new DetailEventPresenter(this);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View root = inflater.inflate(R.layout.fragment_detail_event, container, false);
-        ButterKnife.bind(this, root);
 
         usersAdapter = new UsersAdapter(null, null);
         eventParticipantsList.setAdapter(usersAdapter);

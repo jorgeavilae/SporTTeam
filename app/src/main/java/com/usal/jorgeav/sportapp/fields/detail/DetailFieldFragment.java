@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.fields.detail;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -51,7 +52,7 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
         // Required empty public constructor
     }
 
-    public static DetailFieldFragment newInstance(String fieldId, String sportId) {
+    public static DetailFieldFragment newInstance(@NonNull String fieldId, @NonNull String sportId) {
         DetailFieldFragment fragment = new DetailFieldFragment();
         Bundle args = new Bundle();
         args.putString(BUNDLE_FIELD_ID, fieldId);
@@ -63,10 +64,6 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mFieldId = getArguments().getString(BUNDLE_FIELD_ID);
-            mSportId = getArguments().getString(BUNDLE_SPORT_ID);
-        }
 
         mPresenter = new DetailFieldPresenter(this);
     }
@@ -76,6 +73,11 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_detail_field, container, false);
         ButterKnife.bind(this, root);
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID) && getArguments().containsKey(BUNDLE_SPORT_ID)) {
+            mFieldId = getArguments().getString(BUNDLE_FIELD_ID);
+            mSportId = getArguments().getString(BUNDLE_SPORT_ID);
+        }
 
         return root;
     }

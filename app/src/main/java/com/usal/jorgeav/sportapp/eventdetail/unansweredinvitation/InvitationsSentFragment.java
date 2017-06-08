@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,8 +43,7 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
         // Required empty public constructor
     }
 
-    public static InvitationsSentFragment newInstance(String eventId) {
-
+    public static InvitationsSentFragment newInstance(@NonNull String eventId) {
         Bundle args = new Bundle();
         args.putString(BUNDLE_EVENT_ID, eventId);
         InvitationsSentFragment fragment = new InvitationsSentFragment();
@@ -54,8 +54,6 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
-            mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
         mEventInvitationsPresenter = new InvitationsSentPresenter(this);
         mUsersAdapter = new UsersAdapter(null, this);
@@ -66,6 +64,9 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
+            mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
         userInvitationsSentList.setAdapter(mUsersAdapter);
         userInvitationsSentList.setHasFixedSize(true);

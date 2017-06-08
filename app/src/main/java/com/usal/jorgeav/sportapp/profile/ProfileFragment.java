@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -74,8 +75,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
         // Required empty public constructor
     }
 
-    public static ProfileFragment newInstance(String uid) {
-        Log.d(TAG, "newInstance: uid "+uid);
+    public static ProfileFragment newInstance(@NonNull String uid) {
         Bundle b = new Bundle();
         b.putString(BUNDLE_INSTANCE_UID, uid);
         ProfileFragment pf = new ProfileFragment();
@@ -86,8 +86,6 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
-            mUserUid = getArguments().getString(BUNDLE_INSTANCE_UID);
 
         mProfilePresenter = new ProfilePresenter(this);
     }
@@ -97,6 +95,11 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, root);
+
+        //Es importante hacerlo aqui ya que el valor de mUserId gobierna el aspecto de la UI y
+        // en onCreate no se ejecutaria al volver de otro fragment
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
+            mUserUid = getArguments().getString(BUNDLE_INSTANCE_UID);
 
         sportsAdapter = new ProfileSportsAdapter(null);
         userSportList.setAdapter(sportsAdapter);
@@ -241,7 +244,6 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     @Override
     public void onResume() {
         super.onResume();
-//        mProfilePresenter.loadUser();
         Bundle b = new Bundle();
         b.putString(BUNDLE_INSTANCE_UID, mUserUid);
         getLoaderManager().initLoader(LOADER_MYPROFILE_ID, b, mProfilePresenter.getLoaderInstance());

@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.eventdetail.userrequests;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,7 +44,7 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
         // Required empty public constructor
     }
 
-    public static UsersRequestsFragment newInstance(String eventID) {
+    public static UsersRequestsFragment newInstance(@NonNull String eventID) {
         Bundle args = new Bundle();
         args.putString(BUNDLE_EVENT_ID, eventID);
         UsersRequestsFragment fragment = new UsersRequestsFragment();
@@ -54,8 +55,6 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
-            mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
         mUsersRequestsPresenter = new UsersRequestsPresenter(this);
         mUsersRecyclerAdapter = new UsersAdapter(null, this);
@@ -66,6 +65,9 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
+            mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
         usersRequestsList.setAdapter(mUsersRecyclerAdapter);
         usersRequestsList.setHasFixedSize(true);
