@@ -7,6 +7,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 public class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String TAG = ProfilePresenter.class.getSimpleName();
 
     private ProfileContract.View mUserView;
     private User mUser;
@@ -123,6 +125,8 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     public int getRelationTypeBetweenThisUserAndI() {
         try {
             String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Log.d(TAG, "getRelationTypeBetweenThisUserAndI: myUid "+myUid);
+            Log.d(TAG, "getRelationTypeBetweenThisUserAndI: otherUid "+mUserView.getUserID());
 
             //Friends?
             Cursor cursorFriends = mUserView.getActivityContext().getContentResolver().query(

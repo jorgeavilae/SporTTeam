@@ -4,17 +4,24 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
+
+import java.util.HashMap;
 
 public class SportteamProvider extends ContentProvider {
+    private static final String TAG = SportteamProvider.class.getSimpleName();
 
     public static final int CODE_EVENTS = 100;
     public static final int CODE_FIELDS = 200;
     public static final int CODE_USERS = 300;
     public static final int CODE_USER_SPORT = 400;
     public static final int CODE_FRIEND_REQUEST = 500;
+    public static final int CODE_FRIEND_REQUEST_WITH_USER = 510;
     public static final int CODE_FRIEND = 600;
     public static final int CODE_EVENTS_PARTICIPATION = 700;
     public static final int CODE_EVENT_INVITATIONS = 800;
@@ -37,6 +44,8 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, SportteamContract.PATH_USER_SPORT, CODE_USER_SPORT);
         // This URI is content://com.usal.jorgeav.sportapp/friendRequests/
         matcher.addURI(authority, SportteamContract.PATH_FRIENDS_REQUESTS, CODE_FRIEND_REQUEST);
+        // This URI is content://com.usal.jorgeav.sportapp/friendRequests_user/
+        matcher.addURI(authority, SportteamContract.PATH_FRIENDS_REQUESTS_WITH_USER, CODE_FRIEND_REQUEST_WITH_USER);
         // This URI is content://com.usal.jorgeav.sportapp/friends/
         matcher.addURI(authority, SportteamContract.PATH_FRIENDS, CODE_FRIEND);
         // This URI is content://com.usal.jorgeav.sportapp/eventsParticipation/
@@ -208,6 +217,36 @@ public class SportteamProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
+                break;
+            case CODE_FRIEND_REQUEST_WITH_USER:
+                SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+
+                String tablesJoin =
+                        SportteamContract.TABLE_FRIENDS_REQUESTS
+                        + " INNER JOIN "
+                        + SportteamContract.TABLE_USER
+                        + " ON "
+                        + SportteamContract.TABLE_FRIENDS_REQUESTS + "." + SportteamContract.FriendRequestEntry.SENDER_ID
+                        + " = "
+                        + SportteamContract.TABLE_USER + "." + SportteamContract.UserEntry.USER_ID;
+                builder.setTables(tablesJoin);
+
+                HashMap<String, String> projectionMap = new HashMap<>();
+                for (String columnName : projection) {
+                    projectionMap.put(columnName, SportteamContract.TABLE_USER + "." + columnName);
+                    Log.d(TAG, "query: projectionmap "+columnName+" - "+SportteamContract.TABLE_USER + "." + columnName);
+
+                }
+                builder.setProjectionMap(projectionMap);
+
+                cursor = builder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                Log.d(TAG, "query: "+DatabaseUtils.dumpCursorToString(cursor));
                 break;
             case CODE_FRIEND:
                 cursor = mOpenHelper.getReadableDatabase().query(

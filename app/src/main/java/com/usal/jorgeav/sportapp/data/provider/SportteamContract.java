@@ -111,6 +111,8 @@ public final class SportteamContract {
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_FRIENDS_REQUESTS = "friendRequests";
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_FRIENDS_REQUESTS_WITH_USER = "friendRequests_user";
     /* Used internally as the name of our friend requests table. */
     public static final String TABLE_FRIENDS_REQUESTS = "friendRequest";
     /* Inner class that defines the table contents of the friendRequests table
@@ -120,6 +122,10 @@ public final class SportteamContract {
         /* The base CONTENT_URI used to query the friendRequest table from the content provider */
         public static final Uri CONTENT_FRIEND_REQUESTS_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_FRIENDS_REQUESTS)
+                .build();
+        /* The base CONTENT_URI used to query the friendRequest table with user table from the content provider */
+        public static final Uri CONTENT_FRIEND_REQUESTS_WITH_USER_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_FRIENDS_REQUESTS_WITH_USER)
                 .build();
 
         /* Column names */

@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     }
 
     public static ProfileFragment newInstance(String uid) {
+        Log.d(TAG, "newInstance: uid "+uid);
         Bundle b = new Bundle();
         b.putString(BUNDLE_INSTANCE_UID, uid);
         ProfileFragment pf = new ProfileFragment();

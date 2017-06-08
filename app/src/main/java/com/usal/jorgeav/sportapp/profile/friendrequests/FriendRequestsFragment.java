@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
+import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
@@ -26,8 +27,6 @@ import butterknife.ButterKnife;
 public class FriendRequestsFragment extends Fragment implements FriendRequestsContract.View,
         UsersAdapter.OnUserItemClickListener {
     private static final String TAG = FriendRequestsFragment.class.getSimpleName();
-    public static final int LOADER_FRIENDS_REQUESTS_ID = 5000;
-    public static final int LOADER_FRIENDS_REQUESTS_USERS_ID = 5001;
 
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -73,7 +72,7 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     public void onResume() {
         super.onResume();
 //        mFriendRequestsPresenter.loadFriendRequests();
-        getLoaderManager().initLoader(LOADER_FRIENDS_REQUESTS_ID, null, mFriendRequestsPresenter.getLoaderInstance());
+        getLoaderManager().initLoader(SportteamLoader.LOADER_FRIENDS_REQUESTS_ID, null, mFriendRequestsPresenter.getLoaderInstance());
     }
 
     @Override
