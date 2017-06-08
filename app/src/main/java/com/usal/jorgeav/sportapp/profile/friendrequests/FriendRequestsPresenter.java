@@ -8,14 +8,9 @@ import android.support.v4.content.Loader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 
-/**
- * Created by Jorge Avila on 26/05/2017.
- */
-
 public class FriendRequestsPresenter implements FriendRequestsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = FriendRequestsPresenter.class.getSimpleName();
 
-    private static final String SENDERID_KEY = "SENDERID_KEY";
     FriendRequestsContract.View mFriendRequestsView;
 
     public FriendRequestsPresenter(FriendRequestsContract.View friendRequestsView) {
@@ -23,13 +18,8 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
     }
 
     @Override
-    public void loadFriendRequests() {
-//        FirebaseDatabaseActions.loadUsers(mFriendRequestsView.getActivityContext());
-    }
-
-    @Override
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
-        return this;
+    public void loadFriendRequests(LoaderManager loaderManager, Bundle b) {
+        loaderManager.initLoader(SportteamLoader.LOADER_FRIENDS_REQUESTS_ID, b, this);
     }
 
     @Override
@@ -37,7 +27,8 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         switch (id) {
             case SportteamLoader.LOADER_FRIENDS_REQUESTS_ID:
-                return SportteamLoader.cursorLoaderFriendRequests(mFriendRequestsView.getActivityContext(), currentUserID);
+                return SportteamLoader
+                        .cursorLoaderFriendRequests(mFriendRequestsView.getActivityContext(), currentUserID);
         }
         return null;
     }

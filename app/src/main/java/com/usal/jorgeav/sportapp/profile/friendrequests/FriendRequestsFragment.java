@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
@@ -41,18 +40,13 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        mFriendRequestsPresenter = new FriendRequestsPresenter(this);
-        mUsersRecyclerAdapter = new UsersAdapter(null, this);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
+
+        mFriendRequestsPresenter = new FriendRequestsPresenter(this);
+        mUsersRecyclerAdapter = new UsersAdapter(null, this);
 
         friendRequestsList.setAdapter(mUsersRecyclerAdapter);
         friendRequestsList.setHasFixedSize(true);
@@ -71,8 +65,7 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     @Override
     public void onResume() {
         super.onResume();
-//        mFriendRequestsPresenter.loadFriendRequests();
-        getLoaderManager().initLoader(SportteamLoader.LOADER_FRIENDS_REQUESTS_ID, null, mFriendRequestsPresenter.getLoaderInstance());
+        mFriendRequestsPresenter.loadFriendRequests(getLoaderManager(), getArguments());
     }
 
     @Override
