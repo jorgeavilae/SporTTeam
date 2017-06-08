@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.fields.detail;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -51,7 +52,7 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
         // Required empty public constructor
     }
 
-    public static DetailFieldFragment newInstance(String fieldId, String sportId) {
+    public static DetailFieldFragment newInstance(@NonNull String fieldId, @NonNull String sportId) {
         DetailFieldFragment fragment = new DetailFieldFragment();
         Bundle args = new Bundle();
         args.putString(BUNDLE_FIELD_ID, fieldId);

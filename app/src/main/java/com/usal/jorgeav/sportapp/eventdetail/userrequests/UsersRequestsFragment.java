@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.eventdetail.userrequests;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,7 +44,7 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
         // Required empty public constructor
     }
 
-    public static UsersRequestsFragment newInstance(String eventID) {
+    public static UsersRequestsFragment newInstance(@NonNull String eventID) {
         Bundle args = new Bundle();
         args.putString(BUNDLE_EVENT_ID, eventID);
         UsersRequestsFragment fragment = new UsersRequestsFragment();

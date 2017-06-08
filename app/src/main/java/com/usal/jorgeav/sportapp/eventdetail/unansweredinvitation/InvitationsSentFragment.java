@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,8 +43,7 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
         // Required empty public constructor
     }
 
-    public static InvitationsSentFragment newInstance(String eventId) {
-
+    public static InvitationsSentFragment newInstance(@NonNull String eventId) {
         Bundle args = new Bundle();
         args.putString(BUNDLE_EVENT_ID, eventId);
         InvitationsSentFragment fragment = new InvitationsSentFragment();

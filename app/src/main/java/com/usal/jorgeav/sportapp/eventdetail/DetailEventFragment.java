@@ -4,6 +4,7 @@ package com.usal.jorgeav.sportapp.eventdetail;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -73,7 +74,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         // Required empty public constructor
     }
 
-    public static DetailEventFragment newInstance(String eventId) {
+    public static DetailEventFragment newInstance(@NonNull String eventId) {
         DetailEventFragment fragment = new DetailEventFragment();
         Bundle args = new Bundle();
         args.putString(BUNDLE_EVENT_ID, eventId);
