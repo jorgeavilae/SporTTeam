@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 import java.util.ArrayList;
 
@@ -23,15 +25,15 @@ public class InvitationsSentPresenter implements InvitationsSentContract.Present
     public InvitationsSentPresenter(InvitationsSentContract.View mEventInvitationsView) {
         this.mEventInvitationsView = mEventInvitationsView;
     }
-
     @Override
-    public void loadEventInvitationsSent() {
-//        FirebaseDatabaseActions.loadEvent(mEventInvitationsView.getActivityContext());
+    public void deleteInvitationToThisEvent(String eventId, String uid) {
+        if (!TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
+            FirebaseDatabaseActions.deleteInvitationToThisEvent(eventId, uid);
     }
 
     @Override
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
-        return this;
+    public void loadEventInvitationsSent(LoaderManager loaderManager, Bundle bundle) {
+        loaderManager.initLoader(InvitationsSentFragment.LOADER_EVENT_INVITATIONS_ID, bundle, this);
     }
 
     @Override

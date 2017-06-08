@@ -731,17 +731,29 @@ public class FirebaseDatabaseActions {
 
     }
 
+    //TODO checks if childs exists
     public static void sendInvitationToThisEvent(String eventId, String uid) {
         long currentTime = System.currentTimeMillis();
 
-        //Set Friend Request Sent in my User
+        //Set Invitation Sent in my Event
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
                 .child(FirebaseDBContract.Event.INVITATIONS)
                 .child(uid).setValue(currentTime);
 
-        //Set Friend Request Received in other User
+        //Set Invitation Received in other User
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
                 .child(FirebaseDBContract.User.EVENTS_INVITATIONS)
                 .child(eventId).setValue(currentTime);
+    }
+    public static void deleteInvitationToThisEvent(String eventId, String uid) {
+        //Delete Invitation Sent in my Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.INVITATIONS)
+                .child(uid).removeValue();
+
+        //Set Invitation Received in other User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_INVITATIONS)
+                .child(eventId).removeValue();
     }
 }
