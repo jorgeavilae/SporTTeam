@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.network;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -663,7 +664,9 @@ public class FirebaseDatabaseActions {
 
     //TODO checks if childs exists
     public static void sendFriendRequest(String otherUid) {
+        Log.d(TAG, "sendFriendRequest: otherUid "+otherUid);
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d(TAG, "sendFriendRequest: myUid "+myUid);
         long currentTime = System.currentTimeMillis();
 
         //Set Friend Request Sent in my User
@@ -677,7 +680,9 @@ public class FirebaseDatabaseActions {
                 .child(myUid).setValue(currentTime);
     }
     public static void cancelFriendRequest(String otherUid) {
+        Log.d(TAG, "cancelFriendRequest: otherUid "+otherUid);
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d(TAG, "cancelFriendRequest: myUid "+myUid);
 
         //Delete Friend Request Sent in my User
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
@@ -688,7 +693,9 @@ public class FirebaseDatabaseActions {
                 .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED).child(myUid).removeValue();
     }
     public static void acceptFriendRequest(String otherUid) {
+        Log.d(TAG, "acceptFriendRequest: otherUid "+otherUid);
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d(TAG, "acceptFriendRequest: myUid "+myUid);
         long currentTime = System.currentTimeMillis();
 
         //Add Friend to my User
@@ -708,7 +715,9 @@ public class FirebaseDatabaseActions {
                 .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT).child(myUid).removeValue();
     }
     public static void declineFriendRequest(String otherUid) {
+        Log.d(TAG, "declineFriendRequest: otherUid "+otherUid);
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d(TAG, "declineFriendRequest: myUid "+myUid);
 
         //Delete Friend Request Received in my User
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
@@ -719,7 +728,9 @@ public class FirebaseDatabaseActions {
                 .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT).child(myUid).removeValue();
     }
     public static void deleteFriend(String otherUid) {
+        Log.d(TAG, "deleteFriend: otherUid "+otherUid);
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d(TAG, "deleteFriend: myUid "+myUid);
 
         //Delete Friend to my User
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
