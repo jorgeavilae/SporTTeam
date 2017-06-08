@@ -22,11 +22,20 @@ public abstract class DetailEventContract {
         void showParticipants(Cursor cursor);
         Context getActivityContext();
         Fragment getThis();
+        String getEventID();
 
     }
 
     public interface Presenter {
         void openEvent();
+        @DetailEventPresenter.EventRelationType
+        int getRelationTypeBetweenThisEventAndI();
         LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
+
+        void sendEventRequest(String eventId);
+        void cancelEventRequest(String eventId);
+        void acceptEventInvitation(String eventId);
+        void declineEventInvitation(String eventId);
+        void quitEvent(String eventId);
     }
 }

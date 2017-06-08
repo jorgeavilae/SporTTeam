@@ -267,7 +267,7 @@ public final class SportteamContract {
     public static final String TABLE_EVENTS_REQUESTS = "eventRequest";
     /* Inner class that defines the table contents of the eventRequest table
      * This table store a row for every event request from any user to one of our user events
-     * and a row for every event request sended by our user*/
+     * and a row for every event request sent by our user*/
     public static final class EventRequestsEntry implements BaseColumns {
 
         /* The base CONTENT_URI used to query the eventRequest table from the content provider */
