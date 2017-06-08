@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.profile.sendinvitation;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -11,8 +12,7 @@ import android.support.v4.app.LoaderManager;
 public abstract class SendInvitationContract {
 
     public interface Presenter {
-        void loadEventsForInvitation();
-        LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
+        void loadEventsForInvitation(LoaderManager loaderManager, Bundle b);
     }
 
     public interface View {

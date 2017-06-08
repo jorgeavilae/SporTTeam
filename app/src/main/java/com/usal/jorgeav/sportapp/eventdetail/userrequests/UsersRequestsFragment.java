@@ -89,6 +89,7 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
         Bundle b = new Bundle();
         b.putString(BUNDLE_EVENT_ID, mEventId);
         getLoaderManager().initLoader(LOADER_USERS_REQUESTS_ID, b, mUsersRequestsPresenter.getLoaderInstance());
+        //TODO cargar peticiones denegadas para desdenegarlas
     }
 
     @Override

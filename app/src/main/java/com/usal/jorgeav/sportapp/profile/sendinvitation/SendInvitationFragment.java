@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.profile.sendinvitation;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,8 +26,8 @@ import butterknife.ButterKnife;
 
 public class SendInvitationFragment extends Fragment implements SendInvitationContract.View, EventsAdapter.OnEventItemClickListener {
     private static final String TAG = SendInvitationFragment.class.getSimpleName();
-    public static final int LOADER_EVENTS_FOR_INVITATION_ID = 8000;
 
+    public static final String BUNDLE_INSTANCE_UID = "BUNDLE_INSTANCE_UID";
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
     SendInvitationContract.Presenter mSendInvitationPresenter;
@@ -37,6 +38,15 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
 
     public SendInvitationFragment() {
         // Required empty public constructor
+    }
+
+    public static SendInvitationFragment newInstance(@NonNull String uid) {
+
+        Bundle args = new Bundle();
+        args.putString(BUNDLE_INSTANCE_UID, uid);
+        SendInvitationFragment fragment = new SendInvitationFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -70,7 +80,7 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(LOADER_EVENTS_FOR_INVITATION_ID, null, mSendInvitationPresenter.getLoaderInstance());
+        mSendInvitationPresenter.loadEventsForInvitation(getLoaderManager(), getArguments());
     }
 
 
