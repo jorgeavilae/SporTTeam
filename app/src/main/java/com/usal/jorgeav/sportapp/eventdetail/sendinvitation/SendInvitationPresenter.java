@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 import java.util.ArrayList;
 
@@ -25,14 +27,15 @@ public class SendInvitationPresenter implements SendInvitationContract.Presenter
     }
 
     @Override
-    public void loadFriends() {
+    public void sendInvitationToThisEvent(String eventId, String uid) {
+        if (!TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
+            FirebaseDatabaseActions.sendInvitationToThisEvent(eventId, uid);
     }
 
     @Override
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
-        return this;
+    public void loadFriends(LoaderManager loaderManager, Bundle bundle) {
+        loaderManager.initLoader(SendInvitationFragment.LOADER_FRIENDS_ID, bundle, this);
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -52,10 +55,9 @@ public class SendInvitationPresenter implements SendInvitationContract.Presenter
                         this.mSendInvitationView.getActivityContext(),
                         SportteamContract.UserEntry.CONTENT_USER_URI,
                         SportteamContract.UserEntry.USER_COLUMNS,
-//                        SportteamContract.UserEntry.USER_ID + " = ?",
+//                        SportteamContract.UserEntry.USER_ID + " IN (?)",
 //                        args.getStringArray(FRIEND_KEY),
-                        null,
-                        null,
+                        null, null,
                         SportteamContract.UserEntry.NAME + " DESC");
         }
         return null;

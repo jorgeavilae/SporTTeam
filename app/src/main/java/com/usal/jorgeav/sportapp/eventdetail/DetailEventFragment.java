@@ -136,7 +136,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 @Override
                 public void onClick(View view) {
                     //DONE ver lista de amigos para enviarles invitaciones
-                    Fragment fragment = SendInvitationFragment.newInstance();
+                    Fragment fragment = SendInvitationFragment.newInstance(mEventId);
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });

@@ -2,7 +2,7 @@ package com.usal.jorgeav.sportapp.eventdetail.sendinvitation;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.app.Fragment;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -12,8 +12,8 @@ import android.support.v4.app.LoaderManager;
 public abstract class SendInvitationContract {
 
     public interface Presenter {
-        void loadFriends();
-        LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
+        void loadFriends(LoaderManager loaderManager, Bundle bundle);
+        void sendInvitationToThisEvent(String eventId, String uid);
     }
 
     public interface View {

@@ -49,13 +49,12 @@ public class InvitationsSentPresenter implements InvitationsSentContract.Present
             case InvitationsSentFragment.LOADER_USER_DATA_FROM_INVITATIONS_ID:
                 return new CursorLoader(
                         this.mEventInvitationsView.getActivityContext(),
-                        SportteamContract.EventEntry.CONTENT_EVENT_URI,
-                        SportteamContract.EventEntry.EVENT_COLUMNS,
-//                        SportteamContract.EventEntry.EVENT_ID + " = ?",
-//                        args.getStringArray(USERID_KEY),
-                        null,
-                        null,
-                        SportteamContract.EventEntry.DATE + " ASC");
+                        SportteamContract.UserEntry.CONTENT_USER_URI,
+                        SportteamContract.UserEntry.USER_COLUMNS,
+                        SportteamContract.UserEntry.USER_ID + " = ?",
+                        args.getStringArray(USERID_KEY),
+//                        null, null,
+                        SportteamContract.UserEntry.NAME + " ASC");
         }
         return null;
     }

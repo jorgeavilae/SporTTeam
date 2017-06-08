@@ -1,10 +1,13 @@
 package com.usal.jorgeav.sportapp.eventdetail.sendinvitation;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,7 +30,9 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
     private static final String TAG = SendInvitationFragment.class.getSimpleName();
     public static final int LOADER_FRIENDS_ID = 6000;
     public static final int LOADER_FRIENDS_AS_USERS_ID = 6001;
+    private static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
+    private static String mEvent = "";
     SendInvitationContract.Presenter mSendInvitationPresenter;
     UsersAdapter mSendInvitationRecyclerAdapter;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -40,8 +45,12 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
         // Required empty public constructor
     }
 
-    public static SendInvitationFragment newInstance() {
-        return new SendInvitationFragment();
+    public static SendInvitationFragment newInstance(@NonNull String eventId) {
+        Bundle args = new Bundle();
+        args.putString(BUNDLE_EVENT_ID, eventId);
+        SendInvitationFragment fragment = new SendInvitationFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -57,6 +66,9 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
+            mEvent = getArguments().getString(BUNDLE_EVENT_ID);
 
         sendInvitationRecyclerList.setAdapter(mSendInvitationRecyclerAdapter);
         sendInvitationRecyclerList.setHasFixedSize(true);
@@ -74,7 +86,7 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, mSendInvitationPresenter.getLoaderInstance());
+        mSendInvitationPresenter.loadFriends(getLoaderManager(), getArguments());
     }
 
     @Override
@@ -110,8 +122,19 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
     }
 
     @Override
-    public void onUserClick(String uid) {
-        Fragment newFragment = ProfileFragment.newInstance(uid);
-        mFragmentManagementListener.initFragment(newFragment, true);
+    public void onUserClick(final String uid) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setPositiveButton("Send Invitation", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mSendInvitationPresenter.sendInvitationToThisEvent(mEvent, uid);
+                    }
+                })
+                .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Fragment newFragment = ProfileFragment.newInstance(uid);
+                        mFragmentManagementListener.initFragment(newFragment, true);
+                    }
+                });
+        builder.create().show();
     }
 }

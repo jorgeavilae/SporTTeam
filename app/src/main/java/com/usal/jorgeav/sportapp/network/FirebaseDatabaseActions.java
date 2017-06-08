@@ -730,4 +730,18 @@ public class FirebaseDatabaseActions {
                 .child(FirebaseDBContract.User.FRIENDS).child(myUid).removeValue();
 
     }
+
+    public static void sendInvitationToThisEvent(String eventId, String uid) {
+        long currentTime = System.currentTimeMillis();
+
+        //Set Friend Request Sent in my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.INVITATIONS)
+                .child(uid).setValue(currentTime);
+
+        //Set Friend Request Received in other User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_INVITATIONS)
+                .child(eventId).setValue(currentTime);
+    }
 }
