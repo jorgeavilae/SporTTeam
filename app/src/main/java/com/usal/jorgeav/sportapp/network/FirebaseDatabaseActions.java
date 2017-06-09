@@ -279,9 +279,9 @@ public class FirebaseDatabaseActions {
     }
     private static void loadUsersFromParticipants(final Context context, final String key) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+        DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
-        myUserRef.child(key + "/" + FirebaseDBContract.Event.PARTICIPANTS)
+        eventsRef.child(key + "/" + FirebaseDBContract.Event.PARTICIPANTS)
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {

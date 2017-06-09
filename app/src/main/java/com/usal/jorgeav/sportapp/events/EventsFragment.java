@@ -24,9 +24,6 @@ import butterknife.ButterKnife;
 
 public class EventsFragment extends Fragment implements EventsContract.View, EventsAdapter.OnEventItemClickListener  {
     private static final String TAG = EventsFragment.class.getSimpleName();
-    public static final int LOADER_MY_EVENTS_ID = 2000;
-    public static final int LOADER_EVENTS_PARTICIPATION_ID = 2001;
-    public static final int LOADER_EVENTS_DATA_FROM_PARTICIPATION_ID = 2002;
 
     EventsContract.Presenter mEventsPresenter;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -102,9 +99,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     @Override
     public void onResume() {
         super.onResume();
-//        mEventsPresenter.loadEvents();
-        getLoaderManager().initLoader(LOADER_MY_EVENTS_ID, null, mEventsPresenter.getLoaderInstance());
-        getLoaderManager().initLoader(LOADER_EVENTS_PARTICIPATION_ID, null, mEventsPresenter.getLoaderInstance());
+        mEventsPresenter.loadEvents(getLoaderManager(), getArguments());
     }
 
     @Override

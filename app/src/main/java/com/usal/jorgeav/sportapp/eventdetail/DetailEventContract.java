@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.eventdetail;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 
@@ -27,10 +28,9 @@ public abstract class DetailEventContract {
     }
 
     public interface Presenter {
-        void openEvent();
+        void openEvent(LoaderManager loaderManager, Bundle b);
         @DetailEventPresenter.EventRelationType
         int getRelationTypeBetweenThisEventAndI();
-        LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
 
         void sendEventRequest(String eventId);
         void cancelEventRequest(String eventId);

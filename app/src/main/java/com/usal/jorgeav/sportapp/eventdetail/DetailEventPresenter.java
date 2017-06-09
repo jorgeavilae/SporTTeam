@@ -5,18 +5,17 @@ import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 
 /**
  * Created by Jorge Avila on 26/04/2017.
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 
 public class DetailEventPresenter implements DetailEventContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = DetailEventPresenter.class.getSimpleName();
-    private static final String USERS_KEY = "USERS_KEY";
 
     DetailEventContract.View mView;
 
@@ -33,43 +31,21 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     }
 
     @Override
-    public void openEvent() {
-    }
-
-    @Override
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
-        return this;
+    public void openEvent(LoaderManager loaderManager, Bundle b) {
+        loaderManager.initLoader(SportteamLoader.LOADER_EVENT_ID, b, this);
+        loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String eventId = args.getString(DetailEventFragment.BUNDLE_EVENT_ID);
         switch (id) {
-            case DetailEventFragment.LOADER_EVENT_ID:
-                return new CursorLoader(
-                        this.mView.getActivityContext(),
-                        SportteamContract.EventEntry.CONTENT_EVENT_URI,
-                        SportteamContract.EventEntry.EVENT_COLUMNS,
-                        SportteamContract.EventEntry.EVENT_ID + " = ?",
-                        new String[]{args.getString(DetailEventFragment.BUNDLE_EVENT_ID)},
-                        null);
-            case DetailEventFragment.LOADER_EVENTS_PARTICIPANTS_ID:
-                return new CursorLoader(
-                        this.mView.getActivityContext(),
-                        SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
-                        SportteamContract.EventsParticipationEntry.EVENTS_PARTICIPATION_COLUMNS,
-                        SportteamContract.EventsParticipationEntry.EVENT_ID + " = ?",
-                        new String[]{args.getString(DetailEventFragment.BUNDLE_EVENT_ID)},
-                        null);
-            case DetailEventFragment.LOADER_USER_DATA_FROM_PARTICIPANTS_ID:
-                return new CursorLoader(
-                        this.mView.getActivityContext(),
-                        SportteamContract.UserEntry.CONTENT_USER_URI,
-                        SportteamContract.UserEntry.USER_COLUMNS,
-                        SportteamContract.UserEntry.USER_ID + " = ?",
-                        args.getStringArray(USERS_KEY),
-//                        null,
-//                        null,
-                        SportteamContract.EventEntry.COLUMN_DATE + " ASC");
+            case SportteamLoader.LOADER_EVENT_ID:
+                return SportteamLoader
+                        .cursorLoaderOneEvent(mView.getActivityContext(), eventId);
+            case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
+                return SportteamLoader
+                        .cursorLoaderEventParticipants(mView.getActivityContext(), eventId, true);
         }
         return null;
     }
@@ -77,38 +53,25 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
-            case DetailEventFragment.LOADER_EVENT_ID:
+            case SportteamLoader.LOADER_EVENT_ID:
                 showEventDetails(data);
-            case DetailEventFragment.LOADER_EVENTS_PARTICIPANTS_ID:
-                String usersId[] = cursorEventsParticipationToUsersStringArray(data);
-                Bundle args = new Bundle();
-                args.putStringArray(USERS_KEY, usersId);
-                mView.getThis().getLoaderManager()
-                        .initLoader(DetailEventFragment.LOADER_USER_DATA_FROM_PARTICIPANTS_ID, args, this);
                 break;
-            case DetailEventFragment.LOADER_USER_DATA_FROM_PARTICIPANTS_ID:
+            case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
                 mView.showParticipants(data);
+                break;
         }
-    }
-
-    private String[] cursorEventsParticipationToUsersStringArray(Cursor data) {
-        ArrayList<String> arrayList = new ArrayList<>();
-        while (data.moveToNext())
-            if (data.getInt(SportteamContract.EventsParticipationEntry.COLUMN_PARTICIPATES) == 1)
-                arrayList.add(data.getString(SportteamContract.EventsParticipationEntry.COLUMN_USER_ID));
-        //data.close();
-        return arrayList.toArray(new String[arrayList.size()]);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
-            case DetailEventFragment.LOADER_EVENT_ID:
+            case SportteamLoader.LOADER_EVENT_ID:
                 showEventDetails(null);
-            case DetailEventFragment.LOADER_USER_DATA_FROM_PARTICIPANTS_ID:
+                break;
+            case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
                 mView.showParticipants(null);
+                break;
         }
-
     }
 
     private void showEventDetails(Cursor data) {

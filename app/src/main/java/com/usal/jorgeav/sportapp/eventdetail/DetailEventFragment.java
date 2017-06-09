@@ -35,9 +35,6 @@ import butterknife.ButterKnife;
 public class DetailEventFragment extends Fragment implements DetailEventContract.View {
     private static final String TAG = DetailEventFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
-    public static final int LOADER_EVENT_ID = 11000;
-    public static final int LOADER_EVENTS_PARTICIPANTS_ID = 11001;
-    public static final int LOADER_USER_DATA_FROM_PARTICIPANTS_ID = 11002;
 
     private static String mEventId = "";
     private boolean isMyEvent = false;
@@ -257,10 +254,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void onResume() {
         super.onResume();
-        Bundle b = new Bundle();
-        b.putString(BUNDLE_EVENT_ID, mEventId);
-        getLoaderManager().initLoader(LOADER_EVENT_ID, b, mPresenter.getLoaderInstance());
-        getLoaderManager().initLoader(LOADER_EVENTS_PARTICIPANTS_ID, b, mPresenter.getLoaderInstance());
+        mPresenter.openEvent(getLoaderManager(), getArguments());
     }
 
     @Override
