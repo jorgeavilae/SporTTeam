@@ -733,6 +733,7 @@ public class FirebaseDatabaseActions {
     }
 
     //TODO checks if childs exists and empty player and total player counts
+    //TODO COMPROBAR SI FUNCIONAN
     public static void sendInvitationToThisEvent(String eventId, String uid) {
         long currentTime = System.currentTimeMillis();
 
