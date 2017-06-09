@@ -27,8 +27,6 @@ import butterknife.ButterKnife;
 
 public class FriendsFragment extends Fragment implements FriendsContract.View, UsersAdapter.OnUserItemClickListener {
     private static final String TAG = FriendsFragment.class.getSimpleName();
-    public static final int LOADER_FRIENDS_ID = 6000;
-    public static final int LOADER_FRIENDS_AS_USERS_ID = 6001;
 
     FriendsContract.Presenter mFriendsPresenter;
     UsersAdapter mFriendsRecyclerAdapter;
@@ -86,7 +84,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, mFriendsPresenter.getLoaderInstance());
+        mFriendsPresenter.loadFriend(getLoaderManager(), getArguments());
     }
 
     @Override

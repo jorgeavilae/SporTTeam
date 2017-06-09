@@ -9,7 +9,6 @@ import android.support.v4.content.CursorLoader;
 
 public final class SportteamLoader {
     public static final int LOADER_FRIENDS_REQUESTS_ID = 5000;
-    public static final int LOADER_FRIENDS_REQUESTS_USERS_ID = 5001;
     public static CursorLoader cursorLoaderFriendRequests(Context context, String myUserID) {
         // Return user data for all of my friends requests
         return new CursorLoader(
@@ -20,6 +19,21 @@ public final class SportteamLoader {
                 new String[]{myUserID},
                 SportteamContract.FriendRequestEntry.DATE + " ASC");
     }
+
+
+    public static final int LOADER_FRIENDS_ID = 6000;
+    public static CursorLoader cursorLoaderFriends(Context context, String myUserID) {
+        // Return user data for all of my friends
+        return new CursorLoader(
+                context,
+                SportteamContract.FriendsEntry.CONTENT_FRIEND_WITH_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.FriendsEntry.MY_USER_ID + " = ?",
+                new String[]{myUserID},
+                SportteamContract.FriendsEntry.DATE + " ASC");
+    }
+
+
 
     public static final int LOADER_EVENTS_FOR_INVITATION_ID = 8000;
     public static CursorLoader cursorLoaderSendInvitation(Context context, String myUserID, String otherUserID) {
