@@ -3,7 +3,6 @@ package com.usal.jorgeav.sportapp.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,7 +97,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
         @Override
         public void onClick(View view) {
-            Log.d(TAG, "onClick");
             int position = getAdapterPosition();
             mDataset.moveToPosition(position);
             mClickListener.onEventClick(mDataset.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
