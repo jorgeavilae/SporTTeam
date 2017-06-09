@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.eventdetail.sendinvitation;
+package com.usal.jorgeav.sportapp.eventdetail.inviteuser;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,14 +26,14 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 29/05/2017.
  */
 
-public class SendInvitationFragment extends Fragment implements SendInvitationContract.View, UsersAdapter.OnUserItemClickListener {
-    private static final String TAG = SendInvitationFragment.class.getSimpleName();
+public class InviteUserFragment extends Fragment implements InviteUserContract.View, UsersAdapter.OnUserItemClickListener {
+    private static final String TAG = InviteUserFragment.class.getSimpleName();
     public static final int LOADER_FRIENDS_ID = 6000;
     public static final int LOADER_FRIENDS_AS_USERS_ID = 6001;
     private static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private static String mEvent = "";
-    SendInvitationContract.Presenter mSendInvitationPresenter;
+    InviteUserContract.Presenter mSendInvitationPresenter;
     UsersAdapter mSendInvitationRecyclerAdapter;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
@@ -41,14 +41,14 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
     @BindView(R.id.recycler_list)
     RecyclerView sendInvitationRecyclerList;
 
-    public SendInvitationFragment() {
+    public InviteUserFragment() {
         // Required empty public constructor
     }
 
-    public static SendInvitationFragment newInstance(@NonNull String eventId) {
+    public static InviteUserFragment newInstance(@NonNull String eventId) {
         Bundle args = new Bundle();
         args.putString(BUNDLE_EVENT_ID, eventId);
-        SendInvitationFragment fragment = new SendInvitationFragment();
+        InviteUserFragment fragment = new InviteUserFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,7 +57,7 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mSendInvitationPresenter = new SendInvitationPresenter(this);
+        mSendInvitationPresenter = new InviteUserPresenter(this);
         mSendInvitationRecyclerAdapter = new UsersAdapter(null, this);
     }
 
@@ -117,7 +117,7 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
     }
 
     @Override
-    public SendInvitationFragment getThis() {
+    public InviteUserFragment getThis() {
         return this;
     }
 

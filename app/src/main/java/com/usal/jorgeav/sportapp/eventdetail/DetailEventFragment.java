@@ -22,7 +22,7 @@ import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
-import com.usal.jorgeav.sportapp.eventdetail.sendinvitation.SendInvitationFragment;
+import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
@@ -125,7 +125,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 @Override
                 public void onClick(View view) {
                     //DONE ver lista de amigos para enviarles invitaciones
-                    Fragment fragment = SendInvitationFragment.newInstance(mEventId);
+                    Fragment fragment = InviteUserFragment.newInstance(mEventId);
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });
