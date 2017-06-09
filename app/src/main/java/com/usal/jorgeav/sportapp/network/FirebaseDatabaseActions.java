@@ -663,6 +663,7 @@ public class FirebaseDatabaseActions {
     }
 
     //TODO checks if childs exists
+    //TODO add fromUid and toUid
     public static void sendFriendRequest(String otherUid) {
         Log.d(TAG, "sendFriendRequest: otherUid "+otherUid);
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -740,5 +741,129 @@ public class FirebaseDatabaseActions {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
                 .child(FirebaseDBContract.User.FRIENDS).child(myUid).removeValue();
 
+    }
+
+    //TODO checks if childs exists and empty player and total player counts
+    //TODO COMPROBAR SI FUNCIONAN
+    public static void sendInvitationToThisEvent(String eventId, String uid) {
+        long currentTime = System.currentTimeMillis();
+
+        //Set Invitation Sent in my Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.INVITATIONS)
+                .child(uid).setValue(currentTime);
+
+        //Set Invitation Received in other User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_INVITATIONS)
+                .child(eventId).setValue(currentTime);
+    }
+    public static void deleteInvitationToThisEvent(String eventId, String uid) {
+        //Delete Invitation Sent in my Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.INVITATIONS)
+                .child(uid).removeValue();
+
+        //Set Invitation Received in other User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_INVITATIONS)
+                .child(eventId).removeValue();
+    }
+    public static void sendEventRequest(String uid, String eventId) {
+        long currentTime = System.currentTimeMillis();
+
+        //Set User Request in that Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.USER_REQUESTS)
+                .child(uid).setValue(currentTime);
+
+        //Set Event Request in that my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_REQUESTS)
+                .child(eventId).setValue(currentTime);
+    }
+    public static void cancelEventRequest(String uid, String eventId) {
+        //Delete User Request in that Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.USER_REQUESTS)
+                .child(uid).removeValue();
+
+        //Delete Event Request in that my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_REQUESTS)
+                .child(eventId).removeValue();
+    }
+    public static void acceptEventInvitation(String uid, String eventId) {
+        //Add Assistant Event to my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).setValue(true);
+
+        //Add Assistant User to that Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.PARTICIPANTS).child(uid).setValue(true);
+        //TODO update empty Players with Transaction
+
+        //Delete Event Invitation Received in my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_INVITATIONS).child(eventId).removeValue();
+
+        //Delete Event Invitation Sent in that Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.INVITATIONS).child(uid).removeValue();
+    }
+    public static void declineEventInvitation(String uid, String eventId) {
+        //Delete Event Invitation Received in my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_INVITATIONS).child(eventId).removeValue();
+
+        //Delete Event Invitation Sent in that Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.INVITATIONS).child(uid).removeValue();
+    }
+    public static void quitEvent(String uid, String eventId) {
+        //Delete Assistant Event to my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).removeValue();
+
+        //Delete Assistant User to that Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.PARTICIPANTS).child(uid).removeValue();
+        //TODO update empty Players with Transaction
+    }
+    public static void acceptUserRequestToThisEvent(String uid, String eventId) {
+        //Add Assistant Event to that User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).setValue(true);
+
+        //Add Assistant User to my Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.PARTICIPANTS).child(uid).setValue(true);
+        //TODO update empty Players with Transaction
+
+        //Delete Event Request Sent in that User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_REQUESTS).child(eventId).removeValue();
+
+        //Delete Event Request Received in my Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.USER_REQUESTS).child(uid).removeValue();
+    }
+    public static void declineUserRequestToThisEvent(String uid, String eventId) {
+        //Add Not Assistant Event to that User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).setValue(false);
+
+        //Add Not Assistant User to my Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.PARTICIPANTS).child(uid).setValue(false);
+        //TODO update empty Players with Transaction
+
+        //Delete Event Request Sent in that User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_REQUESTS).child(eventId).removeValue();
+
+        //Delete Event Request Received in my Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.USER_REQUESTS).child(uid).removeValue();
     }
 }

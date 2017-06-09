@@ -1,11 +1,13 @@
 package com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -85,9 +87,7 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
     @Override
     public void onResume() {
         super.onResume();
-        Bundle b = new Bundle();
-        b.putString(BUNDLE_EVENT_ID, mEventId);
-        getLoaderManager().initLoader(LOADER_EVENT_INVITATIONS_ID, b, mEventInvitationsPresenter.getLoaderInstance());
+        mEventInvitationsPresenter.loadEventInvitationsSent(getLoaderManager(), getArguments());
     }
 
 
@@ -125,9 +125,20 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
     }
 
     @Override
-    public void onUserClick(String uid) {
-        Fragment newFragment = ProfileFragment.newInstance(uid);
-        mFragmentManagementListener.initFragment(newFragment, true);
+    public void onUserClick(final String uid) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setPositiveButton("Delete Invitation", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mEventInvitationsPresenter.deleteInvitationToThisEvent(mEventId, uid);
+                    }
+                })
+                .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Fragment newFragment = ProfileFragment.newInstance(uid);
+                        mFragmentManagementListener.initFragment(newFragment, true);
+                    }
+                });
+        builder.create().show();
 
     }
 }

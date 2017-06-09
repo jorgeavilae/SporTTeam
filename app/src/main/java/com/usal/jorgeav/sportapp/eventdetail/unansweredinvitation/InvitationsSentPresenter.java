@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 import java.util.ArrayList;
 
@@ -23,15 +25,15 @@ public class InvitationsSentPresenter implements InvitationsSentContract.Present
     public InvitationsSentPresenter(InvitationsSentContract.View mEventInvitationsView) {
         this.mEventInvitationsView = mEventInvitationsView;
     }
-
     @Override
-    public void loadEventInvitationsSent() {
-//        FirebaseDatabaseActions.loadEvent(mEventInvitationsView.getActivityContext());
+    public void deleteInvitationToThisEvent(String eventId, String uid) {
+        if (!TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
+            FirebaseDatabaseActions.deleteInvitationToThisEvent(eventId, uid);
     }
 
     @Override
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
-        return this;
+    public void loadEventInvitationsSent(LoaderManager loaderManager, Bundle bundle) {
+        loaderManager.initLoader(InvitationsSentFragment.LOADER_EVENT_INVITATIONS_ID, bundle, this);
     }
 
     @Override
@@ -49,13 +51,12 @@ public class InvitationsSentPresenter implements InvitationsSentContract.Present
             case InvitationsSentFragment.LOADER_USER_DATA_FROM_INVITATIONS_ID:
                 return new CursorLoader(
                         this.mEventInvitationsView.getActivityContext(),
-                        SportteamContract.EventEntry.CONTENT_EVENT_URI,
-                        SportteamContract.EventEntry.EVENT_COLUMNS,
-//                        SportteamContract.EventEntry.EVENT_ID + " = ?",
-//                        args.getStringArray(USERID_KEY),
-                        null,
-                        null,
-                        SportteamContract.EventEntry.DATE + " ASC");
+                        SportteamContract.UserEntry.CONTENT_USER_URI,
+                        SportteamContract.UserEntry.USER_COLUMNS,
+                        SportteamContract.UserEntry.USER_ID + " = ?",
+                        args.getStringArray(USERID_KEY),
+//                        null, null,
+                        SportteamContract.UserEntry.NAME + " ASC");
         }
         return null;
     }

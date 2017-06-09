@@ -1,11 +1,13 @@
 package com.usal.jorgeav.sportapp.eventdetail.userrequests;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -125,8 +127,26 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     }
 
     @Override
-    public void onUserClick(String uid) {
-        Fragment newFragment = ProfileFragment.newInstance(uid);
-        mFragmentManagementListener.initFragment(newFragment, true);
+    public void onUserClick(final String uid) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setMessage("Quieres aceptarlo como asistente?")
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mUsersRequestsPresenter.acceptUserRequestToThisEvent(mEventId, uid);
+                    }
+                })
+                .setNegativeButton("Denegar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mUsersRequestsPresenter.declineUserRequestToThisEvent(mEventId, uid);
+                    }
+                })
+                .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Fragment newFragment = ProfileFragment.newInstance(uid);
+                        mFragmentManagementListener.initFragment(newFragment, true);
+                    }
+                });
+        builder.create().show();
     }
 }

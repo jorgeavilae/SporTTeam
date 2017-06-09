@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 import java.util.ArrayList;
 
@@ -22,6 +24,18 @@ public class UsersRequestsPresenter implements UsersRequestsContract.Presenter, 
 
     public UsersRequestsPresenter(UsersRequestsContract.View mUsersRequestsView) {
         this.mUsersRequestsView = mUsersRequestsView;
+    }
+
+    @Override
+    public void acceptUserRequestToThisEvent(String eventId, String uid) {
+        if (!TextUtils.isEmpty(eventId))
+            FirebaseDatabaseActions.acceptUserRequestToThisEvent(uid, eventId);
+    }
+
+    @Override
+    public void declineUserRequestToThisEvent(String eventId, String uid) {
+        if (!TextUtils.isEmpty(eventId))
+            FirebaseDatabaseActions.declineUserRequestToThisEvent(uid, eventId);
     }
 
     @Override

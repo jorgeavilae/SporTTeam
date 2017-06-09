@@ -22,7 +22,8 @@ public abstract class ProfileContract {
 
     public interface Presenter {
        void loadUser();
-        @ProfilePresenter.RelationType int getRelationTypeBetweenThisUserAndI();
+        @ProfilePresenter.UserRelationType
+        int getRelationTypeBetweenThisUserAndI();
         void sendFriendRequest(String uid);
         void cancelFriendRequest(String uid);
         void acceptFriendRequest(String uid);

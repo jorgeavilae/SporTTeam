@@ -2,11 +2,13 @@ package com.usal.jorgeav.sportapp.eventdetail;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,13 +17,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
-import com.usal.jorgeav.sportapp.eventdetail.sendinvitation.SendInvitationFragment;
+import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
@@ -96,30 +97,18 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         View root = inflater.inflate(R.layout.fragment_detail_event, container, false);
         ButterKnife.bind(this, root);
 
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID)) {
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
-            if (mEventId != null) {
-                Cursor c = getActivity().getContentResolver().query(
-                        SportteamContract.EventEntry.CONTENT_EVENT_URI,
-                        SportteamContract.EventEntry.EVENT_COLUMNS,
-                        SportteamContract.EventEntry.EVENT_ID + " = ?",
-                        new String[]{mEventId},
-                        null);
-                if (c != null && c.moveToFirst()) {
-                    String ownerId = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
-                    isMyEvent = FirebaseAuth.getInstance().getCurrentUser().getUid().equals(ownerId);
-                    c.close();
-                } else
-                    isMyEvent = false;
-            }
-        }
+
+        @DetailEventPresenter.EventRelationType
+        int relationType = mPresenter.getRelationTypeBetweenThisEventAndI();
 
         usersAdapter = new UsersAdapter(null, null);
         eventParticipantsList.setAdapter(usersAdapter);
         eventParticipantsList.setHasFixedSize(true);
         eventParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
 
-        if (isMyEvent) {
+        if (relationType == DetailEventPresenter.RELATION_TYPE_OWNER) {
             buttonUserRequests.setVisibility(View.VISIBLE);
             buttonUserRequests.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -136,7 +125,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 @Override
                 public void onClick(View view) {
                     //DONE ver lista de amigos para enviarles invitaciones
-                    Fragment fragment = SendInvitationFragment.newInstance();
+                    Fragment fragment = InviteUserFragment.newInstance(mEventId);
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });
@@ -153,15 +142,92 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
             });
         } else {
             buttonSendRequest.setVisibility(View.VISIBLE);
-            buttonSendRequest.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO enviar peticion para participar
-                }
-            });
+            setupSendRequestButton(relationType);
         }
 
         return root;
+    }
+
+    private void setupSendRequestButton(@DetailEventPresenter.EventRelationType int relationType) {
+        switch (relationType) {
+            case DetailEventPresenter.RELATION_TYPE_NONE:
+                buttonSendRequest.setText("Enviar peticion de entrada");
+                buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        /*Enviar peticion de entrada*/
+                        mPresenter.sendEventRequest(mEventId);
+                    }
+                });
+                break;
+            case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
+                buttonSendRequest.setText("Cancelar peticion de entrada");
+                buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        /*Canncelar peticion de entrada*/
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                        builder.setMessage("Seguro de que quieres eliminar la peticion?")
+                                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        mPresenter.cancelEventRequest(mEventId);
+                                    }
+                                })
+                                .setNegativeButton("No", null);
+                        builder.create().show();
+                    }
+                });
+                break;
+            case DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION:
+                buttonSendRequest.setText("Contestar invitacion");
+                buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        /*Contestar invitacion*/
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                        builder.setMessage("Quieres asistir a este evento?")
+                                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        mPresenter.acceptEventInvitation(mEventId);
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        mPresenter.declineEventInvitation(mEventId);
+                                    }
+                                });
+                        builder.create().show();
+                    }
+                });
+                break;
+            case DetailEventPresenter.RELATION_TYPE_ASSISTANT:
+                buttonSendRequest.setText("Abandonar partido");
+                buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        /*Abandonar partido*/
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                        builder.setMessage("Quieres abandonar este partido?")
+                                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        mPresenter.quitEvent(mEventId);
+                                    }
+                                })
+                                .setNegativeButton("No", null);
+                        builder.create().show();
+                    }
+                });
+                break;
+            case DetailEventPresenter.RELATION_TYPE_BLOCKED:
+                buttonSendRequest.setText("No puedes asistir");
+                buttonSendRequest.setEnabled(false);
+                break;
+            case DetailEventPresenter.RELATION_TYPE_OWNER:
+            case DetailEventPresenter.RELATION_TYPE_ERROR:
+                buttonSendRequest.setText("Error");
+                break;
+        }
     }
 
     @Override
@@ -280,5 +346,10 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public Fragment getThis() {
         return this;
+    }
+
+    @Override
+    public String getEventID() {
+        return mEventId;
     }
 }

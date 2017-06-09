@@ -114,14 +114,14 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_FRIENDS,
             RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_REQUEST})
-    @interface RelationType {}
+    @interface UserRelationType {}
     static final int RELATION_TYPE_ERROR = -1;
     static final int RELATION_TYPE_NONE = 0;
     static final int RELATION_TYPE_FRIENDS = 1;
     static final int RELATION_TYPE_I_SEND_REQUEST = 2;
     static final int RELATION_TYPE_I_RECEIVE_REQUEST = 3;
     @Override
-    @RelationType
+    @UserRelationType
     public int getRelationTypeBetweenThisUserAndI() {
         try {
             String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -164,7 +164,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
                 return RELATION_TYPE_I_SEND_REQUEST;
             }
 
-            //Any relation
+            //No relation
             return RELATION_TYPE_NONE;
         } catch (NullPointerException e) {
             e.printStackTrace();

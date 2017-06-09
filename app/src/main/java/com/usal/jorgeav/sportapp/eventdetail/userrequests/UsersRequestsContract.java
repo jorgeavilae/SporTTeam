@@ -13,6 +13,9 @@ public abstract class UsersRequestsContract {
     public interface Presenter {
         void loadUsersRequests();
         LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
+
+        void acceptUserRequestToThisEvent(String eventId, String uid);
+        void declineUserRequestToThisEvent(String eventId, String uid);
     }
 
     public interface View {
