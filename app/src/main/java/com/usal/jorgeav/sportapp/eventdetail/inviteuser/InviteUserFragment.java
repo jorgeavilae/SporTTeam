@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 
 public class InviteUserFragment extends Fragment implements InviteUserContract.View, UsersAdapter.OnUserItemClickListener {
     private static final String TAG = InviteUserFragment.class.getSimpleName();
-    private static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
+    public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private static String mEvent = "";
     InviteUserContract.Presenter mSendInvitationPresenter;

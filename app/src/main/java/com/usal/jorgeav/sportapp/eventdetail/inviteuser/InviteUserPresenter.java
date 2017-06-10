@@ -32,16 +32,17 @@ public class InviteUserPresenter implements InviteUserContract.Presenter, Loader
 
     @Override
     public void loadFriends(LoaderManager loaderManager, Bundle bundle) {
-        loaderManager.initLoader(SportteamLoader.LOADER_FRIENDS_ID, bundle, this);
+        loaderManager.initLoader(SportteamLoader.LOADER_USERS_FOR_INVITE_ID, bundle, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         switch (id) {
-            case SportteamLoader.LOADER_FRIENDS_ID:
+            case SportteamLoader.LOADER_USERS_FOR_INVITE_ID:
+                String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String eventID = args.getString(InviteUserFragment.BUNDLE_EVENT_ID);
                 return SportteamLoader
-                        .cursorLoaderFriends(mSendInvitationView.getActivityContext(), currentUserID);
+                        .cursorLoaderUsersForInvite(mSendInvitationView.getActivityContext(), currentUserID, eventID);
         }
         return null;
     }
