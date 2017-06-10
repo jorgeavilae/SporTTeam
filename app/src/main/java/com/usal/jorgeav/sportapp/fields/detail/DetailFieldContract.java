@@ -1,7 +1,7 @@
 package com.usal.jorgeav.sportapp.fields.detail;
 
 import android.content.Context;
-import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -22,8 +22,7 @@ public abstract class DetailFieldContract {
     }
 
     public interface Presenter {
-        void openField();
-        LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
+        void openField(LoaderManager loaderManager, Bundle b);
     }
 
 }

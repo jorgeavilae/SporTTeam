@@ -23,13 +23,13 @@ public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.
 
     @Override
     public void loadFields(LoaderManager loaderManager, Bundle b) {
-        loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_ID, b, this);
+        loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY, b, this);
     }
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case SportteamLoader.LOADER_FIELDS_ID:
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY:
                 String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String city = Utiles.getCurrentCity(mFieldsView.getActivityContext(), currentUserID);
                 return SportteamLoader

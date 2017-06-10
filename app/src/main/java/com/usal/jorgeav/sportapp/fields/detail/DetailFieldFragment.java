@@ -24,7 +24,6 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     private static final String TAG = DetailFieldFragment.class.getSimpleName();
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
     public static final String BUNDLE_SPORT_ID = "BUNDLE_SPORT_ID";
-    public static final int LOADER_FIELD_ID = 10000;
 
     private static String mFieldId = "";
     private static String mSportId = "";
@@ -108,10 +107,7 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     @Override
     public void onResume() {
         super.onResume();
-        Bundle b = new Bundle();
-        b.putString(BUNDLE_FIELD_ID, mFieldId);
-        b.putString(BUNDLE_SPORT_ID, mSportId);
-        getLoaderManager().initLoader(LOADER_FIELD_ID, b, mPresenter.getLoaderInstance());
+        mPresenter.openField(getLoaderManager(), getArguments());
     }
 
     @Override

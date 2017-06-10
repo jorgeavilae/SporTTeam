@@ -4,11 +4,11 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 
 /**
  * Created by Jorge Avila on 26/04/2017.
@@ -22,26 +22,18 @@ public class DetailFieldPresenter implements DetailFieldContract.Presenter, Load
     }
 
     @Override
-    public void openField() {
-    }
-
-    @Override
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
-        return this;
+    public void openField(LoaderManager loaderManager, Bundle b) {
+        loaderManager.initLoader(SportteamLoader.LOADER_FIELD_ID, b, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case DetailFieldFragment.LOADER_FIELD_ID:
-                return new CursorLoader(
-                        this.mView.getActivityContext(),
-                        SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                        SportteamContract.FieldEntry.FIELDS_COLUMNS,
-                        SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? ",
-                        new String[]{args.getString(DetailFieldFragment.BUNDLE_FIELD_ID),
-                                args.getString(DetailFieldFragment.BUNDLE_SPORT_ID)},
-                        null);
+            case SportteamLoader.LOADER_FIELD_ID:
+                String fieldId = args.getString(DetailFieldFragment.BUNDLE_FIELD_ID);
+                String sportId = args.getString(DetailFieldFragment.BUNDLE_SPORT_ID);
+                return SportteamLoader
+                        .cursorLoaderOneField(mView.getActivityContext(), fieldId, sportId);
         }
         return null;
     }

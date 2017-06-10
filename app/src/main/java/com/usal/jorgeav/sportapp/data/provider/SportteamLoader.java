@@ -9,8 +9,9 @@ import android.support.v4.content.CursorLoader;
 
 public final class SportteamLoader {
 
-    public static final int LOADER_FIELDS_ID = 3000;
+    public static final int LOADER_FIELDS_FROM_CITY = 3000;
     public static CursorLoader cursorLoaderFieldsFromCity(Context context, String city) {
+        //Return field data from fields in city
         return new CursorLoader(
                 context,
                 SportteamContract.FieldEntry.CONTENT_FIELD_URI,
@@ -21,8 +22,22 @@ public final class SportteamLoader {
     }
 
 
+    public static final int LOADER_FIELD_ID = 10000;
+    public static CursorLoader cursorLoaderOneField(Context context, String fieldId, String sportId) {
+        // Return field data
+        return new CursorLoader(
+                context,
+                SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                SportteamContract.FieldEntry.FIELDS_COLUMNS,
+                SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? ",
+                new String[]{fieldId, sportId},
+                null);
+    }
+
+
     public static final int LOADER_FIELDS_WITH_SPORT = 13000;
     public static CursorLoader cursorLoaderFieldsWithSport(Context context, String sportId) {
+        // Return field data from fields with sportId
         return new CursorLoader(
                 context,
                 SportteamContract.FieldEntry.CONTENT_FIELD_URI,
@@ -36,6 +51,7 @@ public final class SportteamLoader {
     public static final int LOADER_EVENTS_FROM_CITY = 14000;
     public static final int LOADER_EVENTS_WITH_SPORT = 14001;
     public static CursorLoader cursorLoaderEventsFromCity(Context context, String city) {
+        // Return event data from events in city
         return new CursorLoader(
                 context,
                 SportteamContract.EventEntry.CONTENT_EVENT_URI,
@@ -45,6 +61,7 @@ public final class SportteamLoader {
                 SportteamContract.EventEntry.DATE + " ASC");
     }
     public static CursorLoader cursorLoaderEventsWithSport(Context context, String sportId) {
+        //Return event data from events with sportId
         return new CursorLoader(
                 context,
                 SportteamContract.EventEntry.CONTENT_EVENT_URI,
