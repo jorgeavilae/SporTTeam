@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.profile;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -21,7 +22,7 @@ public abstract class ProfileContract {
     }
 
     public interface Presenter {
-       void loadUser();
+       void openUser(LoaderManager loaderManager, Bundle b);
         @ProfilePresenter.UserRelationType
         int getRelationTypeBetweenThisUserAndI();
         void sendFriendRequest(String uid);
@@ -29,6 +30,5 @@ public abstract class ProfileContract {
         void acceptFriendRequest(String uid);
         void declineFriendRequest(String uid);
         void deleteFriend(String uid);
-        LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
     }
 }

@@ -9,6 +9,30 @@ import android.support.v4.content.CursorLoader;
 
 public final class SportteamLoader {
 
+    public static final int LOADER_PROFILE_ID = 1001;
+    public static final int LOADER_PROFILE_SPORTS_ID = 1002;
+    public static CursorLoader cursorLoaderOneUser(Context context, String userId) {
+        // Return user data
+        return new CursorLoader(
+                context,
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.UserEntry.USER_ID + " = ?",
+                new String[]{userId},
+                null);
+    }
+    public static CursorLoader cursorLoaderSportsUser(Context context, String userId) {
+        // Return sports data for userId
+        return new CursorLoader(
+                context,
+                SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                SportteamContract.UserSportEntry.USER_SPORT_COLUMNS,
+                SportteamContract.UserSportEntry.USER_ID + " = ?",
+                new String[]{userId},
+                null);
+    }
+
+
     public static final int LOADER_FIELDS_FROM_CITY = 3000;
     public static CursorLoader cursorLoaderFieldsFromCity(Context context, String city) {
         //Return field data from fields in city

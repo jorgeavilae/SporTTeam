@@ -41,8 +41,6 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     private final static String TAG = ProfileFragment.class.getSimpleName();
 
     public static final String BUNDLE_INSTANCE_UID = "BUNDLE_INSTANCE_UID";
-    public static final int LOADER_MYPROFILE_ID = 1001;
-    public static final int LOADER_MYPROFILE_SPORTS_ID = 1002;
     private static String mUserUid = "";
     private ProfileContract.Presenter mProfilePresenter;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -243,10 +241,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     @Override
     public void onResume() {
         super.onResume();
-        Bundle b = new Bundle();
-        b.putString(BUNDLE_INSTANCE_UID, mUserUid);
-        getLoaderManager().initLoader(LOADER_MYPROFILE_ID, b, mProfilePresenter.getLoaderInstance());
-        getLoaderManager().initLoader(LOADER_MYPROFILE_SPORTS_ID, b, mProfilePresenter.getLoaderInstance());
+        mProfilePresenter.openUser(getLoaderManager(), getArguments());
     }
 
     @Override

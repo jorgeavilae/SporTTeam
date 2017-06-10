@@ -4,15 +4,13 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 import java.lang.annotation.Retention;
@@ -26,54 +24,38 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     private static final String TAG = ProfilePresenter.class.getSimpleName();
 
     private ProfileContract.View mUserView;
-    private User mUser;
 
     public ProfilePresenter(ProfileContract.View userView) {
         mUserView = userView;
     }
 
     @Override
-    public void loadUser() {
-//        FirebaseDatabaseActions.loadMyProfile(mUserView.getActivityContext());
-    }
-
-    @Override
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
-        return this;
+    public void openUser(LoaderManager loaderManager, Bundle b) {
+        loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_ID, b, this);
+        loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_SPORTS_ID, b, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
-        if (fuser != null)
-            switch (id) {
-                case ProfileFragment.LOADER_MYPROFILE_ID:
-                    return new CursorLoader(
-                            this.mUserView.getActivityContext(),
-                            SportteamContract.UserEntry.CONTENT_USER_URI,
-                            SportteamContract.UserEntry.USER_COLUMNS,
-                            SportteamContract.UserEntry.USER_ID + " = ?",
-                            new String[]{args.getString(ProfileFragment.BUNDLE_INSTANCE_UID)},
-                            null);
-                case ProfileFragment.LOADER_MYPROFILE_SPORTS_ID:
-                    return new CursorLoader(
-                            this.mUserView.getActivityContext(),
-                            SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
-                            SportteamContract.UserSportEntry.USER_SPORT_COLUMNS,
-                            SportteamContract.UserSportEntry.USER_ID + " = ?",
-                            new String[]{args.getString(ProfileFragment.BUNDLE_INSTANCE_UID)},
-                            null);
-            }
+        String userId = args.getString(ProfileFragment.BUNDLE_INSTANCE_UID);
+        switch (id) {
+            case SportteamLoader.LOADER_PROFILE_ID:
+                return SportteamLoader
+                        .cursorLoaderOneUser(mUserView.getActivityContext(), userId);
+            case SportteamLoader.LOADER_PROFILE_SPORTS_ID:
+                return SportteamLoader
+                        .cursorLoaderSportsUser(mUserView.getActivityContext(), userId);
+        }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
-            case ProfileFragment.LOADER_MYPROFILE_ID:
+            case SportteamLoader.LOADER_PROFILE_ID:
                 showUser(data);
                 break;
-            case ProfileFragment.LOADER_MYPROFILE_SPORTS_ID:
+            case SportteamLoader.LOADER_PROFILE_SPORTS_ID:
                 if(data != null && data.moveToFirst()) //Todos los usuarios tienen al menos un deporte
                     mUserView.showSports(data);
                 break;
@@ -83,10 +65,10 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
-            case ProfileFragment.LOADER_MYPROFILE_ID:
+            case SportteamLoader.LOADER_PROFILE_ID:
                 showUser(null);
                 break;
-            case ProfileFragment.LOADER_MYPROFILE_SPORTS_ID:
+            case SportteamLoader.LOADER_PROFILE_SPORTS_ID:
                 mUserView.showSports(null);
                 break;
         }
