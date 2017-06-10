@@ -21,6 +21,28 @@ public final class SportteamLoader {
     }
 
 
+    public static final int LOADER_EVENTS_FROM_CITY = 14000;
+    public static final int LOADER_EVENTS_WITH_SPORT = 14001;
+    public static CursorLoader cursorLoaderEventsFromCity(Context context, String city) {
+        return new CursorLoader(
+                context,
+                SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                SportteamContract.EventEntry.EVENT_COLUMNS,
+                SportteamContract.EventEntry.CITY + " = ?",
+                new String[]{city},
+                SportteamContract.EventEntry.DATE + " ASC");
+    }
+    public static CursorLoader cursorLoaderEventsWithSport(Context context, String sportId) {
+        return new CursorLoader(
+                context,
+                SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                SportteamContract.EventEntry.EVENT_COLUMNS,
+                SportteamContract.EventEntry.SPORT + " = ?",
+                new String[]{sportId},
+                SportteamContract.EventEntry.DATE + " ASC");
+    }
+
+
     public static final int LOADER_FRIENDS_REQUESTS_ID = 5000;
     public static CursorLoader cursorLoaderFriendRequests(Context context, String myUserID) {
         // Return user data for all of my friends requests

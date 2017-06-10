@@ -27,8 +27,6 @@ import butterknife.ButterKnife;
 public class SearchEventsFragment extends Fragment implements SearchEventsContract.View,
         EventsAdapter.OnEventItemClickListener, SportDialog.SportDialogListener {
     private static final String TAG = SearchEventsFragment.class.getSimpleName();
-    public static final int LOADER_EVENTS_FROM_CITY = 14000;
-    public static final int LOADER_EVENTS_WITH_SPORT = 14001;
     public static final String BUNDLE_SPORT = "BUNDLE_SPORT";
     public final SearchEventsFragment mThis = this;
 
@@ -88,7 +86,7 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(LOADER_EVENTS_FROM_CITY, null, mSearchEventsPresenter.getLoaderInstance());
+        mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
     }
 
 
@@ -135,10 +133,9 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
     public void onDialogSportClick(String sportId) {
         mEventsRecyclerAdapter.replaceData(null);
         //TODO FirebaseDatabaseActions.loadProfilesWithName(getActivityContext(), username);
-        getLoaderManager().destroyLoader(LOADER_EVENTS_FROM_CITY);
         Bundle b = new Bundle();
         b.putString(BUNDLE_SPORT, sportId);
-        getLoaderManager().restartLoader(LOADER_EVENTS_WITH_SPORT, b, mSearchEventsPresenter.getLoaderInstance());
+        mSearchEventsPresenter.loadNearbyEventsWithSport(getLoaderManager(), b);
 
     }
 }
