@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.fields;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -11,12 +12,11 @@ import android.support.v4.app.LoaderManager;
 public abstract class FieldsContract {
 
     public interface Presenter {
-        void loadFields();
-        LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance();
+        void loadFields(LoaderManager loaderManager, Bundle b);
     }
 
     public interface View {
         void showFields(Cursor cursor);
-        Context getContext();
+        Context getActivityContext();
     }
 }

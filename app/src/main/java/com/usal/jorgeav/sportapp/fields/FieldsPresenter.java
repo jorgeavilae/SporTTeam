@@ -3,10 +3,11 @@ package com.usal.jorgeav.sportapp.fields;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
-import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.google.firebase.auth.FirebaseAuth;
+import com.usal.jorgeav.sportapp.Utiles;
+import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 
 /**
  * Created by Jorge Avila on 25/04/2017.
@@ -21,26 +22,18 @@ public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.
     }
 
     @Override
-    public void loadFields() {
-//        FirebaseDatabaseActions.loadFields(mFieldsView.getContext());
-    }
-
-    @Override
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
-        return this;
+    public void loadFields(LoaderManager loaderManager, Bundle b) {
+        loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_ID, b, this);
     }
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case FieldsFragment.LOADER_FIELDS_ID:
-                return new CursorLoader(
-                        this.mFieldsView.getContext(),
-                        SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                        SportteamContract.FieldEntry.FIELDS_COLUMNS,
-                        null,
-                        null,
-                        SportteamContract.FieldEntry.COLUMN_PUNCTUATION + " DESC");
+            case SportteamLoader.LOADER_FIELDS_ID:
+                String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String city = Utiles.getCurrentCity(mFieldsView.getActivityContext(), currentUserID);
+                return SportteamLoader
+                        .cursorLoaderFieldsFromCity(mFieldsView.getActivityContext(), city);
         }
         return null;
     }

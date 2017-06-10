@@ -9,6 +9,18 @@ import android.support.v4.content.CursorLoader;
 
 public final class SportteamLoader {
 
+    public static final int LOADER_FIELDS_ID = 3000;
+    public static CursorLoader cursorLoaderFieldsFromCity(Context context, String city) {
+        return new CursorLoader(
+                context,
+                SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                SportteamContract.FieldEntry.FIELDS_COLUMNS,
+                SportteamContract.FieldEntry.CITY + " = ? ",
+                new String[]{city},
+                SportteamContract.FieldEntry.COLUMN_PUNCTUATION + " DESC");
+    }
+
+
     public static final int LOADER_FIELDS_WITH_SPORT = 13000;
     public static CursorLoader cursorLoaderFieldsWithSport(Context context, String sportId) {
         return new CursorLoader(

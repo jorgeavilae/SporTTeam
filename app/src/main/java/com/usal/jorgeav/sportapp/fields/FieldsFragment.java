@@ -22,7 +22,6 @@ import butterknife.ButterKnife;
 
 public class FieldsFragment extends Fragment implements FieldsContract.View, FieldsAdapter.OnFieldItemClickListener {
     private static final String TAG = FieldsFragment.class.getSimpleName();
-    public static final int LOADER_FIELDS_ID = 3000;
 
     FieldsContract.Presenter mFieldsPresenter;
     FieldsAdapter mFieldsRecyclerAdapter;
@@ -70,8 +69,7 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     @Override
     public void onResume() {
         super.onResume();
-//        mFieldsPresenter.loadFields();
-        getLoaderManager().initLoader(LOADER_FIELDS_ID, null, mFieldsPresenter.getLoaderInstance());
+        mFieldsPresenter.loadFields(getLoaderManager(), getArguments());
     }
 
     @Override
@@ -100,5 +98,10 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     public void onFieldClick(String fieldId, String sportId) {
         Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
         mFragmentManagementListener.initFragment(newFragment, true);
+    }
+
+    @Override
+    public Context getActivityContext() {
+        return getActivity();
     }
 }
