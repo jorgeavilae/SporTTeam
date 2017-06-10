@@ -3,10 +3,9 @@ package com.usal.jorgeav.sportapp.events.addevent.selectfield;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
-import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 
 /**
  * Created by Jorge Avila on 06/06/2017.
@@ -23,26 +22,18 @@ public class SelectFieldPresenter implements SelectFieldContract.Presenter, Load
     }
 
     @Override
-    public void loadFieldsWithSport(String sportId) {
+    public void loadFieldsWithSport(LoaderManager loaderManager, Bundle b) {
+        loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_WITH_SPORT, b, this);
 
-    }
-
-    @Override
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
-        return this;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case SelectFieldFragment.LOADER_FIELDS_WITH_SPORT:
-                return new CursorLoader(
-                        this.mSelectFieldsView.getActivityContext(),
-                        SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                        SportteamContract.FieldEntry.FIELDS_COLUMNS,
-                        SportteamContract.FieldEntry.SPORT + " = ?",
-                        new String[]{args.getString(SelectFieldFragment.BUNDLE_SPORT_ID)},
-                        SportteamContract.FieldEntry.CITY + " ASC");
+            case SportteamLoader.LOADER_FIELDS_WITH_SPORT:
+                String sportId = args.getString(SelectFieldFragment.BUNDLE_SPORT_ID);
+                return SportteamLoader
+                        .cursorLoaderFieldsWithSport(mSelectFieldsView.getActivityContext(), sportId);
         }
         return null;
     }

@@ -26,7 +26,6 @@ import butterknife.ButterKnife;
 
 public class SelectFieldFragment extends Fragment implements SelectFieldContract.View, FieldsAdapter.OnFieldItemClickListener {
     private static final String TAG = SelectFieldFragment.class.getSimpleName();
-    public static final int LOADER_FIELDS_WITH_SPORT = 13000;
     public static final String BUNDLE_SPORT_ID = "BUNDLE_SPORT_ID";
 
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
@@ -87,7 +86,7 @@ public class SelectFieldFragment extends Fragment implements SelectFieldContract
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(LOADER_FIELDS_WITH_SPORT, getArguments(), mSelectFieldPresenter.getLoaderInstance());
+        mSelectFieldPresenter.loadFieldsWithSport(getLoaderManager(), getArguments());
     }
 
 

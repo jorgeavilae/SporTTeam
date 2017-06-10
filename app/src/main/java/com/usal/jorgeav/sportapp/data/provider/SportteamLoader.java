@@ -8,6 +8,19 @@ import android.support.v4.content.CursorLoader;
  */
 
 public final class SportteamLoader {
+
+    public static final int LOADER_FIELDS_WITH_SPORT = 13000;
+    public static CursorLoader cursorLoaderFieldsWithSport(Context context, String sportId) {
+        return new CursorLoader(
+                context,
+                SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                SportteamContract.FieldEntry.FIELDS_COLUMNS,
+                SportteamContract.FieldEntry.SPORT + " = ?",
+                new String[]{sportId},
+                SportteamContract.FieldEntry.CITY + " ASC");
+    }
+
+
     public static final int LOADER_FRIENDS_REQUESTS_ID = 5000;
     public static CursorLoader cursorLoaderFriendRequests(Context context, String myUserID) {
         // Return user data for all of my friends requests
