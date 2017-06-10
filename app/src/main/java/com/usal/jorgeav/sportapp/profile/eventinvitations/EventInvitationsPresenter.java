@@ -32,7 +32,7 @@ public class EventInvitationsPresenter implements EventInvitationsContract.Prese
         switch (id) {
             case SportteamLoader.LOADER_EVENT_INVITATIONS_RECEIVED_ID:
                 return SportteamLoader
-                        .cursorLoaderEventInvitationsReceived(mEventInvitationsView.getActivityContext(), currentUserID);
+                        .cursorLoaderEventsForEventInvitationsReceived(mEventInvitationsView.getActivityContext(), currentUserID);
         }
         return null;
     }

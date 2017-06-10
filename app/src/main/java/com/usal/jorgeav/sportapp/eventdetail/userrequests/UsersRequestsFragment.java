@@ -29,10 +29,8 @@ import butterknife.ButterKnife;
 public class UsersRequestsFragment extends Fragment implements UsersRequestsContract.View,
         UsersAdapter.OnUserItemClickListener {
     private static final String TAG = UsersRequestsFragment.class.getSimpleName();
-
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
-    public static final int LOADER_USERS_REQUESTS_ID = 9000;
-    public static final int LOADER_USERS_REQUESTS_DATA_ID = 9001;
+
     private static String mEventId = "";
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -88,10 +86,7 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     @Override
     public void onResume() {
         super.onResume();
-        Bundle b = new Bundle();
-        b.putString(BUNDLE_EVENT_ID, mEventId);
-        getLoaderManager().initLoader(LOADER_USERS_REQUESTS_ID, b, mUsersRequestsPresenter.getLoaderInstance());
-        //TODO cargar peticiones denegadas para desdenegarlas
+        mUsersRequestsPresenter.loadUsersRequests(getLoaderManager(), getArguments());
     }
 
     @Override
@@ -114,6 +109,11 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     public void showUsersRequests(Cursor cursor) {
         mUsersRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
+    }
+
+    @Override
+    public void showRejectedUsers(Cursor cursor) {
+        //TODO cargar peticiones denegadas para desdenegarlas
     }
 
     @Override

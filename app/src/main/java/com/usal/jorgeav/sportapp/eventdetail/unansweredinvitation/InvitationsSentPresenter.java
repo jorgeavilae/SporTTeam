@@ -38,7 +38,7 @@ public class InvitationsSentPresenter implements InvitationsSentContract.Present
             case SportteamLoader.LOADER_EVENT_INVITATIONS_SENT_ID:
                 String eventId = args.getString(InvitationsSentFragment.BUNDLE_EVENT_ID);
                 return SportteamLoader
-                        .cursorLoaderEventInvitationsSent(mEventInvitationsView.getActivityContext(), eventId);
+                        .cursorLoaderUsersForEventInvitationsSent(mEventInvitationsView.getActivityContext(), eventId);
         }
         return null;
     }

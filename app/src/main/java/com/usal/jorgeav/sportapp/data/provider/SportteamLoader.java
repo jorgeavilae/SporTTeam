@@ -85,7 +85,7 @@ public final class SportteamLoader {
 
 
     public static final int LOADER_EVENT_INVITATIONS_SENT_ID = 7000;
-    public static CursorLoader cursorLoaderEventInvitationsSent(Context context, String eventId) {
+    public static CursorLoader cursorLoaderUsersForEventInvitationsSent(Context context, String eventId) {
         // Return user data for invitations sent in eventId
         return new CursorLoader(
                 context,
@@ -97,9 +97,9 @@ public final class SportteamLoader {
     }
 
 
-    public static final int LOADER_EVENT_INVITATIONS_RECEIVED_ID = 7000;
-    public static CursorLoader cursorLoaderEventInvitationsReceived(Context context, String myUserId) {
-        // Return user data for participants in eventId
+    public static final int LOADER_EVENT_INVITATIONS_RECEIVED_ID = 7001;
+    public static CursorLoader cursorLoaderEventsForEventInvitationsReceived(Context context, String myUserId) {
+        // Return event data for invitations received in myUserId
         return new CursorLoader(
                 context,
                 SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI,
@@ -107,6 +107,19 @@ public final class SportteamLoader {
                 SportteamContract.EventsInvitationEntry.USER_ID + " = ? ",
                 new String[]{myUserId},
                 SportteamContract.EventsInvitationEntry.DATE + " ASC");
+    }
+
+
+    public static final int LOADER_USERS_REQUESTS_ID = 9000;
+    public static CursorLoader cursorLoaderUsersForEventRequests(Context context, String eventId) {
+        // Return user data for requests received in eventId
+        return new CursorLoader(
+                context,
+                SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.EventRequestsEntry.EVENT_ID + " = ? ",
+                new String[]{eventId},
+                SportteamContract.EventRequestsEntry.DATE + " ASC");
     }
 
 
