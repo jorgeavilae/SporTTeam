@@ -29,6 +29,7 @@ public class SendInvitationPresenter implements SendInvitationContract.Presenter
 
     }
 
+    //TODO SportteamLoader
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();

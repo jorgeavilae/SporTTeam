@@ -132,7 +132,7 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
     @Override
     public void onDialogSportClick(String sportId) {
         mEventsRecyclerAdapter.replaceData(null);
-        //TODO FirebaseDatabaseActions.loadProfilesWithName(getActivityContext(), username);
+        //TODO FirebaseDatabaseActions.loadEventsWithSport(getActivityContext(), sportId);
         Bundle b = new Bundle();
         b.putString(BUNDLE_SPORT, sportId);
         mSearchEventsPresenter.loadNearbyEventsWithSport(getLoaderManager(), b);

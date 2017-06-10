@@ -27,8 +27,6 @@ import butterknife.ButterKnife;
 
 public class SearchUsersFragment extends Fragment implements SearchUsersContract.View, UsersAdapter.OnUserItemClickListener, UsernameDialog.UsernameDialogListener  {
     private static final String TAG = SearchUsersFragment.class.getSimpleName();
-    public static final int LOADER_USERS_FROM_CITY = 12000;
-    public static final int LOADER_USERS_WITH_NAME = 12001;
     public static final String BUNDLE_USERNAME = "BUNDLE_USERNAME";
     public final SearchUsersFragment mThis = this;
 
@@ -84,7 +82,7 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(LOADER_USERS_FROM_CITY, null, mSearchUsersPresenter.getLoaderInstance());
+        mSearchUsersPresenter.loadNearbyUsers(getLoaderManager(), getArguments());
     }
 
 
@@ -130,9 +128,8 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
     public void onDialogPositiveClick(String username) {
         mUsersRecyclerAdapter.replaceData(null);
         FirebaseDatabaseActions.loadProfilesWithName(getActivityContext(), username);
-        getLoaderManager().destroyLoader(LOADER_USERS_FROM_CITY);
         Bundle b = new Bundle();
         b.putString(BUNDLE_USERNAME, username);
-        getLoaderManager().restartLoader(LOADER_USERS_WITH_NAME, b, mSearchUsersPresenter.getLoaderInstance());
+        mSearchUsersPresenter.loadNearbyUsersWithName(getLoaderManager(), getArguments());
     }
 }

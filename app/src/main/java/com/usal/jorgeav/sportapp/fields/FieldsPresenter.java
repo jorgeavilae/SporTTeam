@@ -22,7 +22,7 @@ public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.
     }
 
     @Override
-    public void loadFields(LoaderManager loaderManager, Bundle b) {
+    public void loadNearbyFields(LoaderManager loaderManager, Bundle b) {
         loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY, b, this);
     }
 

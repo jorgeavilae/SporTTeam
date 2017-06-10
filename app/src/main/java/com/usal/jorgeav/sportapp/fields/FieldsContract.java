@@ -12,7 +12,7 @@ import android.support.v4.app.LoaderManager;
 public abstract class FieldsContract {
 
     public interface Presenter {
-        void loadFields(LoaderManager loaderManager, Bundle b);
+        void loadNearbyFields(LoaderManager loaderManager, Bundle b);
     }
 
     public interface View {

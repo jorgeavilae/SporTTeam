@@ -72,6 +72,30 @@ public final class SportteamLoader {
     }
 
 
+    public static final int LOADER_USERS_FROM_CITY = 12000;
+    public static final int LOADER_USERS_WITH_NAME = 12001;
+    public static CursorLoader cursorLoaderUsersFromCity(Context context, String city) {
+        // Return user data from users in city
+        return new CursorLoader(
+                context,
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.UserEntry.CITY + " = ?",
+                new String[]{city},
+                SportteamContract.UserEntry.NAME + " ASC");
+    }
+    public static CursorLoader cursorLoaderUsersWithName(Context context, String username) {
+        //Return user data from users with username
+        return new CursorLoader(
+                context,
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.UserEntry.NAME + " = ?",
+                new String[]{username},
+                null);
+    }
+
+
     public static final int LOADER_FRIENDS_REQUESTS_ID = 5000;
     public static CursorLoader cursorLoaderFriendRequests(Context context, String myUserID) {
         // Return user data for all of my friends requests

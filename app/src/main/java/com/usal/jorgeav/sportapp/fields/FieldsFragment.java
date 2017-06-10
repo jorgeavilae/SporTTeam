@@ -69,7 +69,7 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     @Override
     public void onResume() {
         super.onResume();
-        mFieldsPresenter.loadFields(getLoaderManager(), getArguments());
+        mFieldsPresenter.loadNearbyFields(getLoaderManager(), getArguments());
     }
 
     @Override
