@@ -84,6 +84,32 @@ public final class SportteamLoader {
     }
 
 
+    public static final int LOADER_EVENT_INVITATIONS_SENT_ID = 7000;
+    public static CursorLoader cursorLoaderEventInvitationsSent(Context context, String eventId) {
+        // Return user data for invitations sent in eventId
+        return new CursorLoader(
+                context,
+                SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.EventsInvitationEntry.EVENT_ID + " = ? ",
+                new String[]{eventId},
+                SportteamContract.EventsInvitationEntry.DATE + " ASC");
+    }
+
+
+    public static final int LOADER_EVENT_INVITATIONS_RECEIVED_ID = 7000;
+    public static CursorLoader cursorLoaderEventInvitationsReceived(Context context, String myUserId) {
+        // Return user data for participants in eventId
+        return new CursorLoader(
+                context,
+                SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI,
+                SportteamContract.EventEntry.EVENT_COLUMNS,
+                SportteamContract.EventsInvitationEntry.USER_ID + " = ? ",
+                new String[]{myUserId},
+                SportteamContract.EventsInvitationEntry.DATE + " ASC");
+    }
+
+
     public static final int LOADER_EVENTS_FOR_INVITATION_ID = 8000;
     public static CursorLoader cursorLoaderSendInvitation(Context context, String myUserID, String otherUserID) {
         // Return all of my events data in which otherUser has no relation

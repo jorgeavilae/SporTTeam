@@ -22,8 +22,6 @@ import butterknife.ButterKnife;
 
 public class EventInvitationsFragment extends Fragment implements EventInvitationsContract.View, EventsAdapter.OnEventItemClickListener {
     private static final String TAG = EventInvitationsFragment.class.getSimpleName();
-    public static final int LOADER_EVENT_INVITATIONS_ID = 7000;
-    public static final int LOADER_EVENT_DATA_FROM_INVITATIONS_ID = 7001;
 
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -68,7 +66,7 @@ public class EventInvitationsFragment extends Fragment implements EventInvitatio
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(LOADER_EVENT_INVITATIONS_ID, null, mEventInvitationsPresenter.getLoaderInstance());
+        mEventInvitationsPresenter.loadEventInvitations(getLoaderManager(), getArguments());
     }
 
 

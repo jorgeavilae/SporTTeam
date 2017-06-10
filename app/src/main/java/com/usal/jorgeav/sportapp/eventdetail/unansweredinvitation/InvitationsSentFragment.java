@@ -28,8 +28,6 @@ import butterknife.ButterKnife;
 
 public class InvitationsSentFragment extends Fragment implements InvitationsSentContract.View, UsersAdapter.OnUserItemClickListener {
     private static final String TAG = InvitationsSentFragment.class.getSimpleName();
-    public static final int LOADER_EVENT_INVITATIONS_ID = 7000;
-    public static final int LOADER_USER_DATA_FROM_INVITATIONS_ID = 7001;
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private static String mEventId = "";
