@@ -45,15 +45,23 @@ public final class SportteamContract {
         public static final String CITY = "city";
         public static final String PHOTO = "photo";
 
+        /* Column names with table prefix*/
+        public static final String USER_ID_TABLE_PREFIX = TABLE_USER + "." + USER_ID;
+        public static final String EMAIL_TABLE_PREFIX = TABLE_USER + "." + EMAIL;
+        public static final String NAME_TABLE_PREFIX = TABLE_USER + "." + NAME;
+        public static final String AGE_TABLE_PREFIX = TABLE_USER + "." + AGE;
+        public static final String CITY_TABLE_PREFIX = TABLE_USER + "." + CITY;
+        public static final String PHOTO_TABLE_PREFIX = TABLE_USER + "." + PHOTO;
+
         /* All column projection */
         public static final String[] USER_COLUMNS = {
                 TABLE_USER+"."+UserEntry._ID,
-                TABLE_USER+"."+UserEntry.USER_ID,
-                TABLE_USER+"."+UserEntry.EMAIL,
-                TABLE_USER+"."+UserEntry.NAME,
-                TABLE_USER+"."+UserEntry.AGE,
-                TABLE_USER+"."+UserEntry.CITY,
-                TABLE_USER+"."+UserEntry.PHOTO
+                USER_ID_TABLE_PREFIX,
+                EMAIL_TABLE_PREFIX,
+                NAME_TABLE_PREFIX,
+                AGE_TABLE_PREFIX,
+                CITY_TABLE_PREFIX,
+                PHOTO_TABLE_PREFIX
         };
 
         /* Column indexes */
@@ -90,12 +98,17 @@ public final class SportteamContract {
         public static final String SPORT = "sport";
         public static final String LEVEL = "level";
 
+        /* Column names with table prefix*/
+        public static final String USER_ID_TABLE_PREFIX = TABLE_USER_SPORTS + "." + USER_ID;
+        public static final String SPORT_TABLE_PREFIX = TABLE_USER_SPORTS + "." + SPORT;
+        public static final String LEVEL_TABLE_PREFIX = TABLE_USER_SPORTS + "." + LEVEL;
+
         /* All column projection */
         public static final String[] USER_SPORT_COLUMNS = {
-                TABLE_USER_SPORTS+"."+UserSportEntry._ID,
-                TABLE_USER_SPORTS+"."+UserSportEntry.USER_ID,
-                TABLE_USER_SPORTS+"."+UserSportEntry.SPORT,
-                TABLE_USER_SPORTS+"."+UserSportEntry.LEVEL,
+                TABLE_USER_SPORTS + "." + UserSportEntry._ID,
+                USER_ID_TABLE_PREFIX,
+                SPORT_TABLE_PREFIX,
+                LEVEL_TABLE_PREFIX
         };
 
         /* Column indexes */
@@ -134,18 +147,29 @@ public final class SportteamContract {
         public static final String OPENING_TIME = "openingTime";
         public static final String CLOSING_TIME = "closingTime";
 
+        /* Column names with table prefix*/
+        public static final String FIELD_ID_TABLE_PREFIX = TABLE_FIELD + "." + FIELD_ID;
+        public static final String NAME_TABLE_PREFIX = TABLE_FIELD + "." + NAME;
+        public static final String SPORT_TABLE_PREFIX = TABLE_FIELD + "." + SPORT;
+        public static final String ADDRESS_TABLE_PREFIX = TABLE_FIELD + "." + ADDRESS;
+        public static final String CITY_TABLE_PREFIX = TABLE_FIELD + "." + CITY;
+        public static final String PUNCTUATION_TABLE_PREFIX = TABLE_FIELD + "." + PUNCTUATION;
+        public static final String VOTES_TABLE_PREFIX = TABLE_FIELD + "." + VOTES;
+        public static final String OPENING_TIME_TABLE_PREFIX = TABLE_FIELD + "." + OPENING_TIME;
+        public static final String CLOSING_TIME_TABLE_PREFIX = TABLE_FIELD + "." + CLOSING_TIME;
+
         /* All column projection */
         public static final String[] FIELDS_COLUMNS = {
-                TABLE_FIELD+"."+FieldEntry._ID,
-                TABLE_FIELD+"."+FieldEntry.FIELD_ID,
-                TABLE_FIELD+"."+FieldEntry.NAME,
-                TABLE_FIELD+"."+FieldEntry.SPORT,
-                TABLE_FIELD+"."+FieldEntry.ADDRESS,
-                TABLE_FIELD+"."+FieldEntry.CITY,
-                TABLE_FIELD+"."+FieldEntry.PUNCTUATION,
-                TABLE_FIELD+"."+FieldEntry.VOTES,
-                TABLE_FIELD+"."+FieldEntry.OPENING_TIME,
-                TABLE_FIELD+"."+FieldEntry.CLOSING_TIME
+                TABLE_FIELD + "." + FieldEntry._ID,
+                FIELD_ID_TABLE_PREFIX,
+                NAME_TABLE_PREFIX,
+                SPORT_TABLE_PREFIX,
+                ADDRESS_TABLE_PREFIX,
+                CITY_TABLE_PREFIX,
+                PUNCTUATION_TABLE_PREFIX,
+                VOTES_TABLE_PREFIX,
+                OPENING_TIME_TABLE_PREFIX,
+                CLOSING_TIME_TABLE_PREFIX
         };
 
         /* Column indexes */
@@ -189,17 +213,27 @@ public final class SportteamContract {
         public static final String TOTAL_PLAYERS = "totalPlayers";
         public static final String EMPTY_PLAYERS = "emptyPlayers";
 
+        /* Column names with table prefix */
+        public static final String EVENT_ID_TABLE_PREFIX = TABLE_EVENT + "." + EVENT_ID;
+        public static final String SPORT_TABLE_PREFIX = TABLE_EVENT + "." + SPORT;
+        public static final String FIELD_TABLE_PREFIX = TABLE_EVENT + "." + FIELD;
+        public static final String CITY_TABLE_PREFIX = TABLE_EVENT + "." + CITY;
+        public static final String DATE_TABLE_PREFIX = TABLE_EVENT + "." + DATE;
+        public static final String OWNER_TABLE_PREFIX = TABLE_EVENT + "." + OWNER;
+        public static final String TOTAL_PLAYERS_TABLE_PREFIX = TABLE_EVENT + "." + TOTAL_PLAYERS;
+        public static final String EMPTY_PLAYERS_TABLE_PREFIX = TABLE_EVENT + "." + EMPTY_PLAYERS;
+
         /* All column projection */
         public static final String[] EVENT_COLUMNS = {
-                TABLE_EVENT+"."+EventEntry._ID,
-                TABLE_EVENT+"."+EventEntry.EVENT_ID,
-                TABLE_EVENT+"."+EventEntry.SPORT,
-                TABLE_EVENT+"."+EventEntry.FIELD,
-                TABLE_EVENT+"."+EventEntry.CITY,
-                TABLE_EVENT+"."+EventEntry.DATE,
-                TABLE_EVENT+"."+EventEntry.OWNER,
-                TABLE_EVENT+"."+EventEntry.TOTAL_PLAYERS,
-                TABLE_EVENT+"."+EventEntry.EMPTY_PLAYERS
+                TABLE_EVENT + "." + EventEntry._ID,
+                EVENT_ID_TABLE_PREFIX,
+                SPORT_TABLE_PREFIX,
+                FIELD_TABLE_PREFIX,
+                CITY_TABLE_PREFIX,
+                DATE_TABLE_PREFIX,
+                OWNER_TABLE_PREFIX,
+                TOTAL_PLAYERS_TABLE_PREFIX,
+                EMPTY_PLAYERS_TABLE_PREFIX
         };
 
         /* Column indexes */
@@ -244,12 +278,17 @@ public final class SportteamContract {
         public static final String SENDER_ID = "senderId";
         public static final String DATE = "date";
 
+        /* Column names with table prefix */
+        public static final String RECEIVER_ID_TABLE_PREFIX = TABLE_FRIENDS_REQUESTS + "." + RECEIVER_ID;
+        public static final String SENDER_ID_TABLE_PREFIX = TABLE_FRIENDS_REQUESTS + "." + SENDER_ID;
+        public static final String DATE_TABLE_PREFIX = TABLE_FRIENDS_REQUESTS + "." + DATE;
+
         /* All column projection */
         public static final String[] FRIEND_REQUESTS_COLUMNS = {
-                TABLE_FRIENDS_REQUESTS+"."+FriendRequestEntry._ID,
-                TABLE_FRIENDS_REQUESTS+"."+FriendRequestEntry.RECEIVER_ID,
-                TABLE_FRIENDS_REQUESTS+"."+FriendRequestEntry.SENDER_ID,
-                TABLE_FRIENDS_REQUESTS+"."+FriendRequestEntry.DATE
+                TABLE_FRIENDS_REQUESTS + "." + FriendRequestEntry._ID,
+                RECEIVER_ID_TABLE_PREFIX,
+                SENDER_ID_TABLE_PREFIX,
+                DATE_TABLE_PREFIX
         };
 
         /* Column indexes */
@@ -261,9 +300,7 @@ public final class SportteamContract {
         /* Join for CONTENT_FRIEND_REQUESTS_WITH_USER_URI */
         public static final String TABLES_FRIENDS_REQUESTS_JOIN_USER =
                 TABLE_FRIENDS_REQUESTS + " INNER JOIN " + TABLE_USER + " ON "
-                        + TABLE_FRIENDS_REQUESTS + "." + FriendRequestEntry.SENDER_ID
-                        + " = "
-                        + TABLE_USER + "." + UserEntry.USER_ID;
+                    + FriendRequestEntry.SENDER_ID_TABLE_PREFIX + " = " + UserEntry.USER_ID_TABLE_PREFIX;
 
         /* URI for one friend request */
         public static Uri buildFriendRequestsUriWith(long id) {
@@ -295,12 +332,17 @@ public final class SportteamContract {
         public static final String USER_ID = "userId";
         public static final String DATE = "date";
 
+        /* Column names with table prefix */
+        public static final String MY_USER_ID_TABLE_PREFIX = TABLE_FRIENDS + "." + MY_USER_ID;
+        public static final String USER_ID_TABLE_PREFIX = TABLE_FRIENDS + "." + USER_ID;
+        public static final String DATE_TABLE_PREFIX = TABLE_FRIENDS + "." + DATE;
+
         /* All column projection */
         public static final String[] FRIENDS_COLUMNS = {
-                TABLE_FRIENDS+"."+FriendsEntry._ID,
-                TABLE_FRIENDS+"."+FriendsEntry.MY_USER_ID,
-                TABLE_FRIENDS+"."+FriendsEntry.USER_ID,
-                TABLE_FRIENDS+"."+FriendsEntry.DATE
+                TABLE_FRIENDS + "." + FriendsEntry._ID,
+                MY_USER_ID_TABLE_PREFIX,
+                USER_ID_TABLE_PREFIX,
+                DATE_TABLE_PREFIX
         };
 
         /* Column indexes */
@@ -312,9 +354,7 @@ public final class SportteamContract {
         /* Join for CONTENT_FRIEND_WITH_USER_URI */
         public static final String TABLES_FRIENDS_JOIN_USER =
                 TABLE_FRIENDS + " INNER JOIN " + TABLE_USER + " ON "
-                        + TABLE_FRIENDS + "." + FriendsEntry.USER_ID
-                        + " = "
-                        + TABLE_USER + "." + UserEntry.USER_ID;
+                    + FriendsEntry.USER_ID_TABLE_PREFIX + " = " + UserEntry.USER_ID_TABLE_PREFIX;
 
         /* URI for one friend */
         public static Uri buildFriendsUriWith(long id) {
@@ -352,12 +392,17 @@ public final class SportteamContract {
         public static final String EVENT_ID = "eventId";
         public static final String PARTICIPATES = "participates";
 
+        /* Column names with table prefix */
+        public static final String USER_ID_TABLE_PREFIX = TABLE_EVENTS_PARTICIPATION + "." + USER_ID;
+        public static final String EVENT_ID_TABLE_PREFIX = TABLE_EVENTS_PARTICIPATION + "." + EVENT_ID;
+        public static final String PARTICIPATES_TABLE_PREFIX = TABLE_EVENTS_PARTICIPATION + "." + PARTICIPATES;
+
         /* All column projection */
         public static final String[] EVENTS_PARTICIPATION_COLUMNS = {
-                TABLE_EVENTS_PARTICIPATION+"."+EventsParticipationEntry._ID,
-                TABLE_EVENTS_PARTICIPATION+"."+EventsParticipationEntry.USER_ID,
-                TABLE_EVENTS_PARTICIPATION+"."+EventsParticipationEntry.EVENT_ID,
-                TABLE_EVENTS_PARTICIPATION+"."+EventsParticipationEntry.PARTICIPATES
+                TABLE_EVENTS_PARTICIPATION + "." + EventsParticipationEntry._ID,
+                USER_ID_TABLE_PREFIX,
+                EVENT_ID_TABLE_PREFIX,
+                PARTICIPATES_TABLE_PREFIX
         };
 
         /* Column indexes */
@@ -369,16 +414,12 @@ public final class SportteamContract {
         /* Join for CONTENT_EVENTS_PARTICIPATION_WITH_USER_URI */
         public static final String TABLES_EVENTS_PARTICIPATION_JOIN_USER =
                 TABLE_EVENTS_PARTICIPATION + " INNER JOIN " + TABLE_USER + " ON "
-                        + TABLE_EVENTS_PARTICIPATION + "." + EventsParticipationEntry.USER_ID
-                        + " = "
-                        + TABLE_USER + "." + UserEntry.USER_ID;
+                    + EventsParticipationEntry.USER_ID_TABLE_PREFIX + " = " + UserEntry.USER_ID_TABLE_PREFIX;
 
         /* Join for CONTENT_EVENTS_PARTICIPATION_WITH_EVENT_URI */
         public static final String TABLES_EVENTS_PARTICIPATION_JOIN_EVENT =
                 TABLE_EVENTS_PARTICIPATION + " INNER JOIN " + TABLE_EVENT + " ON "
-                        + TABLE_EVENTS_PARTICIPATION + "." + EventsParticipationEntry.EVENT_ID
-                        + " = "
-                        + TABLE_EVENT + "." + EventEntry.EVENT_ID;
+                    + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " = " + EventEntry.EVENT_ID_TABLE_PREFIX;
 
         /* URI for one event participation */
         public static Uri buildEventsParticipationUriWith(long id) {
@@ -416,12 +457,17 @@ public final class SportteamContract {
         public static final String EVENT_ID = "eventId";
         public static final String DATE = "date";
 
+        /* Column names with table prefix */
+        public static final String USER_ID_TABLE_PREFIX = TABLE_EVENT_INVITATIONS + "." + USER_ID;
+        public static final String EVENT_ID_TABLE_PREFIX = TABLE_EVENT_INVITATIONS + "." + EVENT_ID;
+        public static final String DATE_TABLE_PREFIX = TABLE_EVENT_INVITATIONS + "." + DATE;
+
         /* All column projection */
         public static final String[] EVENT_INVITATIONS_COLUMNS = {
-                TABLE_EVENT_INVITATIONS+"."+EventsInvitationEntry._ID,
-                TABLE_EVENT_INVITATIONS+"."+EventsInvitationEntry.USER_ID,
-                TABLE_EVENT_INVITATIONS+"."+EventsInvitationEntry.EVENT_ID,
-                TABLE_EVENT_INVITATIONS+"."+EventsInvitationEntry.DATE
+                TABLE_EVENT_INVITATIONS + "."  +EventsInvitationEntry._ID,
+                USER_ID_TABLE_PREFIX,
+                EVENT_ID_TABLE_PREFIX,
+                DATE_TABLE_PREFIX
         };
 
         /* Column indexes */
@@ -433,16 +479,12 @@ public final class SportteamContract {
         /* Join for CONTENT_EVENT_INVITATIONS_WITH_USER_URI */
         public static final String TABLES_EVENT_INVITATIONS_JOIN_USER =
                 TABLE_EVENT_INVITATIONS + " INNER JOIN " + TABLE_USER + " ON "
-                        + TABLE_EVENT_INVITATIONS + "." + EventsInvitationEntry.USER_ID
-                        + " = "
-                        + TABLE_USER + "." + UserEntry.USER_ID;
+                    + EventsInvitationEntry.USER_ID_TABLE_PREFIX + " = " + UserEntry.USER_ID_TABLE_PREFIX;
 
         /* Join for CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI */
         public static final String TABLES_EVENT_INVITATIONS_JOIN_EVENT =
                 TABLE_EVENT_INVITATIONS + " INNER JOIN " + TABLE_EVENT + " ON "
-                        + TABLE_EVENT_INVITATIONS + "." + EventsInvitationEntry.EVENT_ID
-                        + " = "
-                        + TABLE_EVENT + "." + EventEntry.EVENT_ID;
+                    + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " = " + EventEntry.EVENT_ID_TABLE_PREFIX;
 
         /* URI for one event invitation */
         public static Uri buildEventInvitationUriWith(long id) {
@@ -475,12 +517,17 @@ public final class SportteamContract {
         public static final String SENDER_ID = "senderId";
         public static final String DATE = "date";
 
+        /* Column names with table prefix */
+        public static final String EVENT_ID_TABLE_PREFIX = TABLE_EVENTS_REQUESTS + "." + EVENT_ID;
+        public static final String SENDER_ID_TABLE_PREFIX = TABLE_EVENTS_REQUESTS + "." + SENDER_ID;
+        public static final String DATE_TABLE_PREFIX = TABLE_EVENTS_REQUESTS + "." + DATE;
+
         /* All column projection */
         public static final String[] EVENTS_REQUESTS_COLUMNS = {
-                TABLE_EVENTS_REQUESTS+"."+EventRequestsEntry._ID,
-                TABLE_EVENTS_REQUESTS+"."+EventRequestsEntry.EVENT_ID,
-                TABLE_EVENTS_REQUESTS+"."+EventRequestsEntry.SENDER_ID,
-                TABLE_EVENTS_REQUESTS+"."+EventRequestsEntry.DATE
+                TABLE_EVENTS_REQUESTS + "." + EventRequestsEntry._ID,
+                EVENT_ID_TABLE_PREFIX,
+                SENDER_ID_TABLE_PREFIX,
+                DATE_TABLE_PREFIX
         };
 
         /* Column indexes */
@@ -492,13 +539,108 @@ public final class SportteamContract {
         /* Join for CONTENT_EVENTS_REQUESTS_WITH_USER_URI */
         public static final String TABLES_EVENTS_REQUESTS_JOIN_USER =
                 TABLE_EVENTS_REQUESTS + " INNER JOIN " + TABLE_USER + " ON "
-                        + TABLE_EVENTS_REQUESTS + "." + EventRequestsEntry.SENDER_ID
-                        + " = "
-                        + TABLE_USER + "." + UserEntry.USER_ID;
+                    + EventRequestsEntry.SENDER_ID_TABLE_PREFIX + " = " + UserEntry.USER_ID_TABLE_PREFIX;
 
         /* URI for one event request */
         public static Uri buildEventRequestsUriWith(long id) {
             return ContentUris.withAppendedId(CONTENT_EVENTS_REQUESTS_URI, id);
         }
     }
+
+
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND = "myEvent_friendUser";
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS = "friendsUser_myEvent";
+    public static final class JoinQueryEntries {
+        /* The base CONTENT_URI used to query the event table for my events without
+           relation with one particular friend from the content provider */
+        public static final Uri CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND)
+                .build();
+        /* JOIN for CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
+        public static final String TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS =
+                TABLE_EVENT
+                    + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " ON ("
+                        + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX
+                        + " AND " + EventsParticipationEntry.USER_ID_TABLE_PREFIX + " = ? )"
+                    + " LEFT JOIN " + TABLE_EVENT_INVITATIONS + " ON ("
+                        + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX
+                        + " AND " + EventsInvitationEntry.USER_ID_TABLE_PREFIX + " = ? )"
+                    + " LEFT JOIN " + TABLE_EVENTS_REQUESTS + " ON ("
+                        + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX
+                        + " AND " + EventRequestsEntry.SENDER_ID_TABLE_PREFIX + " = ? )";
+        /* WHERE for CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
+        public static final String WHERE_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND =
+                EventEntry.OWNER_TABLE_PREFIX + " = ? "
+                    + "AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
+                    + "AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
+                    + "AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " IS NULL ";
+        /* Arguments fro JOIN and WHERE in CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
+        public static String[] queryMyEventsWithoutRelationWithFriendArguments(String ownerId, String friendId) {
+            return new String[]{friendId, friendId, friendId, ownerId};
+        }
+        /* SELECT all columns from event table
+         * FROM event
+         *      LEFT JOIN eventsParticipation
+         *          ON (event.eventId = eventsParticipation.eventId AND eventsParticipation.userId = ? )
+         *      LEFT JOIN eventInvitations
+         *          ON (event.eventId = eventInvitations.eventId AND eventInvitations.userId = ? )
+         *      LEFT JOIN eventRequest
+         *          ON (event.eventId = eventRequest.eventId AND eventRequest.senderId = ? )
+         * WHERE (event.owner = ?
+         *      AND eventsParticipation.eventId IS NULL
+         *      AND eventInvitations.eventId IS NULL
+         *      AND eventRequest.eventId IS NULL )
+         * ORDER BY event.date ASC
+         */
+
+
+        /* The base CONTENT_URI used to query the user table for my friends without
+           relation with one particular event from the content provider */
+        public static final Uri CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS)
+                .build();
+        /* Join for CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI */
+        public static final String TABLES_USERS_JOIN_FRIENDS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS =
+                TABLE_USER
+                    + " INNER JOIN " + TABLE_FRIENDS + " ON ("
+                        + UserEntry.USER_ID_TABLE_PREFIX + " = " + FriendsEntry.USER_ID_TABLE_PREFIX + " )"
+                    + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " ON ("
+                        + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventsParticipationEntry.USER_ID_TABLE_PREFIX
+                        + " AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " = ? )"
+                    + " LEFT JOIN " + TABLE_EVENT_INVITATIONS + " ON ("
+                        + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventsInvitationEntry.USER_ID_TABLE_PREFIX
+                        + " AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " = ? )"
+                    + " LEFT JOIN " + TABLE_EVENTS_REQUESTS + " ON ("
+                        + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventRequestsEntry.SENDER_ID_TABLE_PREFIX
+                        + " AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " = ? )";
+        /* WHERE for CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI */
+        public static final String WHERE_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS =
+                FriendsEntry.MY_USER_ID_TABLE_PREFIX + " = ? "
+                        + "AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
+                        + "AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
+                        + "AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " IS NULL ";
+        /* Arguments fro JOIN and WHERE in CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
+        public static String[] queryMyFriendsWithoutRelationWithMyEventsArguments(String myUserId, String eventId) {
+            return new String[]{eventId, eventId, eventId, myUserId};
+        }
+        /* SELECT all columns from users table
+         * FROM user
+         *      INNER JOIN friends
+         *          ON (user.uid = friends.userId )
+         *      LEFT JOIN eventsParticipation
+         *          ON (user.uid = eventsParticipation.userId AND eventsParticipation.eventId = ? )
+         *      LEFT JOIN eventInvitations
+         *          ON (user.uid = eventInvitations.userId AND eventInvitations.eventId = ? )
+         *      LEFT JOIN eventRequest
+         *          ON (user.uid = eventRequest.senderId AND eventRequest.eventId = ? )
+         * WHERE (friends.myUserId = ?
+         *      AND eventsParticipation.eventId IS NULL
+         *      AND eventInvitations.eventId IS NULL
+         *      AND eventRequest.eventId IS NULL )
+         * ORDER BY friends.date ASC
+         */
+    }
+
 }

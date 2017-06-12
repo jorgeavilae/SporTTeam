@@ -51,10 +51,10 @@ public final class SportteamLoader {
                 context,
                 SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_EVENT_URI,
                 SportteamContract.EventEntry.EVENT_COLUMNS,
-                SportteamContract.EventsParticipationEntry.USER_ID + " = ? AND "
-                        + SportteamContract.EventsParticipationEntry.PARTICIPATES + " = ?",
+                SportteamContract.EventsParticipationEntry.USER_ID_TABLE_PREFIX + " = ? AND "
+                        + SportteamContract.EventsParticipationEntry.PARTICIPATES_TABLE_PREFIX + " = ?",
                 new String[]{myUserID, String.valueOf(participate?1:0)},
-                SportteamContract.EventEntry.DATE + " ASC");
+                SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
     }
     public static final int LOADER_EVENT_ID = 2010;
     public static final int LOADER_EVENTS_PARTICIPANTS_ID = 2011;
@@ -74,10 +74,10 @@ public final class SportteamLoader {
                 context,
                 SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_USER_URI,
                 SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
-                        + SportteamContract.EventsParticipationEntry.PARTICIPATES + " = ?",
+                SportteamContract.EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " = ? AND "
+                        + SportteamContract.EventsParticipationEntry.PARTICIPATES_TABLE_PREFIX + " = ?",
                 new String[]{eventId, String.valueOf(participate?1:0)},
-                SportteamContract.EventsParticipationEntry.USER_ID + " ASC");
+                SportteamContract.EventsParticipationEntry.USER_ID_TABLE_PREFIX + " ASC");
     }
 
 
@@ -89,9 +89,9 @@ public final class SportteamLoader {
                 context,
                 SportteamContract.FriendsEntry.CONTENT_FRIEND_WITH_USER_URI,
                 SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.FriendsEntry.MY_USER_ID + " = ?",
+                SportteamContract.FriendsEntry.MY_USER_ID_TABLE_PREFIX + " = ?",
                 new String[]{myUserID},
-                SportteamContract.FriendsEntry.DATE + " ASC");
+                SportteamContract.FriendsEntry.DATE_TABLE_PREFIX + " ASC");
     }
     public static final int LOADER_FRIENDS_REQUESTS_ID = 3100;
     public static CursorLoader cursorLoaderFriendRequests(Context context, String myUserID) {
@@ -100,9 +100,9 @@ public final class SportteamLoader {
                 context,
                 SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_WITH_USER_URI,
                 SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
+                SportteamContract.FriendRequestEntry.RECEIVER_ID_TABLE_PREFIX + " = ?",
                 new String[]{myUserID},
-                SportteamContract.FriendRequestEntry.DATE + " ASC");
+                SportteamContract.FriendRequestEntry.DATE_TABLE_PREFIX + " ASC");
     }
 
 
@@ -114,9 +114,9 @@ public final class SportteamLoader {
                 context,
                 SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_USER_URI,
                 SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.EventsInvitationEntry.EVENT_ID + " = ? ",
+                SportteamContract.EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " = ? ",
                 new String[]{eventId},
-                SportteamContract.EventsInvitationEntry.DATE + " ASC");
+                SportteamContract.EventsInvitationEntry.DATE_TABLE_PREFIX + " ASC");
     }
     public static final int LOADER_EVENT_INVITATIONS_RECEIVED_ID = 4200;
     public static CursorLoader cursorLoaderEventsForEventInvitationsReceived(Context context, String myUserId) {
@@ -125,9 +125,9 @@ public final class SportteamLoader {
                 context,
                 SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI,
                 SportteamContract.EventEntry.EVENT_COLUMNS,
-                SportteamContract.EventsInvitationEntry.USER_ID + " = ? ",
+                SportteamContract.EventsInvitationEntry.USER_ID_TABLE_PREFIX + " = ? ",
                 new String[]{myUserId},
-                SportteamContract.EventsInvitationEntry.DATE + " ASC");
+                SportteamContract.EventsInvitationEntry.DATE_TABLE_PREFIX + " ASC");
     }
 
 
@@ -138,9 +138,9 @@ public final class SportteamLoader {
                 context,
                 SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI,
                 SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.EventRequestsEntry.EVENT_ID + " = ? ",
+                SportteamContract.EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " = ? ",
                 new String[]{eventId},
-                SportteamContract.EventRequestsEntry.DATE + " ASC");
+                SportteamContract.EventRequestsEntry.DATE_TABLE_PREFIX + " ASC");
     }
 
 
@@ -238,13 +238,14 @@ public final class SportteamLoader {
             peticion participar: envio una peticion para entrar, contestar
             otro caso: enviar invitacion
          */
+
         return new CursorLoader(
                 context,
-                SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                SportteamContract.JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI,
                 SportteamContract.EventEntry.EVENT_COLUMNS,
-                SportteamContract.EventEntry.OWNER + " = ? ",
-                new String[]{myUserID},
-                SportteamContract.EventEntry.DATE + " ASC");
+                SportteamContract.JoinQueryEntries.WHERE_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND,
+                SportteamContract.JoinQueryEntries.queryMyEventsWithoutRelationWithFriendArguments(myUserID, otherUserID),
+                SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
     }
     public static final int LOADER_USERS_FOR_INVITE_ID = 8200;
     public static CursorLoader cursorLoaderUsersForInvite(Context context, String myUserID, String eventId) {
@@ -258,10 +259,10 @@ public final class SportteamLoader {
          */
         return new CursorLoader(
                 context,
-                SportteamContract.FriendsEntry.CONTENT_FRIEND_WITH_USER_URI,
+                SportteamContract.JoinQueryEntries.CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI,
                 SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.FriendsEntry.MY_USER_ID + " = ?",
-                new String[]{myUserID},
-                SportteamContract.FriendsEntry.DATE + " ASC");
+                SportteamContract.JoinQueryEntries.WHERE_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS,
+                SportteamContract.JoinQueryEntries.queryMyFriendsWithoutRelationWithMyEventsArguments(myUserID, eventId),
+                SportteamContract.FriendsEntry.DATE_TABLE_PREFIX + " ASC");
     }
 }

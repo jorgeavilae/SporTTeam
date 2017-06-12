@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.network;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.DatabaseUtils;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,6 +57,8 @@ public class FirebaseDatabaseActions {
                     loadFieldsFromCity(context, myLoggedUser.getmCity());
                     //TODO Cargar Eventos de mi ciudad (cuando cambie) para alarma)
                     loadEventsFromCity(context, myLoggedUser.getmCity());
+                    //TODO Cargar Usuarios de mi ciudad (una vez para buscarlos)
+                    loadUsersFromCity(context, myLoggedUser.getmCity());
                 } else {
                     new Exception("User with UID: " + myUserID + " does not exists").printStackTrace();
                 }
@@ -247,12 +250,19 @@ public class FirebaseDatabaseActions {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         if(dataSnapshot.exists()) {
+                            Log.d(TAG, "onChildAdded: loadUsersFromInvitationsSent "+dataSnapshot.getKey());
                             loadAProfile(context, dataSnapshot.getKey());
 
                             ContentValues cvData = Utiles
                                     .datasnapshotEventInvitationsToContentValues(dataSnapshot, key, false);
+                            Log.d(TAG, "onChildAdded: contentvalue "+ cvData.toString());
                             context.getContentResolver()
                                     .insert(SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI, cvData);
+                            Log.d(TAG, "query: Invitation "+ DatabaseUtils.dumpCursorToString(
+                                    context.getContentResolver().query( SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
+                                            SportteamContract.EventsInvitationEntry.EVENT_INVITATIONS_COLUMNS,
+                                            null,
+                                            null,null)));
                         }
                     }
 
@@ -627,6 +637,49 @@ public class FirebaseDatabaseActions {
 
             }
         });
+    }
+    private static void loadUsersFromCity(final Context context, String city) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference usersRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
+
+        usersRef.orderByChild(filter).equalTo(city)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if (dataSnapshot.exists()) {
+                            User anUser = Utiles.datasnapshotToUser(dataSnapshot, dataSnapshot.getKey());
+                            ContentValues cvData = Utiles.dataUserToContentValues(anUser);
+                            context.getContentResolver()
+                                    .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
+
+                            List<ContentValues> cvSports = Utiles.sportUserToContentValues(anUser);
+                            context.getContentResolver()
+                                    .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                            cvSports.toArray(new ContentValues[cvSports.size()]));
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     public static void loadProfilesWithName(final Context context, String username) {

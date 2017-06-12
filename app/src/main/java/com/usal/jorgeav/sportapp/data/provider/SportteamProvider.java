@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract.JoinQueryEntries;
 
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.CONTENT_AUTHORITY;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.EventEntry;
@@ -30,7 +33,9 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FIE
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS_REQUESTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS_REQUESTS_WITH_USER;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS_WITH_USER;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_USERS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_USER_SPORT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENT;
@@ -63,6 +68,9 @@ public class SportteamProvider extends ContentProvider {
     public static final int CODE_EVENT_INVITATIONS_WITH_EVENT = 820;
     public static final int CODE_EVENTS_REQUESTS = 900;
     public static final int CODE_EVENTS_REQUESTS_WITH_USER = 910;
+
+    public static final int CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND = 10;
+    public static final int CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT = 20;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private SportteamDBHelper mOpenHelper;
@@ -103,6 +111,11 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, PATH_EVENTS_REQUESTS, CODE_EVENTS_REQUESTS);
         // This URI is content://com.usal.jorgeav.sportapp/eventRequests_user/
         matcher.addURI(authority, PATH_EVENTS_REQUESTS_WITH_USER, CODE_EVENTS_REQUESTS_WITH_USER);
+
+        // This URI is content://com.usal.jorgeav.sportapp/myEvent_friendUser/
+        matcher.addURI(authority, PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND, CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND);
+        // This URI is content://com.usal.jorgeav.sportapp/friendsUser_myEvent/
+        matcher.addURI(authority, PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS, CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT);
 
         return matcher;
     }
@@ -377,6 +390,27 @@ public class SportteamProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
+                break;
+            case CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND:
+                builder.setTables(JoinQueryEntries.TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS);
+                cursor = builder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT:
+                builder.setTables(JoinQueryEntries.TABLES_USERS_JOIN_FRIENDS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS);
+                cursor = builder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                Log.d(TAG, "query: "+builder.buildQuery(projection,selection,selectionArgs,null,null,sortOrder,null));
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

@@ -19,7 +19,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
      * If you change the database schema, you must increment the database version or the onUpgrade
      * method will not be called.
      */
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 11;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -72,13 +72,13 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 " UNIQUE (" + SportteamContract.UserSportEntry.USER_ID + ", "
                             + SportteamContract.UserSportEntry.SPORT    + ") ON CONFLICT REPLACE);";
 
-        // Only have entries for my current logged user. RECEIVER_ID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final String SQL_CREATE_FRIEND_REQUESTS_TABLE = "CREATE TABLE " + SportteamContract.TABLE_FRIENDS_REQUESTS + " (" +
                 SportteamContract.FriendRequestEntry._ID                + " INTEGER PRIMARY KEY,"       +
                 SportteamContract.FriendRequestEntry.RECEIVER_ID        + " TEXT NOT NULL,"             +
                 SportteamContract.FriendRequestEntry.SENDER_ID          + " TEXT NOT NULL,"             +
                 SportteamContract.FriendRequestEntry.DATE               + " INTEGER NOT NULL,"             +
-                " UNIQUE (" + SportteamContract.FriendRequestEntry.SENDER_ID + ") ON CONFLICT REPLACE);";
+                " UNIQUE (" + SportteamContract.FriendRequestEntry.RECEIVER_ID  + ", "
+                            + SportteamContract.FriendRequestEntry.SENDER_ID    + ") ON CONFLICT REPLACE);";
 
         // Only have entries for my current logged user. MY_USER_ID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final String SQL_CREATE_FRIENDS_TABLE = "CREATE TABLE " + SportteamContract.TABLE_FRIENDS + " (" +
@@ -101,7 +101,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.EventsInvitationEntry.USER_ID     + " TEXT NOT NULL,"             +
                 SportteamContract.EventsInvitationEntry.EVENT_ID    + " TEXT NOT NULL,"             +
                 SportteamContract.EventsInvitationEntry.DATE        + " INTEGER NOT NULL,"             +
-                " UNIQUE (" + SportteamContract.EventsInvitationEntry.USER_ID     + ", "
+                " UNIQUE (" + SportteamContract.EventsInvitationEntry.USER_ID  + ", "
                             + SportteamContract.EventsInvitationEntry.EVENT_ID + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_EVENTS_REQUESTS_TABLE = "CREATE TABLE " + SportteamContract.TABLE_EVENTS_REQUESTS + " (" +
