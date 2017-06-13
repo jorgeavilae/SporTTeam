@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract.JoinQueryEntries;
 
@@ -169,8 +168,18 @@ public class SportteamProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int count = 0;
+        switch (sUriMatcher.match(uri)) {
+            case CODE_FRIEND_REQUEST:
+                count = db.delete(SportteamContract.TABLE_FRIENDS_REQUESTS, selection, selectionArgs);
+                break;
+            default:
+                // Implement this to handle requests to delete one or more rows.
+                throw new UnsupportedOperationException("Not yet implemented");
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return count;
     }
 
     @Override
@@ -410,7 +419,6 @@ public class SportteamProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-                Log.d(TAG, "query: "+builder.buildQuery(projection,selection,selectionArgs,null,null,sortOrder,null));
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

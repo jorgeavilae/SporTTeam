@@ -128,6 +128,15 @@ public class FirebaseDatabaseActions {
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        String senderId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        String receiverId = dataSnapshot.getKey();
+                        Log.d(TAG, "onChildRemoved: sender "+senderId);
+                        Log.d(TAG, "onChildRemoved: receiver "+receiverId);
+                        MyApplication.getAppContext().getContentResolver()
+                                .delete(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
+                                        SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ? AND "
+                                                + SportteamContract.FriendRequestEntry.SENDER_ID + " = ? ",
+                                        new String[]{receiverId, senderId});
                     }
 
                     @Override
@@ -170,6 +179,15 @@ public class FirebaseDatabaseActions {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String receiverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String senderId = dataSnapshot.getKey();
+                Log.d(TAG, "onChildRemoved: sender "+senderId);
+                Log.d(TAG, "onChildRemoved: receiver "+receiverId);
+                MyApplication.getAppContext().getContentResolver()
+                        .delete(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
+                                SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ? AND "
+                            + SportteamContract.FriendRequestEntry.SENDER_ID + " = ? ",
+                                new String[]{receiverId, senderId});
 
             }
 
