@@ -28,10 +28,10 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
         EventsAdapter.OnEventItemClickListener, SportDialog.SportDialogListener {
     private static final String TAG = SearchEventsFragment.class.getSimpleName();
     public static final String BUNDLE_SPORT = "BUNDLE_SPORT";
-    public final SearchEventsFragment mThis = this;
 
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
+    private SearchEventsFragment mThis;
     SearchEventsContract.Presenter mSearchEventsPresenter;
     EventsAdapter mEventsRecyclerAdapter;
 
@@ -93,6 +93,7 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mThis = this;
         if (context instanceof ActivityContracts.FragmentManagement)
             mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
         if (context instanceof ActivityContracts.ActionBarIconManagement)
@@ -102,6 +103,7 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
     @Override
     public void onDetach() {
         super.onDetach();
+        mThis = null;
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
     }

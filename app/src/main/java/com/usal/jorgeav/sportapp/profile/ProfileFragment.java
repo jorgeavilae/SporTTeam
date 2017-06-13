@@ -262,7 +262,6 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
 
     @Override
     public void showUserImage(String image) {
-//        mFragmentManagementListener.showContent();
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.android_cheer);
         userImage.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
     }
@@ -270,13 +269,11 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     @Override
     public void showUserName(String name) {
         userName.setText(name);
-        mFragmentManagementListener.showContent();
     }
 
     @Override
     public void showUserCity(String city) {
         userCity.setText(city);
-        mFragmentManagementListener.showContent();
 
     }
 
@@ -284,14 +281,17 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     public void showUserAge(int age) {
         if (age > -1) {
             userAge.setText(String.format(Locale.getDefault(), "%2d", age));
-            mFragmentManagementListener.showContent();
         }
-
     }
 
     @Override
     public void showSports(Cursor cursor) {
         sportsAdapter.replaceData(cursor);
+    }
+
+    @Override
+    public void showContent() {
+        mFragmentManagementListener.showContent();
     }
 
     @Override

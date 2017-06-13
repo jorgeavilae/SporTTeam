@@ -26,12 +26,12 @@ import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
 import com.usal.jorgeav.sportapp.friends.FriendsFragment;
+import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -51,11 +51,11 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private User mLoggedUser = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: init");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity
 
         mContentFrame = (FrameLayout) findViewById(R.id.contentFrame);
         mProgressbar = (ProgressBar) findViewById(R.id.main_activity_progressbar);
+        hideContent();
+//        FirebaseDatabaseActions.syncFirebaseDatabase();
 
         //TODO borrar
 //        reiniciarContentProviderYSalir();
@@ -85,22 +87,18 @@ public class MainActivity extends AppCompatActivity
                 if (fuser != null) {
                     // User is signed in
                     Log.d(TAG, "userID: "+fuser.getUid());
-                    mLoggedUser = Utiles.getUserFromContentProvider(getApplicationContext(), fuser.getUid());
-                    if (mLoggedUser == null) {
-                        firebaseAuth.signOut();
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(intent);
-                    } else {
-                        if(mDisplayedFragment == null)
-                            onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
-                    }
+                    FirebaseDatabaseActions.syncFirebaseDatabase();
+                    if(mDisplayedFragment == null)
+                        onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
                 } else {
                     // User is signed out
+                    FirebaseDatabaseActions.detachListeners();
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);
                 }
             }
         };
+        Log.d(TAG, "onCreate: fin");
     }
 
     private void reiniciarContentProviderYSalir() {
@@ -177,7 +175,10 @@ public class MainActivity extends AppCompatActivity
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
 
-        Log.d(TAG, "onOptionsItemSelected: mLoggeduser"+ mLoggedUser.toString());
+        try {
+            Log.d(TAG, "onOptionsItemSelected: mLoggeduser "
+                    + FirebaseAuth.getInstance().getCurrentUser().getUid());
+        } catch (NullPointerException e) { e.printStackTrace(); }
 
         if (mToggle.onOptionsItemSelected(item)) {
             Log.d(TAG, "toogle");
@@ -199,8 +200,12 @@ public class MainActivity extends AppCompatActivity
         mNavigationView.setCheckedItem(id);
         Log.d(TAG, "onNavigationItemSelected: "+item.getTitle());
 
-        if (id == R.id.nav_profile && mLoggedUser != null){
-                initFragment(ProfileFragment.newInstance(mLoggedUser.getmId()), false);
+        String userId = null;
+        try { userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } catch (NullPointerException e) { e.printStackTrace(); }
+
+        if (id == R.id.nav_profile && userId != null){
+            initFragment(ProfileFragment.newInstance(userId), false);
         } else if (id == R.id.nav_events) {
             initFragment(EventsFragment.newInstance(), false);
         } else if (id == R.id.nav_fields) {
@@ -318,6 +323,12 @@ public class MainActivity extends AppCompatActivity
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseDatabaseActions.detachListeners();
     }
 
     @Override

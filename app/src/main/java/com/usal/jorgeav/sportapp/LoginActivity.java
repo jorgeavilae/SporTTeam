@@ -33,7 +33,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.adduser.NewUserActivity;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +105,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         switch (resultCode) {
             case RESULT_OK:
                 Log.d(TAG, "onActivityResult: RESULT_OK");
-                loadMyProfile(this);
+                loadMyProfile();
                 break;
             case RESULT_CANCELED:
                 Log.d(TAG, "onActivityResult: RESULT_CANCELED");
@@ -161,7 +160,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            final LoginActivity loginActivity = this;
             showProgress(true);
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -172,18 +170,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 Toast.makeText(LoginActivity.this, R.string.error_incorrect_password,
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                loadMyProfile(loginActivity);
+                                loadMyProfile();
                             }
                         }
                     });
         }
     }
 
-    public void loadMyProfile(LoginActivity loginActivity) {
+    public void loadMyProfile() {
         deleteContentProvider();
-        FirebaseDatabaseActions.loadMyProfile(getApplicationContext(), loginActivity); //Mi perfil: cuando cambie
-    }
-    public void finishLoadMyProfile() {
         finish();
     }
 

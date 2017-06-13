@@ -186,9 +186,9 @@ public class Utiles {
         return cvArray;
     }
 
-    public static User datasnapshotToUser (DataSnapshot data, String userID) {
+    public static User datasnapshotToUser (DataSnapshot data) {
         String datakey = FirebaseDBContract.DATA + "/";
-        String id = userID;
+        String id = data.getKey();
         String email = data.child(datakey + FirebaseDBContract.User.EMAIL).getValue().toString();
         String name = data.child(datakey + FirebaseDBContract.User.ALIAS).getValue().toString();
         String city = data.child(datakey + FirebaseDBContract.User.CITY).getValue().toString();

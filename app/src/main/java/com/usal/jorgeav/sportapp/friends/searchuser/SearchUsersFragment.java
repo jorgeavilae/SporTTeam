@@ -28,10 +28,10 @@ import butterknife.ButterKnife;
 public class SearchUsersFragment extends Fragment implements SearchUsersContract.View, UsersAdapter.OnUserItemClickListener, UsernameDialog.UsernameDialogListener  {
     private static final String TAG = SearchUsersFragment.class.getSimpleName();
     public static final String BUNDLE_USERNAME = "BUNDLE_USERNAME";
-    public final SearchUsersFragment mThis = this;
 
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
+    private SearchUsersFragment mThis;
     SearchUsersContract.Presenter mSearchUsersPresenter;
     UsersAdapter mUsersRecyclerAdapter;
 
@@ -89,6 +89,7 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mThis = this;
         if (context instanceof ActivityContracts.FragmentManagement)
             mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
         if (context instanceof ActivityContracts.ActionBarIconManagement)
@@ -100,6 +101,7 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
+        mThis = null;
     }
 
     @Override
@@ -127,7 +129,7 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
     @Override
     public void onDialogPositiveClick(String username) {
         mUsersRecyclerAdapter.replaceData(null);
-        FirebaseDatabaseActions.loadProfilesWithName(getActivityContext(), username);
+        FirebaseDatabaseActions.loadProfilesWithName(username);
         Bundle b = new Bundle();
         b.putString(BUNDLE_USERNAME, username);
         mSearchUsersPresenter.loadNearbyUsersWithName(getLoaderManager(), getArguments());
