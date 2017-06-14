@@ -1,7 +1,9 @@
 package com.usal.jorgeav.sportapp.profile;
 
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -25,9 +27,17 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     private static final String TAG = ProfilePresenter.class.getSimpleName();
 
     private ProfileContract.View mUserView;
+    ContentObserver mContentObserver;
 
     public ProfilePresenter(ProfileContract.View userView) {
         mUserView = userView;
+        mContentObserver = new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange) {
+                super.onChange(selfChange);
+                mUserView.uiSetupForUserRelation();
+            }
+        };
     }
 
     @Override
@@ -161,39 +171,54 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     @Override
     public void sendFriendRequest(String uid) {
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(uid))
+        if (!TextUtils.isEmpty(uid)) {
             FirebaseActions.sendFriendRequest(myUid, uid);
+        }
     }
 
     @Override
     public void cancelFriendRequest(String uid) {
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(uid))
+        if (!TextUtils.isEmpty(uid)) {
             FirebaseActions.cancelFriendRequest(myUid, uid);
+        }
 
     }
 
     @Override
     public void acceptFriendRequest(String uid) {
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(uid))
+        if (!TextUtils.isEmpty(uid)) {
             FirebaseActions.acceptFriendRequest(myUid, uid);
+        }
 
     }
 
     @Override
     public void declineFriendRequest(String uid) {
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(uid))
+        if (!TextUtils.isEmpty(uid)) {
             FirebaseActions.declineFriendRequest(myUid, uid);
+        }
 
     }
 
     @Override
     public void deleteFriend(String uid) {
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(uid))
+        if (!TextUtils.isEmpty(uid)) {
             FirebaseActions.deleteFriend(myUid, uid);
+        }
+    }
 
+    @Override
+    public void registerUserRelationObserver() {
+        mUserView.getActivityContext().getContentResolver().registerContentObserver(
+                SportteamContract.UserEntry.CONTENT_USER_RELATION_USER_URI, false, mContentObserver);
+    }
+
+    @Override
+    public void unregisterUserRelationObserver() {
+        mUserView.getActivityContext().getContentResolver().unregisterContentObserver(mContentObserver);
     }
 }

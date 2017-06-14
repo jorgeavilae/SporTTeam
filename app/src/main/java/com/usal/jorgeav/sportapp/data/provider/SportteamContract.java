@@ -27,6 +27,10 @@ public final class SportteamContract {
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_USERS = "users";
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_USER_RELATION_USER = "user_relation_user";
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_USER_RELATION_EVENT = "user_relation_event";
     /* Used internally as the name of our user table. */
     public static final String TABLE_USER = "user";
     /* Inner class that defines the table contents of the user table */
@@ -35,6 +39,14 @@ public final class SportteamContract {
         /* The base CONTENT_URI used to query the user table from the content provider */
         public static final Uri CONTENT_USER_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_USERS)
+                .build();
+        /* The base CONTENT_URI used to observe relation between an User and me */
+        public static final Uri CONTENT_USER_RELATION_USER_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_USER_RELATION_USER)
+                .build();
+        /* The base CONTENT_URI used to observe relation between an User and an Event */
+        public static final Uri CONTENT_USER_RELATION_EVENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_USER_RELATION_EVENT)
                 .build();
 
         /* Column names */

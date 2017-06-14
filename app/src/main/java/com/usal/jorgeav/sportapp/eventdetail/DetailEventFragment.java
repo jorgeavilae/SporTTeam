@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -97,57 +98,54 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
-        @DetailEventPresenter.EventRelationType
-        int relationType = mPresenter.getRelationTypeBetweenThisEventAndI();
-
         usersAdapter = new UsersAdapter(null, null);
         eventParticipantsList.setAdapter(usersAdapter);
         eventParticipantsList.setHasFixedSize(true);
         eventParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
 
-        if (relationType == DetailEventPresenter.RELATION_TYPE_OWNER) {
-            buttonUserRequests.setVisibility(View.VISIBLE);
-            buttonUserRequests.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //DONE ver peticiones para entrar en este evento
-                    if(mEventId != null) {
-                        Fragment fragment = UsersRequestsFragment.newInstance(mEventId);
-                        mFragmentManagementListener.initFragment(fragment, true);
-                    }
-                }
-            });
-            buttonSendInvitation.setVisibility(View.VISIBLE);
-            buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //DONE ver lista de amigos para enviarles invitaciones
-                    Fragment fragment = InviteUserFragment.newInstance(mEventId);
-                    mFragmentManagementListener.initFragment(fragment, true);
-                }
-            });
-            buttonUnansweredInvitations.setVisibility(View.VISIBLE);
-            buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //DONE ver invitaciones enviadas y no contestadas
-                    if(mEventId != null) {
-                        Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
-                        mFragmentManagementListener.initFragment(fragment, true);
-                    }
-                }
-            });
-        } else {
-            buttonSendRequest.setVisibility(View.VISIBLE);
-            setupSendRequestButton(relationType);
-        }
+        uiSetupForEventRelation();
 
         return root;
     }
 
-    private void setupSendRequestButton(@DetailEventPresenter.EventRelationType int relationType) {
-        switch (relationType) {
+    @Override
+    public void uiSetupForEventRelation() {
+        switch (mPresenter.getRelationTypeBetweenThisEventAndI()) {
+            case DetailEventPresenter.RELATION_TYPE_OWNER:
+                buttonUserRequests.setVisibility(View.VISIBLE);
+                buttonUserRequests.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //DONE ver peticiones para entrar en este evento
+                        if(mEventId != null) {
+                            Fragment fragment = UsersRequestsFragment.newInstance(mEventId);
+                            mFragmentManagementListener.initFragment(fragment, true);
+                        }
+                    }
+                });
+                buttonSendInvitation.setVisibility(View.VISIBLE);
+                buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //DONE ver lista de amigos para enviarles invitaciones
+                        Fragment fragment = InviteUserFragment.newInstance(mEventId);
+                        mFragmentManagementListener.initFragment(fragment, true);
+                    }
+                });
+                buttonUnansweredInvitations.setVisibility(View.VISIBLE);
+                buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //DONE ver invitaciones enviadas y no contestadas
+                        if(mEventId != null) {
+                            Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
+                            mFragmentManagementListener.initFragment(fragment, true);
+                        }
+                    }
+                });
+                break;
             case DetailEventPresenter.RELATION_TYPE_NONE:
+                buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Enviar peticion de entrada");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -158,6 +156,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
+                buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Cancelar peticion de entrada");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -176,6 +175,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION:
+                buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Contestar invitacion");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -199,6 +199,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_ASSISTANT:
+                buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Abandonar partido");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -217,11 +218,12 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_BLOCKED:
+                buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("No puedes asistir");
                 buttonSendRequest.setEnabled(false);
                 break;
-            case DetailEventPresenter.RELATION_TYPE_OWNER:
             case DetailEventPresenter.RELATION_TYPE_ERROR:
+                buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Error");
                 break;
         }
@@ -328,7 +330,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     }
 
     @Override
-    public Context getActivityContext() {
+    public FragmentActivity getActivityContext() {
         return getActivity();
     }
 
@@ -340,5 +342,17 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public String getEventID() {
         return mEventId;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.registerUserRelationObserver();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.unregisterUserRelationObserver();
     }
 }

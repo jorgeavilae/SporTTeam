@@ -1,7 +1,9 @@
 package com.usal.jorgeav.sportapp.eventdetail;
 
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
@@ -26,9 +28,17 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     private static final String TAG = DetailEventPresenter.class.getSimpleName();
 
     DetailEventContract.View mView;
+    ContentObserver mContentObserver;
 
     public DetailEventPresenter(@NonNull DetailEventContract.View view) {
         this.mView = view;
+        mContentObserver = new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange) {
+                super.onChange(selfChange);
+                mView.uiSetupForEventRelation();
+            }
+        };
     }
 
     @Override
@@ -220,5 +230,16 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(eventId))
             FirebaseActions.quitEvent(myUid, eventId);
+    }
+
+    @Override
+    public void registerUserRelationObserver() {
+        mView.getActivityContext().getContentResolver().registerContentObserver(
+                SportteamContract.UserEntry.CONTENT_USER_RELATION_EVENT_URI, false, mContentObserver);
+    }
+
+    @Override
+    public void unregisterUserRelationObserver() {
+        mView.getActivityContext().getContentResolver().unregisterContentObserver(mContentObserver);
     }
 }

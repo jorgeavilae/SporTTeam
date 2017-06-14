@@ -1,8 +1,8 @@
 package com.usal.jorgeav.sportapp.profile;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -18,8 +18,9 @@ public abstract class ProfileContract {
         void showUserAge(int age);
         void showSports(Cursor cursor);
         void showContent();
-        Context getActivityContext();
+        FragmentActivity getActivityContext();
         String getUserID();
+        void uiSetupForUserRelation();
     }
 
     public interface Presenter {
@@ -31,5 +32,7 @@ public abstract class ProfileContract {
         void acceptFriendRequest(String uid);
         void declineFriendRequest(String uid);
         void deleteFriend(String uid);
+        void registerUserRelationObserver();
+        void unregisterUserRelationObserver();
     }
 }
