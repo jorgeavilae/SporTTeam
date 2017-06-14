@@ -123,7 +123,7 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
     @Override
     public void onDialogPositiveClick(String username) {
         mUsersRecyclerAdapter.replaceData(null);
-        FirebaseDatabaseActions.loadProfilesWithName(username);
+        FirebaseDatabaseActions.loadUsersWithName(username);
         Bundle b = new Bundle();
         b.putString(BUNDLE_USERNAME, username);
         mSearchUsersPresenter.loadNearbyUsersWithName(getLoaderManager(), getArguments());
