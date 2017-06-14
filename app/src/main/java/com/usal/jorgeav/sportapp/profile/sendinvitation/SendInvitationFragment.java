@@ -75,14 +75,8 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(SendInvitationFragment.class.getSimpleName(), this);
         mActionBarIconManagementListener.setToolbarAsUp();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mSendInvitationPresenter.loadEventsForInvitation(getLoaderManager(), getArguments());
     }
-
 
     @Override
     public void onAttach(Context context) {

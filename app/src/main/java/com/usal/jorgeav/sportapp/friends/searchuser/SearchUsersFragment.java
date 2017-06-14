@@ -77,14 +77,8 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(SearchUsersFragment.class.getSimpleName(), this);
         mActionBarIconManagementListener.setToolbarAsUp();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mSearchUsersPresenter.loadNearbyUsers(getLoaderManager(), getArguments());
     }
-
 
     @Override
     public void onAttach(Context context) {

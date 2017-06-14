@@ -60,11 +60,6 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(FriendRequestsFragment.class.getSimpleName(), this);
         mActionBarIconManagementListener.setToolbarAsUp();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mFriendRequestsPresenter.loadFriendRequests(getLoaderManager(), getArguments());
     }
 

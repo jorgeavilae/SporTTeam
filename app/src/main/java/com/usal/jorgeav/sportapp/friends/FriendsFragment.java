@@ -79,11 +79,6 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.friends), this);
         mActionBarIconManagementListener.setToolbarAsNav();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mFriendsPresenter.loadFriend(getLoaderManager(), getArguments());
     }
 

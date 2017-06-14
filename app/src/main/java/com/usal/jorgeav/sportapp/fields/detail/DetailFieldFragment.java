@@ -86,6 +86,7 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(mFieldId, this);
         mActionBarIconManagementListener.setToolbarAsUp();
+        mPresenter.openField(getLoaderManager(), getArguments());
     }
 
     @Override
@@ -102,12 +103,6 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mPresenter.openField(getLoaderManager(), getArguments());
     }
 
     @Override

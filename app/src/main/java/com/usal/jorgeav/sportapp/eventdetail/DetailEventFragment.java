@@ -233,6 +233,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         //TODO should I add event.name?
         mFragmentManagementListener.setCurrentDisplayedFragment(mEventId, this);
         mActionBarIconManagementListener.setToolbarAsUp();
+        mPresenter.openEvent(getLoaderManager(), getArguments());
     }
 
     @Override
@@ -249,12 +250,6 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mPresenter.openEvent(getLoaderManager(), getArguments());
     }
 
     @Override

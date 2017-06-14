@@ -1,7 +1,5 @@
 package com.usal.jorgeav.sportapp.events.addevent;
 
-import android.database.Cursor;
-import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -78,10 +76,5 @@ public class NewEventPresenter implements NewEventContract.Presenter {
         if (!TextUtils.isEmpty(total) && !TextUtils.isEmpty(empty))
             return Integer.valueOf(total) >= Integer.valueOf(empty);
         return false;
-    }
-
-    @Override
-    public LoaderManager.LoaderCallbacks<Cursor> getLoaderInstance() {
-        return null;
     }
 }

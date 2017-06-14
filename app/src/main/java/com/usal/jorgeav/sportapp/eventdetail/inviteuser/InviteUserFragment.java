@@ -79,11 +79,6 @@ public class InviteUserFragment extends Fragment implements InviteUserContract.V
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getClass().getSimpleName(), this);
         mActionBarIconManagementListener.setToolbarAsUp();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mSendInvitationPresenter.loadFriends(getLoaderManager(), getArguments());
     }
 

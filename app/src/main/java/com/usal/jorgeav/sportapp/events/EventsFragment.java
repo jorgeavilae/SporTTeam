@@ -94,11 +94,6 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
         mActionBarIconManagementListener.setToolbarAsNav();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mEventsPresenter.loadEvents(getLoaderManager(), getArguments());
     }
 

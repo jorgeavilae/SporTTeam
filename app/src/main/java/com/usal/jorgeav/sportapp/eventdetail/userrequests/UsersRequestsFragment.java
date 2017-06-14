@@ -81,11 +81,6 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(UsersRequestsFragment.class.getSimpleName(), this);
         mActionBarIconManagementListener.setToolbarAsUp();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mUsersRequestsPresenter.loadUsersRequests(getLoaderManager(), getArguments());
     }
 

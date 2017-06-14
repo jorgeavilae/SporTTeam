@@ -81,14 +81,8 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(SearchEventsFragment.class.getSimpleName(), this);
         mActionBarIconManagementListener.setToolbarAsUp();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
     }
-
 
     @Override
     public void onAttach(Context context) {

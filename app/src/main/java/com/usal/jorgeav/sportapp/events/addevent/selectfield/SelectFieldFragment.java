@@ -81,14 +81,8 @@ public class SelectFieldFragment extends Fragment implements SelectFieldContract
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getClass().getSimpleName(), this);
         mActionBarIconManagementListener.setToolbarAsUp();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mSelectFieldPresenter.loadFieldsWithSport(getLoaderManager(), getArguments());
     }
-
 
     @Override
     public void onAttach(Context context) {

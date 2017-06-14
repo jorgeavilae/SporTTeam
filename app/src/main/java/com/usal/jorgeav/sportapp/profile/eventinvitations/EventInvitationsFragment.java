@@ -61,14 +61,8 @@ public class EventInvitationsFragment extends Fragment implements EventInvitatio
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(EventInvitationsFragment.class.getSimpleName(), this);
         mActionBarIconManagementListener.setToolbarAsUp();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mEventInvitationsPresenter.loadEventInvitations(getLoaderManager(), getArguments());
     }
-
 
     @Override
     public void onAttach(Context context) {

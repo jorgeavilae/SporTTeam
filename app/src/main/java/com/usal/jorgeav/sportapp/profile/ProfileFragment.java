@@ -235,13 +235,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
             mActionBarIconManagementListener.setToolbarAsNav();
         else
             mActionBarIconManagementListener.setToolbarAsUp();
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mProfilePresenter.openUser(getLoaderManager(), getArguments());
+
     }
 
     @Override

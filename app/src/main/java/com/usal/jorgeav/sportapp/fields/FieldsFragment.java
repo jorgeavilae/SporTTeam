@@ -64,11 +64,6 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.fields), this);
         mActionBarIconManagementListener.setToolbarAsNav();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mFieldsPresenter.loadNearbyFields(getLoaderManager(), getArguments());
     }
 
