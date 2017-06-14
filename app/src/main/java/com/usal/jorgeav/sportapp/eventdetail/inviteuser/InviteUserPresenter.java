@@ -8,7 +8,7 @@ import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
+import com.usal.jorgeav.sportapp.network.FirebaseActions;
 
 /**
  * Created by Jorge Avila on 29/05/2017.
@@ -27,7 +27,7 @@ public class InviteUserPresenter implements InviteUserContract.Presenter, Loader
     @Override
     public void sendInvitationToThisEvent(String eventId, String uid) {
         if (!TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
-            FirebaseDatabaseActions.sendInvitationToThisEvent(eventId, uid);
+            FirebaseActions.sendInvitationToThisEvent(eventId, uid);
     }
 
     @Override

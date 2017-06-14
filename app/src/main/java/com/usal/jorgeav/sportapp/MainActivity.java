@@ -31,7 +31,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
 import com.usal.jorgeav.sportapp.friends.FriendsFragment;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
+import com.usal.jorgeav.sportapp.network.FirebaseData;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
         mContentFrame = (FrameLayout) findViewById(R.id.contentFrame);
         mProgressbar = (ProgressBar) findViewById(R.id.main_activity_progressbar);
         hideContent();
-//        FirebaseDatabaseActions.syncFirebaseDatabase();
+//        FirebaseActions.syncFirebaseDatabase();
 
         //TODO borrar
 //        reiniciarContentProviderYSalir();
@@ -87,12 +87,12 @@ public class MainActivity extends AppCompatActivity
                 if (fuser != null) {
                     // User is signed in
                     Log.d(TAG, "userID: "+fuser.getUid());
-                    FirebaseDatabaseActions.syncFirebaseDatabase();
+                    FirebaseData.syncFirebaseDatabase();
                     if(mDisplayedFragment == null)
                         onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
                 } else {
                     // User is signed out
-                    FirebaseDatabaseActions.detachListeners();
+                    FirebaseData.detachListeners();
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);
                 }
@@ -328,7 +328,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FirebaseDatabaseActions.detachListeners();
+        FirebaseData.detachListeners();
     }
 
     @Override

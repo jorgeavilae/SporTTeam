@@ -9,6 +9,7 @@ import android.support.v4.content.Loader;
 import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.FirebaseData;
 
 /**
  * Created by Jorge Avila on 26/04/2017.
@@ -23,6 +24,8 @@ public class DetailFieldPresenter implements DetailFieldContract.Presenter, Load
 
     @Override
     public void openField(LoaderManager loaderManager, Bundle b) {
+        String fieldId = b.getString(DetailFieldFragment.BUNDLE_FIELD_ID);
+        FirebaseData.loadAField(fieldId);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELD_ID, b, this);
     }
 

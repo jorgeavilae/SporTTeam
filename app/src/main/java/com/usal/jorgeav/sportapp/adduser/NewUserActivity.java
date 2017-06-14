@@ -22,15 +22,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
-import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.network.FirebaseActions;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -103,7 +101,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (!hasFocus)
-                    checkEmailExists(newUserEmail.getText().toString());
+                    checkUserEmailExists(newUserEmail.getText().toString());
             }
         });
         newUserPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -118,7 +116,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (!hasFocus)
-                    checkNameExists(newUserName.getText().toString());
+                    checkUserNameExists(newUserName.getText().toString());
             }
         });
 
@@ -145,12 +143,8 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         showContent();
     }
 
-    private void checkEmailExists(String email) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference(FirebaseDBContract.TABLE_USERS);
-        String userEmailPath = FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.EMAIL;
-
-        myRef.orderByChild(userEmailPath).equalTo(email)
+    private void checkUserEmailExists(String email) {
+        FirebaseActions.getUserEmailReferenceEqualTo(email)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -163,13 +157,8 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                     public void onCancelled(DatabaseError databaseError) { }
                 });
     }
-
-    private void checkNameExists(String name) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference(FirebaseDBContract.TABLE_USERS);
-        String userNamePath = FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.ALIAS;
-
-        myRef.orderByChild(userNamePath).equalTo(name)
+    private void checkUserNameExists(String name) {
+        FirebaseActions.getUserNameReferenceEqualTo(name)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -182,7 +171,6 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                     public void onCancelled(DatabaseError databaseError) { }
                 });
     }
-
     private void createAuthUser(String email, String pass) {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -197,9 +185,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                                     Integer.parseInt(newUserAge.getText().toString()),
                                     newUserPhoto.getText().toString(),
                                     sports);
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            DatabaseReference myRef = database.getReference(FirebaseDBContract.TABLE_USERS);
-                            myRef.child(user.getmId()).setValue(user.toMap());
+                            FirebaseActions.addUser(user);
 
                             setResult(RESULT_OK); finish();
                         } else {

@@ -7,7 +7,7 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
+import com.usal.jorgeav.sportapp.network.FirebaseActions;
 
 /**
  * Created by Jorge Avila on 29/05/2017.
@@ -24,7 +24,7 @@ public class InvitationsSentPresenter implements InvitationsSentContract.Present
     @Override
     public void deleteInvitationToThisEvent(String eventId, String uid) {
         if (!TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
-            FirebaseDatabaseActions.deleteInvitationToThisEvent(eventId, uid);
+            FirebaseActions.deleteInvitationToThisEvent(eventId, uid);
     }
 
     @Override

@@ -12,7 +12,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
+import com.usal.jorgeav.sportapp.network.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.FirebaseData;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,6 +33,8 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
 
     @Override
     public void openEvent(LoaderManager loaderManager, Bundle b) {
+        String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
+        FirebaseData.loadAnEvent(eventId);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENT_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
     }
@@ -188,34 +191,34 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     public void sendEventRequest(String eventId) {
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(eventId))
-            FirebaseDatabaseActions.sendEventRequest(myUid, eventId);
+            FirebaseActions.sendEventRequest(myUid, eventId);
     }
 
     @Override
     public void cancelEventRequest(String eventId) {
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(eventId))
-            FirebaseDatabaseActions.cancelEventRequest(myUid, eventId);
+            FirebaseActions.cancelEventRequest(myUid, eventId);
     }
 
     @Override
     public void acceptEventInvitation(String eventId) {
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(eventId))
-            FirebaseDatabaseActions.acceptEventInvitation(myUid, eventId);
+            FirebaseActions.acceptEventInvitation(myUid, eventId);
     }
 
     @Override
     public void declineEventInvitation(String eventId) {
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(eventId))
-            FirebaseDatabaseActions.declineEventInvitation(myUid, eventId);
+            FirebaseActions.declineEventInvitation(myUid, eventId);
     }
 
     @Override
     public void quitEvent(String eventId) {
         String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(eventId))
-            FirebaseDatabaseActions.quitEvent(myUid, eventId);
+            FirebaseActions.quitEvent(myUid, eventId);
     }
 }

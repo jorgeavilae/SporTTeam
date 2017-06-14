@@ -8,6 +8,7 @@ import android.support.v4.content.Loader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.FirebaseData;
 
 /**
  * Created by Jorge Avila on 04/06/2017.
@@ -24,6 +25,9 @@ public class SearchUsersPresenter implements SearchUsersContract.Presenter, Load
 
     @Override
     public void loadNearbyUsers(LoaderManager loaderManager, Bundle b) {
+        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String city = Utiles.getCurrentCity(mSearchUsersView.getActivityContext(), currentUserID);
+        FirebaseData.loadUsersFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_USERS_FROM_CITY, b, this);
     }
 
@@ -35,9 +39,9 @@ public class SearchUsersPresenter implements SearchUsersContract.Presenter, Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         switch (id) {
             case SportteamLoader.LOADER_USERS_FROM_CITY:
+                String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String city = Utiles.getCurrentCity(mSearchUsersView.getActivityContext(), currentUserID);
                 return SportteamLoader
                         .cursorLoaderUsersFromCity(mSearchUsersView.getActivityContext(), city);

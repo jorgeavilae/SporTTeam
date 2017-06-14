@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Jorge Avila on 18/05/2017.
+ * Created by Jorge Avila on 14/06/2017.
  */
 
-public class FirebaseDatabaseActions {
-    public static final String TAG = FirebaseDatabaseActions.class.getSimpleName();
+public class FirebaseData {
+    public static final String TAG = FirebaseData.class.getSimpleName();
 
     private static HashMap<DatabaseReference, ChildEventListener> listenerMap = new HashMap<>();
 
@@ -121,44 +121,44 @@ public class FirebaseDatabaseActions {
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT);
 
         ChildEventListener childEventListener = new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        if(dataSnapshot.exists()) {
-                            loadAProfile(dataSnapshot.getKey());
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.exists()) {
+                    loadAProfile(dataSnapshot.getKey());
 
-                            String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                            ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID, true);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
-                        }
-                    }
+                    String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID, true);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
+                }
+            }
 
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        onChildAdded(dataSnapshot, s);
-                    }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                onChildAdded(dataSnapshot, s);
+            }
 
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        String senderId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        String receiverId = dataSnapshot.getKey();
-                        MyApplication.getAppContext().getContentResolver().delete(
-                                SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
-                                SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ? AND "
-                                        + SportteamContract.FriendRequestEntry.SENDER_ID + " = ? ",
-                                new String[]{receiverId, senderId});
-                    }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String senderId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String receiverId = dataSnapshot.getKey();
+                MyApplication.getAppContext().getContentResolver().delete(
+                        SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
+                        SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ? AND "
+                                + SportteamContract.FriendRequestEntry.SENDER_ID + " = ? ",
+                        new String[]{receiverId, senderId});
+            }
 
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                    }
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                };
+            }
+        };
         myUserRef.addChildEventListener(childEventListener);
         listenerMap.put(myUserRef, childEventListener);
     }
@@ -196,7 +196,7 @@ public class FirebaseDatabaseActions {
                 MyApplication.getAppContext().getContentResolver()
                         .delete(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
                                 SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ? AND "
-                            + SportteamContract.FriendRequestEntry.SENDER_ID + " = ? ",
+                                        + SportteamContract.FriendRequestEntry.SENDER_ID + " = ? ",
                                 new String[]{receiverId, senderId});
 
             }
@@ -215,7 +215,7 @@ public class FirebaseDatabaseActions {
         listenerMap.put(myUserRef, childEventListener);
     }
 
-    private static void loadEventsFromMyOwnEvents() {
+    static void loadEventsFromMyOwnEvents() {
         String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
@@ -243,6 +243,103 @@ public class FirebaseDatabaseActions {
 //        No es necesario porque se actualiza manualmente cuando se crea un evento nuevo
 //        listenerMap.put(myUserRef, childEventListener);
     }
+    private static void loadUsersFromUserRequests(String key) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
+                .child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS);
+
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.exists()) {
+                    loadAProfile(dataSnapshot.getKey());
+
+                    String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
+                    ContentValues cvData = Utiles
+                            .datasnapshotEventsRequestsToContentValues(dataSnapshot, eventId, false);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI, cvData);
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                onChildAdded(dataSnapshot, s);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
+                String senderId = dataSnapshot.getKey();
+                MyApplication.getAppContext().getContentResolver().delete(
+                        SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,
+                        SportteamContract.EventRequestsEntry.EVENT_ID + " = ? AND "
+                                +SportteamContract.EventRequestsEntry.SENDER_ID + " = ? ",
+                        new String[]{eventId, senderId});
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        myUserRef.addChildEventListener(childEventListener);
+        listenerMap.put(myUserRef, childEventListener);
+    }
+    private static void loadUsersFromInvitationsSent(String key) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
+                .child(key + "/" + FirebaseDBContract.Event.INVITATIONS);
+
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.exists()) {
+                    loadAProfile(dataSnapshot.getKey());
+
+                    String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
+                    ContentValues cvData = Utiles
+                            .datasnapshotEventInvitationsToContentValues(dataSnapshot, eventId, false);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI, cvData);
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                onChildAdded(dataSnapshot, s);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
+                String userId = dataSnapshot.getKey();
+                MyApplication.getAppContext().getContentResolver().delete(
+                        SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
+                        SportteamContract.EventsInvitationEntry.EVENT_ID + " = ? AND "
+                                +SportteamContract.EventsInvitationEntry.USER_ID + " = ? ",
+                        new String[]{eventId, userId});
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        myUserRef.addChildEventListener(childEventListener);
+        listenerMap.put(myUserRef, childEventListener);
+    }
+
     private static void loadEventsFromEventsParticipation() {
         String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -396,104 +493,7 @@ public class FirebaseDatabaseActions {
         listenerMap.put(myUserRef, childEventListener);
     }
 
-    private static void loadUsersFromUserRequests(String key) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
-                .child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS);
-
-        ChildEventListener childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
-                    loadAProfile(dataSnapshot.getKey());
-
-                    String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
-                    ContentValues cvData = Utiles
-                            .datasnapshotEventsRequestsToContentValues(dataSnapshot, eventId, false);
-                    MyApplication.getAppContext().getContentResolver()
-                            .insert(SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI, cvData);
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                onChildAdded(dataSnapshot, s);
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
-                String senderId = dataSnapshot.getKey();
-                MyApplication.getAppContext().getContentResolver().delete(
-                        SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,
-                        SportteamContract.EventRequestsEntry.EVENT_ID + " = ? AND "
-                                +SportteamContract.EventRequestsEntry.SENDER_ID + " = ? ",
-                        new String[]{eventId, senderId});
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
-    }
-    private static void loadUsersFromInvitationsSent(String key) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
-                .child(key + "/" + FirebaseDBContract.Event.INVITATIONS);
-
-        ChildEventListener childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
-                    loadAProfile(dataSnapshot.getKey());
-
-                    String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
-                    ContentValues cvData = Utiles
-                            .datasnapshotEventInvitationsToContentValues(dataSnapshot, eventId, false);
-                    MyApplication.getAppContext().getContentResolver()
-                            .insert(SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI, cvData);
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                onChildAdded(dataSnapshot, s);
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
-                String userId = dataSnapshot.getKey();
-                MyApplication.getAppContext().getContentResolver().delete(
-                        SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
-                        SportteamContract.EventsInvitationEntry.EVENT_ID + " = ? AND "
-                                +SportteamContract.EventsInvitationEntry.USER_ID + " = ? ",
-                        new String[]{eventId, userId});
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
-    }
-
-    private static void loadAProfile(String userID) {
+    public static void loadAProfile(String userID) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
@@ -521,11 +521,11 @@ public class FirebaseDatabaseActions {
                 });
 
     }
-    private static void loadAnEvent(String key) {
+    public static void loadAnEvent(String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
-        myUserRef.child(key)
+        myUserRef.child(eventId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -546,11 +546,11 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-    private static void loadAField(String key) {
+    public static void loadAField(String fieldId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
 
-        myUserRef.child(key)
+        myUserRef.child(fieldId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -599,34 +599,34 @@ public class FirebaseDatabaseActions {
                 });
     }
 
-    private static void loadFieldsFromCity(String city) {
+    public static void loadFieldsFromCity(String city) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference fieldsRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
 
         fieldsRef.orderByChild(filter).equalTo(city)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        List<Field> fields = Utiles.datasnapshotToFieldList(data);
-                        cvArray.addAll(Utiles.fieldsArrayToContentValues(fields));
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
+                            for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                List<Field> fields = Utiles.datasnapshotToFieldList(data);
+                                cvArray.addAll(Utiles.fieldsArrayToContentValues(fields));
+                            }
+                            MyApplication.getAppContext().getContentResolver()
+                                    .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                                            cvArray.toArray(new ContentValues[cvArray.size()]));
+                        }
                     }
-                    MyApplication.getAppContext().getContentResolver()
-                            .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                                    cvArray.toArray(new ContentValues[cvArray.size()]));
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                    }
+                });
     }
-    private static void loadEventsFromCity(String city) {
+    public static void loadEventsFromCity(String city) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
@@ -652,7 +652,7 @@ public class FirebaseDatabaseActions {
                     }
                 });
     }
-    private static void loadUsersFromCity(String city) {
+    public static void loadUsersFromCity(String city) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference usersRef = database.getReference(FirebaseDBContract.TABLE_USERS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
@@ -741,200 +741,5 @@ public class FirebaseDatabaseActions {
 
                     }
                 });
-    }
-
-    //TODO checks if childs exists
-    //TODO add fromUid and toUid
-    public static void sendFriendRequest(String otherUid) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        long currentTime = System.currentTimeMillis();
-
-        //Set Friend Request Sent in my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT)
-                .child(otherUid).setValue(currentTime);
-
-        //Set Friend Request Received in other User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED)
-                .child(myUid).setValue(currentTime);
-    }
-    public static void cancelFriendRequest(String otherUid) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        //Delete Friend Request Sent in my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT).child(otherUid).removeValue();
-
-        //Delete Friend Request Received in other User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED).child(myUid).removeValue();
-    }
-    public static void acceptFriendRequest(String otherUid) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        long currentTime = System.currentTimeMillis();
-
-        //Add Friend to my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
-                .child(FirebaseDBContract.User.FRIENDS).child(otherUid).setValue(currentTime);
-
-        //Add Friend to other User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
-                .child(FirebaseDBContract.User.FRIENDS).child(myUid).setValue(currentTime);
-
-        //Delete Friend Request Received in my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED).child(otherUid).removeValue();
-
-        //Delete Friend Request Sent in other User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT).child(myUid).removeValue();
-    }
-    public static void declineFriendRequest(String otherUid) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        //Delete Friend Request Received in my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED).child(otherUid).removeValue();
-
-        //Delete Friend Request Sent in other User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
-                .child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT).child(myUid).removeValue();
-    }
-    public static void deleteFriend(String otherUid) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        //Delete Friend to my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUid)
-                .child(FirebaseDBContract.User.FRIENDS).child(otherUid).removeValue();
-
-        //Delete Friend to other User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(otherUid)
-                .child(FirebaseDBContract.User.FRIENDS).child(myUid).removeValue();
-
-    }
-
-    //TODO checks if childs exists and empty player and total player counts
-    //TODO COMPROBAR SI FUNCIONAN
-    public static void sendInvitationToThisEvent(String eventId, String uid) {
-        long currentTime = System.currentTimeMillis();
-
-        //Set Invitation Sent in my Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.INVITATIONS)
-                .child(uid).setValue(currentTime);
-
-        //Set Invitation Received in other User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_INVITATIONS)
-                .child(eventId).setValue(currentTime);
-    }
-    public static void deleteInvitationToThisEvent(String eventId, String uid) {
-        //Delete Invitation Sent in my Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.INVITATIONS)
-                .child(uid).removeValue();
-
-        //Set Invitation Received in other User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_INVITATIONS)
-                .child(eventId).removeValue();
-    }
-    public static void sendEventRequest(String uid, String eventId) {
-        long currentTime = System.currentTimeMillis();
-
-        //Set User Request in that Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.USER_REQUESTS)
-                .child(uid).setValue(currentTime);
-
-        //Set Event Request in that my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_REQUESTS)
-                .child(eventId).setValue(currentTime);
-    }
-    public static void cancelEventRequest(String uid, String eventId) {
-        //Delete User Request in that Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.USER_REQUESTS)
-                .child(uid).removeValue();
-
-        //Delete Event Request in that my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_REQUESTS)
-                .child(eventId).removeValue();
-    }
-    public static void acceptEventInvitation(String uid, String eventId) {
-        //Add Assistant Event to my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).setValue(true);
-
-        //Add Assistant User to that Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.PARTICIPANTS).child(uid).setValue(true);
-        //TODO update empty Players with Transaction
-
-        //Delete Event Invitation Received in my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_INVITATIONS).child(eventId).removeValue();
-
-        //Delete Event Invitation Sent in that Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.INVITATIONS).child(uid).removeValue();
-    }
-    public static void declineEventInvitation(String uid, String eventId) {
-        //Delete Event Invitation Received in my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_INVITATIONS).child(eventId).removeValue();
-
-        //Delete Event Invitation Sent in that Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.INVITATIONS).child(uid).removeValue();
-    }
-    public static void quitEvent(String uid, String eventId) {
-        //Delete Assistant Event to my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).removeValue();
-
-        //Delete Assistant User to that Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.PARTICIPANTS).child(uid).removeValue();
-        //TODO update empty Players with Transaction
-    }
-    public static void acceptUserRequestToThisEvent(String uid, String eventId) {
-        //Add Assistant Event to that User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).setValue(true);
-
-        //Add Assistant User to my Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.PARTICIPANTS).child(uid).setValue(true);
-        //TODO update empty Players with Transaction
-
-        //Delete Event Request Sent in that User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_REQUESTS).child(eventId).removeValue();
-
-        //Delete Event Request Received in my Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.USER_REQUESTS).child(uid).removeValue();
-    }
-    public static void declineUserRequestToThisEvent(String uid, String eventId) {
-        //Add Not Assistant Event to that User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).setValue(false);
-
-        //Add Not Assistant User to my Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.PARTICIPANTS).child(uid).setValue(false);
-        //TODO update empty Players with Transaction
-
-        //Delete Event Request Sent in that User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_REQUESTS).child(eventId).removeValue();
-
-        //Delete Event Request Received in my Event
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
-                .child(FirebaseDBContract.Event.USER_REQUESTS).child(uid).removeValue();
     }
 }

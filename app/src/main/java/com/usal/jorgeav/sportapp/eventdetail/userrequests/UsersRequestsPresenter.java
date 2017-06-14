@@ -7,7 +7,7 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
+import com.usal.jorgeav.sportapp.network.FirebaseActions;
 
 /**
  * Created by Jorge Avila on 29/05/2017.
@@ -26,13 +26,13 @@ public class UsersRequestsPresenter implements UsersRequestsContract.Presenter, 
     @Override
     public void acceptUserRequestToThisEvent(String eventId, String uid) {
         if (!TextUtils.isEmpty(eventId))
-            FirebaseDatabaseActions.acceptUserRequestToThisEvent(uid, eventId);
+            FirebaseActions.acceptUserRequestToThisEvent(uid, eventId);
     }
 
     @Override
     public void declineUserRequestToThisEvent(String eventId, String uid) {
         if (!TextUtils.isEmpty(eventId))
-            FirebaseDatabaseActions.declineUserRequestToThisEvent(uid, eventId);
+            FirebaseActions.declineUserRequestToThisEvent(uid, eventId);
     }
 
     @Override

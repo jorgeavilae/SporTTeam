@@ -8,6 +8,7 @@ import android.support.v4.content.Loader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.FirebaseData;
 
 /**
  * Created by Jorge Avila on 06/06/2017.
@@ -24,6 +25,9 @@ public class SearchEventsPresenter implements SearchEventsContract.Presenter, Lo
 
     @Override
     public void loadNearbyEvents(LoaderManager loaderManager, Bundle b) {
+        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String city = Utiles.getCurrentCity(mSearchEventsView.getActivityContext(), currentUserID);
+        FirebaseData.loadEventsFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_FROM_CITY, b, this);
     }
 

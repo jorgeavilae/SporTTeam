@@ -15,7 +15,7 @@ import android.widget.Button;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
+import com.usal.jorgeav.sportapp.network.FirebaseData;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
@@ -123,7 +123,7 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
     @Override
     public void onDialogPositiveClick(String username) {
         mUsersRecyclerAdapter.replaceData(null);
-        FirebaseDatabaseActions.loadUsersWithName(username);
+        FirebaseData.loadUsersWithName(username);
         Bundle b = new Bundle();
         b.putString(BUNDLE_USERNAME, username);
         mSearchUsersPresenter.loadNearbyUsersWithName(getLoaderManager(), getArguments());

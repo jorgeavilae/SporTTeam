@@ -8,6 +8,7 @@ import android.support.v4.content.Loader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.FirebaseData;
 
 /**
  * Created by Jorge Avila on 25/04/2017.
@@ -23,6 +24,9 @@ public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.
 
     @Override
     public void loadNearbyFields(LoaderManager loaderManager, Bundle b) {
+        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String city = Utiles.getCurrentCity(mFieldsView.getActivityContext(), currentUserID);
+        FirebaseData.loadFieldsFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY, b, this);
     }
 

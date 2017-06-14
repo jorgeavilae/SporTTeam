@@ -11,7 +11,8 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseDatabaseActions;
+import com.usal.jorgeav.sportapp.network.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.FirebaseData;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,6 +32,8 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void openUser(LoaderManager loaderManager, Bundle b) {
+        String userId = b.getString(ProfileFragment.BUNDLE_INSTANCE_UID);
+        FirebaseData.loadAProfile(userId);
         loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_SPORTS_ID, b, this);
     }
@@ -157,35 +160,40 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void sendFriendRequest(String uid) {
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(uid))
-            FirebaseDatabaseActions.sendFriendRequest(uid);
+            FirebaseActions.sendFriendRequest(myUid, uid);
     }
 
     @Override
     public void cancelFriendRequest(String uid) {
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(uid))
-            FirebaseDatabaseActions.cancelFriendRequest(uid);
+            FirebaseActions.cancelFriendRequest(myUid, uid);
 
     }
 
     @Override
     public void acceptFriendRequest(String uid) {
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(uid))
-            FirebaseDatabaseActions.acceptFriendRequest(uid);
+            FirebaseActions.acceptFriendRequest(myUid, uid);
 
     }
 
     @Override
     public void declineFriendRequest(String uid) {
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(uid))
-            FirebaseDatabaseActions.declineFriendRequest(uid);
+            FirebaseActions.declineFriendRequest(myUid, uid);
 
     }
 
     @Override
     public void deleteFriend(String uid) {
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (!TextUtils.isEmpty(uid))
-            FirebaseDatabaseActions.deleteFriend(uid);
+            FirebaseActions.deleteFriend(myUid, uid);
 
     }
 }
