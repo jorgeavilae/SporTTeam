@@ -16,7 +16,6 @@ import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
-import com.usal.jorgeav.sportapp.network.FirebaseData;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -129,7 +128,6 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
     @Override
     public void onDialogSportClick(String sportId) {
         mEventsRecyclerAdapter.replaceData(null);
-        FirebaseData.loadEventsWithSport(sportId);
         Bundle b = new Bundle();
         b.putString(BUNDLE_SPORT, sportId);
         mSearchEventsPresenter.loadNearbyEventsWithSport(getLoaderManager(), b);

@@ -170,25 +170,25 @@ public final class SportteamLoader {
 
     public static final int LOADER_EVENTS_FROM_CITY = 2300;
     public static final int LOADER_EVENTS_WITH_SPORT = 2400;
-    public static CursorLoader cursorLoaderEventsFromCity(Context context, String city) {
+    public static CursorLoader cursorLoaderEventsFromCity(Context context, String myUserId, String city) {
         // Return event data from events in city
         return new CursorLoader(
                 context,
-                SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                SportteamContract.JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI,
                 SportteamContract.EventEntry.EVENT_COLUMNS,
-                SportteamContract.EventEntry.CITY + " = ?",
-                new String[]{city},
-                SportteamContract.EventEntry.DATE + " ASC");
+                SportteamContract.JoinQueryEntries.WHERE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME,
+                SportteamContract.JoinQueryEntries.queryCityEventsWithoutRelationWithMeArguments(myUserId, city),
+                SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
     }
-    public static CursorLoader cursorLoaderEventsWithSport(Context context, String sportId) {
+    public static CursorLoader cursorLoaderEventsWithSport(Context context, String myUserId, String city, String sportId) {
         //Return event data from events with sportId
         return new CursorLoader(
                 context,
-                SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                SportteamContract.JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI,
                 SportteamContract.EventEntry.EVENT_COLUMNS,
-                SportteamContract.EventEntry.SPORT + " = ?",
-                new String[]{sportId},
-                SportteamContract.EventEntry.DATE + " ASC");
+                SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME,
+                SportteamContract.JoinQueryEntries.queryCitySportEventsWithoutRelationWithMeArguments(myUserId, city, sportId),
+                SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
     }
 
 

@@ -20,6 +20,8 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.EventsPa
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.FieldEntry;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.FriendRequestEntry;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.FriendsEntry;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS_PARTICIPATION;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS_PARTICIPATION_WITH_EVENT;
@@ -71,6 +73,8 @@ public class SportteamProvider extends ContentProvider {
 
     public static final int CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND = 1010;
     public static final int CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT = 1020;
+    public static final int CODE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME = 1030;
+    public static final int CODE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME = 1040;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private SportteamDBHelper mOpenHelper;
@@ -116,6 +120,10 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND, CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND);
         // This URI is content://com.usal.jorgeav.sportapp/friendsUser_myEvent/
         matcher.addURI(authority, PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS, CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT);
+        // This URI is content://com.usal.jorgeav.sportapp/cityEvent_myUser/
+        matcher.addURI(authority, PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME, CODE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME);
+        // This URI is content://com.usal.jorgeav.sportapp/citySportEvent_myUser/
+        matcher.addURI(authority, PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME, CODE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME);
 
         return matcher;
     }
@@ -131,6 +139,7 @@ public class SportteamProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int rowsInserted = 0;
         Log.d(TAG, "bulkInsert: uri "+uri);
+        Log.d(TAG, "bulkInsert: values "+values);
         switch (sUriMatcher.match(uri)) {
             case CODE_EVENTS:
                 rowsInserted = bulkInsert(uri, values, db, TABLE_EVENT);
@@ -214,6 +223,8 @@ public class SportteamProvider extends ContentProvider {
             case CODE_EVENTS:
                 count = db.delete(TABLE_EVENT, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
                 break;
             case CODE_FRIEND_REQUEST:
                 count = db.delete(TABLE_FRIENDS_REQUESTS, selection, selectionArgs);
@@ -272,6 +283,8 @@ public class SportteamProvider extends ContentProvider {
                 _id = db.insert(TABLE_EVENT, null, values);
                 if ( _id > 0 ) returnUri = EventEntry.buildEventUriWith(_id);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
                 break;
             case CODE_FIELDS:
                 _id = db.insert(TABLE_FIELD, null, values);
@@ -314,6 +327,7 @@ public class SportteamProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         Log.d(TAG, "insert: uri "+uri.toString());
+        Log.d(TAG, "insert: values "+values);
         getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }
@@ -504,6 +518,26 @@ public class SportteamProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
+            case CODE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME:
+                builder.setTables(JoinQueryEntries.TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS);
+                cursor = builder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME:
+                builder.setTables(JoinQueryEntries.TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS);
+                cursor = builder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -514,6 +548,8 @@ public class SportteamProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
+        /* TODO Deberia haber updates? */
+        Log.e(TAG, "update: uri "+uri.toString());
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count = 0;
         switch (sUriMatcher.match(uri)) {
@@ -553,7 +589,6 @@ public class SportteamProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        Log.d(TAG, "update: uri "+uri.toString());
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }

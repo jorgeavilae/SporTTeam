@@ -563,6 +563,10 @@ public final class SportteamContract {
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND = "myEvent_friendUser";
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME = "cityEvent_myUser";
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME = "citySportEvent_myUser";
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS = "friendsUser_myEvent";
     public static final class JoinQueryEntries {
         /* The base CONTENT_URI used to query the event table for my events without
@@ -606,6 +610,46 @@ public final class SportteamContract {
          *      AND eventRequest.eventId IS NULL )
          * ORDER BY event.date ASC
          */
+
+
+        /* The base CONTENT_URI used to query the event table for events
+           in city without relation with me from the content provider */
+        public static final Uri CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME)
+                .build();
+        /* JOIN for CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
+        /* Already defined TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS */
+        /* WHERE for CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
+        public static final String WHERE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME =
+                EventEntry.CITY_TABLE_PREFIX + " = ? "
+                        + "AND " + EventEntry.OWNER_TABLE_PREFIX + " <> ? "
+                        + "AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
+                        + "AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
+                        + "AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " IS NULL ";
+        /* Arguments for JOIN and WHERE in CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
+        public static String[] queryCityEventsWithoutRelationWithMeArguments(String myUserId, String city) {
+            return new String[]{myUserId, myUserId, myUserId, city, myUserId};
+        }
+
+        /* The base CONTENT_URI used to query the event table for events
+           in city without relation with me AND for a sport from the content provider */
+        public static final Uri CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME)
+                .build();
+        /* JOIN for CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
+        /* Already defined TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS */
+        /* WHERE for CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
+        public static final String WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME =
+                EventEntry.CITY_TABLE_PREFIX + " = ? "
+                        + "AND " + EventEntry.SPORT_TABLE_PREFIX + " = ? "
+                        + "AND " + EventEntry.OWNER_TABLE_PREFIX + " <> ? "
+                        + "AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
+                        + "AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
+                        + "AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " IS NULL ";
+        /* Arguments for JOIN and WHERE in CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
+        public static String[] queryCitySportEventsWithoutRelationWithMeArguments(String myUserId, String city, String sportId) {
+            return new String[]{myUserId, myUserId, myUserId, city, sportId, myUserId};
+        }
 
 
         /* The base CONTENT_URI used to query the user table for my friends without

@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.Utiles;
@@ -33,24 +34,29 @@ public class SearchEventsPresenter implements SearchEventsContract.Presenter, Lo
 
     @Override
     public void loadNearbyEventsWithSport(LoaderManager loaderManager, Bundle b) {
+//        String sportId = b.getString(SearchEventsFragment.BUNDLE_SPORT);
+//        FirebaseData.loadEventsWithSport(sportId);
         loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_FROM_CITY);
+        loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_WITH_SPORT);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_WITH_SPORT, b, this);
 
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.d(TAG, "onCreateLoader: "+id);
+        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String city = Utiles.getCurrentCity(mSearchEventsView.getActivityContext(), currentUserID);
         switch (id) {
             case SportteamLoader.LOADER_EVENTS_FROM_CITY:
-                String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                String city = Utiles.getCurrentCity(mSearchEventsView.getActivityContext(), currentUserID);
                 return SportteamLoader
-                        .cursorLoaderEventsFromCity(mSearchEventsView.getActivityContext(), city);
+                        .cursorLoaderEventsFromCity(mSearchEventsView.getActivityContext(), currentUserID, city);
             case SportteamLoader.LOADER_EVENTS_WITH_SPORT:
                 if (args.containsKey(SearchEventsFragment.BUNDLE_SPORT)) {
                     String sportId = args.getString(SearchEventsFragment.BUNDLE_SPORT);
+                    Log.d(TAG, "onCreateLoader: sport "+sportId);
                     return SportteamLoader
-                            .cursorLoaderEventsWithSport(mSearchEventsView.getActivityContext(), sportId);
+                            .cursorLoaderEventsWithSport(mSearchEventsView.getActivityContext(), currentUserID, city, sportId);
                 }
         }
         return null;
@@ -58,6 +64,7 @@ public class SearchEventsPresenter implements SearchEventsContract.Presenter, Lo
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.d(TAG, "onLoadFinished: "+loader.getId());
         mSearchEventsView.showEvents(data);
     }
 

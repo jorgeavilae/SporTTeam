@@ -716,30 +716,34 @@ public class FirebaseData {
                     }
                 });
     }
-    public static void loadEventsWithSport(String sportId) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
-        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.SPORT;
-
-        eventsRef.orderByChild(filter).equalTo(sportId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                Event e = Utiles.datasnapshotToEvent(data);
-                                ContentValues cv = Utiles.eventToContentValues(e);
-                                MyApplication.getAppContext().getContentResolver()
-                                        .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                                loadAField(e.getmField());
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-    }
+    /* Esta llamada no es necesaria porque siempre va precedida de loadEventsFromCity
+     * Esta llamada deberia ser loadEventsFromCityWithSport pero no se puede hacer en Firebase
+     * Por ello para cargar eventos de una ciudad con un deporte se buscan en el Content Provider
+     */
+//    public static void loadEventsWithSport(String sportId) {
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+//        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.SPORT;
+//
+//        eventsRef.orderByChild(filter).equalTo(sportId)
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot.exists()) {
+//                            for (DataSnapshot data : dataSnapshot.getChildren()) {
+//                                Event e = Utiles.datasnapshotToEvent(data);
+//                                ContentValues cv = Utiles.eventToContentValues(e);
+//                                MyApplication.getAppContext().getContentResolver()
+//                                        .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+//                                loadAField(e.getmField());
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//
+//                    }
+//                });
+//    }
 }
