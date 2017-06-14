@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract.JoinQueryEntries;
 
@@ -68,8 +69,8 @@ public class SportteamProvider extends ContentProvider {
     public static final int CODE_EVENTS_REQUESTS = 900;
     public static final int CODE_EVENTS_REQUESTS_WITH_USER = 910;
 
-    public static final int CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND = 10;
-    public static final int CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT = 20;
+    public static final int CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND = 1010;
+    public static final int CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT = 1020;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private SportteamDBHelper mOpenHelper;
@@ -128,28 +129,70 @@ public class SportteamProvider extends ContentProvider {
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int rowsInserted = 0;
+        Log.d(TAG, "bulkInsert: uri "+uri);
         switch (sUriMatcher.match(uri)) {
             case CODE_EVENTS:
-                return bulkInsert(uri, values, db, TABLE_EVENT);
+                rowsInserted = bulkInsert(uri, values, db, TABLE_EVENT);
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
+                }
+                return rowsInserted;
             case CODE_FIELDS:
-                return bulkInsert(uri, values, db, TABLE_FIELD);
+                rowsInserted = bulkInsert(uri, values, db, TABLE_FIELD);
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return rowsInserted;
             case CODE_USER_SPORT:
-                return bulkInsert(uri, values, db, TABLE_USER_SPORTS);
+                rowsInserted = bulkInsert(uri, values, db, TABLE_USER_SPORTS);
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return rowsInserted;
             case CODE_FRIEND_REQUEST:
-                return bulkInsert(uri, values, db, TABLE_FRIENDS_REQUESTS);
+                rowsInserted = bulkInsert(uri, values, db, TABLE_FRIENDS_REQUESTS);
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    getContext().getContentResolver().notifyChange(FriendRequestEntry.CONTENT_FRIEND_REQUESTS_WITH_USER_URI, null);
+                }
+                return rowsInserted;
             case CODE_FRIEND:
-                return bulkInsert(uri, values, db, TABLE_FRIENDS);
+                rowsInserted = bulkInsert(uri, values, db, TABLE_FRIENDS);
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    getContext().getContentResolver().notifyChange(FriendsEntry.CONTENT_FRIEND_WITH_USER_URI, null);
+                    getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI, null);
+                }
+                return rowsInserted;
             case CODE_EVENTS_PARTICIPATION:
-                return bulkInsert(uri, values, db, TABLE_EVENTS_PARTICIPATION);
+                rowsInserted = bulkInsert(uri, values, db, TABLE_EVENTS_PARTICIPATION);
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_USER_URI, null);
+                    getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_EVENT_URI, null);
+                }
+                return rowsInserted;
             case CODE_EVENT_INVITATIONS:
-                return bulkInsert(uri, values, db, TABLE_EVENT_INVITATIONS);
+                rowsInserted = bulkInsert(uri, values, db, TABLE_EVENT_INVITATIONS);
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_USER_URI, null);
+                    getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI, null);
+                }
+                return rowsInserted;
             case CODE_EVENTS_REQUESTS:
-                return bulkInsert(uri, values, db, TABLE_EVENTS_REQUESTS);
+                rowsInserted = bulkInsert(uri, values, db, TABLE_EVENTS_REQUESTS);
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI, null);
+                }
+                return rowsInserted;
             default:
                 return super.bulkInsert(uri, values);
         }
     }
-
     private int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values, SQLiteDatabase db, String tableName) {
         int rowsInserted = 0;
         db.beginTransaction();
@@ -160,9 +203,6 @@ public class SportteamProvider extends ContentProvider {
             }
             db.setTransactionSuccessful();
         } finally { db.endTransaction(); }
-        if (rowsInserted > 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
-        }
         return rowsInserted;
     }
 
@@ -171,13 +211,41 @@ public class SportteamProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count = 0;
         switch (sUriMatcher.match(uri)) {
+            case CODE_USERS:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+            case CODE_EVENTS:
+                count = db.delete(TABLE_EVENT, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
+                break;
+            case CODE_FIELDS:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
             case CODE_FRIEND_REQUEST:
-                count = db.delete(SportteamContract.TABLE_FRIENDS_REQUESTS, selection, selectionArgs);
+                count = db.delete(TABLE_FRIENDS_REQUESTS, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(FriendRequestEntry.CONTENT_FRIEND_REQUESTS_WITH_USER_URI, null);
+                break;
+            case CODE_FRIEND:
+                count = db.delete(TABLE_FRIENDS, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(FriendsEntry.CONTENT_FRIEND_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI, null);
+                break;
+            case CODE_EVENTS_PARTICIPATION:
+                count = db.delete(TABLE_EVENTS_PARTICIPATION, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_EVENT_URI, null);
+                break;
+            case CODE_EVENT_INVITATIONS:
+                count = db.delete(TABLE_EVENT_INVITATIONS, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI, null);
+                break;
+            case CODE_EVENTS_REQUESTS:
+                count = db.delete(TABLE_EVENTS_REQUESTS, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI, null);
                 break;
             default:
-                // Implement this to handle requests to delete one or more rows.
-                throw new UnsupportedOperationException("Not yet implemented");
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        Log.d(TAG, "delete: uri "+uri.toString());
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
@@ -202,6 +270,7 @@ public class SportteamProvider extends ContentProvider {
             case CODE_EVENTS:
                 _id = db.insert(TABLE_EVENT, null, values);
                 if ( _id > 0 ) returnUri = EventEntry.buildEventUriWith(_id);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
                 break;
             case CODE_FIELDS:
                 _id = db.insert(TABLE_FIELD, null, values);
@@ -210,26 +279,35 @@ public class SportteamProvider extends ContentProvider {
             case CODE_FRIEND_REQUEST:
                 _id = db.insert(TABLE_FRIENDS_REQUESTS, null, values);
                 if ( _id > 0 ) returnUri = FriendRequestEntry.buildFriendRequestsUriWith(_id);
+                getContext().getContentResolver().notifyChange(FriendRequestEntry.CONTENT_FRIEND_REQUESTS_WITH_USER_URI, null);
                 break;
             case CODE_FRIEND:
                 _id = db.insert(TABLE_FRIENDS, null, values);
                 if ( _id > 0 ) returnUri = FriendsEntry.buildFriendsUriWith(_id);
+                getContext().getContentResolver().notifyChange(FriendsEntry.CONTENT_FRIEND_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI, null);
                 break;
             case CODE_EVENTS_PARTICIPATION:
                 _id = db.insert(TABLE_EVENTS_PARTICIPATION, null, values);
                 if ( _id > 0 ) returnUri = EventsParticipationEntry.buildEventsParticipationUriWith(_id);
+                getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_EVENT_URI, null);
                 break;
             case CODE_EVENT_INVITATIONS:
                 _id = db.insert(TABLE_EVENT_INVITATIONS, null, values);
                 if ( _id > 0 ) returnUri = EventsInvitationEntry.buildEventInvitationUriWith(_id);
+                getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI, null);
                 break;
             case CODE_EVENTS_REQUESTS:
                 _id = db.insert(TABLE_EVENTS_REQUESTS, null, values);
                 if ( _id > 0 ) returnUri = EventRequestsEntry.buildEventRequestsUriWith(_id);
+                getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI, null);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        Log.d(TAG, "insert: uri "+uri.toString());
         getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }
@@ -430,7 +508,47 @@ public class SportteamProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int count = 0;
+        switch (sUriMatcher.match(uri)) {
+            case CODE_USERS:
+                count = db.update(TABLE_USER, values, selection, selectionArgs);
+                break;
+            case CODE_EVENTS:
+                count = db.update(TABLE_EVENT, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
+                break;
+            case CODE_FIELDS:
+                count = db.update(TABLE_FIELD, values, selection, selectionArgs);
+                break;
+            case CODE_FRIEND_REQUEST:
+                count = db.update(TABLE_FRIENDS_REQUESTS, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(FriendRequestEntry.CONTENT_FRIEND_REQUESTS_WITH_USER_URI, null);
+                break;
+            case CODE_FRIEND:
+                count = db.update(TABLE_FRIENDS, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(FriendsEntry.CONTENT_FRIEND_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI, null);
+                break;
+            case CODE_EVENTS_PARTICIPATION:
+                count = db.update(TABLE_EVENTS_PARTICIPATION, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_EVENT_URI, null);
+                break;
+            case CODE_EVENT_INVITATIONS:
+                count = db.update(TABLE_EVENT_INVITATIONS, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI, null);
+                break;
+            case CODE_EVENTS_REQUESTS:
+                count = db.update(TABLE_EVENTS_REQUESTS, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI, null);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        Log.d(TAG, "update: uri "+uri.toString());
+        getContext().getContentResolver().notifyChange(uri, null);
+        return count;
     }
 }
