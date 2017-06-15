@@ -33,23 +33,26 @@ public class SearchUsersPresenter implements SearchUsersContract.Presenter, Load
 
     @Override
     public void loadNearbyUsersWithName(LoaderManager loaderManager, Bundle b) {
+        String username = b.getString(SearchUsersFragment.BUNDLE_USERNAME);
+        FirebaseData.loadUsersWithName(username);
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_FROM_CITY);
+        loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_WITH_NAME);
         loaderManager.restartLoader(SportteamLoader.LOADER_USERS_WITH_NAME, b, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         switch (id) {
             case SportteamLoader.LOADER_USERS_FROM_CITY:
-                String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String city = Utiles.getCurrentCity(mSearchUsersView.getActivityContext(), currentUserID);
                 return SportteamLoader
-                        .cursorLoaderUsersFromCity(mSearchUsersView.getActivityContext(), city);
+                        .cursorLoaderUsersFromCity(mSearchUsersView.getActivityContext(), currentUserID, city);
             case SportteamLoader.LOADER_USERS_WITH_NAME:
                 if (args.containsKey(SearchUsersFragment.BUNDLE_USERNAME)) {
                     String username = args.getString(SearchUsersFragment.BUNDLE_USERNAME);
                     return SportteamLoader
-                            .cursorLoaderUsersWithName(mSearchUsersView.getActivityContext(), username);
+                            .cursorLoaderUsersWithName(mSearchUsersView.getActivityContext(), currentUserID, username);
                 }
         }
         return null;

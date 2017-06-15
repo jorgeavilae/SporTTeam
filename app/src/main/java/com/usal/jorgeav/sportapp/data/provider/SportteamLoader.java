@@ -146,25 +146,25 @@ public final class SportteamLoader {
 
     public static final int LOADER_USERS_FROM_CITY = 1100;
     public static final int LOADER_USERS_WITH_NAME = 1200;
-    public static CursorLoader cursorLoaderUsersFromCity(Context context, String city) {
+    public static CursorLoader cursorLoaderUsersFromCity(Context context, String myUserId, String city) {
         // Return user data from users in city
         return new CursorLoader(
                 context,
-                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.JoinQueryEntries.CONTENT_NOT_FRIENDS_USERS_FROM_CITY_URI,
                 SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.UserEntry.CITY + " = ?",
-                new String[]{city},
-                SportteamContract.UserEntry.NAME + " ASC");
+                SportteamContract.JoinQueryEntries.WHERE_NOT_FRIENDS_USERS_FROM_CITY,
+                SportteamContract.JoinQueryEntries.queryNotFriendsUsersFromCityArguments(myUserId, city),
+                SportteamContract.UserEntry.NAME_TABLE_PREFIX + " ASC");
     }
-    public static CursorLoader cursorLoaderUsersWithName(Context context, String username) {
+    public static CursorLoader cursorLoaderUsersWithName(Context context, String myUserId, String username) {
         //Return user data from users with username
         return new CursorLoader(
                 context,
-                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.JoinQueryEntries.CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI,
                 SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.UserEntry.NAME + " = ?",
-                new String[]{username},
-                null);
+                SportteamContract.JoinQueryEntries.WHERE_NOT_FRIENDS_USERS_WITH_NAME,
+                SportteamContract.JoinQueryEntries.queryNotFriendsUsersWithNameArguments(myUserId, username),
+                SportteamContract.UserEntry.NAME_TABLE_PREFIX + " ASC");
     }
 
 

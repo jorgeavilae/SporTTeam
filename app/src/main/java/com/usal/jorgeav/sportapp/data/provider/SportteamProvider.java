@@ -38,6 +38,8 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRI
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS_WITH_USER;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_NOT_FRIENDS_USERS_FROM_CITY;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_NOT_FRIENDS_USERS_WITH_NAME;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_USERS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_USER_SPORT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENT;
@@ -75,6 +77,8 @@ public class SportteamProvider extends ContentProvider {
     public static final int CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT = 1020;
     public static final int CODE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME = 1030;
     public static final int CODE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME = 1040;
+    public static final int CODE_NOT_FRIENDS_USERS_FROM_CITY = 1050;
+    public static final int CODE_NOT_FRIENDS_USERS_WITH_NAME = 1060;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private SportteamDBHelper mOpenHelper;
@@ -124,6 +128,10 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME, CODE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME);
         // This URI is content://com.usal.jorgeav.sportapp/citySportEvent_myUser/
         matcher.addURI(authority, PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME, CODE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME);
+        // This URI is content://com.usal.jorgeav.sportapp/notFriendsCity_users/
+        matcher.addURI(authority, PATH_NOT_FRIENDS_USERS_FROM_CITY, CODE_NOT_FRIENDS_USERS_FROM_CITY);
+        // This URI is content://com.usal.jorgeav.sportapp/notFriendsName_users/
+        matcher.addURI(authority, PATH_NOT_FRIENDS_USERS_WITH_NAME, CODE_NOT_FRIENDS_USERS_WITH_NAME);
 
         return matcher;
     }
@@ -278,6 +286,8 @@ public class SportteamProvider extends ContentProvider {
             case CODE_USERS:
                 _id = db.insert(TABLE_USER, null, values);
                 if ( _id > 0 ) returnUri = UserEntry.buildUserUriWith(_id);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_NOT_FRIENDS_USERS_FROM_CITY_URI, null);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI, null);
                 break;
             case CODE_EVENTS:
                 _id = db.insert(TABLE_EVENT, null, values);
@@ -538,6 +548,26 @@ public class SportteamProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
+            case CODE_NOT_FRIENDS_USERS_FROM_CITY:
+                builder.setTables(JoinQueryEntries.TABLES_USERS_JOIN_FRIENDS);
+                cursor = builder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_NOT_FRIENDS_USERS_WITH_NAME:
+                builder.setTables(JoinQueryEntries.TABLES_USERS_JOIN_FRIENDS);
+                cursor = builder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -555,6 +585,8 @@ public class SportteamProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case CODE_USERS:
                 count = db.update(TABLE_USER, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_NOT_FRIENDS_USERS_FROM_CITY_URI, null);
+                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI, null);
                 break;
             case CODE_EVENTS:
                 count = db.update(TABLE_EVENT, values, selection, selectionArgs);

@@ -568,6 +568,10 @@ public final class SportteamContract {
     public static final String PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME = "citySportEvent_myUser";
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS = "friendsUser_myEvent";
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_NOT_FRIENDS_USERS_FROM_CITY = "notFriendsCity_users";
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_NOT_FRIENDS_USERS_WITH_NAME = "notFriendsName_users";
     public static final class JoinQueryEntries {
         /* The base CONTENT_URI used to query the event table for my events without
            relation with one particular friend from the content provider */
@@ -660,15 +664,15 @@ public final class SportteamContract {
         /* Join for CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI */
         public static final String TABLES_USERS_JOIN_FRIENDS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS =
                 TABLE_USER
-                    + " INNER JOIN " + TABLE_FRIENDS + " ON ("
+                        + " INNER JOIN " + TABLE_FRIENDS + " ON ("
                         + UserEntry.USER_ID_TABLE_PREFIX + " = " + FriendsEntry.USER_ID_TABLE_PREFIX + " )"
-                    + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " ON ("
+                        + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " ON ("
                         + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventsParticipationEntry.USER_ID_TABLE_PREFIX
                         + " AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " = ? )"
-                    + " LEFT JOIN " + TABLE_EVENT_INVITATIONS + " ON ("
+                        + " LEFT JOIN " + TABLE_EVENT_INVITATIONS + " ON ("
                         + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventsInvitationEntry.USER_ID_TABLE_PREFIX
                         + " AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " = ? )"
-                    + " LEFT JOIN " + TABLE_EVENTS_REQUESTS + " ON ("
+                        + " LEFT JOIN " + TABLE_EVENTS_REQUESTS + " ON ("
                         + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventRequestsEntry.SENDER_ID_TABLE_PREFIX
                         + " AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " = ? )";
         /* WHERE for CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI */
@@ -696,6 +700,59 @@ public final class SportteamContract {
          *      AND eventInvitations.eventId IS NULL
          *      AND eventRequest.eventId IS NULL )
          * ORDER BY friends.date ASC
+         */
+
+
+
+        /* The base CONTENT_URI used to query the user table for not my friends
+           in a particular city from the content provider */
+        public static final Uri CONTENT_NOT_FRIENDS_USERS_FROM_CITY_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_NOT_FRIENDS_USERS_FROM_CITY)
+                .build();
+        /* Join for CONTENT_NOT_FRIENDS_USERS_FROM_CITY_URI */
+        public static final String TABLES_USERS_JOIN_FRIENDS =
+                TABLE_USER
+                        + " LEFT JOIN " + TABLE_FRIENDS + " ON ("
+                        + UserEntry.USER_ID_TABLE_PREFIX + " = " + FriendsEntry.USER_ID_TABLE_PREFIX
+                        + " AND " + FriendsEntry.MY_USER_ID_TABLE_PREFIX + " = ? )";
+        /* WHERE for CONTENT_NOT_FRIENDS_USERS_FROM_CITY_URI */
+        public static final String WHERE_NOT_FRIENDS_USERS_FROM_CITY =
+                UserEntry.CITY_TABLE_PREFIX + " = ? "
+                        + "AND " + UserEntry.USER_ID_TABLE_PREFIX + " <> ? "
+                        + "AND " + FriendsEntry.MY_USER_ID_TABLE_PREFIX + " IS NULL ";
+        /* Arguments fro JOIN and WHERE in CONTENT_NOT_FRIENDS_USERS_FROM_CITY_URI */
+        public static String[] queryNotFriendsUsersFromCityArguments(String myUserId, String city) {
+            return new String[]{myUserId, city, myUserId};
+        }
+        /* SELECT all columns from users table
+         * FROM user
+         *      LEFT JOIN friends
+         *          ON (user.uid = friend.userId AND friend.myuid = ? )
+         * WHERE (user.city = ? AND user.userId <> ? AND friends.myUserId IS NULL )
+         * ORDER BY user.name ASC
+         */
+
+        /* The base CONTENT_URI used to query the user table for not my friends
+           with a particular name from the content provider */
+        public static final Uri CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_NOT_FRIENDS_USERS_WITH_NAME)
+                .build();
+        /* Join for CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI */
+        /* WHERE for CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI */
+        public static final String WHERE_NOT_FRIENDS_USERS_WITH_NAME =
+                UserEntry.NAME_TABLE_PREFIX + " = ? "
+                        + "AND " + UserEntry.USER_ID_TABLE_PREFIX + " <> ? "
+                        + "AND " + FriendsEntry.MY_USER_ID_TABLE_PREFIX + " IS NULL ";
+        /* Arguments fro JOIN and WHERE in CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI */
+        public static String[] queryNotFriendsUsersWithNameArguments(String myUserId, String name) {
+            return new String[]{myUserId, name, myUserId};
+        }
+        /* SELECT all columns from users table
+         * FROM user
+         *      LEFT JOIN friends
+         *          ON (user.uid = friend.userId AND friend.myuid = ? )
+         * WHERE (user.name = ? AND user.userId <> ? AND friends.myUserId IS NULL )
+         * ORDER BY user.name ASC
          */
     }
 
