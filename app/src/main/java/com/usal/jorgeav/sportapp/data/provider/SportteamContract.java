@@ -740,12 +740,12 @@ public final class SportteamContract {
         /* Join for CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI */
         /* WHERE for CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI */
         public static final String WHERE_NOT_FRIENDS_USERS_WITH_NAME =
-                UserEntry.NAME_TABLE_PREFIX + " = ? "
+                UserEntry.NAME_TABLE_PREFIX + " LIKE ? "
                         + "AND " + UserEntry.USER_ID_TABLE_PREFIX + " <> ? "
                         + "AND " + FriendsEntry.MY_USER_ID_TABLE_PREFIX + " IS NULL ";
         /* Arguments fro JOIN and WHERE in CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI */
         public static String[] queryNotFriendsUsersWithNameArguments(String myUserId, String name) {
-            return new String[]{myUserId, name, myUserId};
+            return new String[]{myUserId, "%"+name+"%", myUserId};
         }
         /* SELECT all columns from users table
          * FROM user
