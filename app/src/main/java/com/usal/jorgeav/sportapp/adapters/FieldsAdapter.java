@@ -10,8 +10,8 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Locale;
 
@@ -51,8 +51,8 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
             holder.textViewFieldAddress.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS));
             holder.textViewFieldRating.setText(String.format(Locale.getDefault(), "%2.2f", rate));
             holder.textViewFieldSport.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT));
-            holder.textViewFieldOpening.setText(Utiles.millisToTimeString(opening));
-            holder.textViewFieldClosing.setText(Utiles.millisToTimeString(closing));
+            holder.textViewFieldOpening.setText(UtilesTime.millisToTimeString(opening));
+            holder.textViewFieldClosing.setText(UtilesTime.millisToTimeString(closing));
         }
     }
 

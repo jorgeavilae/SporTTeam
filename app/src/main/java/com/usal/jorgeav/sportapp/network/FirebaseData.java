@@ -12,11 +12,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.MyApplication;
-import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesDataSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,7 +74,7 @@ public class FirebaseData {
                 if (dataSnapshot.exists()) {
                     loadAProfile(dataSnapshot.getKey());
                     String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    ContentValues cvData = Utiles.datasnapshotFriendToContentValues(dataSnapshot, myUserID);
+                    ContentValues cvData = UtilesDataSnapshot.dataSnapshotFriendToContentValues(dataSnapshot, myUserID);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI, cvData);
                 }
@@ -83,7 +84,7 @@ public class FirebaseData {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 loadAProfile(dataSnapshot.getKey());
                 String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                ContentValues cvData = Utiles.datasnapshotFriendToContentValues(dataSnapshot, myUserID);
+                ContentValues cvData = UtilesDataSnapshot.dataSnapshotFriendToContentValues(dataSnapshot, myUserID);
                 MyApplication.getAppContext().getContentResolver()
                         .insert(SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI, cvData);
 
@@ -127,7 +128,7 @@ public class FirebaseData {
                     loadAProfile(dataSnapshot.getKey());
 
                     String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID, true);
+                    ContentValues cvData = UtilesDataSnapshot.dataSnapshotFriendRequestToContentValues(dataSnapshot, myUserID, true);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
                 }
@@ -176,7 +177,7 @@ public class FirebaseData {
 
                     Log.d(TAG, "loadUsersFromFriendsRequestsReceived:onChildAdded: "+dataSnapshot.getKey());
                     String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    ContentValues cvData = Utiles.datasnapshotFriendRequestToContentValues(dataSnapshot, myUserID, false);
+                    ContentValues cvData = UtilesDataSnapshot.dataSnapshotFriendRequestToContentValues(dataSnapshot, myUserID, false);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
                 }
@@ -255,8 +256,8 @@ public class FirebaseData {
                     loadAProfile(dataSnapshot.getKey());
 
                     String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
-                    ContentValues cvData = Utiles
-                            .datasnapshotEventsRequestsToContentValues(dataSnapshot, eventId, false);
+                    ContentValues cvData = UtilesDataSnapshot
+                            .dataSnapshotEventsRequestsToContentValues(dataSnapshot, eventId, false);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI, cvData);
                 }
@@ -303,8 +304,8 @@ public class FirebaseData {
                     loadAProfile(dataSnapshot.getKey());
 
                     String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
-                    ContentValues cvData = Utiles
-                            .datasnapshotEventInvitationsToContentValues(dataSnapshot, eventId, false);
+                    ContentValues cvData = UtilesDataSnapshot
+                            .dataSnapshotEventInvitationsToContentValues(dataSnapshot, eventId, false);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI, cvData);
                 }
@@ -353,8 +354,8 @@ public class FirebaseData {
                     loadAnEvent(dataSnapshot.getKey());
 
                     String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    ContentValues cvData = Utiles
-                            .datasnapshotEventsParticipationToContentValues(dataSnapshot, myUserID, true);
+                    ContentValues cvData = UtilesDataSnapshot
+                            .dataSnapshotEventsParticipationToContentValues(dataSnapshot, myUserID, true);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
                 }
@@ -404,8 +405,8 @@ public class FirebaseData {
                     loadAnEvent(dataSnapshot.getKey());
 
                     String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    ContentValues cvData = Utiles
-                            .datasnapshotEventInvitationsToContentValues(dataSnapshot, myUserID, true);
+                    ContentValues cvData = UtilesDataSnapshot
+                            .dataSnapshotEventInvitationsToContentValues(dataSnapshot, myUserID, true);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI, cvData);
                 }
@@ -454,8 +455,8 @@ public class FirebaseData {
                     loadAnEvent(dataSnapshot.getKey());
 
                     String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    ContentValues cvData = Utiles
-                            .datasnapshotEventsRequestsToContentValues(dataSnapshot, myUserID, true);
+                    ContentValues cvData = UtilesDataSnapshot
+                            .dataSnapshotEventsRequestsToContentValues(dataSnapshot, myUserID, true);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI, cvData);
                 }
@@ -502,12 +503,12 @@ public class FirebaseData {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            User anUser = Utiles.datasnapshotToUser(dataSnapshot);
-                            ContentValues cvData = Utiles.dataUserToContentValues(anUser);
+                            User anUser = UtilesDataSnapshot.dataSnapshotToUser(dataSnapshot);
+                            ContentValues cvData = UtilesDataSnapshot.dataUserToContentValues(anUser);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
 
-                            List<ContentValues> cvSports = Utiles.sportUserToContentValues(anUser);
+                            List<ContentValues> cvSports = UtilesDataSnapshot.sportUserToContentValues(anUser);
                             MyApplication.getAppContext().getContentResolver()
                                     .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
                                             cvSports.toArray(new ContentValues[cvSports.size()]));
@@ -530,8 +531,8 @@ public class FirebaseData {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            Event e = Utiles.datasnapshotToEvent(dataSnapshot);
-                            ContentValues cv = Utiles.eventToContentValues(e);
+                            Event e = UtilesDataSnapshot.dataSnapshotToEvent(dataSnapshot);
+                            ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
                             loadAField(e.getmField());
@@ -556,8 +557,8 @@ public class FirebaseData {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
-                            List<Field> fields = Utiles.datasnapshotToFieldList(dataSnapshot);
-                            cvArray.addAll(Utiles.fieldsArrayToContentValues(fields));
+                            List<Field> fields = UtilesDataSnapshot.dataSnapshotToFieldList(dataSnapshot);
+                            cvArray.addAll(UtilesDataSnapshot.fieldsArrayToContentValues(fields));
 
                             MyApplication.getAppContext().getContentResolver()
                                     .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
@@ -584,8 +585,8 @@ public class FirebaseData {
                             if(data.exists()) {
                                 loadAProfile(data.getKey());
 
-                                ContentValues cvData = Utiles
-                                        .datasnapshotEventsParticipationToContentValues(data, eventId, false);
+                                ContentValues cvData = UtilesDataSnapshot
+                                        .dataSnapshotEventsParticipationToContentValues(data, eventId, false);
                                 MyApplication.getAppContext().getContentResolver()
                                         .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
                             }
@@ -611,8 +612,8 @@ public class FirebaseData {
                         if (dataSnapshot.exists()) {
                             ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                List<Field> fields = Utiles.datasnapshotToFieldList(data);
-                                cvArray.addAll(Utiles.fieldsArrayToContentValues(fields));
+                                List<Field> fields = UtilesDataSnapshot.dataSnapshotToFieldList(data);
+                                cvArray.addAll(UtilesDataSnapshot.fieldsArrayToContentValues(fields));
                             }
                             MyApplication.getAppContext().getContentResolver()
                                     .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
@@ -637,8 +638,8 @@ public class FirebaseData {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                Event e = Utiles.datasnapshotToEvent(data);
-                                ContentValues cv = Utiles.eventToContentValues(e);
+                                Event e = UtilesDataSnapshot.dataSnapshotToEvent(data);
+                                ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                                 MyApplication.getAppContext().getContentResolver()
                                         .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
                                 loadAField(e.getmField());
@@ -663,13 +664,13 @@ public class FirebaseData {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                User anUser = Utiles.datasnapshotToUser(data);
+                                User anUser = UtilesDataSnapshot.dataSnapshotToUser(data);
 
-                                ContentValues cvData = Utiles.dataUserToContentValues(anUser);
+                                ContentValues cvData = UtilesDataSnapshot.dataUserToContentValues(anUser);
                                 MyApplication.getAppContext().getContentResolver()
                                         .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
 
-                                List<ContentValues> cvSports = Utiles.sportUserToContentValues(anUser);
+                                List<ContentValues> cvSports = UtilesDataSnapshot.sportUserToContentValues(anUser);
                                 MyApplication.getAppContext().getContentResolver()
                                         .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
                                                 cvSports.toArray(new ContentValues[cvSports.size()]));
@@ -697,12 +698,12 @@ public class FirebaseData {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                User anUser = Utiles.datasnapshotToUser(data);
-                                ContentValues cvData = Utiles.dataUserToContentValues(anUser);
+                                User anUser = UtilesDataSnapshot.dataSnapshotToUser(data);
+                                ContentValues cvData = UtilesDataSnapshot.dataUserToContentValues(anUser);
                                 MyApplication.getAppContext().getContentResolver()
                                         .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
 
-                                List<ContentValues> cvSports = Utiles.sportUserToContentValues(anUser);
+                                List<ContentValues> cvSports = UtilesDataSnapshot.sportUserToContentValues(anUser);
                                 MyApplication.getAppContext().getContentResolver()
                                         .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
                                                 cvSports.toArray(new ContentValues[cvSports.size()]));
@@ -731,8 +732,8 @@ public class FirebaseData {
 //                    public void onDataChange(DataSnapshot dataSnapshot) {
 //                        if (dataSnapshot.exists()) {
 //                            for (DataSnapshot data : dataSnapshot.getChildren()) {
-//                                Event e = Utiles.datasnapshotToEvent(data);
-//                                ContentValues cv = Utiles.eventToContentValues(e);
+//                                Event e = UtilesDataSnapshot.dataSnapshotToEvent(data);
+//                                ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
 //                                MyApplication.getAppContext().getContentResolver()
 //                                        .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
 //                                loadAField(e.getmField());

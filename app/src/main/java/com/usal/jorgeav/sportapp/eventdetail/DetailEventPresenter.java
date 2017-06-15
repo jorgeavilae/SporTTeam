@@ -11,11 +11,11 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.FirebaseData;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -92,7 +92,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             mView.showEventId(data.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
             mView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             mView.showEventPlace(data.getString(SportteamContract.EventEntry.COLUMN_FIELD));
-            mView.showEventDate(Utiles.millisToDateTimeString(data.getLong(SportteamContract.EventEntry.COLUMN_DATE)));
+            mView.showEventDate(UtilesTime.millisToDateTimeString(data.getLong(SportteamContract.EventEntry.COLUMN_DATE)));
             mView.showEventOwner(data.getString(SportteamContract.EventEntry.COLUMN_OWNER));
             mView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
             mView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));

@@ -1,8 +1,6 @@
-package com.usal.jorgeav.sportapp;
+package com.usal.jorgeav.sportapp.utils;
 
 import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
 
 import com.google.firebase.database.DataSnapshot;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -12,109 +10,15 @@ import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
- * Created by Jorge Avila on 17/05/2017.
+ * Created by Jorge Avila on 15/06/2017.
  */
 
-public class Utiles {
-
-    public static String calendarToDate(Date time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-        return sdf.format(time.getTime());
-    }
-
-    public static String calendarToTime(Date time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        return sdf.format(time.getTime());
-    }
-
-    public static long stringDateToMillis(String s) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-        try {
-            return sdf.parse(s).getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
-    public static long stringTimeToMillis(String time) {
-        int quoteInd = time.indexOf(":");
-        int hor = Integer.valueOf(time.substring(0, quoteInd));
-        int min = Integer.valueOf(time.substring(++quoteInd, time.length()));
-        return (((hor * 60) + min) * 60 * 1000);
-    }
-
-    public static User getUserFromContentProvider(Context context, String uid) {
-        Cursor cUser = context.getContentResolver().query(
-                SportteamContract.UserEntry.CONTENT_USER_URI,
-                SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.UserEntry.USER_ID + " = ?",
-                new String[]{uid},
-                null);
-        if (cUser != null) {
-            Cursor cSports = context.getContentResolver().query(
-                    SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
-                    SportteamContract.UserSportEntry.USER_SPORT_COLUMNS,
-                    SportteamContract.UserSportEntry.USER_ID + " = ?",
-                    new String[]{uid},
-                    SportteamContract.UserSportEntry.LEVEL + " DESC");
-            ArrayList<Sport> sportsArray = new ArrayList<>();
-            if (cSports != null) {
-                while (cSports.moveToNext()) {
-                    Sport s = new Sport(
-                            cSports.getString(SportteamContract.UserSportEntry.COLUMN_SPORT),
-                            cSports.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL),
-                            0);
-                    sportsArray.add(s);
-                }
-                cSports.close();
-            }
-            if (cUser.moveToFirst()) {
-                User user = new User(
-                        cUser.getString(SportteamContract.UserEntry.COLUMN_USER_ID),
-                        cUser.getString(SportteamContract.UserEntry.COLUMN_EMAIL),
-                        cUser.getString(SportteamContract.UserEntry.COLUMN_NAME),
-                        cUser.getString(SportteamContract.UserEntry.COLUMN_CITY),
-                        cUser.getInt(SportteamContract.UserEntry.COLUMN_AGE),
-                        cUser.getString(SportteamContract.UserEntry.COLUMN_PHOTO),
-                        sportsArray);
-                cUser.close();
-                return user;
-            }
-            cUser.close();
-        }
-        return null;
-    }
-
-    public static String millisToDateTimeString(long millis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MMMM/yy hh:mm", Locale.getDefault());
-        return sdf.format(new Date(millis));
-    }
-
-    public static long timeStringToMillis(String time) {
-        int quoteInd = time.indexOf(":");
-        int hor = Integer.valueOf(time.substring(0, quoteInd));
-        int min = Integer.valueOf(time.substring(++quoteInd, time.length()));
-        return (((hor * 60) + min) * 60 * 1000);
-    }
-
-    public static String millisToTimeString(long millis) {
-        long min = millis/(60*1000);
-        long hor = min/60;
-        min -= hor*60;
-        return String.format(Locale.getDefault(), "%02d:%02d", hor,min);
-    }
-
-
-    public static Event datasnapshotToEvent (DataSnapshot data) {
+public class UtilesDataSnapshot {
+    public static Event dataSnapshotToEvent(DataSnapshot data) {
         String id = data.getKey();
         DataSnapshot dataNode = data.child(FirebaseDBContract.DATA);
 
@@ -145,7 +49,7 @@ public class Utiles {
         return cv;
     }
 
-    public static List<Field> datasnapshotToFieldList (DataSnapshot data) {
+    public static List<Field> dataSnapshotToFieldList(DataSnapshot data) {
         ArrayList<Field> result = new ArrayList<>();
         String id = data.getKey();
         DataSnapshot dataNode = data.child(FirebaseDBContract.DATA);
@@ -186,7 +90,7 @@ public class Utiles {
         return cvArray;
     }
 
-    public static User datasnapshotToUser (DataSnapshot data) {
+    public static User dataSnapshotToUser(DataSnapshot data) {
         String datakey = FirebaseDBContract.DATA + "/";
         String id = data.getKey();
         String email = data.child(datakey + FirebaseDBContract.User.EMAIL).getValue().toString();
@@ -224,7 +128,7 @@ public class Utiles {
         return cvArray;
     }
 
-    public static ContentValues datasnapshotFriendRequestToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheSender) {
+    public static ContentValues dataSnapshotFriendRequestToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheSender) {
         String senderId, receiverId;
         if(iAmTheSender) {
             receiverId = dataSnapshot.getKey();
@@ -242,7 +146,7 @@ public class Utiles {
         return cv;
     }
 
-    public static ContentValues datasnapshotFriendToContentValues(DataSnapshot dataSnapshot, String myUserID) {
+    public static ContentValues dataSnapshotFriendToContentValues(DataSnapshot dataSnapshot, String myUserID) {
         String myUserId = myUserID;
         String userId = dataSnapshot.getKey();
         long date = ((Number)dataSnapshot.getValue()).longValue();
@@ -254,7 +158,7 @@ public class Utiles {
         return cv;
     }
 
-    public static ContentValues datasnapshotEventsParticipationToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheParticipant) {
+    public static ContentValues dataSnapshotEventsParticipationToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheParticipant) {
         String userId, eventId;
         if(iAmTheParticipant) {
             eventId = dataSnapshot.getKey();
@@ -272,7 +176,7 @@ public class Utiles {
         return cv;
     }
 
-    public static ContentValues datasnapshotEventInvitationsToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheReceiver) {
+    public static ContentValues dataSnapshotEventInvitationsToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheReceiver) {
         String userId, eventId;
         if(iAmTheReceiver) {
             eventId = dataSnapshot.getKey();
@@ -290,7 +194,7 @@ public class Utiles {
         return cv;
     }
 
-    public static ContentValues datasnapshotEventsRequestsToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheSender) {
+    public static ContentValues dataSnapshotEventsRequestsToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheSender) {
         String eventId, senderId;
         if(iAmTheSender) {
             eventId = dataSnapshot.getKey();
@@ -306,20 +210,5 @@ public class Utiles {
         cv.put(SportteamContract.EventRequestsEntry.SENDER_ID, senderId);
         cv.put(SportteamContract.EventRequestsEntry.DATE, date);
         return cv;
-    }
-
-    public static String getCurrentCity(Context context, String currentUserID) {
-        String result = null;
-        Cursor c = context.getContentResolver().query(
-                SportteamContract.UserEntry.CONTENT_USER_URI,
-                SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.UserEntry.USER_ID + " = ?",
-                new String[]{currentUserID},
-                null);
-        if (c != null && c.moveToFirst()) {
-            result = c.getString(SportteamContract.UserEntry.COLUMN_CITY);
-            c.close();
-        }
-        return result;
     }
 }

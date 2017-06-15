@@ -5,9 +5,9 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.network.FirebaseActions;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 /**
  * Created by Jorge Avila on 06/06/2017.
@@ -24,8 +24,8 @@ public class NewEventPresenter implements NewEventContract.Presenter {
     @Override
     public void addEvent(String sport, String field, String city, String date, String time, String total, String empty) {
         if (isValidSport(sport) && isValidField(field) && isDateTimeCorrect(date, time) && isPlayersCorrect(total, empty)) {
-            long dateMillis = Utiles.stringDateToMillis(date);
-            long timeMillis = Utiles.stringTimeToMillis(time);
+            long dateMillis = UtilesTime.stringDateToMillis(date);
+            long timeMillis = UtilesTime.stringTimeToMillis(time);
             Event event = new Event(
                     "", sport, field, city, dateMillis + timeMillis,
                     FirebaseAuth.getInstance().getCurrentUser().getUid(),
@@ -49,8 +49,8 @@ public class NewEventPresenter implements NewEventContract.Presenter {
     }
 
     private boolean isDateTimeCorrect(String date, String time) {
-        long dateMillis = Utiles.stringDateToMillis(date);
-        long timeMillis = Utiles.stringTimeToMillis(time);
+        long dateMillis = UtilesTime.stringDateToMillis(date);
+        long timeMillis = UtilesTime.stringTimeToMillis(time);
         return System.currentTimeMillis() < dateMillis+timeMillis;
     }
 

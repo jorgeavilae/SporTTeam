@@ -6,9 +6,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.FirebaseData;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 /**
  * Created by Jorge Avila on 25/04/2017.

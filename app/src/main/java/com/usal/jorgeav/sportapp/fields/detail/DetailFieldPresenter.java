@@ -6,10 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
-import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.FirebaseData;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 /**
  * Created by Jorge Avila on 26/04/2017.
@@ -58,8 +58,8 @@ public class DetailFieldPresenter implements DetailFieldContract.Presenter, Load
             mView.showFieldAddress(data.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS));
             mView.showFieldRating(data.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION));
             mView.showFieldSport(data.getString(SportteamContract.FieldEntry.COLUMN_SPORT));
-            mView.showFieldOpeningTime(Utiles.millisToTimeString(data.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME)));
-            mView.showFieldClosingTime(Utiles.millisToTimeString(data.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME)));
+            mView.showFieldOpeningTime(UtilesTime.millisToTimeString(data.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME)));
+            mView.showFieldClosingTime(UtilesTime.millisToTimeString(data.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME)));
         } else {
             mView.showFieldId("");
             mView.showFieldName("");

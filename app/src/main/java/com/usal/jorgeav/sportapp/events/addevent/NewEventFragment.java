@@ -18,8 +18,8 @@ import android.widget.TimePicker;
 
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Calendar;
 
@@ -62,7 +62,7 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
             myCalendar.set(Calendar.YEAR, year);
             myCalendar.set(Calendar.MONTH, monthOfYear);
             myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            newEventDate.setText(Utiles.calendarToDate(myCalendar.getTime()));
+            newEventDate.setText(UtilesTime.calendarToDate(myCalendar.getTime()));
         }
     };
     TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
@@ -70,7 +70,7 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
         public void onTimeSet(TimePicker timePicker, int hour, int minute) {
             myCalendar.set(Calendar.HOUR_OF_DAY, hour);
             myCalendar.set(Calendar.MINUTE, minute);
-            newEventTime.setText(Utiles.calendarToTime(myCalendar.getTime()));
+            newEventTime.setText(UtilesTime.calendarToTime(myCalendar.getTime()));
         }
     };
 

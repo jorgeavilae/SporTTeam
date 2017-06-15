@@ -10,8 +10,8 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.Utiles;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Locale;
 
@@ -51,7 +51,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             holder.textViewEventId.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
             holder.textViewEventSport.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             holder.textViewEventPlace.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_FIELD));
-            holder.textViewEventDate.setText(Utiles.millisToDateTimeString(date));
+            holder.textViewEventDate.setText(UtilesTime.millisToDateTimeString(date));
             holder.textViewEventTime.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_OWNER));
             holder.textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d",totalPl));
             holder.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d",emptyPl));
