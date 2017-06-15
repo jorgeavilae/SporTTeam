@@ -228,6 +228,18 @@ public final class SportteamLoader {
     }
 
 
+    public static final int LOADER_MY_ALARMS_ID = 7100;
+    public static CursorLoader cursorLoaderMyAlarms(Context context) {
+        // Return my events
+        return new CursorLoader(
+                context,
+                SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
+                SportteamContract.AlarmEntry.ALARM_COLUMNS,
+                null,
+                null,
+                SportteamContract.AlarmEntry.DATE_FROM_TABLE_PREFIX + " ASC");
+    }
+
     public static final int LOADER_EVENTS_FOR_INVITATION_ID = 8100;
     public static CursorLoader cursorLoaderEventsForInvitation(Context context, String myUserID, String otherUserID) {
         // Return all of my events data in which otherUser has no relation

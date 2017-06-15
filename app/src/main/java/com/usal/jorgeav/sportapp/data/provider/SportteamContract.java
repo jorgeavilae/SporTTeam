@@ -204,6 +204,77 @@ public final class SportteamContract {
 
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_ALARMS = "alarms";
+    /* Used internally as the name of our alarm table. */
+    public static final String TABLE_ALARM = "alarm";
+    /* Inner class that defines the table contents of the alarm table */
+    public static final class AlarmEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the alarm table from the content provider */
+        public static final Uri CONTENT_ALARM_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_ALARMS)
+                .build();
+
+        /* Column names */
+        public static final String ALARM_ID = "alarmId";
+        public static final String SPORT = "sport";
+        public static final String FIELD = "field";
+        public static final String CITY = "city";
+        public static final String DATE_FROM = "dateFrom";
+        public static final String DATE_TO = "dateTo";
+        public static final String TOTAL_PLAYERS_FROM = "totalPlayersFrom";
+        public static final String TOTAL_PLAYERS_TO = "totalPlayersTo";
+        public static final String EMPTY_PLAYERS_FROM = "emptyPlayersFrom";
+        public static final String EMPTY_PLAYERS_TO = "emptyPlayersTo";
+
+        /* Column names with table prefix */
+        public static final String ALARM_ID_TABLE_PREFIX = TABLE_ALARM + "." + ALARM_ID;
+        public static final String SPORT_TABLE_PREFIX = TABLE_ALARM + "." + SPORT;
+        public static final String FIELD_TABLE_PREFIX = TABLE_ALARM + "." + FIELD;
+        public static final String CITY_TABLE_PREFIX = TABLE_ALARM + "." + CITY;
+        public static final String DATE_FROM_TABLE_PREFIX = TABLE_ALARM + "." + DATE_FROM;
+        public static final String DATE_TO_TABLE_PREFIX = TABLE_ALARM + "." + DATE_TO;
+        public static final String TOTAL_PLAYERS_FROM_TABLE_PREFIX = TABLE_ALARM + "." + TOTAL_PLAYERS_FROM;
+        public static final String TOTAL_PLAYERS_TO_TABLE_PREFIX = TABLE_ALARM + "." + TOTAL_PLAYERS_TO;
+        public static final String EMPTY_PLAYERS_FROM_TABLE_PREFIX = TABLE_ALARM + "." + EMPTY_PLAYERS_FROM;
+        public static final String EMPTY_PLAYERS_TO_TABLE_PREFIX = TABLE_ALARM + "." + EMPTY_PLAYERS_TO;
+
+        /* All column projection */
+        public static final String[] ALARM_COLUMNS = {
+                TABLE_EVENT + "." + EventEntry._ID,
+                ALARM_ID_TABLE_PREFIX,
+                SPORT_TABLE_PREFIX,
+                FIELD_TABLE_PREFIX,
+                CITY_TABLE_PREFIX,
+                DATE_FROM_TABLE_PREFIX,
+                DATE_TO_TABLE_PREFIX,
+                TOTAL_PLAYERS_FROM_TABLE_PREFIX,
+                TOTAL_PLAYERS_TO_TABLE_PREFIX,
+                EMPTY_PLAYERS_FROM_TABLE_PREFIX,
+                EMPTY_PLAYERS_TO_TABLE_PREFIX
+        };
+
+        /* Column indexes */
+        public static final int COLUMN_ID = 0;
+        public static final int COLUMN_ALARM_ID = 1;
+        public static final int COLUMN_SPORT = 2;
+        public static final int COLUMN_FIELD = 3;
+        public static final int COLUMN_CITY = 4;
+        public static final int COLUMN_DATE_FROM = 5;
+        public static final int COLUMN_DATE_TO = 6;
+        public static final int COLUMN_TOTAL_PLAYERS_FROM = 7;
+        public static final int COLUMN_TOTAL_PLAYERS_TO = 8;
+        public static final int COLUMN_EMPTY_PLAYERS_FROM = 9;
+        public static final int COLUMN_EMPTY_PLAYERS_TO = 10;
+
+        /* URI for one alarm */
+        public static Uri buildAlarmUriWith(long id) {
+            return ContentUris.withAppendedId(CONTENT_ALARM_URI, id);
+        }
+    }
+
+
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_EVENTS = "events";
     /* Used internally as the name of our event table. */
     public static final String TABLE_EVENT = "event";
