@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.utils;
 import android.content.ContentValues;
 
 import com.google.firebase.database.DataSnapshot;
+import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Sport;
@@ -18,6 +19,44 @@ import java.util.List;
  */
 
 public class UtilesDataSnapshot {
+    public static Alarm dataSnapshotToAlarm(DataSnapshot data) {
+        String id = data.getKey();
+
+        String sport = data.child(FirebaseDBContract.Alarm.SPORT).getValue().toString();
+        String field = data.child(FirebaseDBContract.Alarm.FIELD).getValue().toString();
+        String city = data.child(FirebaseDBContract.Alarm.CITY).getValue().toString();
+
+        String dateFromStr = data.child(FirebaseDBContract.Alarm.DATE_FROM).getValue().toString();
+        String dateToStr = data.child(FirebaseDBContract.Alarm.DATE_TO).getValue().toString();
+        String totalPlayersFromStr = data.child(FirebaseDBContract.Alarm.TOTAL_PLAYERS_FROM).getValue().toString();
+        String totalPlayersToStr = data.child(FirebaseDBContract.Alarm.TOTAL_PLAYERS_TO).getValue().toString();
+        String emptyPlayersFromStr = data.child(FirebaseDBContract.Alarm.EMPTY_PLAYERS_FROM).getValue().toString();
+        String emptyPlayersToStr = data.child(FirebaseDBContract.Alarm.EMPTY_PLAYERS_TO).getValue().toString();
+        Long dateFrom = Long.valueOf(dateFromStr);
+        Long dateTo = Long.valueOf(dateToStr);
+        int totalFrom = Integer.valueOf(totalPlayersFromStr);
+        int totalTo = Integer.valueOf(totalPlayersToStr);
+        int emptyFrom = Integer.valueOf(emptyPlayersFromStr);
+        int emptyTo = Integer.valueOf(emptyPlayersToStr);
+
+        return new Alarm(id,sport,field,city,dateFrom,dateTo,totalFrom,totalTo,emptyFrom,emptyTo);
+    }
+    public static ContentValues alarmToContentValues (Alarm alarm) {
+        ContentValues cv = new ContentValues();
+        cv.put(SportteamContract.AlarmEntry.ALARM_ID, alarm.getmId());
+        cv.put(SportteamContract.AlarmEntry.SPORT, alarm.getmSport());
+        cv.put(SportteamContract.AlarmEntry.FIELD, alarm.getmField());
+        cv.put(SportteamContract.AlarmEntry.CITY, alarm.getmCity());
+        cv.put(SportteamContract.AlarmEntry.DATE_FROM, alarm.getmDateFrom());
+        cv.put(SportteamContract.AlarmEntry.DATE_TO, alarm.getmDateTo());
+        cv.put(SportteamContract.AlarmEntry.TOTAL_PLAYERS_FROM, alarm.getmTotalPlayersFrom());
+        cv.put(SportteamContract.AlarmEntry.TOTAL_PLAYERS_TO, alarm.getmTotalPlayersTo());
+        cv.put(SportteamContract.AlarmEntry.EMPTY_PLAYERS_FROM, alarm.getmEmptyPlayersFrom());
+        cv.put(SportteamContract.AlarmEntry.EMPTY_PLAYERS_TO, alarm.getmEmptyPlayersTo());
+        return cv;
+    }
+
+
     public static Event dataSnapshotToEvent(DataSnapshot data) {
         String id = data.getKey();
         DataSnapshot dataNode = data.child(FirebaseDBContract.DATA);

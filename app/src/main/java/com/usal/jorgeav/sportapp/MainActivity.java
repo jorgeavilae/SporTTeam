@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.usal.jorgeav.sportapp.alarms.AlarmsFragment;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity
         FirebaseAuth.getInstance().signOut();
         SportteamDBHelper db = new SportteamDBHelper(this);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_ALARM);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER_SPORTS);
@@ -208,10 +210,12 @@ public class MainActivity extends AppCompatActivity
             initFragment(ProfileFragment.newInstance(userId), false);
         } else if (id == R.id.nav_events) {
             initFragment(EventsFragment.newInstance(), false);
-        } else if (id == R.id.nav_fields) {
-            initFragment(FieldsFragment.newInstance(), false);
         } else if (id == R.id.nav_friends) {
             initFragment(FriendsFragment.newInstance(), false);
+        } else if (id == R.id.nav_alarms) {
+            initFragment(AlarmsFragment.newInstance(), false);
+        } else if (id == R.id.nav_fields) {
+            initFragment(FieldsFragment.newInstance(), false);
         } else if (id == R.id.nav_sign_out) {
             getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
             mDisplayedFragment = null;

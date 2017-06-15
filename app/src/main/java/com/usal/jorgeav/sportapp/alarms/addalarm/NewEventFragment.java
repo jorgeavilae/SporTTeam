@@ -18,7 +18,7 @@ import android.widget.TimePicker;
 
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.alarms.addalarm.selectfield.SelectFieldFragment;
+import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Calendar;

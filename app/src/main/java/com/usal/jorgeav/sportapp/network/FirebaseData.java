@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.MyApplication;
+import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
@@ -52,6 +53,8 @@ public class FirebaseData {
             loadEventsFromInvitationsReceived();
             //TODO Cargar Eventos de mis peticiones de asistencia a eventos enviadas (cuando cambie)
             loadEventsFromEventsRequests();
+            //TODO Cargar mis Alarmas (una vez)
+            loadAlarmsFromMyAlarms();
         }
     }
     public static void detachListeners() {
@@ -492,6 +495,35 @@ public class FirebaseData {
         };
         myUserRef.addChildEventListener(childEventListener);
         listenerMap.put(myUserRef, childEventListener);
+    }
+    
+    static void loadAlarmsFromMyAlarms() {
+        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
+
+        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    if(data.exists()) {
+                        Alarm a = UtilesDataSnapshot.dataSnapshotToAlarm(data);
+                        ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
+                        MyApplication.getAppContext().getContentResolver()
+                                .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
+                        loadAField(a.getmField());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+//        No es necesario porque se actualiza manualmente cuando se crea una alarma nueva
+//        listenerMap.put(myUserRef, childEventListener);
     }
 
     public static void loadAProfile(String userID) {

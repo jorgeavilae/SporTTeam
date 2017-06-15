@@ -24,6 +24,19 @@ public final class FirebaseDBContract {
         public static final String EVENTS_PARTICIPATION = "events_participation";
         public static final String EVENTS_INVITATIONS = "events_invitations_received";
         public static final String EVENTS_REQUESTS = "events_requests";
+        public static final String ALARMS = "events_requests";
+    }
+
+    public static final class Alarm {
+        public static final String SPORT = "sport_id";
+        public static final String FIELD = "field_id";
+        public static final String CITY = "city";
+        public static final String DATE_FROM = "date_from";
+        public static final String DATE_TO = "date_to";
+        public static final String TOTAL_PLAYERS_FROM = "total_players_from";
+        public static final String TOTAL_PLAYERS_TO = "total_players_to";
+        public static final String EMPTY_PLAYERS_FROM = "empty_players_from";
+        public static final String EMPTY_PLAYERS_TO = "empty_players_to";
     }
 
     public static final class Event {
