@@ -98,6 +98,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
+        // TODO: 16/06/2017 Implementar UserClickItem
         usersAdapter = new UsersAdapter(null, null);
         eventParticipantsList.setAdapter(usersAdapter);
         eventParticipantsList.setHasFixedSize(true);

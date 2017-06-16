@@ -239,6 +239,23 @@ public final class SportteamLoader {
                 null,
                 SportteamContract.AlarmEntry.DATE_FROM_TABLE_PREFIX + " ASC");
     }
+    public static final int LOADER_ALARM_ID = 7200;
+    public static final int LOADER_ALARM_EVENTS_COINCIDENCE_ID = 7210;
+    public static CursorLoader cursorLoaderOneAlarm(Context context, String alarmId) {
+        // Return event data
+        return new CursorLoader(
+                context,
+                SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
+                SportteamContract.AlarmEntry.ALARM_COLUMNS,
+                SportteamContract.AlarmEntry.ALARM_ID + " = ?",
+                new String[]{alarmId},
+                null);
+    }
+    public static CursorLoader cursorLoaderAlarmCoincidence(Context context, String alarmId) {
+        // Return user data for participants in eventId
+        return null;
+        // TODO: 16/06/2017 devolver eventos que concuerden con alarmId
+    }
 
     public static final int LOADER_EVENTS_FOR_INVITATION_ID = 8100;
     public static CursorLoader cursorLoaderEventsForInvitation(Context context, String myUserID, String otherUserID) {

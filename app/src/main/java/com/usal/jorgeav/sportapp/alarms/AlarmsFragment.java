@@ -15,6 +15,7 @@ import android.widget.Button;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.AlarmAdapter;
+import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,7 +99,6 @@ public class AlarmsFragment extends Fragment implements AlarmsContract.View, Ala
     public void showAlarms(Cursor cursor) {
         mAlarmsRecyclerAdapter.replaceData(cursor);
         if (cursor != null) mFragmentManagementListener.showContent();
-
     }
 
     @Override
@@ -113,8 +113,7 @@ public class AlarmsFragment extends Fragment implements AlarmsContract.View, Ala
 
     @Override
     public void onAlarmClick(String alarmId) {
-        // TODO: 15/06/2017  
-//        Fragment newFragment = DetailEvment.newInstance(alarmId);
-//        mFragmentManagementListener.initFragment(newFragment, true);
+        Fragment newFragment = DetailAlarmFragment.newInstance(alarmId);
+        mFragmentManagementListener.initFragment(newFragment, true);
     }
 }

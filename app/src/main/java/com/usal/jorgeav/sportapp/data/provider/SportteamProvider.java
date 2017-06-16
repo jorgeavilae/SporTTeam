@@ -388,6 +388,16 @@ public class SportteamProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
+            case CODE_ALARMS:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        TABLE_ALARM,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
             case CODE_USER_SPORT:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         TABLE_USER_SPORTS,

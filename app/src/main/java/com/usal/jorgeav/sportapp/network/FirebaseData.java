@@ -555,6 +555,31 @@ public class FirebaseData {
                 });
 
     }
+    public static void loadAnAlarm(String alarmId) {
+        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
+
+        myUserRef.child(alarmId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Alarm a = UtilesDataSnapshot.dataSnapshotToAlarm(dataSnapshot);
+                            ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
+                            MyApplication.getAppContext().getContentResolver()
+                                    .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
+                            loadAField(a.getmField());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
     public static void loadAnEvent(String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
