@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract.AlarmEntry;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract.JoinQueryEntries;
 
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.CONTENT_AUTHORITY;
@@ -20,6 +21,7 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.EventsPa
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.FieldEntry;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.FriendRequestEntry;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.FriendsEntry;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_ALARMS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS;
@@ -42,6 +44,7 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_NOT
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_NOT_FRIENDS_USERS_WITH_NAME;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_USERS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_USER_SPORT;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_ALARM;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENTS_PARTICIPATION;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENTS_REQUESTS;
@@ -57,9 +60,10 @@ public class SportteamProvider extends ContentProvider {
     private static final String TAG = SportteamProvider.class.getSimpleName();
 
     public static final int CODE_USERS = 100;
-    public static final int CODE_USER_SPORT = 200;
-    public static final int CODE_FIELDS = 300;
-    public static final int CODE_EVENTS = 400;
+    public static final int CODE_USER_SPORT = 110;
+    public static final int CODE_FIELDS = 200;
+    public static final int CODE_EVENTS = 300;
+    public static final int CODE_ALARMS = 400;
     public static final int CODE_FRIEND_REQUEST = 500;
     public static final int CODE_FRIEND_REQUEST_WITH_USER = 510;
     public static final int CODE_FRIEND = 600;
@@ -95,6 +99,8 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, PATH_FIELDS, CODE_FIELDS);
         // This URI is content://com.usal.jorgeav.sportapp/events/
         matcher.addURI(authority, PATH_EVENTS, CODE_EVENTS);
+        // This URI is content://com.usal.jorgeav.sportapp/events/
+        matcher.addURI(authority, PATH_ALARMS, CODE_ALARMS);
         // This URI is content://com.usal.jorgeav.sportapp/friendRequests/
         matcher.addURI(authority, PATH_FRIENDS_REQUESTS, CODE_FRIEND_REQUEST);
         // This URI is content://com.usal.jorgeav.sportapp/friendRequests_user/
@@ -299,6 +305,10 @@ public class SportteamProvider extends ContentProvider {
             case CODE_FIELDS:
                 _id = db.insert(TABLE_FIELD, null, values);
                 if ( _id > 0 ) returnUri = FieldEntry.buildFieldUriWith(_id);
+                break;
+            case CODE_ALARMS:
+                _id = db.insert(TABLE_ALARM, null, values);
+                if ( _id > 0 ) returnUri = AlarmEntry.buildAlarmUriWith(_id);
                 break;
             case CODE_FRIEND_REQUEST:
                 _id = db.insert(TABLE_FRIENDS_REQUESTS, null, values);

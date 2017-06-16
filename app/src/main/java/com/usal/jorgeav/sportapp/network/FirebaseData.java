@@ -34,6 +34,7 @@ public class FirebaseData {
 
     private static HashMap<DatabaseReference, ChildEventListener> listenerMap = new HashMap<>();
 
+    // TODO: 16/06/2017 Las sincronizaciones que no se guarda el listener tienen que borrarse cuando se actualicen
     public static void syncFirebaseDatabase() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null && listenerMap.isEmpty()) {
             //TODO Cargar Mis datos y deportes (una vez y reload cuando lo cambie)
@@ -660,6 +661,7 @@ public class FirebaseData {
                 });
     }
     public static void loadEventsFromCity(String city) {
+        // TODO: 16/06/2017 comparar evento con alarmas
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
