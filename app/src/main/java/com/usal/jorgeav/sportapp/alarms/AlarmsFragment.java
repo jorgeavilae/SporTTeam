@@ -15,6 +15,7 @@ import android.widget.Button;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.AlarmAdapter;
+import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 
 import butterknife.BindView;
@@ -62,9 +63,8 @@ public class AlarmsFragment extends Fragment implements AlarmsContract.View, Ala
         alarmCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 15/06/2017  
-//                Fragment fragment = NewEvgment.newInstance();
-//                mFragmentManagementListener.initFragment(fragment, true);
+                Fragment fragment = NewAlarmFragment.newInstance();
+                mFragmentManagementListener.initFragment(fragment, true);
             }
         });
 

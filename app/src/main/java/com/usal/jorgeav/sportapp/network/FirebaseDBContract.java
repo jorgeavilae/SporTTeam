@@ -24,7 +24,7 @@ public final class FirebaseDBContract {
         public static final String EVENTS_PARTICIPATION = "events_participation";
         public static final String EVENTS_INVITATIONS = "events_invitations_received";
         public static final String EVENTS_REQUESTS = "events_requests";
-        public static final String ALARMS = "events_requests";
+        public static final String ALARMS = "alarms";
     }
 
     public static final class Alarm {

@@ -21,7 +21,10 @@ public class Alarm {
     int mEmptyPlayersFrom;
     int mEmptyPlayersTo;
 
-    public Alarm(String mId, String mSport, String mField, String mCity, Long mDateFrom, Long mDateTo, int mTotalPlayersFrom, int mTotalPlayersTo, int mEmptyPlayersFrom, int mEmptyPlayersTo) {
+    public Alarm(String mId, String mSport, String mField, String mCity,
+                 Long mDateFrom, Long mDateTo,
+                 int mTotalPlayersFrom, int mTotalPlayersTo,
+                 int mEmptyPlayersFrom, int mEmptyPlayersTo) {
         this.mId = mId;
         this.mSport = mSport;
         this.mField = mField;

@@ -7,10 +7,13 @@ import android.support.v4.app.Fragment;
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class NewEventContract {
+public abstract class NewAlarmContract {
 
     public interface Presenter {
-        void addEvent(String sport, String field, String city, String date, String time, String total, String empty);
+        void addAlarm(String sport, String field, String city,
+                      String dateFrom, String dateTo,
+                      String totalFrom, String totalTo,
+                      String emptyFrom, String emptyTo);
     }
 
     public interface View {

@@ -241,7 +241,7 @@ public final class SportteamContract {
 
         /* All column projection */
         public static final String[] ALARM_COLUMNS = {
-                TABLE_EVENT + "." + EventEntry._ID,
+                TABLE_ALARM + "." + AlarmEntry._ID,
                 ALARM_ID_TABLE_PREFIX,
                 SPORT_TABLE_PREFIX,
                 FIELD_TABLE_PREFIX,

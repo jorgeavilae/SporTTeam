@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.network;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.User;
 
@@ -50,6 +51,20 @@ public class FirebaseActions {
         fieldsNextEventsRef.child(event.getmId()).setValue(currentTime);
 
         FirebaseData.loadEventsFromMyOwnEvents();
+    }
+
+    // Add Alarm
+    public static void addAlarm(Alarm alarm, String myUserId) {
+        DatabaseReference myUserAlarmsRef = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserId)
+                .child(FirebaseDBContract.User.ALARMS);
+
+        alarm.setmId(myUserAlarmsRef.push().getKey());
+
+        myUserAlarmsRef.child(alarm.getmId()).setValue(alarm.toMap());
+
+        FirebaseData.loadAlarmsFromMyAlarms();
     }
 
     //TODO checks if childs exists
@@ -237,4 +252,5 @@ public class FirebaseActions {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
                 .child(FirebaseDBContract.Event.USER_REQUESTS).child(uid).removeValue();
     }
+
 }
