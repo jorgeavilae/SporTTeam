@@ -234,6 +234,9 @@ public class SportteamProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count = 0;
         switch (sUriMatcher.match(uri)) {
+            case CODE_USER_SPORT:
+                count = db.delete(TABLE_USER_SPORTS, selection, selectionArgs);
+                break;
             case CODE_EVENTS:
                 count = db.delete(TABLE_EVENT, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);

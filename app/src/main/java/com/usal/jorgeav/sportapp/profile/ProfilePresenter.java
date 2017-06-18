@@ -69,8 +69,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
                 showUser(data);
                 break;
             case SportteamLoader.LOADER_PROFILE_SPORTS_ID:
-                if(data != null && data.moveToFirst()) //Todos los usuarios tienen al menos un deporte
-                    mUserView.showSports(data);
+                mUserView.showSports(data);
                 break;
         }
     }

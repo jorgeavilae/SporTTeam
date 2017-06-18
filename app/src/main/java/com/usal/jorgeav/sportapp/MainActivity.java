@@ -2,7 +2,6 @@ package com.usal.jorgeav.sportapp;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -11,7 +10,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -121,7 +119,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //TODO IllegalStateException: Fragment no longer exists for key BUNDLE_SAVE_FRAGMENT_INSTANCE: index 0
         if (mDisplayedFragment != null && getSupportFragmentManager() != null)
             getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
     }
@@ -131,8 +128,6 @@ public class MainActivity extends AppCompatActivity
         super.onRestoreInstanceState(savedInstanceState);
         Log.d(TAG, "onRestoreInstanceState: ");
         mDisplayedFragment = null;
-        //TODO IllegalStateException: Fragment no longer exists for key BUNDLE_SAVE_FRAGMENT_INSTANCE: index 0
-        // arreglado al mover el codigo a este metodo??
         if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
             try {
                 mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
@@ -145,16 +140,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        //TODO toggle default icon smaller
-        // mToggle.syncState(); pone el icono que le corresponde al DrawerLayout
-        // Si esta cerrado este icono es ic_hamburguer.
-        // Si el icono ahora es ic_up no quiero que ponga ic_hamburguer aunque este cerrado
-        Drawable upIcon = ContextCompat.getDrawable(this, R.drawable.ic_up);
-        Drawable icon = mToolbar.getNavigationIcon();
-        if (icon == null || !upIcon.getConstantState().equals(icon.getConstantState())) {
             mToggle.syncState();
-            Log.d(TAG, "syncState");
-        }
     }
 
     @Override
@@ -220,8 +206,6 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
             mDisplayedFragment = null;
             mAuth.signOut();
-        } else if (id == R.id.nav_other) {
-            //TODO Borrar
         }
 
         mDrawer.closeDrawer(GravityCompat.START);

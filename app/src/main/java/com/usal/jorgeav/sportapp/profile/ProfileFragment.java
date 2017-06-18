@@ -28,10 +28,12 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
+import com.usal.jorgeav.sportapp.network.FirebaseActions;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -304,7 +306,10 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
 
     @Override
     public void retrieveSportsSelected(List<Sport> sportsSelected) {
-        //TODO update sports in firebase
+        HashMap<String, Float> sportsMap = new HashMap<>();
+        for (Sport sport : sportsSelected)
+            sportsMap.put(sport.getmName(), sport.getmLevel());
+        FirebaseActions.updateSports(mUserUid, sportsMap);
     }
 
     @Override

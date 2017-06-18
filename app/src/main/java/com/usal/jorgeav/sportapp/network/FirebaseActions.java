@@ -7,6 +7,8 @@ import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.User;
 
+import java.util.HashMap;
+
 /**
  * Created by Jorge Avila on 18/05/2017.
  */
@@ -28,6 +30,10 @@ public class FirebaseActions {
     public static void addUser(User user){
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                 .child(user.getmId()).setValue(user.toMap());
+    }
+    public static void updateSports(String myUid, HashMap<String, Float> sportsMap) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+            .child(myUid).child(FirebaseDBContract.User.SPORTS_PRACTICED).setValue(sportsMap);
     }
 
     // Add Event

@@ -537,11 +537,16 @@ public class FirebaseData {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             User anUser = UtilesDataSnapshot.dataSnapshotToUser(dataSnapshot);
+
                             ContentValues cvData = UtilesDataSnapshot.dataUserToContentValues(anUser);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
 
                             List<ContentValues> cvSports = UtilesDataSnapshot.sportUserToContentValues(anUser);
+                            MyApplication.getAppContext().getContentResolver()
+                                    .delete(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                            SportteamContract.UserSportEntry.USER_ID + " = ? ",
+                                            new String[]{anUser.getmId()});
                             MyApplication.getAppContext().getContentResolver()
                                     .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
                                             cvSports.toArray(new ContentValues[cvSports.size()]));
