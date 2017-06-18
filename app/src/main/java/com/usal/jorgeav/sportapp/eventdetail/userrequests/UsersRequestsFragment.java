@@ -26,8 +26,7 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 29/05/2017.
  */
 
-public class UsersRequestsFragment extends Fragment implements UsersRequestsContract.View,
-        UsersAdapter.OnUserItemClickListener {
+public class UsersRequestsFragment extends Fragment implements UsersRequestsContract.View {
     private static final String TAG = UsersRequestsFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
@@ -35,10 +34,13 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
     UsersRequestsContract.Presenter mUsersRequestsPresenter;
-    UsersAdapter mUsersRecyclerAdapter;
 
-    @BindView(R.id.recycler_list)
+    UsersAdapter mUsersRequestRecyclerAdapter;
+    @BindView(R.id.user_requests_list)
     RecyclerView usersRequestsList;
+    UsersAdapter mUsersRejectedRecyclerAdapter;
+    @BindView(R.id.user_rejected_list)
+    RecyclerView usersRejectedList;
 
     public UsersRequestsFragment() {
         // Required empty public constructor
@@ -57,21 +59,69 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
         super.onCreate(savedInstanceState);
 
         mUsersRequestsPresenter = new UsersRequestsPresenter(this);
-        mUsersRecyclerAdapter = new UsersAdapter(null, this);
+        mUsersRequestRecyclerAdapter = new UsersAdapter(null, new UsersAdapter.OnUserItemClickListener() {
+            @Override
+            public void onUserClick(final String uid) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                builder.setMessage("Quieres aceptarlo como asistente?")
+                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mUsersRequestsPresenter.acceptUserRequestToThisEvent(mEventId, uid);
+                            }
+                        })
+                        .setNegativeButton("Denegar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mUsersRequestsPresenter.declineUserRequestToThisEvent(mEventId, uid);
+                            }
+                        })
+                        .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Fragment newFragment = ProfileFragment.newInstance(uid);
+                                mFragmentManagementListener.initFragment(newFragment, true);
+                            }
+                        });
+                builder.create().show();
+            }
+        });
+        mUsersRejectedRecyclerAdapter = new UsersAdapter(null, new UsersAdapter.OnUserItemClickListener() {
+            @Override
+            public void onUserClick(final String uid) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                builder.setMessage("Quieres desbloquearlo?")
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mUsersRequestsPresenter.unblockUserParticipationRejectedToThisEvent(mEventId, uid);
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Fragment newFragment = ProfileFragment.newInstance(uid);
+                                mFragmentManagementListener.initFragment(newFragment, true);
+                            }
+                        });
+                builder.create().show();
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_list, container, false);
+        View root = inflater.inflate(R.layout.fragment_user_request, container, false);
         ButterKnife.bind(this, root);
 
         if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
-        usersRequestsList.setAdapter(mUsersRecyclerAdapter);
+        usersRequestsList.setAdapter(mUsersRequestRecyclerAdapter);
         usersRequestsList.setHasFixedSize(true);
         usersRequestsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
+        usersRejectedList.setAdapter(mUsersRejectedRecyclerAdapter);
+        usersRejectedList.setHasFixedSize(true);
+        usersRejectedList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         return root;
     }
@@ -102,13 +152,14 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
 
     @Override
     public void showUsersRequests(Cursor cursor) {
-        mUsersRecyclerAdapter.replaceData(cursor);
+        mUsersRequestRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }
 
     @Override
     public void showRejectedUsers(Cursor cursor) {
-        //TODO cargar peticiones denegadas para desdenegarlas
+        mUsersRejectedRecyclerAdapter.replaceData(cursor);
+        mFragmentManagementListener.showContent();
     }
 
     @Override
@@ -119,29 +170,5 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     @Override
     public UsersRequestsFragment getThis() {
         return this;
-    }
-
-    @Override
-    public void onUserClick(final String uid) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        builder.setMessage("Quieres aceptarlo como asistente?")
-                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mUsersRequestsPresenter.acceptUserRequestToThisEvent(mEventId, uid);
-                    }
-                })
-                .setNegativeButton("Denegar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mUsersRequestsPresenter.declineUserRequestToThisEvent(mEventId, uid);
-                    }
-                })
-                .setNeutralButton("See details", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Fragment newFragment = ProfileFragment.newInstance(uid);
-                        mFragmentManagementListener.initFragment(newFragment, true);
-                    }
-                });
-        builder.create().show();
     }
 }

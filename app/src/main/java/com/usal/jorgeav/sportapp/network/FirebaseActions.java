@@ -239,6 +239,8 @@ public class FirebaseActions {
         //Delete Event Request Received in my Event
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
                 .child(FirebaseDBContract.Event.USER_REQUESTS).child(uid).removeValue();
+
+        FirebaseData.loadAnEvent(eventId);
     }
     public static void declineUserRequestToThisEvent(String uid, String eventId) {
         //Add Not Assistant Event to that User
@@ -257,6 +259,18 @@ public class FirebaseActions {
         //Delete Event Request Received in my Event
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
                 .child(FirebaseDBContract.Event.USER_REQUESTS).child(uid).removeValue();
-    }
 
+        FirebaseData.loadAnEvent(eventId);
+    }
+    public static void unblockUserParticipationRejectedToThisEvent(String uid, String eventId) {
+        //Delete Assistant Event to that User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).removeValue();
+
+        //Delete Assistant User to my Event
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId)
+                .child(FirebaseDBContract.Event.PARTICIPANTS).child(uid).removeValue();
+
+        FirebaseData.loadAnEvent(eventId);
+    }
 }

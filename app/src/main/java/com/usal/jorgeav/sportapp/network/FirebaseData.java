@@ -249,7 +249,7 @@ public class FirebaseData {
 //        listenerMap.put(myUserRef, childEventListener);
     }
     private static void loadUsersFromUserRequests(String key) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
                 .child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS);
 
@@ -643,7 +643,11 @@ public class FirebaseData {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
+                        String eventId = Uri.parse(dataSnapshot.getRef().getParent().toString()).getLastPathSegment();
+                        MyApplication.getAppContext().getContentResolver()
+                                .delete(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
+                                        SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
+                                        new String[]{eventId});
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             if(data.exists()) {
                                 loadAProfile(data.getKey());

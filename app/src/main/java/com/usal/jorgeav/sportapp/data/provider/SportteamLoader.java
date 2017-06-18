@@ -8,6 +8,7 @@ import android.support.v4.content.CursorLoader;
  */
 
 public final class SportteamLoader {
+    private static final String TAG = SportteamLoader.class.getSimpleName();
 
     public static final int LOADER_PROFILE_ID = 1010;
     public static final int LOADER_PROFILE_SPORTS_ID = 1011;

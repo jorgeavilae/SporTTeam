@@ -36,6 +36,12 @@ public class UsersRequestsPresenter implements UsersRequestsContract.Presenter, 
     }
 
     @Override
+    public void unblockUserParticipationRejectedToThisEvent(String eventId, String uid) {
+        if (!TextUtils.isEmpty(eventId))
+            FirebaseActions.unblockUserParticipationRejectedToThisEvent(uid, eventId);
+    }
+
+    @Override
     public void loadUsersRequests(LoaderManager loaderManager, Bundle b) {
         loaderManager.initLoader(SportteamLoader.LOADER_USERS_REQUESTS_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);

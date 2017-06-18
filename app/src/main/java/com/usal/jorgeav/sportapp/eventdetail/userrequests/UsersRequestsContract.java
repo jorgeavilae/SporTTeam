@@ -16,6 +16,7 @@ public abstract class UsersRequestsContract {
 
         void acceptUserRequestToThisEvent(String eventId, String uid);
         void declineUserRequestToThisEvent(String eventId, String uid);
+        void unblockUserParticipationRejectedToThisEvent(String eventId, String uid);
     }
 
     public interface View {
