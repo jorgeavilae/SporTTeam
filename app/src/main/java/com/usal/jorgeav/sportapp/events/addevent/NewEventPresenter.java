@@ -28,12 +28,13 @@ public class NewEventPresenter implements NewEventContract.Presenter {
     }
 
     @Override
-    public void addEvent(String sport, String field, String city, String date, String time, String total, String empty) {
-        if (isValidSport(sport) && isValidField(field, sport) && isDateTimeCorrect(date, time) && isPlayersCorrect(total, empty)) {
+    public void addEvent(String sport, String field, String name, String city, String date, String time, String total, String empty) {
+        if (isValidSport(sport) && isValidField(field, sport) && isValidName(name)
+                && isDateTimeCorrect(date, time) && isPlayersCorrect(total, empty)) {
             long dateMillis = UtilesTime.stringDateToMillis(date);
             long timeMillis = UtilesTime.stringTimeToMillis(time);
             Event event = new Event(
-                    "", sport, field, city, dateMillis + timeMillis,
+                    "", sport, field, name, city, dateMillis + timeMillis,
                     FirebaseAuth.getInstance().getCurrentUser().getUid(),
                     Integer.valueOf(total), Integer.valueOf(total), new HashMap<String, Boolean>());
 
@@ -66,6 +67,10 @@ public class NewEventPresenter implements NewEventContract.Presenter {
                 }
         } finally { c.close(); }
         return false;
+    }
+
+    private boolean isValidName(String name) {
+        return !TextUtils.isEmpty(name);
     }
 
     private boolean isDateTimeCorrect(String date, String time) {

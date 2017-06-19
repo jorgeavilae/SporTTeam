@@ -41,6 +41,8 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
     Spinner newEventSport;
     @BindView(R.id.new_event_field)
     Button newEventFieldButton;
+    @BindView(R.id.new_event_name)
+    EditText newEventName;
     @BindView(R.id.new_event_city)
     EditText newEventCity;
     @BindView(R.id.new_event_date)
@@ -135,6 +137,7 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
                 mNewEventPresenter.addEvent(
                         newEventSport.getSelectedItem().toString(),
                         fieldSelectedId,
+                        newEventName.getText().toString(),
                         newEventCity.getText().toString(),
                         newEventDate.getText().toString(),
                         newEventTime.getText().toString(),

@@ -16,6 +16,7 @@ public class Event implements Parcelable {
     String event_id;
     String sport_id;
     String field_id;
+    String name;
     String city;
     Long date;
     String owner;
@@ -27,11 +28,12 @@ public class Event implements Parcelable {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
-    public Event(String mId, String mSport, String mField, String mCity, Long mDate,
+    public Event(String mId, String mSport, String mField, String name, String mCity, Long mDate,
                  String mOwner, int mTotalPlayers, int mEmptyPlayers, HashMap<String, Boolean> participants) {
         this.event_id = mId;
         this.sport_id = mSport;
         this.field_id = mField;
+        this.name = name;
         this.city = mCity;
         this.date = mDate;
         this.owner = mOwner;
@@ -60,6 +62,10 @@ public class Event implements Parcelable {
         return city;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public Long getDate() {
         return date;
     }
@@ -78,6 +84,10 @@ public class Event implements Parcelable {
 
     public void setEmpty_players(int empty_players) {
         this.empty_players = empty_players;
+    }
+
+    public HashMap<String, Boolean> getParticipants() {
+        return participants;
     }
 
     public void addToParticipants(String userId, Boolean participates) {
@@ -103,6 +113,7 @@ public class Event implements Parcelable {
         result.put(FirebaseDBContract.Event.SPORT, this.sport_id);
         result.put(FirebaseDBContract.Event.FIELD, this.field_id);
         result.put(FirebaseDBContract.Event.CITY, this.city);
+        result.put(FirebaseDBContract.Event.NAME, this.name);
         result.put(FirebaseDBContract.Event.OWNER, this.owner);
         result.put(FirebaseDBContract.Event.DATE, this.date);
         result.put(FirebaseDBContract.Event.TOTAL_PLAYERS, this.total_players);

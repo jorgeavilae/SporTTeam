@@ -10,7 +10,7 @@ import android.support.v4.app.Fragment;
 public class NewEventContract {
 
     public interface Presenter {
-        void addEvent(String sport, String field, String city, String date, String time, String total, String empty);
+        void addEvent(String sport, String field, String name, String city, String date, String time, String total, String empty);
     }
 
     public interface View {

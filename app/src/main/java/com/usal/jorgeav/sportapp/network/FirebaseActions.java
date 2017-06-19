@@ -20,6 +20,7 @@ import java.util.Map;
 
 public class FirebaseActions {
     public static final String TAG = FirebaseActions.class.getSimpleName();
+    //TODO Where to reload?
 
     // Add User
     public static Query getUserEmailReferenceEqualTo(String email) {
@@ -78,7 +79,6 @@ public class FirebaseActions {
         FirebaseData.loadAlarmsFromMyAlarms();
     }
 
-    //TODO Where to reload?
     // It couldn't check if children exists, but if it set a value on non-existent child
     // wouldn't be added to the content provider
     public static void sendFriendRequest(String myUid, String otherUid) {

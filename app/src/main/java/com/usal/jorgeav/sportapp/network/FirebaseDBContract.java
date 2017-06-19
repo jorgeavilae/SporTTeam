@@ -43,6 +43,7 @@ public final class FirebaseDBContract {
         public static final String SPORT = "sport_id";
         public static final String FIELD = "field_id";
         public static final String CITY = "city";
+        public static final String NAME = "name";
         public static final String DATE = "date";
         public static final String TOTAL_PLAYERS = "total_players";
         public static final String EMPTY_PLAYERS = "empty_players";
