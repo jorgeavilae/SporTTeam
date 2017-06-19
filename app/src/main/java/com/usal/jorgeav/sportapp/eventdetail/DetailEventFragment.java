@@ -319,10 +319,13 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void showEventEmptyPlayers(int emptyPlayers) {
         if(emptyPlayers > -1) {
+            @DetailEventPresenter.EventRelationType
+            int relation = mPresenter.getRelationTypeBetweenThisEventAndI();
+            if (relation == DetailEventPresenter.RELATION_TYPE_NONE && emptyPlayers == 0)
+                buttonSendRequest.setEnabled(false);
             ((MainActivity) getActivity()).showContent();
             this.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));
         }
-
     }
 
     @Override

@@ -58,7 +58,6 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
     @BindView(R.id.new_alarm_add_alarm)
     Button newAlarmAddButton;
 
-    // TODO: 17/06/2017 Este dato se pierde on Rotations
     String fieldSelectedId;
     Calendar myCalendar;
 

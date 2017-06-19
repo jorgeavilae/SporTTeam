@@ -13,6 +13,8 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.FirebaseActions;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
+import java.util.HashMap;
+
 /**
  * Created by Jorge Avila on 06/06/2017.
  */
@@ -33,7 +35,7 @@ public class NewEventPresenter implements NewEventContract.Presenter {
             Event event = new Event(
                     "", sport, field, city, dateMillis + timeMillis,
                     FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                    Integer.valueOf(total), Integer.valueOf(total));
+                    Integer.valueOf(total), Integer.valueOf(total), new HashMap<String, Boolean>());
 
             FirebaseActions.addEvent(event);
 

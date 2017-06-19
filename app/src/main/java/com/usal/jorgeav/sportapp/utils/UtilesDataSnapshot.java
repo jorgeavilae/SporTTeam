@@ -12,6 +12,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -73,18 +74,18 @@ public class UtilesDataSnapshot {
         int total = Integer.valueOf(totalPlayersStr);
         int empty = Integer.valueOf(emptyPlayersStr);
 
-        return new Event(id,sport,field,city,date,owner,total,empty);
+        return new Event(id,sport,field,city,date,owner,total,empty,new HashMap<String, Boolean>());
     }
     public static ContentValues eventToContentValues (Event event) {
         ContentValues cv = new ContentValues();
-        cv.put(SportteamContract.EventEntry.EVENT_ID, event.getmId());
-        cv.put(SportteamContract.EventEntry.SPORT, event.getmSport());
-        cv.put(SportteamContract.EventEntry.FIELD, event.getmField());
-        cv.put(SportteamContract.EventEntry.CITY, event.getmCity());
-        cv.put(SportteamContract.EventEntry.DATE, event.getmDate());
-        cv.put(SportteamContract.EventEntry.OWNER, event.getmOwner());
-        cv.put(SportteamContract.EventEntry.TOTAL_PLAYERS, event.getmTotalPlayers());
-        cv.put(SportteamContract.EventEntry.EMPTY_PLAYERS, event.getmEmptyPlayers());
+        cv.put(SportteamContract.EventEntry.EVENT_ID, event.getEvent_id());
+        cv.put(SportteamContract.EventEntry.SPORT, event.getSport_id());
+        cv.put(SportteamContract.EventEntry.FIELD, event.getField_id());
+        cv.put(SportteamContract.EventEntry.CITY, event.getCity());
+        cv.put(SportteamContract.EventEntry.DATE, event.getDate());
+        cv.put(SportteamContract.EventEntry.OWNER, event.getOwner());
+        cv.put(SportteamContract.EventEntry.TOTAL_PLAYERS, event.getTotal_players());
+        cv.put(SportteamContract.EventEntry.EMPTY_PLAYERS, event.getEmpty_players());
         return cv;
     }
 

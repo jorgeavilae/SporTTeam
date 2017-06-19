@@ -598,7 +598,7 @@ public class FirebaseData {
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                            loadAField(e.getmField());
+                            loadAField(e.getField_id());
                             //TODO cargar Usuarios que participan en este evento PARTICIPANTS
                             loadUsersFromParticipants(dataSnapshot.getKey());
                         }
@@ -639,7 +639,7 @@ public class FirebaseData {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
-        eventsRef.child(key + "/" + FirebaseDBContract.Event.PARTICIPANTS)
+        eventsRef.child(key + "/" + FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.PARTICIPANTS)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -710,7 +710,7 @@ public class FirebaseData {
                                 ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                                 MyApplication.getAppContext().getContentResolver()
                                         .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                                loadAField(e.getmField());
+                                loadAField(e.getField_id());
                             }
                         }
                     }
@@ -804,7 +804,7 @@ public class FirebaseData {
 //                                ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
 //                                MyApplication.getAppContext().getContentResolver()
 //                                        .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-//                                loadAField(e.getmField());
+//                                loadAField(e.getField_id());
 //                            }
 //                        }
 //                    }
