@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -234,7 +233,6 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //TODO IllegalStateException: Fragment no longer exists for key BUNDLE_SAVE_FRAGMENT_INSTANCE: index 0
         if (mDisplayedFragment != null && getSupportFragmentManager() != null)
             getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
     }
@@ -242,10 +240,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Log.d(TAG, "onRestoreInstanceState: ");
         mDisplayedFragment = null;
-        //TODO IllegalStateException: Fragment no longer exists for key BUNDLE_SAVE_FRAGMENT_INSTANCE: index 0
-        // arreglado al mover el codigo a este metodo??
         if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
             try {
                 mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);

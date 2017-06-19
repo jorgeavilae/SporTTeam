@@ -233,6 +233,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     }
 
     @Override
+    public void quitEvent(String userId, String eventId) {
+        if (!TextUtils.isEmpty(eventId))
+            FirebaseActions.quitEvent(userId, eventId);
+    }
+
+    @Override
     public void registerUserRelationObserver() {
         mView.getActivityContext().getContentResolver().registerContentObserver(
                 SportteamContract.UserEntry.CONTENT_USER_RELATION_EVENT_URI, false, mContentObserver);

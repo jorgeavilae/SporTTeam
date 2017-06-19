@@ -38,6 +38,7 @@ public abstract class DetailEventContract {
         void acceptEventInvitation(String eventId);
         void declineEventInvitation(String eventId);
         void quitEvent(String eventId);
+        void quitEvent(String userId, String eventId);
 
         void registerUserRelationObserver();
         void unregisterUserRelationObserver();

@@ -27,13 +27,14 @@ import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
+import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailEventFragment extends Fragment implements DetailEventContract.View {
+public class DetailEventFragment extends Fragment implements DetailEventContract.View, UsersAdapter.OnUserItemClickListener {
     private static final String TAG = DetailEventFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
@@ -98,8 +99,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
-        // TODO: 16/06/2017 Implementar UserClickItem
-        usersAdapter = new UsersAdapter(null, null);
+        usersAdapter = new UsersAdapter(null, this);
         eventParticipantsList.setAdapter(usersAdapter);
         eventParticipantsList.setHasFixedSize(true);
         eventParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
@@ -355,5 +355,24 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     public void onPause() {
         super.onPause();
         mPresenter.unregisterUserRelationObserver();
+    }
+
+    @Override
+    public void onUserClick(final String uid) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setMessage("Quieres expulsarlo del evento?")
+                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mPresenter.quitEvent(uid, mEventId);
+                    }
+                })
+                .setNegativeButton("No", null)
+                .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Fragment newFragment = ProfileFragment.newInstance(uid);
+                        mFragmentManagementListener.initFragment(newFragment, true);
+                    }
+                });
+        builder.create().show();
     }
 }

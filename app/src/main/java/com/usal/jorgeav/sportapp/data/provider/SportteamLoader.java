@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.data.provider;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v4.content.CursorLoader;
 
 /**
@@ -294,5 +295,14 @@ public final class SportteamLoader {
                 SportteamContract.JoinQueryEntries.WHERE_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS,
                 SportteamContract.JoinQueryEntries.queryMyFriendsWithoutRelationWithMyEventsArguments(myUserID, eventId),
                 SportteamContract.FriendsEntry.DATE_TABLE_PREFIX + " ASC");
+    }
+
+    public static Cursor simpleQueryFieldId(Context context, String fieldId) {
+        return context.getContentResolver().query(
+                SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                SportteamContract.FieldEntry.FIELDS_COLUMNS,
+                SportteamContract.FieldEntry.FIELD_ID + " = ? ",
+                new String[]{fieldId},
+                null);
     }
 }
