@@ -107,6 +107,13 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         }
     }
 
+    /* Puede estar
+        asistencia true: ya asiste
+        asistencia false: esta bloqueado, desbloquear
+        invitacion enviada: invitado y esperando que conteste
+        peticion participar: envio una peticion para entrar, contestar
+        otro caso: enviar invitacion
+     */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_OWNER,
             RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_INVITATION,
@@ -114,11 +121,11 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     @interface EventRelationType {}
     static final int RELATION_TYPE_ERROR = -1;
     static final int RELATION_TYPE_NONE = 0;
-    static final int RELATION_TYPE_OWNER = 1;
-    static final int RELATION_TYPE_I_SEND_REQUEST = 2;
-    static final int RELATION_TYPE_I_RECEIVE_INVITATION = 3;
-    static final int RELATION_TYPE_ASSISTANT = 4;
-    static final int RELATION_TYPE_BLOCKED = 5;
+    static final int RELATION_TYPE_OWNER = 1; //Event.owner = me
+    static final int RELATION_TYPE_I_SEND_REQUEST = 2; //Request.sender = me
+    static final int RELATION_TYPE_I_RECEIVE_INVITATION = 3; //Invitation.receiver = me
+    static final int RELATION_TYPE_ASSISTANT = 4; //Participation true
+    static final int RELATION_TYPE_BLOCKED = 5; //Participation false
     @Override
     @EventRelationType
     public int getRelationTypeBetweenThisEventAndI() {

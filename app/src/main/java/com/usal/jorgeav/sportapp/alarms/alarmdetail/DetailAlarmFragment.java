@@ -21,6 +21,7 @@ import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 
 import java.util.Locale;
@@ -37,7 +38,7 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
 
-    @BindView(R.id.alarm_item_id)
+    @BindView(R.id.alarm_detail_id)
     TextView textViewAlarmId;
     @BindView(R.id.alarm_detail_sport)
     TextView textViewAlarmSport;
@@ -45,8 +46,6 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     Button buttonAlarmPlace;
     @BindView(R.id.alarm_detail_date)
     TextView textViewAlarmDate;
-    @BindView(R.id.alarm_detail_time)
-    TextView textViewAlarmTime;
     @BindView(R.id.alarm_detail_total)
     TextView textViewAlarmTotal;
     @BindView(R.id.alarm_detail_empty)
@@ -97,7 +96,7 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(mAlarmId, this);
         mActionBarIconManagementListener.setToolbarAsUp();
-        mPresenter.openEvent(getLoaderManager(), getArguments());
+        mPresenter.openAlarm(getLoaderManager(), getArguments());
     }
 
     @Override
@@ -117,20 +116,20 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     }
 
     @Override
-    public void showEventId(String id) {
+    public void showAlarmId(String id) {
         ((MainActivity)getActivity()).showContent();
         this.textViewAlarmId.setText(id);
     }
 
     @Override
-    public void showEventSport(String sport) {
+    public void showAlarmSport(String sport) {
         ((MainActivity)getActivity()).showContent();
         this.textViewAlarmSport.setText(sport);
 
     }
 
     @Override
-    public void showEventPlace(String place) {
+    public void showAlarmPlace(String place) {
         ((MainActivity)getActivity()).showContent();
         this.buttonAlarmPlace.setText(place);
         buttonAlarmPlace.setOnClickListener(new View.OnClickListener() {
@@ -155,13 +154,13 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     }
 
     @Override
-    public void showEventDate(String dateFrom, String dateTo) {
+    public void showAlarmDate(String dateFrom, String dateTo) {
         ((MainActivity)getActivity()).showContent();
         this.textViewAlarmDate.setText(dateFrom + " - " + dateTo);
     }
 
     @Override
-    public void showEventTotalPlayers(int totalPlayersFrom, int totalPlayersTo) {
+    public void showAlarmTotalPlayers(int totalPlayersFrom, int totalPlayersTo) {
         if (totalPlayersFrom > -1 && totalPlayersTo > -1) {
             ((MainActivity) getActivity()).showContent();
             this.textViewAlarmTotal.setText(String.format(Locale.getDefault(),
@@ -170,7 +169,7 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     }
 
     @Override
-    public void showEventEmptyPlayers(int emptyPlayersFrom, int emptyPlayersTo) {
+    public void showAlarmEmptyPlayers(int emptyPlayersFrom, int emptyPlayersTo) {
         if (emptyPlayersFrom > -1 && emptyPlayersTo > -1) {
             ((MainActivity) getActivity()).showContent();
             this.textViewAlarmEmpty.setText(String.format(Locale.getDefault(),
@@ -195,6 +194,7 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
 
     @Override
     public void onEventClick(String eventId) {
-// TODO: 16/06/2017 implementar
+        Fragment newFragment = DetailEventFragment.newInstance(eventId);
+        mFragmentManagementListener.initFragment(newFragment, true);
     }
 }

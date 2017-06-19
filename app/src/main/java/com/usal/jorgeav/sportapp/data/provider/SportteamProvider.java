@@ -281,8 +281,6 @@ public class SportteamProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        // TODO: Implement this to handle requests for the MIME type of the data
-        // at the given URI.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -601,7 +599,10 @@ public class SportteamProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        /* TODO Deberia haber updates? */
+        /* TODO Posible Problema: Deberia haber updates?
+         * Los cambios en la DDBB se hacen contra Firebase que los trae y los INSERTA
+         * En DBHelper esta puesto ON CONFLICT REPLACE
+         */
         Log.e(TAG, "update: uri "+uri.toString());
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count = 0;

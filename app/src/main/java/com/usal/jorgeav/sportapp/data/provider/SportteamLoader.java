@@ -262,14 +262,6 @@ public final class SportteamLoader {
     public static final int LOADER_EVENTS_FOR_INVITATION_ID = 8100;
     public static CursorLoader cursorLoaderEventsForInvitation(Context context, String myUserID, String otherUserID) {
         // Return all of my events data in which otherUser has no relation
-        /* TODO puede estar
-            asistencia true: ya asiste
-            asistencia false: esta bloqueado, desbloquear
-            invitacion enviada: invitado y esperando que conteste
-            peticion participar: envio una peticion para entrar, contestar
-            otro caso: enviar invitacion
-         */
-
         return new CursorLoader(
                 context,
                 SportteamContract.JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI,
@@ -281,13 +273,6 @@ public final class SportteamLoader {
     public static final int LOADER_USERS_FOR_INVITE_ID = 8200;
     public static CursorLoader cursorLoaderUsersForInvite(Context context, String myUserID, String eventId) {
         // Return all of my friends data who has no relation with eventId
-        /* TODO puede estar
-            asistencia true: ya asiste
-            asistencia false: esta bloqueado, desbloquear
-            invitacion enviada: invitado y esperando que conteste
-            peticion participar: envio una peticion para entrar, contestar
-            otro caso: enviar invitacion
-         */
         return new CursorLoader(
                 context,
                 SportteamContract.JoinQueryEntries.CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI,

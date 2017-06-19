@@ -27,7 +27,6 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-//TODO add foreigns keys "foreign key (" + COLUMN_ARTICLE + ") references " + TABLE_ARTICLES + "(" + COLUMN_ARTICLE_ID + "));";
         final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + SportteamContract.TABLE_USER + " (" +
                 SportteamContract.UserEntry._ID         + " INTEGER PRIMARY KEY,"       +
                 SportteamContract.UserEntry.USER_ID     + " TEXT UNIQUE NOT NULL,"      +

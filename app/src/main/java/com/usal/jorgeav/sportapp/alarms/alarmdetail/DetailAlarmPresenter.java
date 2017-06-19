@@ -25,7 +25,7 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     }
 
     @Override
-    public void openEvent(LoaderManager loaderManager, Bundle b) {
+    public void openAlarm(LoaderManager loaderManager, Bundle b) {
         String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
         FirebaseData.loadAnAlarm(alarmId);
         loaderManager.initLoader(SportteamLoader.LOADER_ALARM_ID, b, this);
@@ -78,19 +78,19 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
             int totalPlTo = data.getInt(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO);
             int emptyFrom = data.getInt(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM);
             int emptyTo = data.getInt(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO);
-            mView.showEventId(data.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID));
-            mView.showEventSport(data.getString(SportteamContract.AlarmEntry.COLUMN_SPORT));
-            mView.showEventPlace(data.getString(SportteamContract.AlarmEntry.COLUMN_FIELD));
-            mView.showEventDate(dateFrom, dateTo);
-            mView.showEventTotalPlayers(totalPlFrom, totalPlTo);
-            mView.showEventEmptyPlayers(emptyFrom, emptyTo);
+            mView.showAlarmId(data.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID));
+            mView.showAlarmSport(data.getString(SportteamContract.AlarmEntry.COLUMN_SPORT));
+            mView.showAlarmPlace(data.getString(SportteamContract.AlarmEntry.COLUMN_FIELD));
+            mView.showAlarmDate(dateFrom, dateTo);
+            mView.showAlarmTotalPlayers(totalPlFrom, totalPlTo);
+            mView.showAlarmEmptyPlayers(emptyFrom, emptyTo);
         } else {
-            mView.showEventId("");
-            mView.showEventSport("");
-            mView.showEventPlace("");
-            mView.showEventDate("", "");
-            mView.showEventTotalPlayers(-1, -1);
-            mView.showEventEmptyPlayers(-1, -1);
+            mView.showAlarmId("");
+            mView.showAlarmSport("");
+            mView.showAlarmPlace("");
+            mView.showAlarmDate("", "");
+            mView.showAlarmTotalPlayers(-1, -1);
+            mView.showAlarmEmptyPlayers(-1, -1);
         }
     }
 }

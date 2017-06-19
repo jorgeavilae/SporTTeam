@@ -13,12 +13,12 @@ import android.support.v4.app.LoaderManager;
 public abstract class DetailAlarmContract {
 
     public interface View {
-        void showEventId(String id);
-        void showEventSport(String sport);
-        void showEventPlace(String place);
-        void showEventDate(String dateFrom, String dateTo);
-        void showEventTotalPlayers(int totalPlayersFrom, int totalPlayersTo);
-        void showEventEmptyPlayers(int emptyPlayersFrom, int emptyPlayersTo);
+        void showAlarmId(String id);
+        void showAlarmSport(String sport);
+        void showAlarmPlace(String place);
+        void showAlarmDate(String dateFrom, String dateTo);
+        void showAlarmTotalPlayers(int totalPlayersFrom, int totalPlayersTo);
+        void showAlarmEmptyPlayers(int emptyPlayersFrom, int emptyPlayersTo);
         void showEvents(Cursor data);
         FragmentActivity getActivityContext();
         Fragment getThis();
@@ -26,6 +26,6 @@ public abstract class DetailAlarmContract {
     }
 
     public interface Presenter {
-        void openEvent(LoaderManager loaderManager, Bundle b);
+        void openAlarm(LoaderManager loaderManager, Bundle b);
     }
 }

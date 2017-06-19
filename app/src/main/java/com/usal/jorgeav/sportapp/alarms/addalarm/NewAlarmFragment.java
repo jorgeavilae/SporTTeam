@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import butterknife.ButterKnife;
 
 public class NewAlarmFragment extends Fragment implements NewAlarmContract.View, SelectFieldFragment.OnFieldSelected  {
     private static final String TAG = NewAlarmFragment.class.getSimpleName();
+    private static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
 
     NewAlarmContract.Presenter mNewAlarmPresenter;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -190,6 +192,22 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(BUNDLE_FIELD_ID, fieldSelectedId);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_FIELD_ID))
+            fieldSelectedId = savedInstanceState.getString(BUNDLE_FIELD_ID);
+
+        if (!TextUtils.isEmpty(newAlarmDateFrom.getText().toString()))
+            newAlarmDateTo.setEnabled(true);
     }
 
     @Override

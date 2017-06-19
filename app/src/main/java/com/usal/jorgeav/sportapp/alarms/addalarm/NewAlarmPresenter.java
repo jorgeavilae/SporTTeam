@@ -1,12 +1,15 @@
 package com.usal.jorgeav.sportapp.alarms.addalarm;
 
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Alarm;
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.FirebaseActions;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -26,7 +29,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter {
     @Override
     public void addAlarm(String sport, String field, String city, String dateFrom, String dateTo,
                          String totalFrom, String totalTo, String emptyFrom, String emptyTo) {
-        if (isValidSport(sport) && isValidField(field) && isDateCorrect(dateFrom, dateTo)
+        if (isValidSport(sport) && isValidField(field, sport) && isDateCorrect(dateFrom, dateTo)
                 && isPlayersCorrect(totalFrom, totalTo, emptyFrom, emptyTo)) {
             long dateFromMillis = UtilesTime.stringDateToMillis(dateFrom);
             long dateToMillis = UtilesTime.stringDateToMillis(dateTo);
@@ -37,23 +40,32 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter {
             FirebaseActions.addAlarm(alarm, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
             ((AppCompatActivity)mNewAlarmView.getActivityContext()).onBackPressed();
-        } else {
-            Log.e(TAG, "addAlarm: isValidSport "+isValidSport(sport));
-            Log.e(TAG, "addAlarm: isValidField "+isValidField(field));
-            Log.e(TAG, "addAlarm: isDateCorrect "+isDateCorrect(dateFrom, dateTo));
-            Log.e(TAG, "addAlarm: isPlayersCorrect "+isPlayersCorrect(totalFrom, totalTo, emptyFrom, emptyTo));
+        } else
             Toast.makeText(mNewAlarmView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private boolean isValidSport(String sport) {
-        //TODO
-        return true;
+        // If R.array.sport_id contains this sport
+        String[] arraySports = mNewAlarmView.getActivityContext().getResources().getStringArray(R.array.sport_id);
+        for (String sportArr : arraySports)
+            if (sport.equals(sportArr)) return true;
+        return false;
     }
 
-    private boolean isValidField(String field) {
-        //TODO
-        return !TextUtils.isEmpty(field);
+    private boolean isValidField(String field, String sport) {
+        // Check if the sport doesn't need a field
+        String[] arraySports = mNewAlarmView.getActivityContext().getResources().getStringArray(R.array.sport_id);
+        if (sport.equals(arraySports[0]) || sport.equals(arraySports[1])) return /* todo isValidAddress ?? */ true;
+
+        // Query database for the fieldId and checks if this sport exists for that field
+        Cursor c = SportteamLoader.simpleQueryFieldId(mNewAlarmView.getActivityContext(), field);
+        try {
+            while (c.moveToNext())
+                if (c.getString(SportteamContract.FieldEntry.COLUMN_SPORT).equals(sport)) {
+                    c.close(); return true;
+                }
+        } finally { c.close(); }
+        return false;
     }
 
     private boolean isDateCorrect(String dateFrom, String dateTo) {
