@@ -643,19 +643,22 @@ public class FirebaseData {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String eventId = Uri.parse(dataSnapshot.getRef().getParent().toString()).getLastPathSegment();
-                        MyApplication.getAppContext().getContentResolver()
-                                .delete(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
-                                        SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
-                                        new String[]{eventId});
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                            if(data.exists()) {
-                                loadAProfile(data.getKey());
+                        if (dataSnapshot.exists()) {
+                            String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
+                            MyApplication.getAppContext().getContentResolver()
+                                    .delete(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
+                                            SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
+                                            new String[]{eventId});
+                            Log.d(TAG, "loadUsersFromParticipants: " + dataSnapshot.getValue().toString());
+                            for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                if (data.exists()) {
+                                    loadAProfile(data.getKey());
 
-                                ContentValues cvData = UtilesDataSnapshot
-                                        .dataSnapshotEventsParticipationToContentValues(data, eventId, false);
-                                MyApplication.getAppContext().getContentResolver()
-                                        .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
+                                    ContentValues cvData = UtilesDataSnapshot
+                                            .dataSnapshotEventsParticipationToContentValues(data, eventId, false);
+                                    MyApplication.getAppContext().getContentResolver()
+                                            .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
+                                }
                             }
                         }
                     }

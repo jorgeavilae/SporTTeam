@@ -62,25 +62,23 @@ public class UtilesDataSnapshot {
         String id = data.getKey();
         DataSnapshot dataNode = data.child(FirebaseDBContract.DATA);
 
-        String sport = dataNode.child(FirebaseDBContract.Event.SPORT).getValue().toString();
-        String field = dataNode.child(FirebaseDBContract.Event.FIELD).getValue().toString();
-        String city = dataNode.child(FirebaseDBContract.Event.CITY).getValue().toString();
-        String owner = dataNode.child(FirebaseDBContract.Event.OWNER).getValue().toString();
+        String sport = dataNode.child(FirebaseDBContract.Event.SPORT).getValue(String.class);
+        String field = dataNode.child(FirebaseDBContract.Event.FIELD).getValue(String.class);
+        String name = dataNode.child(FirebaseDBContract.Event.NAME).getValue(String.class);
+        String city = dataNode.child(FirebaseDBContract.Event.CITY).getValue(String.class);
+        String owner = dataNode.child(FirebaseDBContract.Event.OWNER).getValue(String.class);
+        Long date = dataNode.child(FirebaseDBContract.Event.DATE).getValue(Long.class);
+        Long total = dataNode.child(FirebaseDBContract.Event.TOTAL_PLAYERS).getValue(Long.class);
+        Long empty = dataNode.child(FirebaseDBContract.Event.EMPTY_PLAYERS).getValue(Long.class);
 
-        String dateStr = dataNode.child(FirebaseDBContract.Event.DATE).getValue().toString();
-        String totalPlayersStr = dataNode.child(FirebaseDBContract.Event.TOTAL_PLAYERS).getValue().toString();
-        String emptyPlayersStr = dataNode.child(FirebaseDBContract.Event.EMPTY_PLAYERS).getValue().toString();
-        Long date = Long.valueOf(dateStr);
-        int total = Integer.valueOf(totalPlayersStr);
-        int empty = Integer.valueOf(emptyPlayersStr);
-
-        return new Event(id,sport,field,city,date,owner,total,empty,new HashMap<String, Boolean>());
+        return new Event(id,sport,field,name,city,date,owner,total.intValue(),empty.intValue(),new HashMap<String, Boolean>());
     }
     public static ContentValues eventToContentValues (Event event) {
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.EventEntry.EVENT_ID, event.getEvent_id());
         cv.put(SportteamContract.EventEntry.SPORT, event.getSport_id());
         cv.put(SportteamContract.EventEntry.FIELD, event.getField_id());
+        cv.put(SportteamContract.EventEntry.NAME, event.getName());
         cv.put(SportteamContract.EventEntry.CITY, event.getCity());
         cv.put(SportteamContract.EventEntry.DATE, event.getDate());
         cv.put(SportteamContract.EventEntry.OWNER, event.getOwner());

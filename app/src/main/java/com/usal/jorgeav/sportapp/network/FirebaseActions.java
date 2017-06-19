@@ -1,5 +1,7 @@
 package com.usal.jorgeav.sportapp.network;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -249,7 +251,7 @@ public class FirebaseActions {
 
         database.updateChildren(childUpdates);
     }
-    public static void acceptEventInvitation(final String uid, String eventId) {
+    public static void acceptEventInvitation(final String uid, final String eventId) {
         //Add Assistant User to that Event
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -269,6 +271,28 @@ public class FirebaseActions {
                 }
 
                 mutableData.setValue(e);
+
+                //Add Assistant Event to my User
+                String userParticipationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
+                        + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION + "/" + eventId;
+
+                //Delete Event Invitation Received in my User
+                String userInvitationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
+                        + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS + "/" + eventId;
+
+                //Delete Event Invitation Sent in that Event
+                String eventInvitationUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                        + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + uid;
+
+                DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+                Map<String, Object> childUpdates = new HashMap<>();
+                childUpdates.put(userParticipationEvent, true);
+                childUpdates.put(userInvitationEvent, null);
+                childUpdates.put(eventInvitationUser, null);
+
+                database.updateChildren(childUpdates);
+
                 return Transaction.success(mutableData);
             }
 
@@ -278,27 +302,6 @@ public class FirebaseActions {
                 // Transaction completed
             }
         });
-
-        //Add Assistant Event to my User
-        String userParticipationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION + "/" + eventId;
-
-        //Delete Event Invitation Received in my User
-        String userInvitationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS + "/" + eventId;
-
-        //Delete Event Invitation Sent in that Event
-        String eventInvitationUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
-                + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + uid;
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(userParticipationEvent, true);
-        childUpdates.put(userInvitationEvent, null);
-        childUpdates.put(eventInvitationUser, null);
-
-        database.updateChildren(childUpdates);
     }
     public static void declineEventInvitation(String uid, String eventId) {
         //Delete Event Invitation Received in my User
@@ -317,7 +320,7 @@ public class FirebaseActions {
 
         database.updateChildren(childUpdates);
     }
-    public static void quitEvent(final String uid, String eventId) {
+    public static void quitEvent(final String uid, final String eventId) {
         //Delete Assistant User to that Event
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -335,6 +338,11 @@ public class FirebaseActions {
                 e.deleteParticipant(uid);
 
                 mutableData.setValue(e);
+
+                //Delete Assistant Event to my User
+                FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
+                        .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).removeValue();
+
                 return Transaction.success(mutableData);
             }
 
@@ -344,23 +352,19 @@ public class FirebaseActions {
                 // Transaction completed
             }
         });
-
-        //Delete Assistant Event to my User
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
-                .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).removeValue();
     }
-    public static void acceptUserRequestToThisEvent(final String uid, String eventId) {
+    public static void acceptUserRequestToThisEvent(final String uid, final String eventId) {
         //Add Assistant User to my Event
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
-                .child(eventId).child(FirebaseDBContract.DATA);
+                .child(eventId);
         eventRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                Event e = mutableData.getValue(Event.class);
+                Event e = mutableData.child(FirebaseDBContract.DATA).getValue(Event.class);
                 if (e == null) return Transaction.success(mutableData);
 
-                // Doesn't work, fortunately it doesn't needed
+                // TODO Doesn't work, fortunately it doesn't needed here (needed below)
                 // e.setEvent_id(mutableData.getKey());
 
                 if (e.getEmpty_players() > 0) {
@@ -368,7 +372,31 @@ public class FirebaseActions {
                     e.addToParticipants(uid, true);
                 }
 
-                mutableData.setValue(e);
+                mutableData.child(FirebaseDBContract.DATA).setValue(e);
+
+                /* This actions must be performed in here https://stackoverflow.com/a/39608139/4235666*/
+
+                //Add Assistant Event to that User
+                String userParticipationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
+                        + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION + "/" + eventId;
+
+                //Delete Event Request Sent in that User
+                String userEventRequestsEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
+                        + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
+
+                //Delete Event Request Received in my Event
+                String eventUserRequestsUser  =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                        + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + uid;
+
+                DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+                Map<String, Object> childUpdates = new HashMap<>();
+                childUpdates.put(userParticipationEvent, true);
+                childUpdates.put(userEventRequestsEvent, null);
+                childUpdates.put(eventUserRequestsUser, null);
+
+                database.updateChildren(childUpdates);
+
                 return Transaction.success(mutableData);
             }
 
@@ -376,29 +404,9 @@ public class FirebaseActions {
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
+                Log.d(TAG, "postTransaction:onComplete:" + databaseError);
             }
         });
-
-        //Add Assistant Event to that User
-        String userParticipationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION + "/" + eventId;
-
-        //Delete Event Request Sent in that User
-        String userEventRequestsEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
-
-        //Delete Event Request Received in my Event
-        String eventUserRequestsUser  =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
-                + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + uid;
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(userParticipationEvent, true);
-        childUpdates.put(userEventRequestsEvent, null);
-        childUpdates.put(eventUserRequestsUser, null);
-
-        database.updateChildren(childUpdates);
     }
     public static void declineUserRequestToThisEvent(String uid, String eventId) {
         //Add Not Assistant Event to that User
