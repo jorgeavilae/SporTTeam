@@ -51,8 +51,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             holder.textViewEventId.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
             holder.textViewEventSport.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             holder.textViewEventPlace.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_FIELD));
+            holder.textViewEventName.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_NAME));
             holder.textViewEventDate.setText(UtilesTime.millisToDateTimeString(date));
-            holder.textViewEventTime.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_OWNER));
+            holder.textViewEventOwner.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_OWNER));
             holder.textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d",totalPl));
             holder.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d",emptyPl));
         }
@@ -80,10 +81,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         TextView textViewEventSport;
         @BindView(R.id.events_item_place)
         TextView textViewEventPlace;
+        @BindView(R.id.events_item_name)
+        TextView textViewEventName;
         @BindView(R.id.events_item_date)
         TextView textViewEventDate;
-        @BindView(R.id.events_item_time)
-        TextView textViewEventTime;
+        @BindView(R.id.events_item_owner)
+        TextView textViewEventOwner;
         @BindView(R.id.events_item_total)
         TextView textViewEventTotal;
         @BindView(R.id.events_item_empty)

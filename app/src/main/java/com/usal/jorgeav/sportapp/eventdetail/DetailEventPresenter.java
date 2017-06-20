@@ -92,6 +92,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             mView.showEventId(data.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
             mView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             mView.showEventPlace(data.getString(SportteamContract.EventEntry.COLUMN_FIELD));
+            mView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mView.showEventDate(UtilesTime.millisToDateTimeString(data.getLong(SportteamContract.EventEntry.COLUMN_DATE)));
             mView.showEventOwner(data.getString(SportteamContract.EventEntry.COLUMN_OWNER));
             mView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
@@ -100,6 +101,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             mView.showEventId("");
             mView.showEventSport("");
             mView.showEventPlace("");
+            mView.showEventName("");
             mView.showEventDate("");
             mView.showEventOwner("");
             mView.showEventTotalPlayers(-1);

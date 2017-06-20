@@ -50,10 +50,12 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     TextView textViewEventSport;
     @BindView(R.id.event_detail_place)
     Button buttonEventPlace;
+    @BindView(R.id.event_detail_name)
+    TextView textViewEventName;
     @BindView(R.id.event_detail_date)
     TextView textViewEventDate;
-    @BindView(R.id.event_detail_time)
-    TextView textViewEventTime;
+    @BindView(R.id.event_detail_owner)
+    TextView textViewEventOwner;
     @BindView(R.id.event_detail_total)
     TextView textViewEventTotal;
     @BindView(R.id.event_detail_empty)
@@ -290,7 +292,12 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 }
             }
         });
+    }
 
+    @Override
+    public void showEventName(String name) {
+        ((MainActivity)getActivity()).showContent();
+        this.textViewEventName.setText(name);
     }
 
     @Override
@@ -303,7 +310,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void showEventOwner(String owner) {
         ((MainActivity)getActivity()).showContent();
-        this.textViewEventTime.setText(owner);
+        this.textViewEventOwner.setText(owner);
 
     }
 
