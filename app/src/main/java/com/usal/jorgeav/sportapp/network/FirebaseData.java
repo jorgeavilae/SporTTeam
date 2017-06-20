@@ -513,7 +513,8 @@ public class FirebaseData {
                         ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
                         MyApplication.getAppContext().getContentResolver()
                                 .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
-                        loadAField(a.getmField());
+                        if (a.getmField() != null)
+                            loadAField(a.getmField());
                     }
                 }
             }
@@ -575,7 +576,8 @@ public class FirebaseData {
                             ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
-                            loadAField(a.getmField());
+                            if (a.getmField() != null)
+                                loadAField(a.getmField());
                         }
                     }
 

@@ -22,23 +22,15 @@ import java.util.List;
 public class UtilesDataSnapshot {
     public static Alarm dataSnapshotToAlarm(DataSnapshot data) {
         String id = data.getKey();
-
-        String sport = data.child(FirebaseDBContract.Alarm.SPORT).getValue().toString();
-        String field = data.child(FirebaseDBContract.Alarm.FIELD).getValue().toString();
-        String city = data.child(FirebaseDBContract.Alarm.CITY).getValue().toString();
-
-        String dateFromStr = data.child(FirebaseDBContract.Alarm.DATE_FROM).getValue().toString();
-        String dateToStr = data.child(FirebaseDBContract.Alarm.DATE_TO).getValue().toString();
-        String totalPlayersFromStr = data.child(FirebaseDBContract.Alarm.TOTAL_PLAYERS_FROM).getValue().toString();
-        String totalPlayersToStr = data.child(FirebaseDBContract.Alarm.TOTAL_PLAYERS_TO).getValue().toString();
-        String emptyPlayersFromStr = data.child(FirebaseDBContract.Alarm.EMPTY_PLAYERS_FROM).getValue().toString();
-        String emptyPlayersToStr = data.child(FirebaseDBContract.Alarm.EMPTY_PLAYERS_TO).getValue().toString();
-        Long dateFrom = Long.valueOf(dateFromStr);
-        Long dateTo = Long.valueOf(dateToStr);
-        int totalFrom = Integer.valueOf(totalPlayersFromStr);
-        int totalTo = Integer.valueOf(totalPlayersToStr);
-        int emptyFrom = Integer.valueOf(emptyPlayersFromStr);
-        int emptyTo = Integer.valueOf(emptyPlayersToStr);
+        String sport = data.child(FirebaseDBContract.Alarm.SPORT).getValue(String.class);
+        String field = data.child(FirebaseDBContract.Alarm.FIELD).getValue(String.class);
+        String city = data.child(FirebaseDBContract.Alarm.CITY).getValue(String.class);
+        Long dateFrom = data.child(FirebaseDBContract.Alarm.DATE_FROM).getValue(Long.class);
+        Long dateTo = data.child(FirebaseDBContract.Alarm.DATE_TO).getValue(Long.class);
+        Long totalFrom = data.child(FirebaseDBContract.Alarm.TOTAL_PLAYERS_FROM).getValue(Long.class);
+        Long totalTo = data.child(FirebaseDBContract.Alarm.TOTAL_PLAYERS_TO).getValue(Long.class);
+        Long emptyFrom = data.child(FirebaseDBContract.Alarm.EMPTY_PLAYERS_FROM).getValue(Long.class);
+        Long emptyTo = data.child(FirebaseDBContract.Alarm.EMPTY_PLAYERS_TO).getValue(Long.class);
 
         return new Alarm(id,sport,field,city,dateFrom,dateTo,totalFrom,totalTo,emptyFrom,emptyTo);
     }

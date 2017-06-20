@@ -1,5 +1,7 @@
 package com.usal.jorgeav.sportapp.data;
 
+import android.text.TextUtils;
+
 import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
 
 import java.util.HashMap;
@@ -16,15 +18,17 @@ public class Alarm {
     String mCity;
     Long mDateFrom;
     Long mDateTo;
-    int mTotalPlayersFrom;
-    int mTotalPlayersTo;
-    int mEmptyPlayersFrom;
-    int mEmptyPlayersTo;
+    Long mTotalPlayersFrom;
+    Long mTotalPlayersTo;
+    Long mEmptyPlayersFrom;
+    Long mEmptyPlayersTo;
+
+    public Alarm(){}
 
     public Alarm(String mId, String mSport, String mField, String mCity,
                  Long mDateFrom, Long mDateTo,
-                 int mTotalPlayersFrom, int mTotalPlayersTo,
-                 int mEmptyPlayersFrom, int mEmptyPlayersTo) {
+                 Long mTotalPlayersFrom, Long mTotalPlayersTo,
+                 Long mEmptyPlayersFrom, Long mEmptyPlayersTo) {
         this.mId = mId;
         this.mSport = mSport;
         this.mField = mField;
@@ -43,6 +47,44 @@ public class Alarm {
 
     public void setmId(String mId) {
         this.mId = mId;
+    }
+
+    public void setmSport(String mSport) {
+        this.mSport = mSport;
+    }
+
+    public void setmField(String mField) {
+        if (!TextUtils.isEmpty(mField)) this.mField = mField;
+        else this.mField = null;
+    }
+
+    public void setmCity(String mCity) {
+        this.mCity = mCity;
+    }
+
+    public void setmDateFrom(Long mDateFrom) {
+        this.mDateFrom = mDateFrom;
+    }
+
+    public void setmDateTo(Long mDateTo) {
+        if (mDateTo > 0) this.mDateTo = mDateTo;
+        else this.mDateTo = null;
+    }
+
+    public void setmTotalPlayersFrom(Long mTotalPlayersFrom) {
+        this.mTotalPlayersFrom = mTotalPlayersFrom;
+    }
+
+    public void setmTotalPlayersTo(Long mTotalPlayersTo) {
+        this.mTotalPlayersTo = mTotalPlayersTo;
+    }
+
+    public void setmEmptyPlayersFrom(Long mEmptyPlayersFrom) {
+        this.mEmptyPlayersFrom = mEmptyPlayersFrom;
+    }
+
+    public void setmEmptyPlayersTo(Long mEmptyPlayersTo) {
+        this.mEmptyPlayersTo = mEmptyPlayersTo;
     }
 
     public String getmSport() {
@@ -65,19 +107,19 @@ public class Alarm {
         return mDateTo;
     }
 
-    public int getmTotalPlayersFrom() {
+    public Long getmTotalPlayersFrom() {
         return mTotalPlayersFrom;
     }
 
-    public int getmTotalPlayersTo() {
+    public Long getmTotalPlayersTo() {
         return mTotalPlayersTo;
     }
 
-    public int getmEmptyPlayersFrom() {
+    public Long getmEmptyPlayersFrom() {
         return mEmptyPlayersFrom;
     }
 
-    public int getmEmptyPlayersTo() {
+    public Long getmEmptyPlayersTo() {
         return mEmptyPlayersTo;
     }
 

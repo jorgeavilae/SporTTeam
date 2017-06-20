@@ -1,5 +1,7 @@
 package com.usal.jorgeav.sportapp.utils;
 
+import android.text.TextUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,6 +24,7 @@ public class UtilesTime {
     }
 
     public static long stringDateToMillis(String s) {
+        if (s == null || TextUtils.isEmpty(s)) return 0;
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
         try {
             return sdf.parse(s).getTime();
@@ -39,6 +42,7 @@ public class UtilesTime {
     }
 
     public static String millisToDateTimeString(long millis) {
+        if (millis <= 0) return "";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MMMM/yy hh:mm", Locale.getDefault());
         return sdf.format(new Date(millis));
     }
