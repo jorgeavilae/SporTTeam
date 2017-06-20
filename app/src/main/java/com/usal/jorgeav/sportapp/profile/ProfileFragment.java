@@ -4,9 +4,6 @@ package com.usal.jorgeav.sportapp.profile;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
@@ -262,8 +260,13 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
 
     @Override
     public void showUserImage(String image) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.android_cheer);
-        userImage.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.android_cheer);
+//        userImage.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+
+        // TODO: 20/06/2017 Exception Activity has been destroyed
+        Glide.with(this)
+                .load(image)
+                .into(userImage);
     }
 
     @Override

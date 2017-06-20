@@ -1,5 +1,7 @@
 package com.usal.jorgeav.sportapp.adduser;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -8,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,18 +19,27 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnPausedListener;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.network.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +53,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     private final static String TAG = NewUserActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
     Fragment mDisplayedFragment;
+    private static final int RC_PHOTO_PICKER = 2;
 
     @BindView(R.id.new_user_toolbar)
     Toolbar newUseerToolbar;
@@ -52,14 +65,14 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     EditText newUserEmail;
     @BindView(R.id.new_user_password)
     EditText newUserPassword;
-    //    @BindView(R.id.new_user_auth_button)
-//    Button newUserAuthButton;
     @BindView(R.id.new_user_name)
     EditText newUserName;
     @BindView(R.id.new_user_age)
     EditText newUserAge;
     @BindView(R.id.new_user_photo)
     EditText newUserPhoto;
+    @BindView(R.id.new_user_photo_button)
+    Button newUserPhotoButton;
     @BindView(R.id.new_user_city)
     EditText newUserCity;
     @BindView(R.id.new_user_add_sport_button)
@@ -119,6 +132,17 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
             }
         });
 
+        newUserPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: 20/06/2017 pick fotos
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+            }
+        });
+
         newUserCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,6 +164,15 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
             }
         });
         showContent();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+            Uri selectedImageUri = data.getData();
+            newUserPhoto.setText(selectedImageUri.toString());
+        }
     }
 
     private void checkUserEmailExists(String email) {
@@ -170,29 +203,79 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                     public void onCancelled(DatabaseError databaseError) { }
                 });
     }
-    private void createAuthUser(String email, String pass) {
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Log in is Successful", Toast.LENGTH_SHORT).show();
-                            User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                    newUserEmail.getText().toString(),
-                                    newUserName.getText().toString(),
-                                    newUserCity.getText().toString(),
-                                    Integer.parseInt(newUserAge.getText().toString()),
-                                    newUserPhoto.getText().toString(),
-                                    sports);
-                            FirebaseActions.addUser(user);
 
-                            setResult(RESULT_OK); finish();
-                        } else {
-                            showContent();
-                            Toast.makeText(getApplicationContext(), "Error Login in", Toast.LENGTH_SHORT).show();
+    private void createAuthUser(String email, String pass) {
+        final OnCompleteListener<AuthResult> onCompleteListener = new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Log in is Successful", Toast.LENGTH_SHORT).show();
+
+                    Uri selectedImageUri = Uri.parse(newUserPhoto.getText().toString());
+                    // Get a reference to store file at chat_photos/<FILENAME>
+                    StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()
+                            .child(FirebaseDBContract.Storage.PROFILE_PICTURES);
+                    StorageReference photoRef = mChatPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
+
+                    // Upload file to Firebase Storage
+                    // Create the file metadata
+                    StorageMetadata metadata = new StorageMetadata.Builder()
+                            .setContentType("image/jpeg")
+                            .build();
+
+                    // Upload file and metadata to the path 'images/mountains.jpg'
+                    UploadTask uploadTask = photoRef.putFile(selectedImageUri, metadata);
+
+                    // Listen for state changes, errors, and completion of the upload.
+                    uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            /* https://stackoverflow.com/a/42616488/4235666 */
+                            @SuppressWarnings("VisibleForTests")
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                            System.out.println("Upload is " + progress + "% done");
                         }
-                    }
-                });
+                    }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                            System.out.println("Upload is paused");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle unsuccessful uploads
+                            Log.e(TAG, "createAuthUser:putFile:onFailure: ", exception);
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // Handle successful uploads on complete
+                            /* https://stackoverflow.com/a/42616488/4235666 */
+                            @SuppressWarnings("VisibleForTests")
+                            StorageMetadata metadata = taskSnapshot.getMetadata();
+                            if (metadata != null) {
+                                Uri downloadUrl = metadata.getDownloadUrl();
+                                User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                        newUserEmail.getText().toString(),
+                                        newUserName.getText().toString(),
+                                        newUserCity.getText().toString(),
+                                        Integer.parseInt(newUserAge.getText().toString()),
+                                        downloadUrl.toString(),
+                                        sports);
+                                FirebaseActions.addUser(user);
+
+                                setResult(RESULT_OK); finish();
+                            }
+                        }
+                    });
+                } else {
+                    showContent();
+                    Toast.makeText(getApplicationContext(), "Error Login in", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
+                .addOnCompleteListener(this, onCompleteListener);
     }
 
     @Override

@@ -64,4 +64,8 @@ public final class FirebaseDBContract {
         public static final String VOTES = "votes";
         public static final String NEXT_EVENTS = "next_events";
     }
+
+    public static final class Storage {
+        public static final String PROFILE_PICTURES = "profile_picture";
+    }
 }

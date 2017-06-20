@@ -700,7 +700,6 @@ public class FirebaseData {
                 });
     }
     public static void loadEventsFromCity(String city) {
-        // TODO: 16/06/2017 comparar evento con alarmas
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
@@ -717,6 +716,7 @@ public class FirebaseData {
                                         .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
                                 loadAField(e.getField_id());
                             }
+                            // TODO: 16/06/2017 comparar evento con alarmas
                         }
                     }
 
