@@ -233,12 +233,12 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                             /* https://stackoverflow.com/a/42616488/4235666 */
                             @SuppressWarnings("VisibleForTests")
                             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                            System.out.println("Upload is " + progress + "% done");
+                            Log.i(TAG, "createAuthUser:putFile:onProgress: Upload is " + progress + "% done");
                         }
                     }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                            System.out.println("Upload is paused");
+                            Log.i(TAG, "createAuthUser:putFile:onPaused: Upload is paused");
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
