@@ -262,6 +262,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     @Override
     public void showUserImage(String image) {
         if(image != null && !TextUtils.isEmpty(image))
+            // TODO: 21/06/2017 buscar la imagen en almacenamiento y si no se descarga
             GlideApp.with(this)
                     .load(image)
                     .placeholder(R.drawable.profile_picture_placeholder)

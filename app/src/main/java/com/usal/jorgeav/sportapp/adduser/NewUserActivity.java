@@ -1,9 +1,13 @@
 package com.usal.jorgeav.sportapp.adduser;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -34,26 +39,38 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.usal.jorgeav.sportapp.ActivityContracts;
+import com.usal.jorgeav.sportapp.GlideApp;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.network.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
+import com.yalantis.ucrop.UCrop;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pl.aprilapps.easyphotopicker.DefaultCallback;
+import pl.aprilapps.easyphotopicker.EasyImage;
+
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class NewUserActivity extends AppCompatActivity implements ActivityContracts.FragmentManagement, SportsListFragment.OnSportsSelected{
     private final static String TAG = NewUserActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
+    private static final int RC_PERMISSIONS = 3;
     Fragment mDisplayedFragment;
     private static final int RC_PHOTO_PICKER = 2;
+    Uri selectedImageUri;
+    Uri croppedImageUri;
 
     @BindView(R.id.new_user_toolbar)
     Toolbar newUseerToolbar;
@@ -70,7 +87,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     @BindView(R.id.new_user_age)
     EditText newUserAge;
     @BindView(R.id.new_user_photo)
-    EditText newUserPhoto;
+    ImageView newUserPhoto;
     @BindView(R.id.new_user_photo_button)
     Button newUserPhotoButton;
     @BindView(R.id.new_user_city)
@@ -135,11 +152,11 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         newUserPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 20/06/2017 pick fotos
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/jpeg");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+                EasyImage.configuration(NewUserActivity.this)
+                        .setImagesFolderName(Environment.DIRECTORY_PICTURES)
+                        .saveInAppExternalFilesDir();
+                if (isStorageCameraPermissionGranted())
+                    EasyImage.openChooserWithGallery(NewUserActivity.this, "Elegir foto de...", RC_PHOTO_PICKER);
             }
         });
 
@@ -154,7 +171,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                         && !TextUtils.isEmpty(newUserName.getText())
                         && TextUtils.isEmpty(newUserName.getError())
                         && !TextUtils.isEmpty(newUserAge.getText())
-                        && !TextUtils.isEmpty(newUserPhoto.getText())
+                        && croppedImageUri != null
                         && !TextUtils.isEmpty(newUserCity.getText())
                         && sports.size() > 0) {
                     hideContent();
@@ -169,9 +186,93 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
-            Uri selectedImageUri = data.getData();
-            newUserPhoto.setText(selectedImageUri.toString());
+
+        EasyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
+            @Override
+            public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
+                //Some error handling
+            }
+
+            @Override
+            public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
+                selectedImageUri = Uri.fromFile(imageFile);
+                startCropActivity();
+            }
+        });
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == UCrop.REQUEST_CROP) {
+                croppedImageUri = UCrop.getOutput(data);
+                Log.d(TAG, "onActivityResult: "+croppedImageUri);
+                GlideApp.with(this)
+                        .load(croppedImageUri)
+                        .placeholder(R.drawable.profile_picture_placeholder)
+                        .centerCrop()
+                        .into(newUserPhoto);
+
+            }
+        } else if (resultCode == UCrop.RESULT_ERROR)
+            Log.e(TAG, "onActivityResult: error ", UCrop.getError(data));
+    }
+
+    private void startCropActivity() {
+        long millis = System.currentTimeMillis();
+        croppedImageUri = getAlbumStorageDir(selectedImageUri.getLastPathSegment() + "_cropped" + millis);
+        UCrop.of(selectedImageUri, croppedImageUri)
+                    .withAspectRatio(1, 1)
+                    .withMaxResultSize(512, 512)
+                    .start(this);
+    }
+
+    private Uri getAlbumStorageDir(@NonNull String path) {
+        // Get the directory for the user's public pictures directory.
+        File f = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        Uri uri = Uri.fromFile(f).buildUpon().appendPath(path).build();
+        File file = new File(uri.getPath());
+        if (!file.exists()) {
+            try {
+                if (!file.createNewFile())
+                    Log.e(TAG, "getAlbumStorageDir: file not created");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return Uri.fromFile(file);
+    }
+
+    /* Checks if external storage is available for read and write */
+    private  boolean isStorageCameraPermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permissions are granted");
+                return true;
+            } else {
+                Log.v(TAG,"Permissions are revoked");
+                ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, RC_PERMISSIONS);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permissions are granted");
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == RC_PERMISSIONS &&
+                permissions[0].equals(WRITE_EXTERNAL_STORAGE) && permissions[1].equals(CAMERA)) {
+
+            if(grantResults[0] == PackageManager.PERMISSION_DENIED)
+                //Without WRITE_EXTERNAL_STORAGE it can't save cropped photo
+                Toast.makeText(this, "Se necesita guardar la imagen", Toast.LENGTH_SHORT).show();
+            else if (grantResults[1] == PackageManager.PERMISSION_DENIED)
+                //The user can't take pictures
+                EasyImage.openGallery(this, RC_PHOTO_PICKER);
+            else if (grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                //The user can take pictures or pick an image
+                EasyImage.openChooserWithGallery(this, "Elegir foto de...", RC_PHOTO_PICKER);
         }
     }
 
@@ -211,11 +312,10 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                 if (task.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), "Log in is Successful", Toast.LENGTH_SHORT).show();
 
-                    Uri selectedImageUri = Uri.parse(newUserPhoto.getText().toString());
                     // Get a reference to store file at chat_photos/<FILENAME>
                     StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()
                             .child(FirebaseDBContract.Storage.PROFILE_PICTURES);
-                    StorageReference photoRef = mChatPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
+                    StorageReference photoRef = mChatPhotosStorageReference.child(croppedImageUri.getLastPathSegment());
 
                     // Upload file to Firebase Storage
                     // Create the file metadata
@@ -224,7 +324,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                             .build();
 
                     // Upload file and metadata to the path 'images/mountains.jpg'
-                    UploadTask uploadTask = photoRef.putFile(selectedImageUri, metadata);
+                    UploadTask uploadTask = photoRef.putFile(croppedImageUri, metadata);
 
                     // Listen for state changes, errors, and completion of the upload.
                     uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
