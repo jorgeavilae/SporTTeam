@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.network;
+package com.usal.jorgeav.sportapp.network.firebase;
 
 import android.util.Log;
 
@@ -64,7 +64,7 @@ public class FirebaseActions {
         myUserEventCreatedRef.child(event.getEvent_id()).setValue(currentTime);
         fieldsNextEventsRef.child(event.getEvent_id()).setValue(currentTime);
 
-        FirebaseData.loadEventsFromMyOwnEvents();
+        FirebaseSync.loadEventsFromMyOwnEvents();
     }
 
     // Add Alarm
@@ -78,7 +78,7 @@ public class FirebaseActions {
 
         myUserAlarmsRef.child(alarm.getmId()).setValue(alarm.toMap());
 
-        FirebaseData.loadAlarmsFromMyAlarms();
+        FirebaseSync.loadAlarmsFromMyAlarms();
     }
 
     // It couldn't check if children exists, but if it set a value on non-existent child

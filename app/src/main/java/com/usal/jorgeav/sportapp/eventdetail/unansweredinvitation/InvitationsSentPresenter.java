@@ -7,7 +7,7 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 
 /**
  * Created by Jorge Avila on 29/05/2017.

@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.network;
+package com.usal.jorgeav.sportapp.network.firebase;
 
 import android.content.ContentValues;
 import android.net.Uri;
@@ -29,8 +29,8 @@ import java.util.Map;
  * Created by Jorge Avila on 14/06/2017.
  */
 
-public class FirebaseData {
-    public static final String TAG = FirebaseData.class.getSimpleName();
+public class FirebaseSync {
+    public static final String TAG = FirebaseSync.class.getSimpleName();
 
     private static HashMap<DatabaseReference, ChildEventListener> listenerMap = new HashMap<>();
 

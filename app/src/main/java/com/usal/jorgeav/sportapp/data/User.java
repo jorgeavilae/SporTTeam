@@ -1,6 +1,6 @@
 package com.usal.jorgeav.sportapp.data;
 
-import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
 import java.util.HashMap;
 import java.util.List;

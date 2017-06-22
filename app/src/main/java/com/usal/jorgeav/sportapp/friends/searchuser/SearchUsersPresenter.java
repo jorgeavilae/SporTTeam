@@ -7,7 +7,7 @@ import android.support.v4.content.Loader;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseData;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 /**
@@ -27,14 +27,14 @@ public class SearchUsersPresenter implements SearchUsersContract.Presenter, Load
     public void loadNearbyUsers(LoaderManager loaderManager, Bundle b) {
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String city = Utiles.getCurrentCity(mSearchUsersView.getActivityContext(), currentUserID);
-        FirebaseData.loadUsersFromCity(city);
+        FirebaseSync.loadUsersFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_USERS_FROM_CITY, b, this);
     }
 
     @Override
     public void loadNearbyUsersWithName(LoaderManager loaderManager, Bundle b) {
         String username = b.getString(SearchUsersFragment.BUNDLE_USERNAME);
-        FirebaseData.loadUsersWithName(username);
+        FirebaseSync.loadUsersWithName(username);
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_FROM_CITY);
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_WITH_NAME);
         loaderManager.restartLoader(SportteamLoader.LOADER_USERS_WITH_NAME, b, this);

@@ -8,7 +8,7 @@ import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 
 /**
  * Created by Jorge Avila on 29/05/2017.

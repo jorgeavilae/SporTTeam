@@ -13,8 +13,8 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseActions;
-import com.usal.jorgeav.sportapp.network.FirebaseData;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -43,7 +43,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     @Override
     public void openUser(LoaderManager loaderManager, Bundle b) {
         String userId = b.getString(ProfileFragment.BUNDLE_INSTANCE_UID);
-        FirebaseData.loadAProfile(userId);
+        FirebaseSync.loadAProfile(userId);
         loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_SPORTS_ID, b, this);
     }

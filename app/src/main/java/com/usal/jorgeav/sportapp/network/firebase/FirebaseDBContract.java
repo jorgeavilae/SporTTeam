@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.network;
+package com.usal.jorgeav.sportapp.network.firebase;
 
 /**
  * Created by Jorge Avila on 19/05/2017.

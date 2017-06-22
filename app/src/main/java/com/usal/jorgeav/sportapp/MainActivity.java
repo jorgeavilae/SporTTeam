@@ -30,8 +30,11 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
 import com.usal.jorgeav.sportapp.friends.FriendsFragment;
-import com.usal.jorgeav.sportapp.network.FirebaseData;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -40,13 +43,18 @@ public class MainActivity extends AppCompatActivity
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
 
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.drawer_layout)
     DrawerLayout mDrawer;
+    @BindView(R.id.nav_view)
     NavigationView mNavigationView;
+    @BindView(R.id.contentFrame)
+    FrameLayout mContentFrame;
+    @BindView(R.id.main_activity_progressbar)
+    ProgressBar mProgressbar;
     Fragment mDisplayedFragment;
     ActionBarDrawerToggle mToggle;
-    FrameLayout mContentFrame;
-    ProgressBar mProgressbar;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -54,29 +62,24 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate: init");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(mToolbar);
 
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(mToggle);
         //https://stackoverflow.com/questions/17025957/disable-gesture-listener-on-drawerlayout
         mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        mContentFrame = (FrameLayout) findViewById(R.id.contentFrame);
-        mProgressbar = (ProgressBar) findViewById(R.id.main_activity_progressbar);
         hideContent();
-//        FirebaseActions.syncFirebaseDatabase();
 
         //TODO borrar
-//        reiniciarContentProviderYSalir();
+        // reiniciarContentProviderYSalir();
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -86,18 +89,17 @@ public class MainActivity extends AppCompatActivity
                 if (fuser != null) {
                     // User is signed in
                     Log.d(TAG, "userID: "+fuser.getUid());
-                    FirebaseData.syncFirebaseDatabase();
+                    FirebaseSync.syncFirebaseDatabase();
                     if(mDisplayedFragment == null)
                         onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
                 } else {
                     // User is signed out
-                    FirebaseData.detachListeners();
+                    FirebaseSync.detachListeners();
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);
                 }
             }
         };
-        Log.d(TAG, "onCreate: fin");
     }
 
     private void reiniciarContentProviderYSalir() {
@@ -267,7 +269,7 @@ public class MainActivity extends AppCompatActivity
             } else {
                 mToggle.onDrawerSlide(mDrawer, offset);
                 currentOffset = offset;
-                toolbarIconTransition.postDelayed(this, 19);
+                toolbarIconTransition.postDelayed(this, 10);
             }
         }
     };
@@ -282,7 +284,7 @@ public class MainActivity extends AppCompatActivity
             } else {
                 mToggle.onDrawerSlide(mDrawer, offset);
                 currentOffset = offset;
-                toolbarIconTransition.postDelayed(this, 19);
+                toolbarIconTransition.postDelayed(this, 10);
             }
         }
     };
@@ -316,7 +318,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FirebaseData.detachListeners();
+        FirebaseSync.detachListeners();
     }
 
     @Override

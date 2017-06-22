@@ -4,10 +4,6 @@ package com.usal.jorgeav.sportapp.profile;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,7 +12,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +26,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
-import com.usal.jorgeav.sportapp.network.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
@@ -265,16 +260,13 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
 
     @Override
     public void showUserImage(String image) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.profile_picture_placeholder);
-        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-        if(image != null && !TextUtils.isEmpty(image))
-            // TODO: 21/06/2017 buscar la imagen en almacenamiento y si no se descarga
-            GlideApp.with(this)
-                    .load(image)
-                    .placeholder(R.drawable.profile_picture_placeholder)
-                    .centerCrop()
-                    .into(userImage)
-                    .onLoadFailed(drawable);
+        // TODO: 21/06/2017 buscar la imagen en almacenamiento y si no se descarga
+        GlideApp.with(this)
+                .load(image)
+                .placeholder(R.drawable.profile_picture_placeholder)
+                .centerCrop()
+                .error(R.drawable.profile_picture_placeholder)
+                .into(userImage);
     }
 
     @Override

@@ -9,7 +9,7 @@ import android.support.v4.content.Loader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseData;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 /**
@@ -28,7 +28,7 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     @Override
     public void openAlarm(LoaderManager loaderManager, Bundle b) {
         String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
-        FirebaseData.loadAnAlarm(alarmId);
+        FirebaseSync.loadAnAlarm(alarmId);
         loaderManager.initLoader(SportteamLoader.LOADER_ALARM_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_ALARM_EVENTS_COINCIDENCE_ID, b, this);
     }

@@ -2,7 +2,7 @@ package com.usal.jorgeav.sportapp.data;
 
 import android.text.TextUtils;
 
-import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
 import java.util.HashMap;
 import java.util.Map;

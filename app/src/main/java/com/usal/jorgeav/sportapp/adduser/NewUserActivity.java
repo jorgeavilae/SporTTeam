@@ -44,8 +44,8 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
-import com.usal.jorgeav.sportapp.network.FirebaseActions;
-import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.yalantis.ucrop.UCrop;
 
 import org.jetbrains.annotations.NotNull;

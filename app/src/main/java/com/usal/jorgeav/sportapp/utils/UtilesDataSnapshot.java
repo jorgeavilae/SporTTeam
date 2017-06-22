@@ -9,7 +9,7 @@ import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
-import com.usal.jorgeav.sportapp.network.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -131,7 +131,7 @@ public class UtilesDataSnapshot {
         String city = data.child(datakey + FirebaseDBContract.User.CITY).getValue().toString();
         String ageStr = data.child(datakey + FirebaseDBContract.User.AGE).getValue().toString();
         int age = Integer.valueOf(ageStr);
-        String photoUrl = data.child(datakey + FirebaseDBContract.User.PROFILE_PICTURE).getValue().toString();
+        String photoUrl = data.child(datakey + FirebaseDBContract.User.PROFILE_PICTURE).getValue(String.class);
 
         ArrayList<Sport> arraySports = new ArrayList<>();
         for (DataSnapshot d : data.child(FirebaseDBContract.User.SPORTS_PRACTICED).getChildren())

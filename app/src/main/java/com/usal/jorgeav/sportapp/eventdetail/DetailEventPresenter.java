@@ -13,8 +13,8 @@ import android.text.TextUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.FirebaseActions;
-import com.usal.jorgeav.sportapp.network.FirebaseData;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.lang.annotation.Retention;
@@ -44,7 +44,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     @Override
     public void openEvent(LoaderManager loaderManager, Bundle b) {
         String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
-        FirebaseData.loadAnEvent(eventId);
+        FirebaseSync.loadAnEvent(eventId);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENT_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
     }
