@@ -53,6 +53,20 @@
                 android:value="com.usal.jorgeav.sportapp.MainActivity" />
         </activity>
 
+        <!--This is required for immediate syncs -->
+        <service
+            android:name=".network.SportteamSyncIntentService"
+            android:exported="false" />
+
+        <!-- This is the Service declaration used in conjunction with FirebaseJobDispatcher -->
+        <service
+            android:name=".network.SportteamFirebaseJobService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
