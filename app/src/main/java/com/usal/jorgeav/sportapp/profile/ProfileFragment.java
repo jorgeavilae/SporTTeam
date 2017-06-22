@@ -4,6 +4,10 @@ package com.usal.jorgeav.sportapp.profile;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -261,13 +265,16 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
 
     @Override
     public void showUserImage(String image) {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.profile_picture_placeholder);
+        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
         if(image != null && !TextUtils.isEmpty(image))
             // TODO: 21/06/2017 buscar la imagen en almacenamiento y si no se descarga
             GlideApp.with(this)
                     .load(image)
                     .placeholder(R.drawable.profile_picture_placeholder)
                     .centerCrop()
-                    .into(userImage);
+                    .into(userImage)
+                    .onLoadFailed(drawable);
     }
 
     @Override

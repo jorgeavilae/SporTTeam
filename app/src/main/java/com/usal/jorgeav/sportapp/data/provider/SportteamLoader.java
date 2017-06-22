@@ -4,6 +4,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.CursorLoader;
 
+import com.usal.jorgeav.sportapp.data.Alarm;
+import com.usal.jorgeav.sportapp.utils.Utiles;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by Jorge Avila on 07/06/2017.
  */
@@ -253,10 +259,107 @@ public final class SportteamLoader {
                 new String[]{alarmId},
                 null);
     }
-    public static CursorLoader cursorLoaderAlarmCoincidence(Context context, String alarmId) {
+    public static CursorLoader cursorLoaderAlarmCoincidence(Context context, String alarmId, String myUserId) {
         // Return user data for participants in eventId
+        Alarm alarm = Utiles.cursorToAlarm(
+                context.getContentResolver().query(
+                    SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
+                    SportteamContract.AlarmEntry.ALARM_COLUMNS,
+                    SportteamContract.AlarmEntry.ALARM_ID + " = ?",
+                    new String[]{alarmId},
+                    null));
+
+        if (alarm != null) {
+            String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
+            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCitySportEventsWithoutRelationWithMeArguments(myUserId, alarm.getmCity(), alarm.getmSport())));
+
+            // field could be null
+            if (alarm.getmField() != null) {
+                selection += "AND " + SportteamContract.EventEntry.FIELD_TABLE_PREFIX + " = ? ";
+                selectionArgs.add(alarm.getmField());
+            }
+
+            // dateFrom must be at least today and dateTo should be greater than dateFrom or null
+            selection += "AND " + SportteamContract.EventEntry.DATE_TABLE_PREFIX + " >= ? ";
+            selectionArgs.add(alarm.getmDateFrom().toString());
+            if (alarm.getmDateTo() != null) {
+                selection += "AND " + SportteamContract.EventEntry.DATE_TABLE_PREFIX + " <= ? ";
+                selectionArgs.add(alarm.getmDateTo().toString());
+            }
+
+            // totalFrom could be null and totalTo should be greater than totalFrom or null
+            if (alarm.getmTotalPlayersFrom() != null) {
+                selection += "AND " + SportteamContract.EventEntry.TOTAL_PLAYERS_TABLE_PREFIX + " >= ? ";
+                selectionArgs.add(alarm.getmTotalPlayersFrom().toString());
+            }
+            if (alarm.getmTotalPlayersTo() != null) {
+                selection += "AND " + SportteamContract.EventEntry.TOTAL_PLAYERS_TABLE_PREFIX + " <= ? ";
+                selectionArgs.add(alarm.getmTotalPlayersTo().toString());
+            }
+
+            // emptyFrom must be at least 1 and emptyTo should be greater than emptyFrom or null
+            selection += "AND " + SportteamContract.EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " >= ? ";
+            selectionArgs.add(alarm.getmEmptyPlayersFrom().toString());
+            if (alarm.getmEmptyPlayersTo() != null) {
+                selection += "AND " + SportteamContract.EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " <= ? ";
+                selectionArgs.add(alarm.getmEmptyPlayersTo().toString());
+            }
+
+            return new CursorLoader(
+                    context,
+                    SportteamContract.JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI,
+                    SportteamContract.EventEntry.EVENT_COLUMNS,
+                    selection,
+                    selectionArgs.toArray(new String[selectionArgs.size()]),
+                    SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
+            /*
+            SELECT event._id, event.eventId, event.sport, event.field, event.name, event.city, event.date, event.owner, event.totalPlayers, event.emptyPlayers
+            FROM event
+                LEFT JOIN eventsParticipation
+                    ON (event.eventId = eventsParticipation.eventId AND eventsParticipation.userId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
+                LEFT JOIN eventInvitations
+                    ON (event.eventId = eventInvitations.eventId AND eventInvitations.userId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
+                LEFT JOIN eventRequest
+                    ON (event.eventId = eventRequest.eventId AND eventRequest.senderId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
+            WHERE (
+                event.city = ciudad AND
+                event.sport = basketball AND
+                event.owner <> XPs5mf8MZnXDAPjtyHkF0MqbzQ42 AND
+                eventsParticipation.eventId IS NULL AND
+                eventInvitations.eventId IS NULL AND
+                eventRequest.eventId IS NULL AND
+
+                event.field = -KkaYdeabKspjuzgvzqI AND
+                event.date >= 1497823200000 AND event.date <= 1497909600000 AND
+                event.totalPlayers >= 22 AND event.totalPlayers <= 22 AND
+                event.emptyPlayers >= 2 AND event.emptyPlayers <= 2
+                )
+             */
+
+            /*
+            SELECT event._id, event.eventId, event.sport, event.field, event.name, event.city, event.date, event.owner, event.totalPlayers, event.emptyPlayers
+            FROM event
+                LEFT JOIN eventsParticipation
+                    ON (event.eventId = eventsParticipation.eventId AND eventsParticipation.userId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
+                LEFT JOIN eventInvitations
+                    ON (event.eventId = eventInvitations.eventId AND eventInvitations.userId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
+                LEFT JOIN eventRequest
+                    ON (event.eventId = eventRequest.eventId AND eventRequest.senderId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
+            WHERE (
+                event.city = ciudad AND
+                event.sport = running AND
+                event.owner <> XPs5mf8MZnXDAPjtyHkF0MqbzQ42 AND
+
+                eventsParticipation.eventId IS NULL AND
+                eventInvitations.eventId IS NULL AND
+                eventRequest.eventId IS NULL AND
+
+                event.date >= 1498082400000 AND event.date <= 1498082400000 AND
+                event.emptyPlayers >= 2
+                )
+             */
+        }
         return null;
-        // TODO: 16/06/2017 devolver eventos que concuerden con alarmId
     }
 
     public static final int LOADER_EVENTS_FOR_INVITATION_ID = 8100;

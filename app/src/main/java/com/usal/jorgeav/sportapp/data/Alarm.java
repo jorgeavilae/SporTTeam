@@ -135,6 +135,21 @@ public class Alarm {
         result.put(FirebaseDBContract.Alarm.EMPTY_PLAYERS_FROM, this.mEmptyPlayersFrom);
         result.put(FirebaseDBContract.Alarm.EMPTY_PLAYERS_TO, this.mEmptyPlayersTo);
         return result;
+    }
 
+    @Override
+    public String toString() {
+        return "Alarm{" +
+                "mId='" + mId + '\'' +
+                ", mSport='" + mSport + '\'' +
+                ", mField='" + mField + '\'' +
+                ", mCity='" + mCity + '\'' +
+                ", mDateFrom=" + mDateFrom +
+                ", mDateTo=" + mDateTo +
+                ", mTotalPlayersFrom=" + mTotalPlayersFrom +
+                ", mTotalPlayersTo=" + mTotalPlayersTo +
+                ", mEmptyPlayersFrom=" + mEmptyPlayersFrom +
+                ", mEmptyPlayersTo=" + mEmptyPlayersTo +
+                '}';
     }
 }

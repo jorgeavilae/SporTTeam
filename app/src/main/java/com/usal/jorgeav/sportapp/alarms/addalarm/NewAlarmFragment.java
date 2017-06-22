@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.alarms.addalarm;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -109,6 +110,7 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
                                 myCalendar.set(Calendar.MONTH, monthOfYear);
                                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                                 newAlarmDateFrom.setText(UtilesTime.calendarToDate(myCalendar.getTime()));
+                                newAlarmDateTo.setText("");
                                 newAlarmDateTo.setEnabled(true);
                             }
                         },
@@ -116,8 +118,18 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
 
-                dialog.show();
                 dialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Borrar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        myCalendar.setTimeInMillis(System.currentTimeMillis());
+                        newAlarmDateFrom.setText("");
+                        newAlarmDateTo.setText("");
+                        newAlarmDateTo.setEnabled(false);
+                    }
+                });
+                dialog.show();
             }
         });
 
@@ -125,23 +137,33 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
         newAlarmDateTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatePickerDialog dialog = new DatePickerDialog(
+                final DatePickerDialog dialog = new DatePickerDialog(
                         getActivityContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                myCalendar.set(Calendar.YEAR, year);
-                                myCalendar.set(Calendar.MONTH, monthOfYear);
-                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                newAlarmDateTo.setText(UtilesTime.calendarToDate(myCalendar.getTime()));
+                                Calendar c = Calendar.getInstance();
+                                c.set(Calendar.YEAR, year);
+                                c.set(Calendar.MONTH, monthOfYear);
+                                c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                newAlarmDateTo.setText(UtilesTime.calendarToDate(c.getTime()));
                             }
                         },
                         myCalendar.get(Calendar.YEAR),
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
 
+                dialog.getDatePicker().setMinDate(myCalendar.getTimeInMillis() + 1000*60*60*24);
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Borrar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (!TextUtils.isEmpty(newAlarmDateTo.getText())) // myCalendar has been updated
+                            myCalendar.setTimeInMillis(dialog.getDatePicker().getMinDate() - 1000*60*60*24);
+                        newAlarmDateTo.setText("");
+                    }
+                });
                 dialog.show();
-                dialog.getDatePicker().setMinDate(myCalendar.getTimeInMillis());
             }
         });
 

@@ -6,10 +6,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
-import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.google.firebase.auth.FirebaseAuth;
+import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.FirebaseData;
-import com.usal.jorgeav.sportapp.utils.UtilesTime;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 /**
  * Created by Jorge Avila on 26/04/2017.
@@ -40,8 +41,9 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
                 return SportteamLoader
                         .cursorLoaderOneAlarm(mView.getActivityContext(), alarmId);
             case SportteamLoader.LOADER_ALARM_EVENTS_COINCIDENCE_ID:
+                String myUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 return SportteamLoader
-                        .cursorLoaderAlarmCoincidence(mView.getActivityContext(), alarmId);
+                        .cursorLoaderAlarmCoincidence(mView.getActivityContext(), alarmId, myUserId);
         }
         return null;
     }
@@ -71,26 +73,21 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     }
 
     private void showAlarmDetails(Cursor data) {
-        if (data != null && data.moveToFirst()) {
-            String dateFrom = UtilesTime.millisToDateTimeString(data.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_FROM));
-            String dateTo = UtilesTime.millisToDateTimeString(data.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_TO));
-            int totalPlFrom = data.getInt(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM);
-            int totalPlTo = data.getInt(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO);
-            int emptyFrom = data.getInt(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM);
-            int emptyTo = data.getInt(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO);
-            mView.showAlarmId(data.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID));
-            mView.showAlarmSport(data.getString(SportteamContract.AlarmEntry.COLUMN_SPORT));
-            mView.showAlarmPlace(data.getString(SportteamContract.AlarmEntry.COLUMN_FIELD));
-            mView.showAlarmDate(dateFrom, dateTo);
-            mView.showAlarmTotalPlayers(totalPlFrom, totalPlTo);
-            mView.showAlarmEmptyPlayers(emptyFrom, emptyTo);
+        Alarm a = Utiles.cursorToAlarm(data);
+        if (a != null) {
+            mView.showAlarmId(a.getmId());
+            mView.showAlarmSport(a.getmSport());
+            mView.showAlarmPlace(a.getmField());
+            mView.showAlarmDate(a.getmDateFrom(), a.getmDateTo());
+            mView.showAlarmTotalPlayers(a.getmTotalPlayersFrom(), a.getmTotalPlayersTo());
+            mView.showAlarmEmptyPlayers(a.getmEmptyPlayersFrom(), a.getmEmptyPlayersTo());
         } else {
-            mView.showAlarmId("");
-            mView.showAlarmSport("");
-            mView.showAlarmPlace("");
-            mView.showAlarmDate("", "");
-            mView.showAlarmTotalPlayers(-1, -1);
-            mView.showAlarmEmptyPlayers(-1, -1);
+            mView.showAlarmId(null);
+            mView.showAlarmSport(null);
+            mView.showAlarmPlace(null);
+            mView.showAlarmDate(0L, 0L);
+            mView.showAlarmTotalPlayers(-1L, -1L);
+            mView.showAlarmEmptyPlayers(-1L, -1L);
         }
     }
 }

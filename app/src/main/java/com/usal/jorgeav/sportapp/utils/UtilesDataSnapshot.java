@@ -20,6 +20,8 @@ import java.util.List;
  */
 
 public class UtilesDataSnapshot {
+    private static final String TAG = UtilesDataSnapshot.class.getSimpleName();
+
     public static Alarm dataSnapshotToAlarm(DataSnapshot data) {
         String id = data.getKey();
         String sport = data.child(FirebaseDBContract.Alarm.SPORT).getValue(String.class);
@@ -32,7 +34,8 @@ public class UtilesDataSnapshot {
         Long emptyFrom = data.child(FirebaseDBContract.Alarm.EMPTY_PLAYERS_FROM).getValue(Long.class);
         Long emptyTo = data.child(FirebaseDBContract.Alarm.EMPTY_PLAYERS_TO).getValue(Long.class);
 
-        return new Alarm(id,sport,field,city,dateFrom,dateTo,totalFrom,totalTo,emptyFrom,emptyTo);
+        Alarm a = new Alarm(id,sport,field,city,dateFrom,dateTo,totalFrom,totalTo,emptyFrom,emptyTo);
+        return a;
     }
     public static ContentValues alarmToContentValues (Alarm alarm) {
         ContentValues cv = new ContentValues();

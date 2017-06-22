@@ -23,6 +23,7 @@ import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Locale;
 
@@ -117,63 +118,82 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
 
     @Override
     public void showAlarmId(String id) {
-        ((MainActivity)getActivity()).showContent();
-        this.textViewAlarmId.setText(id);
+        if (id != null) {
+            ((MainActivity) getActivity()).showContent();
+            this.textViewAlarmId.setText(id);
+        }
     }
 
     @Override
     public void showAlarmSport(String sport) {
-        ((MainActivity)getActivity()).showContent();
-        this.textViewAlarmSport.setText(sport);
+        if (sport != null) {
+            ((MainActivity) getActivity()).showContent();
+            this.textViewAlarmSport.setText(sport);
+        }
 
     }
 
     @Override
     public void showAlarmPlace(String place) {
-        ((MainActivity)getActivity()).showContent();
-        this.buttonAlarmPlace.setText(place);
-        buttonAlarmPlace.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Cursor c = getActivity().getContentResolver().query(
-                        SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                        SportteamContract.FieldEntry.FIELDS_COLUMNS,
-                        SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? ",
-                        new String[]{buttonAlarmPlace.getText().toString(), textViewAlarmSport.getText().toString()},
-                        null);
-                if (c != null && c.moveToFirst()) {
-                    String fieldId = c.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
-                    String sportId = c.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
-                    Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
-                    mFragmentManagementListener.initFragment(newFragment, true);
-                    c.close();
-                }
-            }
-        });
-
-    }
-
-    @Override
-    public void showAlarmDate(String dateFrom, String dateTo) {
-        ((MainActivity)getActivity()).showContent();
-        this.textViewAlarmDate.setText(dateFrom + " - " + dateTo);
-    }
-
-    @Override
-    public void showAlarmTotalPlayers(int totalPlayersFrom, int totalPlayersTo) {
-        if (totalPlayersFrom > -1 && totalPlayersTo > -1) {
+        if (place != null) {
             ((MainActivity) getActivity()).showContent();
-            this.textViewAlarmTotal.setText(String.format(Locale.getDefault(),
-                    "%2d - %2d", totalPlayersFrom, totalPlayersTo));
+            this.buttonAlarmPlace.setText(place);
+            buttonAlarmPlace.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Cursor c = getActivity().getContentResolver().query(
+                            SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                            SportteamContract.FieldEntry.FIELDS_COLUMNS,
+                            SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT + " = ? ",
+                            new String[]{buttonAlarmPlace.getText().toString(), textViewAlarmSport.getText().toString()},
+                            null);
+                    if (c != null && c.moveToFirst()) {
+                        String fieldId = c.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
+                        String sportId = c.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
+                        Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
+                        mFragmentManagementListener.initFragment(newFragment, true);
+                        c.close();
+                    }
+                }
+            });
         }
     }
 
     @Override
-    public void showAlarmEmptyPlayers(int emptyPlayersFrom, int emptyPlayersTo) {
-        if (emptyPlayersFrom > -1 && emptyPlayersTo > -1) {
+    public void showAlarmDate(Long dateFrom, Long dateTo) {
+        if (dateFrom != null && dateFrom > 0) {
+            ((MainActivity) getActivity()).showContent();
+            this.textViewAlarmDate.setText(
+                    UtilesTime.millisToDateTimeString(dateFrom));
+        }
+        if (dateTo != null && dateTo > 0)
+            this.textViewAlarmDate.setText(
+                    this.textViewAlarmDate.getText() + " - " + UtilesTime.millisToDateTimeString(dateTo));
+    }
+
+    @Override
+    public void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo) {
+        if (totalPlayersFrom != null && totalPlayersFrom > -1) {
+            ((MainActivity) getActivity()).showContent();
+            this.textViewAlarmTotal.setText(String.format(Locale.getDefault(),
+                    "%2d", totalPlayersFrom));
+        }
+        if (totalPlayersTo != null && totalPlayersTo > -1) {
+            this.textViewAlarmTotal.setText(String.format(Locale.getDefault(),
+                    this.textViewAlarmTotal.getText() + " - %2d", totalPlayersTo));
+        }
+    }
+
+    @Override
+    public void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo) {
+        if (emptyPlayersFrom != null && emptyPlayersFrom > -1) {
             ((MainActivity) getActivity()).showContent();
             this.textViewAlarmEmpty.setText(String.format(Locale.getDefault(),
-                    "%2d - %2d", emptyPlayersFrom, emptyPlayersTo));
+                    "%2d", emptyPlayersFrom));
+        }
+        if (emptyPlayersTo != null && emptyPlayersTo > -1) {
+            this.textViewAlarmEmpty.setText(String.format(Locale.getDefault(),
+                    this.textViewAlarmEmpty.getText() + " - %2d", emptyPlayersTo));
         }
     }
 

@@ -220,7 +220,7 @@ public class FirebaseData {
         listenerMap.put(myUserRef, childEventListener);
     }
 
-    static void loadEventsFromMyOwnEvents() {
+            static void loadEventsFromMyOwnEvents() {
         String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
@@ -498,7 +498,7 @@ public class FirebaseData {
         listenerMap.put(myUserRef, childEventListener);
     }
     
-    static void loadAlarmsFromMyAlarms() {
+            static void loadAlarmsFromMyAlarms() {
         String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
@@ -793,31 +793,6 @@ public class FirebaseData {
     /* Esta llamada no es necesaria porque siempre va precedida de loadEventsFromCity
      * Esta llamada deberia ser loadEventsFromCityWithSport pero no se puede hacer en Firebase
      * Por ello para cargar eventos de una ciudad con un deporte se buscan en el Content Provider
+     * public static void loadEventsWithSport(String sportId) {}
      */
-//    public static void loadEventsWithSport(String sportId) {
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
-//        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.SPORT;
-//
-//        eventsRef.orderByChild(filter).equalTo(sportId)
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot.exists()) {
-//                            for (DataSnapshot data : dataSnapshot.getChildren()) {
-//                                Event e = UtilesDataSnapshot.dataSnapshotToEvent(data);
-//                                ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
-//                                MyApplication.getAppContext().getContentResolver()
-//                                        .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-//                                loadAField(e.getField_id());
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//
-//                    }
-//                });
-//    }
 }
