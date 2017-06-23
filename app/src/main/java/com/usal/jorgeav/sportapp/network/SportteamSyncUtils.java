@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.network;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 
 /**
@@ -8,64 +9,29 @@ import android.support.annotation.NonNull;
  */
 
 public class SportteamSyncUtils {
-    private static boolean sInitialized;
+    private static boolean sScheduled;
 
     /**
-     * Creates periodic sync tasks and checks to see if an immediate sync is required. If an
-     * immediate sync is required, this method will take care of making sure that sync occurs.
+     * Creates periodic sync tasks and attach the listeners to Firebase Database.
      *
-     * @param context Context that will be passed to other methods and used to access the
-     *                ContentResolver
+     * @param context Context that will be passed to other methods
      */
     synchronized public static void initialize(@NonNull final Context context) {
         /*
-         * Only perform initialization once per app lifetime. If initialization has already been
-         * performed, we have nothing to do in this method.
+         * This method starts an IntentService to attach listeners from FirebaseDatabase
+         * Those listeners performs inserts into Content Provider
          */
-        if (sInitialized) return;   sInitialized = true;
+        startServiceToAttachListeners(context);
 
         /*
-         * This method call triggers Sunshine to create its task to synchronize weather data
-         * periodically.
+         * Only perform schedule once per app lifetime. If schedule has already been
+         * performed, we have nothing else to do in this method.
          */
+        if (sScheduled) return;   sScheduled = true;
+
+        /* This method create its task to synchronize Firebase data periodically. */
         scheduleFirebaseJobDispatcherSync(context);
 
-    /*
-     * We need to check to see if our ContentProvider has data to display in our forecast
-     * list. However, performing a query on the main thread is a bad idea as this may
-     * cause our UI to lag. Therefore, we create a thread in which we will run the query
-     * to check the contents of our ContentProvider.
-     */
-
-    /* URI for every row of weather data in our weather table*/
-
-    /*
-     * Since this query is going to be used only as a check to see if we have any
-     * data (rather than to display data), we just need to PROJECT the ID of each
-     * row. In our queries where we display data, we need to PROJECT more columns
-     * to determine what weather details need to be displayed.
-     */
-
-    /* Here, we perform the query to check to see if we have any weather data */
-
-    /*
-     * A Cursor object can be null for various different reasons. A few are
-     * listed below.
-     *
-     *   1) Invalid URI
-     *   2) A certain ContentProvider's query method returns null
-     *   3) A RemoteException was thrown.
-     *
-     * Bottom line, it is generally a good idea to check if a Cursor returned
-     * from a ContentResolver is null.
-     *
-     * If the Cursor was null OR if it was empty, we need to sync immediately to
-     * be able to display data to the user.
-     */
-
-    /* Make sure to close the Cursor to avoid memory leaks! */
-
-    /* Finally, once the thread is prepared, fire it off to perform our checks. */
     }
 
     /**
@@ -109,10 +75,13 @@ public class SportteamSyncUtils {
         /* Schedule the Job with the dispatcher */
 
     /**
-     * Helper method to perform a sync immediately using an IntentService for asynchronous
+     * Helper method to perform a sync using an IntentService for asynchronous
      * execution.
      *
      * @param context The Context used to start the IntentService for the sync.
      */
-    //public static void startImmediateSync(@NonNull final Context context)
+    public static void startServiceToAttachListeners(@NonNull final Context context){
+        Intent intentToSync = new Intent(context, SportteamSyncIntentService.class);
+        context.startService(intentToSync);
+    }
 }

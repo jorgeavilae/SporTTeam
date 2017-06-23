@@ -30,6 +30,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
 import com.usal.jorgeav.sportapp.friends.FriendsFragment;
+import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
@@ -89,7 +90,10 @@ public class MainActivity extends AppCompatActivity
                 if (fuser != null) {
                     // User is signed in
                     Log.d(TAG, "userID: "+fuser.getUid());
-                    FirebaseSync.syncFirebaseDatabase();
+
+                    SportteamSyncUtils.initialize(MainActivity.this);
+//                    FirebaseSync.syncFirebaseDatabase();
+
                     if(mDisplayedFragment == null)
                         onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
                 } else {

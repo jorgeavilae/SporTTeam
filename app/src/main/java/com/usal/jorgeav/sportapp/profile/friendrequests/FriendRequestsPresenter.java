@@ -1,11 +1,9 @@
 package com.usal.jorgeav.sportapp.profile.friendrequests;
 
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
@@ -37,7 +35,6 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.d(TAG, "onLoadFinished: "+ DatabaseUtils.dumpCursorToString(data));
         mFriendRequestsView.showFriendRequests(data);
     }
 

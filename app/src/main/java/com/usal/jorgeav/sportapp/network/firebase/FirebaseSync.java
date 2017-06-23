@@ -37,6 +37,7 @@ public class FirebaseSync {
     // TODO: 16/06/2017 Las sincronizaciones que no se guarda el listener tienen que borrarse cuando se actualicen
     public static void syncFirebaseDatabase() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null && listenerMap.isEmpty()) {
+            Log.d(TAG, "syncFirebaseDatabase: ");
             //TODO Cargar Mis datos y deportes (una vez y reload cuando lo cambie)
             loadAProfile(FirebaseAuth.getInstance().getCurrentUser().getUid());
             loadFieldsFromCity(Utiles.getCurrentCity(MyApplication.getAppContext(), FirebaseAuth.getInstance().getCurrentUser().getUid()));
@@ -179,7 +180,6 @@ public class FirebaseSync {
                 if(dataSnapshot.exists()) {
                     loadAProfile(dataSnapshot.getKey());
 
-                    Log.d(TAG, "loadUsersFromFriendsRequestsReceived:onChildAdded: "+dataSnapshot.getKey());
                     String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     ContentValues cvData = UtilesDataSnapshot.dataSnapshotFriendRequestToContentValues(dataSnapshot, myUserID, false);
                     MyApplication.getAppContext().getContentResolver()

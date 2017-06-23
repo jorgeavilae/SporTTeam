@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+
 /**
  * Created by Jorge Avila on 22/06/2017.
  */
@@ -19,15 +21,12 @@ public class SportteamSyncIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        /**
-         * Performs the network request for updated weather, parses the JSON from that request, and
-         * inserts the new weather information into our ContentProvider. Will notify the user that new
-         * weather has been loaded if the user hasn't been notified of the weather within the last day
-         * AND they haven't disabled notifications in the preferences screen.
-         *
-         * @param context Used to access utility methods and the ContentResolver
+        /*
+         * Performs the network request for updated database: attach listeners to
+         * FirebaseDatabaseReferences, parses the DataSnapshot from that listeners, and
+         * inserts the data into our ContentProvider.
          */
-        // listeners de Firebase Database-
+        FirebaseSync.syncFirebaseDatabase();
 
     }
 }
