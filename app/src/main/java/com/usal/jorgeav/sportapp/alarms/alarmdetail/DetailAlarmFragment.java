@@ -20,7 +20,6 @@ import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
-import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
@@ -134,26 +133,15 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     }
 
     @Override
-    public void showAlarmPlace(String place) {
-        if (place != null) {
+    public void showAlarmPlace(final String place, final String sport) {
+        if (place != null && sport != null) {
             ((MainActivity) getActivity()).showContent();
             this.buttonAlarmPlace.setText(place);
             buttonAlarmPlace.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Cursor c = getActivity().getContentResolver().query(
-                            SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                            SportteamContract.FieldEntry.FIELDS_COLUMNS,
-                            SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT + " = ? ",
-                            new String[]{buttonAlarmPlace.getText().toString(), textViewAlarmSport.getText().toString()},
-                            null);
-                    if (c != null && c.moveToFirst()) {
-                        String fieldId = c.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
-                        String sportId = c.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
-                        Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
-                        mFragmentManagementListener.initFragment(newFragment, true);
-                        c.close();
-                    }
+                Fragment newFragment = DetailFieldFragment.newInstance(place, sport);
+                mFragmentManagementListener.initFragment(newFragment, true);
                 }
             });
         }

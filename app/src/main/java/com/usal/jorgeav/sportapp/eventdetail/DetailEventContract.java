@@ -15,7 +15,7 @@ public abstract class DetailEventContract {
     public interface View {
         void showEventId(String id);
         void showEventSport(String sport);
-        void showEventPlace(String place);
+        void showEventPlace(String place, String sport);
         void showEventName(String name);
         void showEventDate(String date);
         void showEventOwner(String time);
@@ -25,14 +25,13 @@ public abstract class DetailEventContract {
         FragmentActivity getActivityContext();
         Fragment getThis();
         String getEventID();
-        void uiSetupForEventRelation();
+        void uiSetupForEventRelation(@DetailEventPresenter.EventRelationType int relation);
 
     }
 
     public interface Presenter {
         void openEvent(LoaderManager loaderManager, Bundle b);
-        @DetailEventPresenter.EventRelationType
-        int getRelationTypeBetweenThisEventAndI();
+        void getRelationTypeBetweenThisEventAndI();
 
         void sendEventRequest(String eventId);
         void cancelEventRequest(String eventId);

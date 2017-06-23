@@ -141,7 +141,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
                 }
             });
             userAddFriendButton.setVisibility(View.VISIBLE);
-            uiSetupForUserRelation();
+            mProfilePresenter.getRelationTypeBetweenThisUserAndI();
         }
 
 
@@ -149,7 +149,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     }
 
     @Override
-    public void uiSetupForUserRelation() {
+    public void uiSetupForUserRelation(@ProfilePresenter.UserRelationType int relation) {
         /* AMISTAD
          * Si this y yo somos amigos: Icono de amigos -> onClick: borrar amigo
          * Si this ha pedido ser amigo de mi: Icono de responder peticion -> onClick: aceptar o rechazar
@@ -162,72 +162,71 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
          * Si yo sigo a this: Icono de siguiendo -> onClick: dejar de seguir
          * En otro caso: Icono de seguir? -> onClick: seguir
          */
-        if (!mUserUid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-            switch (mProfilePresenter.getRelationTypeBetweenThisUserAndI()) {
-                case ProfilePresenter.RELATION_TYPE_FRIENDS:
-                    userAddFriendButton.setText("Borrar Amigo");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            /*borrar amigos*/
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                            builder.setMessage("Estas seguro de que quieres borrar amigo?")
-                                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            mProfilePresenter.deleteFriend(mUserUid);
-                                        }
-                                    })
-                                    .setNegativeButton("No", null);
-                            builder.create().show();
-                        }
-                    });
-                    break;
-                case ProfilePresenter.RELATION_TYPE_I_RECEIVE_REQUEST:
-                    userAddFriendButton.setText("Responder peticion");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            /*aceptar o rechazar*/
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                            builder.setMessage("Aceptar como amigo?")
-                                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            mProfilePresenter.acceptFriendRequest(mUserUid);
-                                        }
-                                    })
-                                    .setNegativeButton("Rechazar", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            mProfilePresenter.declineFriendRequest(mUserUid);
-                                        }
-                                    });
-                            builder.create().show();
-                        }
-                    });
-                    break;
-                case ProfilePresenter.RELATION_TYPE_I_SEND_REQUEST:
-                    userAddFriendButton.setText("Peticion Enviada");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            /*borrar peticion*/
-                            mProfilePresenter.cancelFriendRequest(mUserUid);
-                        }
-                    });
-                    break;
-                case ProfilePresenter.RELATION_TYPE_NONE:
-                    userAddFriendButton.setText("Enviar peticion");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            /*enviar peticion*/
-                            mProfilePresenter.sendFriendRequest(mUserUid);
-                        }
-                    });
-                    break;
-                case ProfilePresenter.RELATION_TYPE_ERROR:
-                    userAddFriendButton.setText("Error");
-                    break;
-            }
+        switch (relation) {
+            case ProfilePresenter.RELATION_TYPE_FRIENDS:
+                userAddFriendButton.setText("Borrar Amigo");
+                userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        /*borrar amigos*/
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                        builder.setMessage("Estas seguro de que quieres borrar amigo?")
+                                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        mProfilePresenter.deleteFriend(mUserUid);
+                                    }
+                                })
+                                .setNegativeButton("No", null);
+                        builder.create().show();
+                    }
+                });
+                break;
+            case ProfilePresenter.RELATION_TYPE_I_RECEIVE_REQUEST:
+                userAddFriendButton.setText("Responder peticion");
+                userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        /*aceptar o rechazar*/
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                        builder.setMessage("Aceptar como amigo?")
+                                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        mProfilePresenter.acceptFriendRequest(mUserUid);
+                                    }
+                                })
+                                .setNegativeButton("Rechazar", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        mProfilePresenter.declineFriendRequest(mUserUid);
+                                    }
+                                });
+                        builder.create().show();
+                    }
+                });
+                break;
+            case ProfilePresenter.RELATION_TYPE_I_SEND_REQUEST:
+                userAddFriendButton.setText("Peticion Enviada");
+                userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        /*borrar peticion*/
+                        mProfilePresenter.cancelFriendRequest(mUserUid);
+                    }
+                });
+                break;
+            case ProfilePresenter.RELATION_TYPE_NONE:
+                userAddFriendButton.setText("Enviar peticion");
+                userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        /*enviar peticion*/
+                        mProfilePresenter.sendFriendRequest(mUserUid);
+                    }
+                });
+                break;
+            case ProfilePresenter.RELATION_TYPE_ERROR:
+                userAddFriendButton.setText("Error");
+                break;
+        }
     }
 
     @Override
@@ -261,11 +260,11 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     @Override
     public void showUserImage(String image) {
         // TODO: 21/06/2017 buscar la imagen en almacenamiento y si no se descarga
-        GlideApp.with(this)
+        GlideApp.with(this.getActivity())
                 .load(image)
+                .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)
                 .centerCrop()
-                .error(R.drawable.profile_picture_placeholder)
                 .into(userImage);
     }
 

@@ -22,7 +22,6 @@ import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
@@ -39,7 +38,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private static String mEventId = "";
-    private boolean isMyEvent = false;
+    @DetailEventPresenter.EventRelationType int mRelation;
     private DetailEventContract.Presenter mPresenter;
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -106,14 +105,15 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         eventParticipantsList.setHasFixedSize(true);
         eventParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
 
-        uiSetupForEventRelation();
+        mPresenter.getRelationTypeBetweenThisEventAndI();
 
         return root;
     }
 
     @Override
-    public void uiSetupForEventRelation() {
-        switch (mPresenter.getRelationTypeBetweenThisEventAndI()) {
+    public void uiSetupForEventRelation(@DetailEventPresenter.EventRelationType int relation) {
+        mRelation = relation;
+        switch (relation) {
             case DetailEventPresenter.RELATION_TYPE_OWNER:
                 buttonUserRequests.setVisibility(View.VISIBLE);
                 buttonUserRequests.setOnClickListener(new View.OnClickListener() {
@@ -235,7 +235,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //TODO should I add event.name?
+        //TODO poner de titulo event name?
         mFragmentManagementListener.setCurrentDisplayedFragment(mEventId, this);
         mActionBarIconManagementListener.setToolbarAsUp();
         mPresenter.openEvent(getLoaderManager(), getArguments());
@@ -271,25 +271,14 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     }
 
     @Override
-    public void showEventPlace(String place) {
+    public void showEventPlace(final String place, final String sport) {
         ((MainActivity)getActivity()).showContent();
         this.buttonEventPlace.setText(place);
         buttonEventPlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Cursor c = getActivity().getContentResolver().query(
-                        SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                        SportteamContract.FieldEntry.FIELDS_COLUMNS,
-                        SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? ",
-                        new String[]{buttonEventPlace.getText().toString(), textViewEventSport.getText().toString()},
-                        null);
-                if (c != null && c.moveToFirst()) {
-                    String fieldId = c.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
-                    String sportId = c.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
-                    Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
-                    mFragmentManagementListener.initFragment(newFragment, true);
-                    c.close();
-                }
+                Fragment newFragment = DetailFieldFragment.newInstance(place, sport);
+                mFragmentManagementListener.initFragment(newFragment, true);
             }
         });
     }
@@ -326,9 +315,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void showEventEmptyPlayers(int emptyPlayers) {
         if(emptyPlayers > -1) {
-            @DetailEventPresenter.EventRelationType
-            int relation = mPresenter.getRelationTypeBetweenThisEventAndI();
-            if (relation == DetailEventPresenter.RELATION_TYPE_NONE && emptyPlayers == 0)
+            if (mRelation == DetailEventPresenter.RELATION_TYPE_NONE && emptyPlayers == 0)
                 buttonSendRequest.setEnabled(false);
             ((MainActivity) getActivity()).showContent();
             this.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));

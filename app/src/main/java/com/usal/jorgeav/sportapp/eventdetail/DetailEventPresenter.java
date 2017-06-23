@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.eventdetail;
 
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IntDef;
@@ -36,7 +37,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             @Override
             public void onChange(boolean selfChange) {
                 super.onChange(selfChange);
-                mView.uiSetupForEventRelation();
+                getRelationTypeBetweenThisEventAndI();
             }
         };
     }
@@ -91,7 +92,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         if (data != null && data.moveToFirst()) {
             mView.showEventId(data.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
             mView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
-            mView.showEventPlace(data.getString(SportteamContract.EventEntry.COLUMN_FIELD));
+            mView.showEventPlace(data.getString(SportteamContract.EventEntry.COLUMN_FIELD), data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             mView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mView.showEventDate(UtilesTime.millisToDateTimeString(data.getLong(SportteamContract.EventEntry.COLUMN_DATE)));
             mView.showEventOwner(data.getString(SportteamContract.EventEntry.COLUMN_OWNER));
@@ -100,7 +101,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         } else {
             mView.showEventId("");
             mView.showEventSport("");
-            mView.showEventPlace("");
+            mView.showEventPlace("", "");
             mView.showEventName("");
             mView.showEventDate("");
             mView.showEventOwner("");
@@ -129,81 +130,93 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     static final int RELATION_TYPE_ASSISTANT = 4; //Participation true
     static final int RELATION_TYPE_BLOCKED = 5; //Participation false
     @Override
-    @EventRelationType
-    public int getRelationTypeBetweenThisEventAndI() {
-        try {
-            String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    public void getRelationTypeBetweenThisEventAndI() {
+        AsyncTask<Void, Void, Integer> task = new AsyncTask<Void, Void, Integer>(){
+            @Override
+            protected Integer doInBackground(Void... voids) {
+                try {
+                    String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            //Owner?
-            Cursor cursorOwner = mView.getActivityContext().getContentResolver().query(
-                    SportteamContract.EventEntry.CONTENT_EVENT_URI,
-                    SportteamContract.EventEntry.EVENT_COLUMNS,
-                    SportteamContract.EventEntry.EVENT_ID + " = ? AND " + SportteamContract.EventEntry.OWNER + " = ?",
-                    new String[]{mView.getEventID(), myUid},
-                    null);
-            if (cursorOwner != null && cursorOwner.getCount() > 0) {
-                cursorOwner.close();
-                return RELATION_TYPE_OWNER;
+                    //Owner?
+                    Cursor cursorOwner = mView.getActivityContext().getContentResolver().query(
+                            SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                            SportteamContract.EventEntry.EVENT_COLUMNS,
+                            SportteamContract.EventEntry.EVENT_ID + " = ? AND " + SportteamContract.EventEntry.OWNER + " = ?",
+                            new String[]{mView.getEventID(), myUid},
+                            null);
+                    if (cursorOwner != null && cursorOwner.getCount() > 0) {
+                        cursorOwner.close();
+                        return RELATION_TYPE_OWNER;
+                    }
+
+                    //I have received an Invitation?
+                    Cursor cursorReceiver = mView.getActivityContext().getContentResolver().query(
+                            SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
+                            SportteamContract.EventsInvitationEntry.EVENT_INVITATIONS_COLUMNS,
+                            SportteamContract.EventsInvitationEntry.EVENT_ID + " = ?",
+                            new String[]{mView.getEventID()},
+                            null);
+                    if (cursorReceiver != null && cursorReceiver.getCount() > 0) {
+                        cursorReceiver.close();
+                        return RELATION_TYPE_I_RECEIVE_INVITATION;
+                    }
+
+                    //I have sent a EventRequest?
+                    Cursor cursorSender = mView.getActivityContext().getContentResolver().query(
+                            SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,
+                            SportteamContract.EventRequestsEntry.EVENTS_REQUESTS_COLUMNS,
+                            SportteamContract.EventRequestsEntry.SENDER_ID + " = ? AND " + SportteamContract.EventRequestsEntry.EVENT_ID + " = ?",
+                            new String[]{myUid, mView.getEventID()},
+                            null);
+                    if (cursorSender != null && cursorSender.getCount() > 0) {
+                        cursorSender.close();
+                        return RELATION_TYPE_I_SEND_REQUEST;
+                    }
+
+                    //I assist
+                    Cursor cursorAssist = mView.getActivityContext().getContentResolver().query(
+                            SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
+                            SportteamContract.EventsParticipationEntry.EVENTS_PARTICIPATION_COLUMNS,
+                            SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
+                                    + SportteamContract.EventsParticipationEntry.USER_ID + " = ? AND "
+                                    + SportteamContract.EventsParticipationEntry.PARTICIPATES + " = ?",
+                            new String[]{mView.getEventID(), myUid, String.valueOf(1)},
+                            null);
+                    if (cursorAssist != null && cursorAssist.getCount() > 0) {
+                        cursorAssist.close();
+                        return RELATION_TYPE_ASSISTANT;
+                    }
+
+                    //I don't assist
+                    Cursor cursorNotAssist = mView.getActivityContext().getContentResolver().query(
+                            SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
+                            SportteamContract.EventsParticipationEntry.EVENTS_PARTICIPATION_COLUMNS,
+                            SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
+                                    + SportteamContract.EventsParticipationEntry.USER_ID + " = ? AND "
+                                    + SportteamContract.EventsParticipationEntry.PARTICIPATES + " = ?",
+                            new String[]{mView.getEventID(), myUid, String.valueOf(0)},
+                            null);
+                    if (cursorNotAssist != null && cursorNotAssist.getCount() > 0) {
+                        cursorNotAssist.close();
+                        return RELATION_TYPE_BLOCKED;
+                    }
+
+                    //No relation
+                    return RELATION_TYPE_NONE;
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    return RELATION_TYPE_ERROR;
+                }
             }
 
-            //I have received an Invitation?
-            Cursor cursorReceiver = mView.getActivityContext().getContentResolver().query(
-                    SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
-                    SportteamContract.EventsInvitationEntry.EVENT_INVITATIONS_COLUMNS,
-                    SportteamContract.EventsInvitationEntry.EVENT_ID + " = ?",
-                    new String[]{mView.getEventID()},
-                    null);
-            if (cursorReceiver != null && cursorReceiver.getCount() > 0) {
-                cursorReceiver.close();
-                return RELATION_TYPE_I_RECEIVE_INVITATION;
+            @Override
+            protected void onPostExecute(Integer integer) {
+                super.onPostExecute(integer);
+                mView.uiSetupForEventRelation(integer);
             }
+        };
 
-            //I have sent a EventRequest?
-            Cursor cursorSender = mView.getActivityContext().getContentResolver().query(
-                    SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,
-                    SportteamContract.EventRequestsEntry.EVENTS_REQUESTS_COLUMNS,
-                    SportteamContract.EventRequestsEntry.SENDER_ID + " = ? AND " + SportteamContract.EventRequestsEntry.EVENT_ID + " = ?",
-                    new String[]{myUid, mView.getEventID()},
-                    null);
-            if (cursorSender != null && cursorSender.getCount() > 0) {
-                cursorSender.close();
-                return RELATION_TYPE_I_SEND_REQUEST;
-            }
-
-            //I assist
-            Cursor cursorAssist = mView.getActivityContext().getContentResolver().query(
-                    SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
-                    SportteamContract.EventsParticipationEntry.EVENTS_PARTICIPATION_COLUMNS,
-                    SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
-                            + SportteamContract.EventsParticipationEntry.USER_ID + " = ? AND "
-                            + SportteamContract.EventsParticipationEntry.PARTICIPATES + " = ?",
-                    new String[]{mView.getEventID(), myUid, String.valueOf(1)},
-                    null);
-            if (cursorAssist != null && cursorAssist.getCount() > 0) {
-                cursorAssist.close();
-                return RELATION_TYPE_ASSISTANT;
-            }
-
-            //I don't assist
-            Cursor cursorNotAssist = mView.getActivityContext().getContentResolver().query(
-                    SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
-                    SportteamContract.EventsParticipationEntry.EVENTS_PARTICIPATION_COLUMNS,
-                    SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
-                            + SportteamContract.EventsParticipationEntry.USER_ID + " = ? AND "
-                            + SportteamContract.EventsParticipationEntry.PARTICIPATES + " = ?",
-                    new String[]{mView.getEventID(), myUid, String.valueOf(0)},
-                    null);
-            if (cursorNotAssist != null && cursorNotAssist.getCount() > 0) {
-                cursorNotAssist.close();
-                return RELATION_TYPE_BLOCKED;
-            }
-
-            //No relation
-            return RELATION_TYPE_NONE;
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return RELATION_TYPE_ERROR;
-        }
+        task.execute();
     }
 
     @Override

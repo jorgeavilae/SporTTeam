@@ -15,7 +15,7 @@ public abstract class DetailAlarmContract {
     public interface View {
         void showAlarmId(String id);
         void showAlarmSport(String sport);
-        void showAlarmPlace(String place);
+        void showAlarmPlace(String place, String sport);
         void showAlarmDate(Long dateFrom, Long dateTo);
         void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo);
         void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo);

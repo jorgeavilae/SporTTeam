@@ -1,10 +1,14 @@
 package com.usal.jorgeav.sportapp.network;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+
 /**
  * Created by Jorge Avila on 22/06/2017.
  */
 
 public class SportteamSyncUtils {
+    private static boolean sInitialized;
 
     /**
      * Creates periodic sync tasks and checks to see if an immediate sync is required. If an
@@ -13,16 +17,18 @@ public class SportteamSyncUtils {
      * @param context Context that will be passed to other methods and used to access the
      *                ContentResolver
      */
-    //synchronized public static void initialize(@NonNull final Context context)
-    /*
-     * Only perform initialization once per app lifetime. If initialization has already been
-     * performed, we have nothing to do in this method.
-     */
+    synchronized public static void initialize(@NonNull final Context context) {
+        /*
+         * Only perform initialization once per app lifetime. If initialization has already been
+         * performed, we have nothing to do in this method.
+         */
+        if (sInitialized) return;   sInitialized = true;
 
-    /*
-     * This method call triggers Sunshine to create its task to synchronize weather data
-     * periodically.
-     */
+        /*
+         * This method call triggers Sunshine to create its task to synchronize weather data
+         * periodically.
+         */
+        scheduleFirebaseJobDispatcherSync(context);
 
     /*
      * We need to check to see if our ContentProvider has data to display in our forecast
@@ -60,13 +66,14 @@ public class SportteamSyncUtils {
     /* Make sure to close the Cursor to avoid memory leaks! */
 
     /* Finally, once the thread is prepared, fire it off to perform our checks. */
+    }
 
     /**
      * Schedules a repeating sync of Sunshine's weather data using FirebaseJobDispatcher.
      * @param context Context used to create the GooglePlayDriver that powers the
      *                FirebaseJobDispatcher
      */
-    //static void scheduleFirebaseJobDispatcherSync(@NonNull final Context context)
+    static void scheduleFirebaseJobDispatcherSync(@NonNull final Context context){}
 
     /* Init GooglePlayDriver and FirebaseJobDispatcher */
 

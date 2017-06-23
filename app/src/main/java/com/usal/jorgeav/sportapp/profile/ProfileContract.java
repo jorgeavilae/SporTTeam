@@ -20,13 +20,12 @@ public abstract class ProfileContract {
         void showContent();
         FragmentActivity getActivityContext();
         String getUserID();
-        void uiSetupForUserRelation();
+        void uiSetupForUserRelation(@ProfilePresenter.UserRelationType int relation);
     }
 
     public interface Presenter {
        void openUser(LoaderManager loaderManager, Bundle b);
-        @ProfilePresenter.UserRelationType
-        int getRelationTypeBetweenThisUserAndI();
+        void getRelationTypeBetweenThisUserAndI();
         void sendFriendRequest(String uid);
         void cancelFriendRequest(String uid);
         void acceptFriendRequest(String uid);
