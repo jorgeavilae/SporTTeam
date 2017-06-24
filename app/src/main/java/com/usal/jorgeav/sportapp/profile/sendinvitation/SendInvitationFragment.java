@@ -93,6 +93,13 @@ public class SendInvitationFragment extends Fragment implements SendInvitationCo
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mEventsRecyclerAdapter.replaceData(null);
+    }
+
     @Override
     public void showEventsForInvitation(Cursor cursor) {
         mEventsRecyclerAdapter.replaceData(cursor);

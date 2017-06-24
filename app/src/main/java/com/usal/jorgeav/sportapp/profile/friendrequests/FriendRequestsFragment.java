@@ -80,6 +80,12 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mUsersRecyclerAdapter.replaceData(null);
+    }
+
+    @Override
     public void onUserClick(String uid) {
         Fragment newFragment = ProfileFragment.newInstance(uid);
         mFragmentManagementListener.initFragment(newFragment, true);

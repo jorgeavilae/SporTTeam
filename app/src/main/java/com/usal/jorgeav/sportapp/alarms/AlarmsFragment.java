@@ -96,6 +96,12 @@ public class AlarmsFragment extends Fragment implements AlarmsContract.View, Ala
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mAlarmsRecyclerAdapter.replaceData(null);
+    }
+
+    @Override
     public void showAlarms(Cursor cursor) {
         mAlarmsRecyclerAdapter.replaceData(cursor);
         if (cursor != null) mFragmentManagementListener.showContent();

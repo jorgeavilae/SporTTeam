@@ -651,7 +651,7 @@ public class FirebaseSync {
                                     .delete(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
                                             SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
                                             new String[]{eventId});
-                            Log.d(TAG, "loadUsersFromParticipants: " + dataSnapshot.getValue().toString());
+
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 if (data.exists()) {
                                     loadAProfile(data.getKey());

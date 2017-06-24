@@ -118,9 +118,16 @@ public class SportsListFragment extends Fragment {
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
+        //Todo esto es null despues de dos rotation
         mOnSportsSelectedListener.retrieveSportsSelected(mSportAdapter.getDataAsArrayList());
     }
-    
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSportAdapter.replaceData(null);
+    }
+
     public interface OnSportsSelected {
         void retrieveSportsSelected(List<Sport> sportsSelected);
     }

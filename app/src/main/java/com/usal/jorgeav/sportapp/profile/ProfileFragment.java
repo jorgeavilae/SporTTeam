@@ -324,5 +324,6 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     public void onPause() {
         super.onPause();
         mProfilePresenter.unregisterUserRelationObserver();
+        sportsAdapter.replaceData(null);
     }
 }

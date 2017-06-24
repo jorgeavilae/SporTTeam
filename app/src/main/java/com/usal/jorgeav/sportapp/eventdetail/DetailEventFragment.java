@@ -352,6 +352,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     public void onPause() {
         super.onPause();
         mPresenter.unregisterUserRelationObserver();
+        usersAdapter.replaceData(null);
     }
 
     @Override

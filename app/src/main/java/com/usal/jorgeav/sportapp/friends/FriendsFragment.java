@@ -99,6 +99,12 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mFriendsRecyclerAdapter.replaceData(null);
+    }
+
+    @Override
     public void showFriends(Cursor cursor) {
         mFriendsRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();

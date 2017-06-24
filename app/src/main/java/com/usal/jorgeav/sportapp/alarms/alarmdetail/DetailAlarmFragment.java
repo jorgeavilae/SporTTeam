@@ -116,6 +116,12 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        eventsAdapter.replaceData(null);
+    }
+
+    @Override
     public void showAlarmId(String id) {
         if (id != null) {
             ((MainActivity) getActivity()).showContent();

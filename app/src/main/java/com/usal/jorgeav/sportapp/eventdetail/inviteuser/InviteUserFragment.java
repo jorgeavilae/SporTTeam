@@ -99,6 +99,12 @@ public class InviteUserFragment extends Fragment implements InviteUserContract.V
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mSendInvitationRecyclerAdapter.replaceData(null);
+    }
+
+    @Override
     public void showFriends(Cursor cursor) {
         mSendInvitationRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();

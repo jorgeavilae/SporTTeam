@@ -98,6 +98,12 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mUsersRecyclerAdapter.replaceData(null);
+    }
+
+    @Override
     public void showUsers(Cursor cursor) {
         mUsersRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();

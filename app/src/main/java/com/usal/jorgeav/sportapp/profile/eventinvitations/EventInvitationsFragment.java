@@ -81,6 +81,12 @@ public class EventInvitationsFragment extends Fragment implements EventInvitatio
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mEventsRecyclerAdapter.replaceData(null);
+    }
+
+    @Override
     public void showEventInvitations(Cursor cursor) {
         mEventsRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();

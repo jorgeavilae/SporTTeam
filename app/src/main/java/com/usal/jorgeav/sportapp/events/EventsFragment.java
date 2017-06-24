@@ -114,6 +114,13 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mMyOwnEventsRecyclerAdapter.replaceData(null);
+        mEventsParticipationRecyclerAdapter.replaceData(null);
+    }
+
+    @Override
     public void showMyOwnEvents(Cursor cursor) {
         mMyOwnEventsRecyclerAdapter.replaceData(cursor);
         if (cursor != null) mFragmentManagementListener.showContent();

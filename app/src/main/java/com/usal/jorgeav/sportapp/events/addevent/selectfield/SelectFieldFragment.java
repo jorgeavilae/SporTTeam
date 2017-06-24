@@ -102,6 +102,12 @@ public class SelectFieldFragment extends Fragment implements SelectFieldContract
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mFieldsAdapter.replaceData(null);
+    }
+
+    @Override
     public void showFields(Cursor cursor) {
         mFieldsAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();

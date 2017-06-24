@@ -100,6 +100,12 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mUsersAdapter.replaceData(null);
+    }
+
+    @Override
     public void showEventInvitationsSent(Cursor cursor) {
         mUsersAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();

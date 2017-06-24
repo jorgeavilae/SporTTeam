@@ -103,6 +103,12 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mEventsRecyclerAdapter.replaceData(null);
+    }
+
+    @Override
     public void showEvents(Cursor cursor) {
         mEventsRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();

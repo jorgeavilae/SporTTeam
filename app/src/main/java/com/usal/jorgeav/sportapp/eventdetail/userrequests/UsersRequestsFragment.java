@@ -151,6 +151,13 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mUsersRequestRecyclerAdapter.replaceData(null);
+        mUsersRejectedRecyclerAdapter.replaceData(null);
+    }
+
+    @Override
     public void showUsersRequests(Cursor cursor) {
         mUsersRequestRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();

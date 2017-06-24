@@ -84,6 +84,12 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mFieldsRecyclerAdapter.replaceData(null);
+    }
+
+    @Override
     public void showFields(Cursor cursor) {
         mFieldsRecyclerAdapter.replaceData(cursor);
         if (cursor != null) mFragmentManagementListener.showContent();
