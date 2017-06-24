@@ -58,6 +58,7 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
 
     String fieldSelectedId;
     Calendar myCalendar;
+    DatePickerDialog datePickerDialog;
     DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -67,6 +68,7 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
             newEventDate.setText(UtilesTime.calendarToDate(myCalendar.getTime()));
         }
     };
+    TimePickerDialog timePickerDialog;
     TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker timePicker, int hour, int minute) {
@@ -114,20 +116,21 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
         newEventDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatePickerDialog dialog = new DatePickerDialog(getActivityContext(), dateSetListener,
+                datePickerDialog = new DatePickerDialog(getActivityContext(), dateSetListener,
                         myCalendar.get(Calendar.YEAR),
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
-                dialog.show();
-                dialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                datePickerDialog.show();
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
             }
         });
 
         newEventTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new TimePickerDialog(getActivityContext(), timeSetListener, myCalendar
-                        .get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE), true).show();
+                timePickerDialog = new TimePickerDialog(getActivityContext(), timeSetListener, myCalendar
+                        .get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE), true);
+                timePickerDialog.show();
             }
         });
 
@@ -152,7 +155,7 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("New Event", this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -176,6 +179,13 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (datePickerDialog != null && datePickerDialog.isShowing()) datePickerDialog.dismiss();
+        if (timePickerDialog != null && timePickerDialog.isShowing()) timePickerDialog.dismiss();
     }
 
     @Override
