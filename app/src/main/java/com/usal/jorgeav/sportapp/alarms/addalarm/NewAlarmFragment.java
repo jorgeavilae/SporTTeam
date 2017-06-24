@@ -61,6 +61,8 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
 
     String fieldSelectedId;
     Calendar myCalendar;
+    DatePickerDialog datePickerDialogFrom;
+    DatePickerDialog datePickerDialogTo;
 
     public NewAlarmFragment() {
         // Required empty public constructor
@@ -101,7 +103,7 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
         newAlarmDateFrom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatePickerDialog dialog = new DatePickerDialog(
+                datePickerDialogFrom = new DatePickerDialog(
                         getActivityContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
@@ -118,9 +120,9 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
 
-                dialog.getDatePicker().setMinDate(System.currentTimeMillis());
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Borrar", new DialogInterface.OnClickListener() {
+                datePickerDialogFrom.getDatePicker().setMinDate(System.currentTimeMillis());
+                datePickerDialogFrom.setCanceledOnTouchOutside(true);
+                datePickerDialogFrom.setButton(DialogInterface.BUTTON_NEUTRAL, "Borrar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         myCalendar.setTimeInMillis(System.currentTimeMillis());
@@ -129,7 +131,7 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
                         newAlarmDateTo.setEnabled(false);
                     }
                 });
-                dialog.show();
+                datePickerDialogFrom.show();
             }
         });
 
@@ -137,7 +139,7 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
         newAlarmDateTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final DatePickerDialog dialog = new DatePickerDialog(
+                datePickerDialogTo = new DatePickerDialog(
                         getActivityContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
@@ -153,17 +155,17 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
 
-                dialog.getDatePicker().setMinDate(myCalendar.getTimeInMillis() + 1000*60*60*24);
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Borrar", new DialogInterface.OnClickListener() {
+                datePickerDialogTo.getDatePicker().setMinDate(myCalendar.getTimeInMillis() + 1000*60*60*24);
+                datePickerDialogTo.setCanceledOnTouchOutside(true);
+                datePickerDialogTo.setButton(DialogInterface.BUTTON_NEUTRAL, "Borrar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (!TextUtils.isEmpty(newAlarmDateTo.getText())) // myCalendar has been updated
-                            myCalendar.setTimeInMillis(dialog.getDatePicker().getMinDate() - 1000*60*60*24);
+                            myCalendar.setTimeInMillis(datePickerDialogTo.getDatePicker().getMinDate() - 1000*60*60*24);
                         newAlarmDateTo.setText("");
                     }
                 });
-                dialog.show();
+                datePickerDialogTo.show();
             }
         });
 
@@ -213,6 +215,13 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (datePickerDialogFrom != null && datePickerDialogFrom.isShowing()) datePickerDialogFrom.dismiss();
+        if (datePickerDialogTo != null && datePickerDialogTo.isShowing()) datePickerDialogTo.dismiss();
     }
 
     @Override
