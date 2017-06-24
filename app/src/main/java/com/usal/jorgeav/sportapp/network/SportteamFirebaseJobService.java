@@ -26,6 +26,18 @@ public class SportteamFirebaseJobService extends JobService {
      */
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
+        /* Avisar al usuario cuando:
+         *  - Recibe peticion de amistad
+         *  - Contestan peticion de amistad enviada por el (aceptan o rechazan)
+         *
+         *  - Recibe invitacion a evento
+         *  - Contestan peticion a evento enviada por el (aceptan o rechazan)
+         *
+         *  - Se completa un evento al que asisto
+         *  - Se cambia un evento al que asisto
+         *
+         *  - Se crea un evento que coincide con alguna de mis alarmas
+         */
         return false;
     }
 

@@ -35,7 +35,7 @@ public class SportteamSyncUtils {
     }
 
     /**
-     * Schedules a repeating sync of Sunshine's weather data using FirebaseJobDispatcher.
+     * Schedules a repeating sync of Users notification using FirebaseJobDispatcher.
      * @param context Context used to create the GooglePlayDriver that powers the
      *                FirebaseJobDispatcher
      */
