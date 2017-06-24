@@ -139,8 +139,8 @@ public final class SportteamLoader {
     }
 
 
-    public static final int LOADER_USERS_REQUESTS_ID = 5100;
-    public static CursorLoader cursorLoaderUsersForEventRequests(Context context, String eventId) {
+    public static final int LOADER_USERS_REQUESTS_RECEIVED_ID = 5100;
+    public static CursorLoader cursorLoaderUsersForEventRequestsReceived(Context context, String eventId) {
         // Return user data for requests received in eventId
         return new CursorLoader(
                 context,
@@ -148,6 +148,17 @@ public final class SportteamLoader {
                 SportteamContract.UserEntry.USER_COLUMNS,
                 SportteamContract.EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " = ? ",
                 new String[]{eventId},
+                SportteamContract.EventRequestsEntry.DATE_TABLE_PREFIX + " ASC");
+    }
+    public static final int LOADER_EVENT_REQUESTS_SENT_ID = 5200;
+    public static CursorLoader cursorLoaderEventsForEventRequestsSent(Context context, String myUserId) {
+        // Return event data for event requests sent by myUserId
+        return new CursorLoader(
+                context,
+                SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_EVENT_URI,
+                SportteamContract.EventEntry.EVENT_COLUMNS,
+                SportteamContract.EventRequestsEntry.SENDER_ID_TABLE_PREFIX + " = ? ",
+                new String[]{myUserId},
                 SportteamContract.EventRequestsEntry.DATE_TABLE_PREFIX + " ASC");
     }
 

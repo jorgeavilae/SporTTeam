@@ -29,6 +29,7 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVE
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS_PARTICIPATION_WITH_EVENT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS_PARTICIPATION_WITH_USER;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS_REQUESTS;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS_REQUESTS_WITH_EVENT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS_REQUESTS_WITH_USER;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENT_INVITATIONS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENT_INVITATIONS_WITH_EVENT;
@@ -76,6 +77,7 @@ public class SportteamProvider extends ContentProvider {
     public static final int CODE_EVENT_INVITATIONS_WITH_EVENT = 820;
     public static final int CODE_EVENTS_REQUESTS = 900;
     public static final int CODE_EVENTS_REQUESTS_WITH_USER = 910;
+    public static final int CODE_EVENTS_REQUESTS_WITH_EVENT = 920;
 
     public static final int CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND = 1010;
     public static final int CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT = 1020;
@@ -125,6 +127,8 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, PATH_EVENTS_REQUESTS, CODE_EVENTS_REQUESTS);
         // This URI is content://com.usal.jorgeav.sportapp/eventRequests_user/
         matcher.addURI(authority, PATH_EVENTS_REQUESTS_WITH_USER, CODE_EVENTS_REQUESTS_WITH_USER);
+        // This URI is content://com.usal.jorgeav.sportapp/eventRequests_event/
+        matcher.addURI(authority, PATH_EVENTS_REQUESTS_WITH_EVENT, CODE_EVENTS_REQUESTS_WITH_EVENT);
 
         // This URI is content://com.usal.jorgeav.sportapp/myEvent_friendUser/
         matcher.addURI(authority, PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND, CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND);
@@ -210,6 +214,7 @@ public class SportteamProvider extends ContentProvider {
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                     getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI, null);
+                    getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_EVENT_URI, null);
                 }
                 return rowsInserted;
             default:
@@ -270,6 +275,7 @@ public class SportteamProvider extends ContentProvider {
                 count = db.delete(TABLE_EVENTS_REQUESTS, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(UserEntry.CONTENT_USER_RELATION_EVENT_URI, null);
                 getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_EVENT_URI, null);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -345,6 +351,7 @@ public class SportteamProvider extends ContentProvider {
                 if ( _id > 0 ) returnUri = EventRequestsEntry.buildEventRequestsUriWith(_id);
                 getContext().getContentResolver().notifyChange(UserEntry.CONTENT_USER_RELATION_EVENT_URI, null);
                 getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_EVENT_URI, null);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI, null);
                 break;
             default:
@@ -532,6 +539,16 @@ public class SportteamProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
+            case CODE_EVENTS_REQUESTS_WITH_EVENT:
+                builder.setTables(EventRequestsEntry.TABLES_EVENTS_REQUESTS_JOIN_EVENT);
+                cursor = builder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
             case CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND:
                 builder.setTables(JoinQueryEntries.TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
@@ -644,6 +661,7 @@ public class SportteamProvider extends ContentProvider {
             case CODE_EVENTS_REQUESTS:
                 count = db.update(TABLE_EVENTS_REQUESTS, values, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI, null);
+                getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_EVENT_URI, null);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

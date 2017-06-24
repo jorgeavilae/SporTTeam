@@ -583,6 +583,8 @@ public final class SportteamContract {
     public static final String PATH_EVENTS_REQUESTS = "eventRequests";
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_EVENTS_REQUESTS_WITH_USER = "eventRequests_user";
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_EVENTS_REQUESTS_WITH_EVENT = "eventRequests_event";
     /* Used internally as the name of our event requests table. */
     public static final String TABLE_EVENTS_REQUESTS = "eventRequest";
     /* Inner class that defines the table contents of the eventRequest table
@@ -597,6 +599,10 @@ public final class SportteamContract {
         /* The base CONTENT_URI used to query the eventRequest table with user table from the content provider */
         public static final Uri CONTENT_EVENTS_REQUESTS_WITH_USER_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_EVENTS_REQUESTS_WITH_USER)
+                .build();
+        /* The base CONTENT_URI used to query the eventRequest table with event table from the content provider */
+        public static final Uri CONTENT_EVENTS_REQUESTS_WITH_EVENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_EVENTS_REQUESTS_WITH_EVENT)
                 .build();
 
         /* Column names */
@@ -627,6 +633,10 @@ public final class SportteamContract {
         public static final String TABLES_EVENTS_REQUESTS_JOIN_USER =
                 TABLE_EVENTS_REQUESTS + " INNER JOIN " + TABLE_USER + " ON "
                     + EventRequestsEntry.SENDER_ID_TABLE_PREFIX + " = " + UserEntry.USER_ID_TABLE_PREFIX;
+        /* Join for CONTENT_EVENTS_REQUESTS_WITH_EVENT_URI */
+        public static final String TABLES_EVENTS_REQUESTS_JOIN_EVENT =
+                TABLE_EVENTS_REQUESTS + " INNER JOIN " + TABLE_EVENT + " ON "
+                        + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " = " + EventEntry.EVENT_ID_TABLE_PREFIX;
 
         /* URI for one event request */
         public static Uri buildEventRequestsUriWith(long id) {

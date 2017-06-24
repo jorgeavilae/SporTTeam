@@ -43,7 +43,7 @@ public class UsersRequestsPresenter implements UsersRequestsContract.Presenter, 
 
     @Override
     public void loadUsersRequests(LoaderManager loaderManager, Bundle b) {
-        loaderManager.initLoader(SportteamLoader.LOADER_USERS_REQUESTS_ID, b, this);
+        loaderManager.initLoader(SportteamLoader.LOADER_USERS_REQUESTS_RECEIVED_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
     }
 
@@ -51,9 +51,9 @@ public class UsersRequestsPresenter implements UsersRequestsContract.Presenter, 
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String eventId = args.getString(UsersRequestsFragment.BUNDLE_EVENT_ID);
         switch (id) {
-            case SportteamLoader.LOADER_USERS_REQUESTS_ID:
+            case SportteamLoader.LOADER_USERS_REQUESTS_RECEIVED_ID:
                 return SportteamLoader
-                        .cursorLoaderUsersForEventRequests(mUsersRequestsView.getActivityContext(), eventId);
+                        .cursorLoaderUsersForEventRequestsReceived(mUsersRequestsView.getActivityContext(), eventId);
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
                 return SportteamLoader
                         .cursorLoaderEventParticipants(mUsersRequestsView.getActivityContext(), eventId, false);
@@ -64,7 +64,7 @@ public class UsersRequestsPresenter implements UsersRequestsContract.Presenter, 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
-            case SportteamLoader.LOADER_USERS_REQUESTS_ID:
+            case SportteamLoader.LOADER_USERS_REQUESTS_RECEIVED_ID:
                 mUsersRequestsView.showUsersRequests(data);
                 break;
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
@@ -76,7 +76,7 @@ public class UsersRequestsPresenter implements UsersRequestsContract.Presenter, 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
-            case SportteamLoader.LOADER_USERS_REQUESTS_ID:
+            case SportteamLoader.LOADER_USERS_REQUESTS_RECEIVED_ID:
                 mUsersRequestsView.showUsersRequests(null);
                 break;
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:

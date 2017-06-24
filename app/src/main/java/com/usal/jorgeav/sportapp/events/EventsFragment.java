@@ -17,6 +17,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
+import com.usal.jorgeav.sportapp.events.eventrequest.EventRequestsFragment;
 import com.usal.jorgeav.sportapp.events.searchevent.SearchEventsFragment;
 
 import butterknife.BindView;
@@ -31,6 +32,8 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
 
     @BindView(R.id.events_create_button)
     Button eventsCreateButton;
+    @BindView(R.id.events_requests_button)
+    Button eventsRequestsButton;
     @BindView(R.id.events_search_button)
     Button eventsSearchButton;
     EventsAdapter mMyOwnEventsRecyclerAdapter;
@@ -75,6 +78,13 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
             @Override
             public void onClick(View view) {
                 Fragment fragment = NewEventFragment.newInstance();
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
+        });
+        eventsRequestsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = EventRequestsFragment.newInstance();
                 mFragmentManagementListener.initFragment(fragment, true);
             }
         });
