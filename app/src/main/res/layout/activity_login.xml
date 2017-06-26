@@ -6,7 +6,7 @@
     android:fitsSystemWindows="true"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context="com.usal.jorgeav.sportapp.LoginActivity">
+    tools:context="com.usal.jorgeav.sportapp.mainactivities.LoginActivity">
 
     <!-- Login progress -->
     <ProgressBar

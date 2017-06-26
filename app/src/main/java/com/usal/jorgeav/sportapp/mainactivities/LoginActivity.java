@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp;
+package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.NewUserActivity;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
@@ -181,6 +182,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     public void loadMyProfile() {
         deleteContentProvider();
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
         finish();
     }
 

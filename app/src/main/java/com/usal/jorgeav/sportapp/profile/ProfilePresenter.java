@@ -74,6 +74,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
         }
     }
 
+    //todo cambiar null por algo como limpiarUI
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {

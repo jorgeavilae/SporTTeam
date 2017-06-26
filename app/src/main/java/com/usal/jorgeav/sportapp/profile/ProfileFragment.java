@@ -20,12 +20,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.GlideApp;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
+import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
@@ -260,6 +260,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     @Override
     public void showUserImage(String image) {
         // TODO: 21/06/2017 buscar la imagen en almacenamiento y si no se descarga
+        if (!this.getActivity().isDestroyed())
         GlideApp.with(this.getActivity())
                 .load(image)
                 .error(R.drawable.profile_picture_placeholder)

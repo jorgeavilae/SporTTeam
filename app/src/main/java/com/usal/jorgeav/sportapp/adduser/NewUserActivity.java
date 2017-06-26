@@ -38,12 +38,12 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.GlideApp;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.yalantis.ucrop.UCrop;
@@ -382,6 +382,11 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     public void retrieveSportsSelected(List<Sport> sportsSelected) {
         this.sports.clear();
         this.sports.addAll(sportsSelected);
+    }
+
+    @Override
+    public void startMainFragment() {
+
     }
 
     @Override

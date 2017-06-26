@@ -18,14 +18,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.usal.jorgeav.sportapp.ActivityContracts;
-import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
+import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
+import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import java.util.Locale;
@@ -259,20 +259,20 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
     @Override
     public void showEventId(String id) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewEventId.setText(id);
     }
 
     @Override
     public void showEventSport(String sport) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewEventSport.setText(sport);
 
     }
 
     @Override
     public void showEventPlace(final String place, final String sport) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.buttonEventPlace.setText(place);
         buttonEventPlace.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,20 +285,20 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
 
     @Override
     public void showEventName(String name) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewEventName.setText(name);
     }
 
     @Override
     public void showEventDate(String date) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewEventDate.setText(date);
 
     }
 
     @Override
     public void showEventOwner(String owner) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewEventOwner.setText(owner);
 
     }
@@ -306,7 +306,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void showEventTotalPlayers(int totalPlayers) {
         if(totalPlayers > -1) {
-            ((MainActivity) getActivity()).showContent();
+            ((BaseActivity) getActivity()).showContent();
             this.textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d", totalPlayers));
         }
 
@@ -317,7 +317,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
         if(emptyPlayers > -1) {
             if (mRelation == DetailEventPresenter.RELATION_TYPE_NONE && emptyPlayers == 0)
                 buttonSendRequest.setEnabled(false);
-            ((MainActivity) getActivity()).showContent();
+            ((BaseActivity) getActivity()).showContent();
             this.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));
         }
     }

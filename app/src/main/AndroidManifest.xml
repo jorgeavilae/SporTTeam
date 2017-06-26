@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".mainactivities.ProfileActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
@@ -29,6 +29,27 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".mainactivities.EventsActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".mainactivities.FriendsActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".mainactivities.AlarmsActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".mainactivities.FieldsActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <provider
             android:name=".data.provider.SportteamProvider"
             android:authorities="com.usal.jorgeav.sportapp"
@@ -36,21 +57,21 @@
 
         <!-- https://stackoverflow.com/questions/10530760/android-stop-recreating-the-activity-on-orientation-change -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".mainactivities.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".mainactivities.BaseActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.usal.jorgeav.sportapp.MainActivity" />
+                android:value="com.usal.jorgeav.sportapp.mainactivities.BaseActivity" />
         </activity>
         <activity android:name=".adduser.NewUserActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".mainactivities.BaseActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.usal.jorgeav.sportapp.MainActivity" />
+                android:value="com.usal.jorgeav.sportapp.mainactivities.BaseActivity" />
         </activity>
 
         <!--This is required for immediate syncs -->

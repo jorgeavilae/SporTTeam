@@ -16,12 +16,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.usal.jorgeav.sportapp.ActivityContracts;
-import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
+import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
+import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Locale;
@@ -124,7 +124,7 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     @Override
     public void showAlarmId(String id) {
         if (id != null) {
-            ((MainActivity) getActivity()).showContent();
+            ((BaseActivity) getActivity()).showContent();
             this.textViewAlarmId.setText(id);
         }
     }
@@ -132,7 +132,7 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     @Override
     public void showAlarmSport(String sport) {
         if (sport != null) {
-            ((MainActivity) getActivity()).showContent();
+            ((BaseActivity) getActivity()).showContent();
             this.textViewAlarmSport.setText(sport);
         }
 
@@ -141,7 +141,7 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     @Override
     public void showAlarmPlace(final String place, final String sport) {
         if (place != null && sport != null) {
-            ((MainActivity) getActivity()).showContent();
+            ((BaseActivity) getActivity()).showContent();
             this.buttonAlarmPlace.setText(place);
             buttonAlarmPlace.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -156,7 +156,7 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     @Override
     public void showAlarmDate(Long dateFrom, Long dateTo) {
         if (dateFrom != null && dateFrom > 0) {
-            ((MainActivity) getActivity()).showContent();
+            ((BaseActivity) getActivity()).showContent();
             this.textViewAlarmDate.setText(
                     UtilesTime.millisToDateTimeString(dateFrom));
         }
@@ -168,7 +168,7 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     @Override
     public void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo) {
         if (totalPlayersFrom != null && totalPlayersFrom > -1) {
-            ((MainActivity) getActivity()).showContent();
+            ((BaseActivity) getActivity()).showContent();
             this.textViewAlarmTotal.setText(String.format(Locale.getDefault(),
                     "%2d", totalPlayersFrom));
         }
@@ -181,7 +181,7 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     @Override
     public void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo) {
         if (emptyPlayersFrom != null && emptyPlayersFrom > -1) {
-            ((MainActivity) getActivity()).showContent();
+            ((BaseActivity) getActivity()).showContent();
             this.textViewAlarmEmpty.setText(String.format(Locale.getDefault(),
                     "%2d", emptyPlayersFrom));
         }

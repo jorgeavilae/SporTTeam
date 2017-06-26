@@ -11,10 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.usal.jorgeav.sportapp.ActivityContracts;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.AddSportsAdapter;
 import com.usal.jorgeav.sportapp.data.Sport;
+import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
 import java.util.ArrayList;
 import java.util.List;

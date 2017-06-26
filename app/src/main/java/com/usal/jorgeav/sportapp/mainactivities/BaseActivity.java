@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp;
+package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -24,24 +24,20 @@ import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.usal.jorgeav.sportapp.alarms.AlarmsFragment;
+import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
-import com.usal.jorgeav.sportapp.events.EventsFragment;
-import com.usal.jorgeav.sportapp.fields.FieldsFragment;
-import com.usal.jorgeav.sportapp.friends.FriendsFragment;
 import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity
+public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ActivityContracts.ActionBarIconManagement,
         ActivityContracts.FragmentManagement {
-    private final static String TAG = MainActivity.class.getSimpleName();
+    private final static String TAG = BaseActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
 
     @BindView(R.id.toolbar)
@@ -91,16 +87,16 @@ public class MainActivity extends AppCompatActivity
                     // User is signed in
                     Log.d(TAG, "userID: "+fuser.getUid());
 
-                    SportteamSyncUtils.initialize(MainActivity.this);
-//                    FirebaseSync.syncFirebaseDatabase();
-
                     if(mDisplayedFragment == null)
-                        onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
+                        startMainFragment();
                 } else {
                     // User is signed out
+                    Log.d(TAG, "userID: null");
                     FirebaseSync.detachListeners();
-                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    finish();
                 }
             }
         };
@@ -194,28 +190,36 @@ public class MainActivity extends AppCompatActivity
         mNavigationView.setCheckedItem(id);
         Log.d(TAG, "onNavigationItemSelected: "+item.getTitle());
 
-        String userId = null;
-        try { userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        } catch (NullPointerException e) { e.printStackTrace(); }
-
-        if (id == R.id.nav_profile && userId != null){
-            initFragment(ProfileFragment.newInstance(userId), false);
-        } else if (id == R.id.nav_events) {
-            initFragment(EventsFragment.newInstance(), false);
-        } else if (id == R.id.nav_friends) {
-            initFragment(FriendsFragment.newInstance(), false);
-        } else if (id == R.id.nav_alarms) {
-            initFragment(AlarmsFragment.newInstance(), false);
-        } else if (id == R.id.nav_fields) {
-            initFragment(FieldsFragment.newInstance(), false);
-        } else if (id == R.id.nav_sign_out) {
+        if (id == R.id.nav_sign_out) {
             getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
             mDisplayedFragment = null;
             mAuth.signOut();
-        }
+        } else {
+            Intent intent;
+            switch (id) {
+                default: case R.id.nav_profile:
+                    intent = new Intent(this, ProfileActivity.class); break;
+                case R.id.nav_events:
+                    intent = new Intent(this, EventsActivity.class); break;
+                case R.id.nav_friends:
+                    intent = new Intent(this, FriendsActivity.class); break;
+                case R.id.nav_alarms:
+                    intent = new Intent(this, AlarmsActivity.class); break;
+                case R.id.nav_fields:
+                    intent = new Intent(this, FieldsActivity.class); break;
+            }
 
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void startMainFragment() {
+        // Activities must implement this
     }
 
     @Override
@@ -308,21 +312,25 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart: attach listeners");
         mAuth.addAuthStateListener(mAuthListener);
+        SportteamSyncUtils.initialize(this);
+//        FirebaseSync.syncFirebaseDatabase();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         if (mAuthListener != null) {
+            Log.d(TAG, "onStop: detach listeners");
             mAuth.removeAuthStateListener(mAuthListener);
+            FirebaseSync.detachListeners();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FirebaseSync.detachListeners();
     }
 
     @Override

@@ -11,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.usal.jorgeav.sportapp.ActivityContracts;
-import com.usal.jorgeav.sportapp.MainActivity;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
+import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 
 import java.util.Locale;
 
@@ -107,45 +107,45 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
 
     @Override
     public void showFieldId(String id) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewFieldId.setText(id);
     }
 
     @Override
     public void showFieldName(String name) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewFieldName.setText(name);
     }
 
     @Override
     public void showFieldAddress(String address) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewFieldAddress.setText(address);
     }
 
     @Override
     public void showFieldRating(Float rating) {
         if (rating > -1) {
-            ((MainActivity) getActivity()).showContent();
+            ((BaseActivity) getActivity()).showContent();
             this.textViewFieldRating.setText(String.format(Locale.getDefault(), "%2.2f", rating));
         }
     }
 
     @Override
     public void showFieldSport(String sport) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewFieldSport.setText(sport);
     }
 
     @Override
     public void showFieldOpeningTime(String opening) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewFieldOpening.setText(opening);
     }
 
     @Override
     public void showFieldClosingTime(String closing) {
-        ((MainActivity)getActivity()).showContent();
+        ((BaseActivity)getActivity()).showContent();
         this.textViewFieldClosing.setText(closing);
     }
 
