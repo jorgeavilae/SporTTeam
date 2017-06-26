@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
+import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Calendar;
@@ -30,7 +31,7 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class NewAlarmFragment extends Fragment implements NewAlarmContract.View, SelectFieldFragment.OnFieldSelected  {
+public class NewAlarmFragment extends Fragment implements NewAlarmContract.View  {
     private static final String TAG = NewAlarmFragment.class.getSimpleName();
     private static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
 
@@ -59,7 +60,6 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
     @BindView(R.id.new_alarm_add_alarm)
     Button newAlarmAddButton;
 
-    String fieldSelectedId;
     Calendar myCalendar;
     DatePickerDialog datePickerDialogFrom;
     DatePickerDialog datePickerDialogTo;
@@ -91,11 +91,10 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         newAlarmSport.setAdapter(adapter);
 
-        final SelectFieldFragment.OnFieldSelected listener = this;
         newAlarmFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = SelectFieldFragment.newInstance(getSportSelected(), listener);
+                Fragment fragment = SelectFieldFragment.newInstance(getSportSelected());
                 mFragmentManagementListener.initFragment(fragment, true);
             }
         });
@@ -174,7 +173,7 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
             public void onClick(View view) {
                 mNewAlarmPresenter.addAlarm(
                         newAlarmSport.getSelectedItem().toString(),
-                        fieldSelectedId,
+                        ((AlarmsActivity)getActivity()).newAlarmFieldSelected,
                         newAlarmCity.getText().toString(),
                         newAlarmDateFrom.getText().toString(),
                         newAlarmDateTo.getText().toString(),
@@ -225,16 +224,8 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(BUNDLE_FIELD_ID, fieldSelectedId);
-    }
-
-    @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_FIELD_ID))
-            fieldSelectedId = savedInstanceState.getString(BUNDLE_FIELD_ID);
 
         if (!TextUtils.isEmpty(newAlarmDateFrom.getText().toString()))
             newAlarmDateTo.setEnabled(true);
@@ -252,10 +243,5 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View,
 
     private String getSportSelected() {
         return newAlarmSport.getSelectedItem().toString();
-    }
-
-    @Override
-    public void retrieveFieldSelected(String fieldId) {
-        fieldSelectedId = fieldId;
     }
 }

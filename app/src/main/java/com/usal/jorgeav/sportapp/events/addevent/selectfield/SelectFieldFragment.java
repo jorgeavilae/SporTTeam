@@ -3,7 +3,6 @@ package com.usal.jorgeav.sportapp.events.addevent.selectfield;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,8 +30,6 @@ public class SelectFieldFragment extends Fragment implements SelectFieldContract
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
     SelectFieldContract.Presenter mSelectFieldPresenter;
-    private OnFieldSelected mOnFieldSelectedListener;
-    private String mFieldSelected;
     FieldsAdapter mFieldsAdapter;
 
     @BindView(R.id.recycler_list)
@@ -42,16 +39,11 @@ public class SelectFieldFragment extends Fragment implements SelectFieldContract
         // Required empty public constructor
     }
 
-    private void setmOnFieldSelectedListener(OnFieldSelected mOnFieldSelectedListener) {
-        this.mOnFieldSelectedListener = mOnFieldSelectedListener;
-    }
-
-    public static SelectFieldFragment newInstance(String sportId, @NonNull OnFieldSelected listener) {
+    public static SelectFieldFragment newInstance(String sportId) {
         Bundle args = new Bundle();
         args.putString(BUNDLE_SPORT_ID, sportId);
         SelectFieldFragment fragment = new SelectFieldFragment();
         fragment.setArguments(args);
-        fragment.setmOnFieldSelectedListener(listener);
         return fragment;
     }
 
@@ -98,14 +90,12 @@ public class SelectFieldFragment extends Fragment implements SelectFieldContract
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
-        mOnFieldSelectedListener = null;
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mFieldsAdapter.replaceData(null);
-        mOnFieldSelectedListener.retrieveFieldSelected(mFieldSelected);
     }
 
     @Override
@@ -126,7 +116,8 @@ public class SelectFieldFragment extends Fragment implements SelectFieldContract
 
     @Override
     public void onFieldClick(String fieldId, String sportId) {
-        mFieldSelected = fieldId;
+        if (getActivity() instanceof OnFieldSelected)
+            ((OnFieldSelected) getActivity()).retrieveFieldSelected(fieldId);
         Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
         mFragmentManagementListener.initFragment(newFragment, true);
     }

@@ -19,6 +19,7 @@ import android.widget.TimePicker;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
+import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Calendar;
@@ -30,7 +31,7 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class NewEventFragment extends Fragment implements NewEventContract.View, SelectFieldFragment.OnFieldSelected  {
+public class NewEventFragment extends Fragment implements NewEventContract.View  {
     public static final String TAG = NewEventFragment.class.getSimpleName();
 
     NewEventContract.Presenter mNewEventPresenter;
@@ -104,11 +105,10 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         newEventSport.setAdapter(adapter);
 
-        final SelectFieldFragment.OnFieldSelected listener = this;
         newEventFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = SelectFieldFragment.newInstance(getSportSelected(), listener);
+                Fragment fragment = SelectFieldFragment.newInstance(getSportSelected());
                 mFragmentManagementListener.initFragment(fragment, true);
             }
         });
@@ -139,7 +139,7 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
             public void onClick(View view) {
                 mNewEventPresenter.addEvent(
                         newEventSport.getSelectedItem().toString(),
-                        fieldSelectedId,
+                        ((EventsActivity)getActivity()).newEventFieldSelected,
                         newEventName.getText().toString(),
                         newEventCity.getText().toString(),
                         newEventDate.getText().toString(),
@@ -200,10 +200,5 @@ public class NewEventFragment extends Fragment implements NewEventContract.View,
 
     private String getSportSelected() {
         return newEventSport.getSelectedItem().toString();
-    }
-
-    @Override
-    public void retrieveFieldSelected(String fieldId) {
-        fieldSelectedId = fieldId;
     }
 }

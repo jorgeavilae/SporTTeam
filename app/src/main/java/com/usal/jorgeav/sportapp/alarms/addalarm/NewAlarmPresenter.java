@@ -11,6 +11,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -91,7 +92,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter {
         }
 
         FirebaseActions.addAlarm(a, FirebaseAuth.getInstance().getCurrentUser().getUid());
-
+        ((AlarmsActivity)mNewAlarmView.getActivityContext()).newAlarmFieldSelected = null;
         ((AppCompatActivity)mNewAlarmView.getActivityContext()).onBackPressed();
     }
 

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?android:attr/actionBarSize"
     tools:context="com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment">
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/textView14"
@@ -251,4 +254,4 @@
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="206dp" />
 
-</android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout></ScrollView>

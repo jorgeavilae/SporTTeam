@@ -10,6 +10,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -39,7 +40,7 @@ public class NewEventPresenter implements NewEventContract.Presenter {
                     Integer.valueOf(total), Integer.valueOf(total), new HashMap<String, Boolean>());
 
             FirebaseActions.addEvent(event);
-
+            ((EventsActivity)mNewEventView.getActivityContext()).newEventFieldSelected = null;
             ((AppCompatActivity)mNewEventView.getActivityContext()).onBackPressed();
         } else
             Toast.makeText(mNewEventView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
