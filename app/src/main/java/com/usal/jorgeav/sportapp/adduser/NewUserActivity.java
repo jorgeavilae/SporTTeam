@@ -392,7 +392,6 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         transaction.replace(R.id.new_user_content, fragment);
         if (isOnBackStack) transaction.addToBackStack(null);
         transaction.commit();
-
     }
 
     @Override

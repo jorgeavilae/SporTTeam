@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
  */
 
 public class NewEventFragment extends Fragment implements NewEventContract.View, SelectFieldFragment.OnFieldSelected  {
-    private static final String TAG = NewEventFragment.class.getSimpleName();
+    public static final String TAG = NewEventFragment.class.getSimpleName();
 
     NewEventContract.Presenter mNewEventPresenter;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;

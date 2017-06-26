@@ -98,13 +98,14 @@ public class SelectFieldFragment extends Fragment implements SelectFieldContract
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
-        mOnFieldSelectedListener.retrieveFieldSelected(mFieldSelected);
+        mOnFieldSelectedListener = null;
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mFieldsAdapter.replaceData(null);
+        mOnFieldSelectedListener.retrieveFieldSelected(mFieldSelected);
     }
 
     @Override
