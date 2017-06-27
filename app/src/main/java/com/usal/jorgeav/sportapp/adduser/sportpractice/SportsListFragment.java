@@ -2,7 +2,6 @@ package com.usal.jorgeav.sportapp.adduser.sportpractice;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,7 +32,6 @@ public class SportsListFragment extends Fragment {
 
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
-    private OnSportsSelected mOnSportsSelectedListener;
     private AddSportsAdapter mSportAdapter;
 
     @BindView(R.id.recycler_list)
@@ -43,13 +41,8 @@ public class SportsListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void setmOnSportsSelectedListener(OnSportsSelected mOnSportsSelectedListener) {
-        this.mOnSportsSelectedListener = mOnSportsSelectedListener;
-    }
-
-    public static SportsListFragment newInstance(ArrayList<Sport> sportsList, @NonNull OnSportsSelected listener) {
+    public static SportsListFragment newInstance(ArrayList<Sport> sportsList) {
         SportsListFragment fragment = new SportsListFragment();
-        fragment.setmOnSportsSelectedListener(listener);
         if (sportsList != null) {
             Bundle args = new Bundle();
             args.putParcelableArrayList(BUNDLE_INSTANCE_SPORT_LIST, sportsList);
@@ -76,7 +69,12 @@ public class SportsListFragment extends Fragment {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
-            // TODO: 27/06/2017
+            if (getActivity() instanceof OnSportsSelected) {
+                ((OnSportsSelected) getActivity()).retrieveSportsSelected(mSportAdapter.getDataAsArrayList());
+                getActivity().onBackPressed();
+            } else {
+                Log.e(TAG, "onOptionsItemSelected: Activity does not implement OnSportsSelected", new java.lang.InstantiationException());
+            }
             return true;
         }
         return false;
@@ -146,8 +144,6 @@ public class SportsListFragment extends Fragment {
         super.onDetach();
         mFragmentManagementListener = null;
         mActionBarIconManagementListener = null;
-        //Todo esto es null despues de dos rotation
-        mOnSportsSelectedListener.retrieveSportsSelected(mSportAdapter.getDataAsArrayList());
     }
 
     @Override

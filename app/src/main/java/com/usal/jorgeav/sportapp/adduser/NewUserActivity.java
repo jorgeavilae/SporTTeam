@@ -65,7 +65,8 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class NewUserActivity extends AppCompatActivity implements ActivityContracts.FragmentManagement, SportsListFragment.OnSportsSelected{
+public class NewUserActivity extends AppCompatActivity implements ActivityContracts.FragmentManagement,
+        SportsListFragment.OnSportsSelected {
     private final static String TAG = NewUserActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
     private static final int RC_PERMISSIONS = 3;
@@ -120,7 +121,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
 
         sports = new ArrayList<Sport>();
 
-        final SportsListFragment slf = SportsListFragment.newInstance(null, this);
+        final SportsListFragment slf = SportsListFragment.newInstance(null);
         newUserAddSportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
