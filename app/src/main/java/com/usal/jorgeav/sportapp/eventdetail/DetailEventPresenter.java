@@ -144,9 +144,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
                             SportteamContract.EventEntry.EVENT_ID + " = ? AND " + SportteamContract.EventEntry.OWNER + " = ?",
                             new String[]{mView.getEventID(), myUid},
                             null);
-                    if (cursorOwner != null && cursorOwner.getCount() > 0) {
+                    if (cursorOwner != null) {
+                        if(cursorOwner.getCount() > 0) {
+                            cursorOwner.close();
+                            return RELATION_TYPE_OWNER;
+                        }
                         cursorOwner.close();
-                        return RELATION_TYPE_OWNER;
                     }
 
                     //I have received an Invitation?
@@ -156,9 +159,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
                             SportteamContract.EventsInvitationEntry.EVENT_ID + " = ?",
                             new String[]{mView.getEventID()},
                             null);
-                    if (cursorReceiver != null && cursorReceiver.getCount() > 0) {
+                    if (cursorReceiver != null) {
+                        if(cursorReceiver.getCount() > 0) {
+                            cursorReceiver.close();
+                            return RELATION_TYPE_I_RECEIVE_INVITATION;
+                        }
                         cursorReceiver.close();
-                        return RELATION_TYPE_I_RECEIVE_INVITATION;
                     }
 
                     //I have sent a EventRequest?
@@ -168,9 +174,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
                             SportteamContract.EventRequestsEntry.SENDER_ID + " = ? AND " + SportteamContract.EventRequestsEntry.EVENT_ID + " = ?",
                             new String[]{myUid, mView.getEventID()},
                             null);
-                    if (cursorSender != null && cursorSender.getCount() > 0) {
+                    if (cursorSender != null) {
+                        if(cursorSender.getCount() > 0) {
+                            cursorSender.close();
+                            return RELATION_TYPE_I_SEND_REQUEST;
+                        }
                         cursorSender.close();
-                        return RELATION_TYPE_I_SEND_REQUEST;
                     }
 
                     //I assist
@@ -182,9 +191,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
                                     + SportteamContract.EventsParticipationEntry.PARTICIPATES + " = ?",
                             new String[]{mView.getEventID(), myUid, String.valueOf(1)},
                             null);
-                    if (cursorAssist != null && cursorAssist.getCount() > 0) {
+                    if (cursorAssist != null) {
+                        if(cursorAssist.getCount() > 0) {
+                            cursorAssist.close();
+                            return RELATION_TYPE_ASSISTANT;
+                        }
                         cursorAssist.close();
-                        return RELATION_TYPE_ASSISTANT;
                     }
 
                     //I don't assist
@@ -196,9 +208,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
                                     + SportteamContract.EventsParticipationEntry.PARTICIPATES + " = ?",
                             new String[]{mView.getEventID(), myUid, String.valueOf(0)},
                             null);
-                    if (cursorNotAssist != null && cursorNotAssist.getCount() > 0) {
+                    if (cursorNotAssist != null) {
+                        if(cursorNotAssist.getCount() > 0) {
+                            cursorNotAssist.close();
+                            return RELATION_TYPE_BLOCKED;
+                        }
                         cursorNotAssist.close();
-                        return RELATION_TYPE_BLOCKED;
                     }
 
                     //No relation

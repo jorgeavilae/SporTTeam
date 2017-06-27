@@ -381,6 +381,8 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     public void onResume() {
         super.onResume();
         mPresenter.registerUserRelationObserver();
+        /* https://stackoverflow.com/a/17063800/4235666 */
+        setMenuVisibility(true);
     }
 
     @Override

@@ -108,14 +108,15 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_FRIENDS,
+    @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_ME, RELATION_TYPE_NONE, RELATION_TYPE_FRIENDS,
             RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_REQUEST})
     @interface UserRelationType {}
     static final int RELATION_TYPE_ERROR = -1;
-    static final int RELATION_TYPE_NONE = 0;
-    static final int RELATION_TYPE_FRIENDS = 1;
-    static final int RELATION_TYPE_I_SEND_REQUEST = 2;
-    static final int RELATION_TYPE_I_RECEIVE_REQUEST = 3;
+    static final int RELATION_TYPE_ME = 0;
+    static final int RELATION_TYPE_NONE = 1;
+    static final int RELATION_TYPE_FRIENDS = 2;
+    static final int RELATION_TYPE_I_SEND_REQUEST = 3;
+    static final int RELATION_TYPE_I_RECEIVE_REQUEST = 4;
     @Override
     public void getRelationTypeBetweenThisUserAndI() {
         AsyncTask<Void, Void, Integer> task = new AsyncTask<Void, Void, Integer>() {
@@ -124,6 +125,9 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
                 try {
                     String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+                    //Me?
+                    if (myUid.equals(mUserView.getUserID())) return RELATION_TYPE_ME;
+
                     //Friends?
                     Cursor cursorFriends = mUserView.getActivityContext().getContentResolver().query(
                             SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI,
@@ -131,9 +135,12 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
                             SportteamContract.FriendsEntry.MY_USER_ID + " = ? AND " + SportteamContract.FriendsEntry.USER_ID + " = ?",
                             new String[]{myUid, mUserView.getUserID()},
                             null);
-                    if (cursorFriends != null && cursorFriends.getCount() > 0) {
+                    if (cursorFriends != null) {
+                        if(cursorFriends.getCount() > 0) {
+                            cursorFriends.close();
+                            return RELATION_TYPE_FRIENDS;
+                        }
                         cursorFriends.close();
-                        return RELATION_TYPE_FRIENDS;
                     }
 
                     //I have received a FriendRequest?
@@ -143,9 +150,12 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
                             SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND " + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
                             new String[]{mUserView.getUserID(), myUid},
                             null);
-                    if (cursorReceiver != null && cursorReceiver.getCount() > 0) {
+                    if (cursorReceiver != null) {
+                        if(cursorReceiver.getCount() > 0) {
+                            cursorReceiver.close();
+                            return RELATION_TYPE_I_RECEIVE_REQUEST;
+                        }
                         cursorReceiver.close();
-                        return RELATION_TYPE_I_RECEIVE_REQUEST;
                     }
 
                     //I have sent a FriendRequest?
@@ -155,9 +165,12 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
                             SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND " + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
                             new String[]{myUid, mUserView.getUserID()},
                             null);
-                    if (cursorSender != null && cursorSender.getCount() > 0) {
+                    if (cursorSender != null) {
+                        if(cursorSender.getCount() > 0) {
+                            cursorSender.close();
+                            return RELATION_TYPE_I_SEND_REQUEST;
+                        }
                         cursorSender.close();
-                        return RELATION_TYPE_I_SEND_REQUEST;
                     }
 
                     //No relation
