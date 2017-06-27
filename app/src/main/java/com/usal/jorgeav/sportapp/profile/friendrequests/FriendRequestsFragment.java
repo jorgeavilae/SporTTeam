@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -40,13 +42,25 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
+        mFriendRequestsPresenter = new FriendRequestsPresenter(this);
+        mUsersRecyclerAdapter = new UsersAdapter(null, this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
-
-        mFriendRequestsPresenter = new FriendRequestsPresenter(this);
-        mUsersRecyclerAdapter = new UsersAdapter(null, this);
 
         friendRequestsList.setAdapter(mUsersRecyclerAdapter);
         friendRequestsList.setHasFixedSize(true);

@@ -64,6 +64,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
     }
 
     public List<Sport> getDataAsArrayList() {
+        if (mDataset == null) return null;
         ArrayList<Sport> result = new ArrayList<>();
         for (Sport s : mDataset)
             if (s.getmLevel() > 0)

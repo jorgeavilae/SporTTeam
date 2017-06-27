@@ -1,6 +1,8 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.view.MenuItem;
 
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.alarms.AlarmsFragment;
@@ -21,6 +23,11 @@ public class AlarmsActivity extends BaseActivity implements SelectFieldFragment.
 
         initFragment(AlarmsFragment.newInstance(), false);
         mNavigationView.setCheckedItem(R.id.nav_alarms);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return item.getItemId() != R.id.nav_alarms && super.onNavigationItemSelected(item);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.view.MenuItem;
 
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
@@ -11,6 +13,7 @@ import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment
  */
 
 public class EventsActivity extends BaseActivity implements SelectFieldFragment.OnFieldSelected {
+    private final static String TAG = EventsActivity.class.getSimpleName();
 
     private static final String INSTANCE_NEW_EVENT_FIELD = "INSTANCE_NEW_EVENT_FIELD";
     public String newEventFieldSelected = null;
@@ -21,6 +24,11 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
 
         initFragment(EventsFragment.newInstance(), false);
         mNavigationView.setCheckedItem(R.id.nav_events);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return item.getItemId() != R.id.nav_events && super.onNavigationItemSelected(item);
     }
 
     @Override

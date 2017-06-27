@@ -12,7 +12,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -47,6 +50,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
+    Menu mMenu;
     @BindView(R.id.user_send_invitation)
     Button userSendInvitationButton;
     @BindView(R.id.user_add_friend)
@@ -84,8 +88,16 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mProfilePresenter = new ProfilePresenter(this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        mMenu = menu;
+        Log.d(TAG, "onCreateOptionsMenu: mMenu "+mMenu);
+        super.onCreateOptionsMenu(mMenu, inflater);
     }
 
     @Override
@@ -162,6 +174,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.View, S
          * Si yo sigo a this: Icono de siguiendo -> onClick: dejar de seguir
          * En otro caso: Icono de seguir? -> onClick: seguir
          */
+        mMenu.clear();
+        Log.d(TAG, "uiSetupForUserRelation: mMenu "+mMenu);
         switch (relation) {
             case ProfilePresenter.RELATION_TYPE_FRIENDS:
                 userAddFriendButton.setText("Borrar Amigo");

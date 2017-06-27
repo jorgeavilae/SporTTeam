@@ -10,7 +10,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -69,8 +73,31 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mPresenter = new DetailAlarmPresenter(this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_edit_delete, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_edit) {
+            Log.d(TAG, "onOptionsItemSelected: Edit");
+            // TODO: 27/06/2017
+            return true;
+        } else if (item.getItemId() == R.id.action_delete) {
+            Log.d(TAG, "onOptionsItemSelected: Delete");
+            // TODO: 27/06/2017
+            return true;
+        }
+        return false;
     }
 
     @Override

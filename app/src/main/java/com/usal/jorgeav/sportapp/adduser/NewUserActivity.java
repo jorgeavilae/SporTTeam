@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -181,6 +183,23 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
             }
         });
         showContent();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_ok, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_ok) {
+            Log.d(TAG, "onOptionsItemSelected: Ok");
+            // TODO: 27/06/2017
+            return true;
+        }
+        return false;
     }
 
     @Override

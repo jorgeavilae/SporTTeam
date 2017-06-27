@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,6 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
         mEventsPresenter = new EventsPresenter(this);
         mMyOwnEventsRecyclerAdapter = new EventsAdapter(null, this);
         mEventsParticipationRecyclerAdapter = new EventsAdapter(null, this);
-
     }
 
     @Override
@@ -102,6 +102,7 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated: ");
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
         mActionBarIconManagementListener.setToolbarAsNav();
         mEventsPresenter.loadEvents(getLoaderManager(), getArguments());

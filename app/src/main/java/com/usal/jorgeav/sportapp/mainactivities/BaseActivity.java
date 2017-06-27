@@ -161,33 +161,25 @@ public class BaseActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
-
-        try {
-            Log.d(TAG, "onOptionsItemSelected: mLoggeduser "
-                    + FirebaseAuth.getInstance().getCurrentUser().getUid());
-        } catch (NullPointerException e) { e.printStackTrace(); }
-
-        if (mToggle.onOptionsItemSelected(item)) {
-            Log.d(TAG, "toogle");
-            return true;
-        }
-        Log.d(TAG, "default");
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_settings) {
+            Log.d(TAG, "onOptionsItemSelected: Settings");
+            // TODO: 27/06/2017
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        mNavigationView.setCheckedItem(id);
         Log.d(TAG, "onNavigationItemSelected: "+item.getTitle());
 
         if (id == R.id.nav_sign_out) {
@@ -213,6 +205,7 @@ public class BaseActivity extends AppCompatActivity
             startActivity(intent);
             finish();
         }
+        mNavigationView.setCheckedItem(id);
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }

@@ -12,7 +12,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -43,6 +47,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
     private ActivityContracts.FragmentManagement mFragmentManagementListener;
 
+    Menu mMenu;
     @BindView(R.id.event_detail_id)
     TextView textViewEventId;
     @BindView(R.id.event_detail_sport)
@@ -86,8 +91,32 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mPresenter = new DetailEventPresenter(this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        mMenu = menu;
+        super.onCreateOptionsMenu(mMenu, inflater);
+        mMenu.clear();
+        inflater.inflate(R.menu.menu_edit_delete, mMenu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_edit) {
+            Log.d(TAG, "onOptionsItemSelected: Edit");
+            // TODO: 27/06/2017
+            return true;
+        } else if (item.getItemId() == R.id.action_delete) {
+            Log.d(TAG, "onOptionsItemSelected: Delete");
+            // TODO: 27/06/2017
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -148,6 +177,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_NONE:
+                mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Enviar peticion de entrada");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
@@ -159,6 +189,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
+                mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Cancelar peticion de entrada");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
@@ -178,6 +209,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION:
+                mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Contestar invitacion");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
@@ -202,6 +234,7 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_ASSISTANT:
+                mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Abandonar partido");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
@@ -221,11 +254,13 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_BLOCKED:
+                mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("No puedes asistir");
                 buttonSendRequest.setEnabled(false);
                 break;
             case DetailEventPresenter.RELATION_TYPE_ERROR:
+                mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Error");
                 break;

@@ -1,5 +1,8 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
+import android.support.annotation.NonNull;
+import android.view.MenuItem;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
@@ -20,5 +23,10 @@ public class ProfileActivity extends BaseActivity {
 
         initFragment(ProfileFragment.newInstance(userId), false);
         mNavigationView.setCheckedItem(R.id.nav_profile);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return item.getItemId() != R.id.nav_profile && super.onNavigationItemSelected(item);
     }
 }
