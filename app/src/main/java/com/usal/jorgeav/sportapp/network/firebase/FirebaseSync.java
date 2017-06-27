@@ -10,7 +10,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -24,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Jorge Avila on 14/06/2017.
@@ -32,6 +33,7 @@ import java.util.Map;
 public class FirebaseSync {
     public static final String TAG = FirebaseSync.class.getSimpleName();
 
+    private static final Executor executor = Executors.newSingleThreadExecutor();
     private static HashMap<DatabaseReference, ChildEventListener> listenerMap = new HashMap<>();
 
     // TODO: 16/06/2017 Las sincronizaciones que no se guarda el listener tienen que borrarse cuando se actualicen
@@ -74,9 +76,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS);
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
                     loadAProfile(dataSnapshot.getKey());
                     String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -87,7 +89,7 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
                 loadAProfile(dataSnapshot.getKey());
                 String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 ContentValues cvData = UtilesDataSnapshot.dataSnapshotFriendToContentValues(dataSnapshot, myUserID);
@@ -97,7 +99,7 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
                 String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String userId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
@@ -109,12 +111,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
         };
@@ -127,9 +129,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT);
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
                     loadAProfile(dataSnapshot.getKey());
 
@@ -141,12 +143,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
                 onChildAdded(dataSnapshot, s);
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
                 String senderId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String receiverId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
@@ -157,12 +159,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
         };
@@ -175,9 +177,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED);
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
                     loadAProfile(dataSnapshot.getKey());
 
@@ -189,12 +191,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
                 onChildAdded(dataSnapshot, s);
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
                 String receiverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String senderId = dataSnapshot.getKey();
                 Log.d(TAG, "onChildRemoved: sender "+senderId);
@@ -208,12 +210,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
         };
@@ -227,9 +229,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_CREATED);
 
-        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        myUserRef.addListenerForSingleValueEvent(new ExecutorValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     if(data.exists()) {
                         loadAnEvent(data.getKey());
@@ -242,7 +244,7 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
         });
@@ -254,9 +256,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
                 .child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS);
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
                     loadAProfile(dataSnapshot.getKey());
 
@@ -269,12 +271,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
                 onChildAdded(dataSnapshot, s);
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
                 String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
                 String senderId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
@@ -285,12 +287,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
         };
@@ -302,9 +304,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
                 .child(key + "/" + FirebaseDBContract.Event.INVITATIONS);
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
                     loadAProfile(dataSnapshot.getKey());
 
@@ -317,12 +319,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
                 onChildAdded(dataSnapshot, s);
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
                 String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
                 String userId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
@@ -333,12 +335,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
         };
@@ -352,9 +354,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION);
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
 
@@ -368,12 +370,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
                 onChildAdded(dataSnapshot, s);
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
                 String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String eventId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
@@ -385,12 +387,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
         };
@@ -403,9 +405,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS);
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
 
@@ -419,12 +421,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
                 onChildAdded(dataSnapshot, s);
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
                 String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String eventId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
@@ -435,12 +437,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
         };
@@ -453,9 +455,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_REQUESTS);
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
 
@@ -469,12 +471,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
                 onChildAdded(dataSnapshot, s);
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
                 String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String eventId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
@@ -486,12 +488,12 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
         };
@@ -505,9 +507,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
 
-        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        myUserRef.addListenerForSingleValueEvent(new ExecutorValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     if(data.exists()) {
                         Alarm a = UtilesDataSnapshot.dataSnapshotToAlarm(data);
@@ -521,7 +523,7 @@ public class FirebaseSync {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
         });
@@ -534,9 +536,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
         myUserRef.child(userID)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             User anUser = UtilesDataSnapshot.dataSnapshotToUser(dataSnapshot);
 
@@ -556,7 +558,7 @@ public class FirebaseSync {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelledExecutor(DatabaseError databaseError) {
 
                     }
                 });
@@ -569,9 +571,9 @@ public class FirebaseSync {
                 .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
 
         myUserRef.child(alarmId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             Alarm a = UtilesDataSnapshot.dataSnapshotToAlarm(dataSnapshot);
                             ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
@@ -583,7 +585,7 @@ public class FirebaseSync {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelledExecutor(DatabaseError databaseError) {
 
                     }
                 });
@@ -593,9 +595,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
         myUserRef.child(eventId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             Event e = UtilesDataSnapshot.dataSnapshotToEvent(dataSnapshot);
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
@@ -608,7 +610,7 @@ public class FirebaseSync {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelledExecutor(DatabaseError databaseError) {
 
                     }
                 });
@@ -618,9 +620,9 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
 
         myUserRef.child(fieldId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
                             List<Field> fields = UtilesDataSnapshot.dataSnapshotToFieldList(dataSnapshot);
@@ -633,7 +635,7 @@ public class FirebaseSync {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelledExecutor(DatabaseError databaseError) {
 
                     }
                 });
@@ -643,9 +645,9 @@ public class FirebaseSync {
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
         eventsRef.child(key + "/" + FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.PARTICIPANTS)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
                             MyApplication.getAppContext().getContentResolver()
@@ -667,7 +669,7 @@ public class FirebaseSync {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelledExecutor(DatabaseError databaseError) {
 
                     }
                 });
@@ -679,9 +681,9 @@ public class FirebaseSync {
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
 
         fieldsRef.orderByChild(filter).equalTo(city)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -695,7 +697,7 @@ public class FirebaseSync {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelledExecutor(DatabaseError databaseError) {
 
                     }
                 });
@@ -706,9 +708,9 @@ public class FirebaseSync {
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
 
         eventsRef.orderByChild(filter).equalTo(city)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 Event e = UtilesDataSnapshot.dataSnapshotToEvent(data);
@@ -722,7 +724,7 @@ public class FirebaseSync {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelledExecutor(DatabaseError databaseError) {
 
                     }
                 });
@@ -733,9 +735,9 @@ public class FirebaseSync {
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
 
         usersRef.orderByChild(filter).equalTo(city)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 User anUser = UtilesDataSnapshot.dataSnapshotToUser(data);
@@ -753,7 +755,7 @@ public class FirebaseSync {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelledExecutor(DatabaseError databaseError) {
 
                     }
                 });
@@ -767,9 +769,9 @@ public class FirebaseSync {
         /* https://stackoverflow.com/a/40633692/4235666
          * https://firebase.google.com/docs/database/admin/retrieve-data */
         usersRef.orderByChild(filter).startAt(username).endAt(username+"\uf8ff")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 User anUser = UtilesDataSnapshot.dataSnapshotToUser(data);
@@ -786,7 +788,7 @@ public class FirebaseSync {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelledExecutor(DatabaseError databaseError) {
 
                     }
                 });

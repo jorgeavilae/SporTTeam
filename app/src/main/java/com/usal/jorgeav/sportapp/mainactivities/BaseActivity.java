@@ -316,9 +316,20 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     protected void onPause() {
+        super.onPause();
         toolbarIconTransition.removeCallbacks(transitionToNav);
         toolbarIconTransition.removeCallbacks(transitionToUp);
-        super.onPause();
+
+        if (mAuthListener != null) {
+            Log.d(TAG, "onStop: detach listeners");
+            mAuth.removeAuthStateListener(mAuthListener);
+            /* To detach listener before been reattached in new activity start lifecycle need
+             * to put this call in onPause()
+             * https://developer.android.com/guide/components/activities/activity-lifecycle.html#soafa
+             * Subsection: Coordinating activities
+             */
+            FirebaseSync.detachListeners();
+        }
     }
 
     @Override
@@ -327,17 +338,11 @@ public class BaseActivity extends AppCompatActivity
         Log.d(TAG, "onStart: attach listeners");
         mAuth.addAuthStateListener(mAuthListener);
         SportteamSyncUtils.initialize(this);
-//        FirebaseSync.syncFirebaseDatabase();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            Log.d(TAG, "onStop: detach listeners");
-            mAuth.removeAuthStateListener(mAuthListener);
-            FirebaseSync.detachListeners();
-        }
     }
 
     @Override
