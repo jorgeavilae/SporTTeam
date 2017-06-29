@@ -42,7 +42,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
         Sport s = mDataset.get(position);
         if (s != null) {
             String name = s.getmName();
-            float level = s.getmLevel();
+            float level = s.getPunctuation();
             holder.textViewSportName.setText(name);
             holder.ratingBarSportLevel.setRating(level);
         }
@@ -67,7 +67,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
         if (mDataset == null) return null;
         ArrayList<Sport> result = new ArrayList<>();
         for (Sport s : mDataset)
-            if (s.getmLevel() > 0)
+            if (s.getPunctuation() > 0)
                 result.add(s);
         return result;
     }
@@ -87,7 +87,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
             ratingBarSportLevel.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                    mDataset.get(getAdapterPosition()).setmLevel(v);
+                    mDataset.get(getAdapterPosition()).setPunctuation(v);
                 }
             });
         }

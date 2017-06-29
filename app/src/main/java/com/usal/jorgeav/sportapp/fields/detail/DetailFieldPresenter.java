@@ -8,6 +8,7 @@ import android.support.v4.content.Loader;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -27,6 +28,15 @@ public class DetailFieldPresenter implements DetailFieldContract.Presenter, Load
         String fieldId = b.getString(DetailFieldFragment.BUNDLE_FIELD_ID);
         FirebaseSync.loadAField(fieldId);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELD_ID, b, this);
+    }
+
+    @Override
+    public void voteField(Bundle b, float rating) {
+        if (rating > 0 && rating <= 5) {
+            String fieldId = b.getString(DetailFieldFragment.BUNDLE_FIELD_ID);
+            String sportId = b.getString(DetailFieldFragment.BUNDLE_SPORT_ID);
+            FirebaseActions.voteField(fieldId, sportId, rating);
+        }
     }
 
     @Override

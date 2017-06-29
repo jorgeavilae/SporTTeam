@@ -11,6 +11,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
+import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 
 import java.util.HashMap;
@@ -451,5 +452,36 @@ public class FirebaseActions {
         childUpdates.put(eventParticipationUser, null);
 
         database.updateChildren(childUpdates);
+    }
+
+    public static void voteField(String fieldId, String sportId, final float vote) {
+        //Add vote to count and recalculate average rating
+        DatabaseReference fieldSportRef = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_FIELDS)
+                .child(fieldId)
+                .child(FirebaseDBContract.Field.SPORTS)
+                .child(sportId);
+        fieldSportRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Sport s = mutableData.getValue(Sport.class);
+                if (s == null) return Transaction.success(mutableData);
+
+                float newRating = (s.getPunctuation()*s.getVotes() + vote) / (s.getVotes()+1);
+                s.setVotes(s.getVotes() + 1);
+                s.setPunctuation((float) (Math.round(newRating * 2) / 2.0));
+
+                mutableData.setValue(s);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+                // Transaction completed
+                Log.d(TAG, "postTransaction:onComplete:" + databaseError);
+            }
+        });
     }
 }

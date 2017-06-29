@@ -55,8 +55,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     EditText newEventTotal;
     @BindView(R.id.new_event_empty)
     EditText newEventEmpty;
-    @BindView(R.id.new_event_add_event)
-    Button newEventAddButton;
 
     String fieldSelectedId;
     Calendar myCalendar;
@@ -108,7 +106,15 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
-            // TODO: 27/06/2017
+            mNewEventPresenter.addEvent(
+                    newEventSport.getSelectedItem().toString(),
+                    ((EventsActivity)getActivity()).newEventFieldSelected,
+                    newEventName.getText().toString(),
+                    newEventCity.getText().toString(),
+                    newEventDate.getText().toString(),
+                    newEventTime.getText().toString(),
+                    newEventTotal.getText().toString(),
+                    newEventEmpty.getText().toString());
             return true;
         }
         return false;
@@ -151,21 +157,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                 timePickerDialog = new TimePickerDialog(getActivityContext(), timeSetListener, myCalendar
                         .get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE), true);
                 timePickerDialog.show();
-            }
-        });
-
-        newEventAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mNewEventPresenter.addEvent(
-                        newEventSport.getSelectedItem().toString(),
-                        ((EventsActivity)getActivity()).newEventFieldSelected,
-                        newEventName.getText().toString(),
-                        newEventCity.getText().toString(),
-                        newEventDate.getText().toString(),
-                        newEventTime.getText().toString(),
-                        newEventTotal.getText().toString(),
-                        newEventEmpty.getText().toString());
             }
         });
 

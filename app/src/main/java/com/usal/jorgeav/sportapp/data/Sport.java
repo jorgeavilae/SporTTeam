@@ -9,29 +9,37 @@ import android.os.Parcelable;
 
 public class Sport implements Parcelable {
     String mName;
-    float mLevel;
-    int mVotes;
+    float punctuation;
+    int votes;
 
-    public Sport(String mName, float mLevel, int mVotes) {
+    public Sport() {
+        // Default constructor required for calls to DataSnapshot.getValue(Event.class)
+    }
+
+    public Sport(String mName, float punctuation, int votes) {
         this.mName = mName;
-        this.mLevel = mLevel;
-        this.mVotes = mVotes;
+        this.punctuation = punctuation;
+        this.votes = votes;
     }
 
     public String getmName() {
         return mName;
     }
 
-    public float getmLevel() {
-        return mLevel;
+    public float getPunctuation() {
+        return punctuation;
     }
 
-    public int getmVotes() {
-        return mVotes;
+    public int getVotes() {
+        return votes;
     }
 
-    public void setmLevel(float mLevel) {
-        this.mLevel = mLevel;
+    public void setPunctuation(float punctuation) {
+        this.punctuation = punctuation;
+    }
+
+    public void setVotes(int votes) {
+        this.votes = votes;
     }
 
     @Override
@@ -42,14 +50,14 @@ public class Sport implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.mName);
-        dest.writeFloat(this.mLevel);
-        dest.writeInt(this.mVotes);
+        dest.writeFloat(this.punctuation);
+        dest.writeInt(this.votes);
     }
 
     protected Sport(Parcel in) {
         this.mName = in.readString();
-        this.mLevel = in.readFloat();
-        this.mVotes = in.readInt();
+        this.punctuation = in.readFloat();
+        this.votes = in.readInt();
     }
 
     public static final Parcelable.Creator<Sport> CREATOR = new Parcelable.Creator<Sport>() {

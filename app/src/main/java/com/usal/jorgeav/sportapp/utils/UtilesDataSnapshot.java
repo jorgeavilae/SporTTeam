@@ -155,7 +155,7 @@ public class UtilesDataSnapshot {
             ContentValues cv = new ContentValues();
             cv.put(SportteamContract.UserSportEntry.USER_ID, user.getmId());
             cv.put(SportteamContract.UserSportEntry.SPORT, s.getmName());
-            cv.put(SportteamContract.UserSportEntry.LEVEL, s.getmLevel());
+            cv.put(SportteamContract.UserSportEntry.LEVEL, s.getPunctuation());
             cvArray.add(cv);
         }
         return cvArray;

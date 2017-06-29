@@ -97,7 +97,7 @@ public class User {
     private Map<String, Float> sportsToMap() {
         HashMap<String, Float> result = new HashMap<>();
         for (Sport sport : mSportList) {
-            result.put(sport.getmName(), sport.getmLevel());
+            result.put(sport.getmName(), sport.getPunctuation());
         }
         return result;
     }

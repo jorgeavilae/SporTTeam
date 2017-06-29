@@ -198,20 +198,6 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginStart="8dp" />
 
-            <Button
-                android:id="@+id/new_user_create_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:text="Add User"
-                android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/new_user_add_sport_button"
-                android:layout_marginRight="8dp"
-                app:layout_constraintRight_toRightOf="parent"
-                android:layout_marginLeft="8dp"
-                app:layout_constraintLeft_toLeftOf="parent" />
-
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
 </FrameLayout>

@@ -58,8 +58,6 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     EditText newAlarmEmptyFrom;
     @BindView(R.id.new_alarm_empty_to)
     EditText newAlarmEmptyTo;
-    @BindView(R.id.new_alarm_add_alarm)
-    Button newAlarmAddButton;
 
     Calendar myCalendar;
     DatePickerDialog datePickerDialogFrom;
@@ -93,7 +91,16 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
-            // TODO: 27/06/2017
+            mNewAlarmPresenter.addAlarm(
+                    newAlarmSport.getSelectedItem().toString(),
+                    ((AlarmsActivity)getActivity()).newAlarmFieldSelected,
+                    newAlarmCity.getText().toString(),
+                    newAlarmDateFrom.getText().toString(),
+                    newAlarmDateTo.getText().toString(),
+                    newAlarmTotalFrom.getText().toString(),
+                    newAlarmTotalTo.getText().toString(),
+                    newAlarmEmptyFrom.getText().toString(),
+                    newAlarmEmptyTo.getText().toString());
             return true;
         }
         return false;
@@ -185,22 +192,6 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                     }
                 });
                 datePickerDialogTo.show();
-            }
-        });
-
-        newAlarmAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mNewAlarmPresenter.addAlarm(
-                        newAlarmSport.getSelectedItem().toString(),
-                        ((AlarmsActivity)getActivity()).newAlarmFieldSelected,
-                        newAlarmCity.getText().toString(),
-                        newAlarmDateFrom.getText().toString(),
-                        newAlarmDateTo.getText().toString(),
-                        newAlarmTotalFrom.getText().toString(),
-                        newAlarmTotalTo.getText().toString(),
-                        newAlarmEmptyFrom.getText().toString(),
-                        newAlarmEmptyTo.getText().toString());
             }
         });
 

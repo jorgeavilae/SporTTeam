@@ -1,9 +1,11 @@
 package com.usal.jorgeav.sportapp.fields.detail;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
@@ -80,7 +83,19 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_vote) {
             Log.d(TAG, "onOptionsItemSelected: Vote");
-            // TODO: 27/06/2017
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            final View view = inflater.inflate(R.layout.vote_dialog, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+            builder.setMessage("Selecciona puntuación")
+                    .setView(view)
+                    .setPositiveButton("Votar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_for_vote);
+                            mPresenter.voteField(getArguments(), ratingBar.getRating());
+                        }
+                    })
+                    .setNegativeButton("Cancelar", null);
+            builder.create().show();
             return true;
         }
         return false;

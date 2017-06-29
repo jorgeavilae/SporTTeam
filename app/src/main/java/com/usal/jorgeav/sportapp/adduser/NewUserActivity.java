@@ -98,9 +98,6 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     @BindView(R.id.new_user_add_sport_button)
     Button newUserAddSportButton;
 
-    @BindView(R.id.new_user_create_button)
-    Button newUserCreateButton;
-
     ArrayList<Sport> sports;
 
     @Override
@@ -163,26 +160,6 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
             }
         });
 
-        newUserCreateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Check emailEditText and PassEditText
-                if (!TextUtils.isEmpty(newUserEmail.getText())
-                        && TextUtils.isEmpty(newUserEmail.getError())
-                        && !TextUtils.isEmpty(newUserPassword.getText())
-                        && TextUtils.isEmpty(newUserPassword.getError())
-                        && !TextUtils.isEmpty(newUserName.getText())
-                        && TextUtils.isEmpty(newUserName.getError())
-                        && !TextUtils.isEmpty(newUserAge.getText())
-                        && croppedImageUri != null
-                        && !TextUtils.isEmpty(newUserCity.getText())
-                        && sports.size() > 0) {
-                    hideContent();
-                    createAuthUser(newUserEmail.getText().toString(), newUserPassword.getText().toString());
-                } else
-                    Toast.makeText(getApplicationContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
-            }
-        });
         showContent();
     }
 
@@ -197,7 +174,21 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
-            // TODO: 27/06/2017
+            //Check emailEditText and PassEditText
+            if (!TextUtils.isEmpty(newUserEmail.getText())
+                    && TextUtils.isEmpty(newUserEmail.getError())
+                    && !TextUtils.isEmpty(newUserPassword.getText())
+                    && TextUtils.isEmpty(newUserPassword.getError())
+                    && !TextUtils.isEmpty(newUserName.getText())
+                    && TextUtils.isEmpty(newUserName.getError())
+                    && !TextUtils.isEmpty(newUserAge.getText())
+                    && croppedImageUri != null
+                    && !TextUtils.isEmpty(newUserCity.getText())
+                    && sports.size() > 0) {
+                hideContent();
+                createAuthUser(newUserEmail.getText().toString(), newUserPassword.getText().toString());
+            } else
+                Toast.makeText(getApplicationContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;

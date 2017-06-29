@@ -269,7 +269,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void showUserCity(String city) {
         userCity.setText(city);
-
     }
 
     @Override

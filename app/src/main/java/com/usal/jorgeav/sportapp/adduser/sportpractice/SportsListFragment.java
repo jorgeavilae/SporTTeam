@@ -110,7 +110,7 @@ public class SportsListFragment extends Fragment {
                 for (Sport sportFromActivity : sportsListFromActivity)
                     for (Sport sportFromResources : result)
                         if (isTheSameSport(sportFromActivity, sportFromResources)) {
-                            sportFromResources.setmLevel(sportFromActivity.getmLevel());
+                            sportFromResources.setPunctuation(sportFromActivity.getPunctuation());
                             break;
                         }
             }
