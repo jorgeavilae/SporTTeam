@@ -1,14 +1,12 @@
 package com.usal.jorgeav.sportapp.eventdetail;
 
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,13 +20,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
@@ -37,15 +35,13 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailEventFragment extends Fragment implements DetailEventContract.View, UsersAdapter.OnUserItemClickListener {
+public class DetailEventFragment extends BaseFragment implements DetailEventContract.View, UsersAdapter.OnUserItemClickListener {
     private static final String TAG = DetailEventFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private static String mEventId = "";
     @DetailEventPresenter.EventRelationType int mRelation;
     private DetailEventContract.Presenter mPresenter;
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
 
     Menu mMenu;
     @BindView(R.id.event_detail_id)
@@ -277,22 +273,6 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void showEventId(String id) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewEventId.setText(id);
@@ -360,16 +340,6 @@ public class DetailEventFragment extends Fragment implements DetailEventContract
     @Override
     public void showParticipants(Cursor cursor) {
         usersAdapter.replaceData(cursor);
-    }
-
-    @Override
-    public FragmentActivity getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public Fragment getThis() {
-        return this;
     }
 
     @Override

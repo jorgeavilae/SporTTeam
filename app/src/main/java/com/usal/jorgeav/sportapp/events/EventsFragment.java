@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.events;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,23 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
 import com.usal.jorgeav.sportapp.events.eventrequest.EventRequestsFragment;
 import com.usal.jorgeav.sportapp.events.searchevent.SearchEventsFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EventsFragment extends Fragment implements EventsContract.View, EventsAdapter.OnEventItemClickListener  {
+public class EventsFragment extends BaseFragment implements EventsContract.View, EventsAdapter.OnEventItemClickListener  {
     private static final String TAG = EventsFragment.class.getSimpleName();
 
     EventsContract.Presenter mEventsPresenter;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.events_create_button)
     Button eventsCreateButton;
@@ -109,22 +106,6 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mMyOwnEventsRecyclerAdapter.replaceData(null);
@@ -141,16 +122,6 @@ public class EventsFragment extends Fragment implements EventsContract.View, Eve
     public void showParticipatesEvents(Cursor cursor) {
         mEventsParticipationRecyclerAdapter.replaceData(cursor);
         if (cursor != null) mFragmentManagementListener.showContent();
-    }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public Fragment getThis() {
-        return this;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,9 +15,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
@@ -28,13 +27,11 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 29/05/2017.
  */
 
-public class InvitationsSentFragment extends Fragment implements InvitationsSentContract.View, UsersAdapter.OnUserItemClickListener {
+public class InvitationsSentFragment extends BaseFragment implements InvitationsSentContract.View, UsersAdapter.OnUserItemClickListener {
     private static final String TAG = InvitationsSentFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private static String mEventId = "";
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     InvitationsSentContract.Presenter mEventInvitationsPresenter;
     UsersAdapter mUsersAdapter;
 
@@ -93,22 +90,6 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mUsersAdapter.replaceData(null);
@@ -118,17 +99,6 @@ public class InvitationsSentFragment extends Fragment implements InvitationsSent
     public void showEventInvitationsSent(Cursor cursor) {
         mUsersAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
-    }
-
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public InvitationsSentFragment getThis() {
-        return this;
     }
 
     @Override

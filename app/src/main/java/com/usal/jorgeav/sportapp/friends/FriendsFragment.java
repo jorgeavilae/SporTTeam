@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.friends;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.friends.searchuser.SearchUsersFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
@@ -25,13 +24,11 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 26/05/2017.
  */
 
-public class FriendsFragment extends Fragment implements FriendsContract.View, UsersAdapter.OnUserItemClickListener {
+public class FriendsFragment extends BaseFragment implements FriendsContract.View, UsersAdapter.OnUserItemClickListener {
     private static final String TAG = FriendsFragment.class.getSimpleName();
 
     FriendsContract.Presenter mFriendsPresenter;
     UsersAdapter mFriendsRecyclerAdapter;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.friends_search)
     Button friendsSearchButton;
@@ -83,22 +80,6 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mFriendsRecyclerAdapter.replaceData(null);
@@ -108,16 +89,6 @@ public class FriendsFragment extends Fragment implements FriendsContract.View, U
     public void showFriends(Cursor cursor) {
         mFriendsRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
-    }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public Fragment getThis() {
-        return this;
     }
 
     @Override

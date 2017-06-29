@@ -1,7 +1,6 @@
 package com.usal.jorgeav.sportapp.profile.eventinvitations;
 
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,19 +13,17 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EventInvitationsFragment extends Fragment implements EventInvitationsContract.View, EventsAdapter.OnEventItemClickListener {
+public class EventInvitationsFragment extends BaseFragment implements EventInvitationsContract.View, EventsAdapter.OnEventItemClickListener {
     private static final String TAG = EventInvitationsFragment.class.getSimpleName();
 
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     EventInvitationsContract.Presenter mEventInvitationsPresenter;
     EventsAdapter mEventsRecyclerAdapter;
 
@@ -74,22 +71,6 @@ public class EventInvitationsFragment extends Fragment implements EventInvitatio
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mEventsRecyclerAdapter.replaceData(null);
@@ -99,17 +80,6 @@ public class EventInvitationsFragment extends Fragment implements EventInvitatio
     public void showEventInvitations(Cursor cursor) {
         mEventsRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
-    }
-
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public EventInvitationsFragment getThis() {
-        return this;
     }
 
     @Override

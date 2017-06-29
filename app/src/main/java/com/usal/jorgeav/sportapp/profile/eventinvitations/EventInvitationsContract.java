@@ -18,6 +18,5 @@ public abstract class EventInvitationsContract {
     public interface View {
         void showEventInvitations(Cursor cursor);
         Context getActivityContext();
-        EventInvitationsFragment getThis();
     }
 }

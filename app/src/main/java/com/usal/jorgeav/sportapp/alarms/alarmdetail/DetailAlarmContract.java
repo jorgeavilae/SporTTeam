@@ -1,9 +1,8 @@
 package com.usal.jorgeav.sportapp.alarms.alarmdetail;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -20,8 +19,7 @@ public abstract class DetailAlarmContract {
         void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo);
         void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo);
         void showEvents(Cursor data);
-        FragmentActivity getActivityContext();
-        Fragment getThis();
+        Context getActivityContext();
 
     }
 

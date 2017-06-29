@@ -1,7 +1,6 @@
 package com.usal.jorgeav.sportapp.events.addevent;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
 
 /**
  * Created by Jorge Avila on 06/06/2017.
@@ -15,6 +14,5 @@ public class NewEventContract {
 
     public interface View {
         Context getActivityContext();
-        Fragment getThis();
     }
 }

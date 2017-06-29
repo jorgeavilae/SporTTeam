@@ -1,7 +1,6 @@
 package com.usal.jorgeav.sportapp.alarms.addalarm;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,9 +19,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -35,13 +34,11 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class NewAlarmFragment extends Fragment implements NewAlarmContract.View  {
+public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.View  {
     private static final String TAG = NewAlarmFragment.class.getSimpleName();
     private static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
 
     NewAlarmContract.Presenter mNewAlarmPresenter;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.new_alarm_sport)
     Spinner newAlarmSport;
@@ -224,22 +221,6 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View 
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         if (datePickerDialogFrom != null && datePickerDialogFrom.isShowing()) datePickerDialogFrom.dismiss();
@@ -252,16 +233,6 @@ public class NewAlarmFragment extends Fragment implements NewAlarmContract.View 
 
         if (!TextUtils.isEmpty(newAlarmDateFrom.getText().toString()))
             newAlarmDateTo.setEnabled(true);
-    }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public Fragment getThis() {
-        return this;
     }
 
     private String getSportSelected() {

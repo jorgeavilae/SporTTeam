@@ -1,13 +1,11 @@
 package com.usal.jorgeav.sportapp.alarms.alarmdetail;
 
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,11 +18,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -33,14 +31,12 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailAlarmFragment extends Fragment implements DetailAlarmContract.View, EventsAdapter.OnEventItemClickListener {
+public class DetailAlarmFragment extends BaseFragment implements DetailAlarmContract.View, EventsAdapter.OnEventItemClickListener {
     private static final String TAG = DetailAlarmFragment.class.getSimpleName();
     public static final String BUNDLE_ALARM_ID = "BUNDLE_ALARM_ID";
 
     private static String mAlarmId = "";
     private DetailAlarmContract.Presenter mPresenter;
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
 
     @BindView(R.id.alarm_detail_id)
     TextView textViewAlarmId;
@@ -127,22 +123,6 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         eventsAdapter.replaceData(null);
@@ -221,16 +201,6 @@ public class DetailAlarmFragment extends Fragment implements DetailAlarmContract
     @Override
     public void showEvents(Cursor data) {
         eventsAdapter.replaceData(data);
-    }
-
-    @Override
-    public FragmentActivity getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public Fragment getThis() {
-        return this;
     }
 
     @Override

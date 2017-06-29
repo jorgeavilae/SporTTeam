@@ -19,6 +19,5 @@ public abstract class SearchEventsContract {
     public interface View {
         void showEvents(Cursor cursor);
         Context getActivityContext();
-        SearchEventsContract.View getThis();
     }
 }

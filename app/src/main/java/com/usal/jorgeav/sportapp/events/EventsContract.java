@@ -3,7 +3,6 @@ package com.usal.jorgeav.sportapp.events;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -20,6 +19,5 @@ public abstract class EventsContract {
         void showMyOwnEvents(Cursor cursor);
         void showParticipatesEvents(Cursor cursor);
         Context getActivityContext();
-        Fragment getThis();
     }
 }

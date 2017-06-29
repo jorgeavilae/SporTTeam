@@ -19,6 +19,5 @@ public abstract class InviteUserContract {
     public interface View {
         void showFriends(Cursor cursor);
         Context getActivityContext();
-        InviteUserFragment getThis();
     }
 }

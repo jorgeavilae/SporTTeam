@@ -1,8 +1,8 @@
 package com.usal.jorgeav.sportapp.profile;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -18,7 +18,7 @@ public abstract class ProfileContract {
         void showUserAge(int age);
         void showSports(Cursor cursor);
         void showContent();
-        FragmentActivity getActivityContext();
+        Context getActivityContext();
         String getUserID();
         void uiSetupForUserRelation(@ProfilePresenter.UserRelationType int relation);
     }

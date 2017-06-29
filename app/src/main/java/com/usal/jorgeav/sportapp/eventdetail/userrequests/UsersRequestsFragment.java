@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.eventdetail.userrequests;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,9 +15,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
@@ -28,13 +27,11 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 29/05/2017.
  */
 
-public class UsersRequestsFragment extends Fragment implements UsersRequestsContract.View {
+public class UsersRequestsFragment extends BaseFragment implements UsersRequestsContract.View {
     private static final String TAG = UsersRequestsFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private static String mEventId = "";
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     UsersRequestsContract.Presenter mUsersRequestsPresenter;
 
     UsersAdapter mUsersRequestRecyclerAdapter;
@@ -144,22 +141,6 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mUsersRequestRecyclerAdapter.replaceData(null);
@@ -176,15 +157,5 @@ public class UsersRequestsFragment extends Fragment implements UsersRequestsCont
     public void showRejectedUsers(Cursor cursor) {
         mUsersRejectedRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
-    }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public UsersRequestsFragment getThis() {
-        return this;
     }
 }

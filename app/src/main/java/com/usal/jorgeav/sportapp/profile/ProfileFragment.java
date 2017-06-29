@@ -1,14 +1,12 @@
 package com.usal.jorgeav.sportapp.profile;
 
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,11 +21,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.GlideApp;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
@@ -37,14 +35,12 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProfileFragment extends Fragment implements ProfileContract.View {
+public class ProfileFragment extends BaseFragment implements ProfileContract.View {
     private final static String TAG = ProfileFragment.class.getSimpleName();
 
     public static final String BUNDLE_INSTANCE_UID = "BUNDLE_INSTANCE_UID";
     private static String mUserUid = "";
     private ProfileContract.Presenter mProfilePresenter;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     Menu mMenu;
     @BindView(R.id.user_send_invitation)
@@ -251,23 +247,6 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
         else
             mActionBarIconManagementListener.setToolbarAsUp();
         mProfilePresenter.openUser(getLoaderManager(), getArguments());
-
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
     }
 
     @Override
@@ -308,11 +287,6 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     @Override
     public void showContent() {
         mFragmentManagementListener.showContent();
-    }
-
-    @Override
-    public FragmentActivity getActivityContext() {
-        return getActivity();
     }
 
     @Override

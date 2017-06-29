@@ -23,6 +23,5 @@ public abstract class UsersRequestsContract {
         void showUsersRequests(Cursor cursor);
         void showRejectedUsers(Cursor cursor);
         Context getActivityContext();
-        UsersRequestsFragment getThis();
     }
 }

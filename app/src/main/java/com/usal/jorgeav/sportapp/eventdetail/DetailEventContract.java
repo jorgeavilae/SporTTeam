@@ -1,9 +1,8 @@
 package com.usal.jorgeav.sportapp.eventdetail;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 
 /**
@@ -22,8 +21,7 @@ public abstract class DetailEventContract {
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);
         void showParticipants(Cursor cursor);
-        FragmentActivity getActivityContext();
-        Fragment getThis();
+        Context getActivityContext();
         String getEventID();
         void uiSetupForEventRelation(@DetailEventPresenter.EventRelationType int relation);
 

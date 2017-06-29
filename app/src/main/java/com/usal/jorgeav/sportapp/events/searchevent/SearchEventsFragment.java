@@ -16,10 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,13 +28,11 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class SearchEventsFragment extends Fragment implements SearchEventsContract.View,
+public class SearchEventsFragment extends BaseFragment implements SearchEventsContract.View,
         EventsAdapter.OnEventItemClickListener, SportDialog.SportDialogListener {
     private static final String TAG = SearchEventsFragment.class.getSimpleName();
     public static final String BUNDLE_SPORT = "BUNDLE_SPORT";
 
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     private SearchEventsFragment mThis;
     SearchEventsContract.Presenter mSearchEventsPresenter;
     EventsAdapter mEventsRecyclerAdapter;
@@ -111,18 +109,12 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
     public void onAttach(Context context) {
         super.onAttach(context);
         mThis = this;
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mThis = null;
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
     }
 
     @Override
@@ -138,21 +130,10 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
     }
 
     @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public SearchEventsFragment getThis() {
-        return this;
-    }
-
-    @Override
     public void onEventClick(String eventId) {
         Fragment newFragment = DetailEventFragment.newInstance(eventId);
         mFragmentManagementListener.initFragment(newFragment, true);
     }
-
 
     @Override
     public void onDialogSportClick(String sportId) {
@@ -160,6 +141,5 @@ public class SearchEventsFragment extends Fragment implements SearchEventsContra
         Bundle b = new Bundle();
         b.putString(BUNDLE_SPORT, sportId);
         mSearchEventsPresenter.loadNearbyEventsWithSport(getLoaderManager(), b);
-
     }
 }

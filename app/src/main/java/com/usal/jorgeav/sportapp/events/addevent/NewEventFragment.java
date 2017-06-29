@@ -2,7 +2,6 @@ package com.usal.jorgeav.sportapp.events.addevent;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,9 +19,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -35,12 +34,10 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class NewEventFragment extends Fragment implements NewEventContract.View  {
+public class NewEventFragment extends BaseFragment implements NewEventContract.View  {
     public static final String TAG = NewEventFragment.class.getSimpleName();
 
     NewEventContract.Presenter mNewEventPresenter;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.new_event_sport)
     Spinner newEventSport;
@@ -190,36 +187,10 @@ public class NewEventFragment extends Fragment implements NewEventContract.View 
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         if (datePickerDialog != null && datePickerDialog.isShowing()) datePickerDialog.dismiss();
         if (timePickerDialog != null && timePickerDialog.isShowing()) timePickerDialog.dismiss();
-    }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public Fragment getThis() {
-        return this;
     }
 
     private String getSportSelected() {

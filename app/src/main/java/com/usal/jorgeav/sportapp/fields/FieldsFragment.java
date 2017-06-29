@@ -1,7 +1,6 @@
 package com.usal.jorgeav.sportapp.fields;
 
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,21 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.FieldsAdapter;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FieldsFragment extends Fragment implements FieldsContract.View, FieldsAdapter.OnFieldItemClickListener {
+public class FieldsFragment extends BaseFragment implements FieldsContract.View, FieldsAdapter.OnFieldItemClickListener {
     private static final String TAG = FieldsFragment.class.getSimpleName();
 
     FieldsContract.Presenter mFieldsPresenter;
     FieldsAdapter mFieldsRecyclerAdapter;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.fields_list)
     RecyclerView fieldsRecyclerList;
@@ -68,22 +65,6 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mFieldsRecyclerAdapter.replaceData(null);
@@ -99,10 +80,5 @@ public class FieldsFragment extends Fragment implements FieldsContract.View, Fie
     public void onFieldClick(String fieldId, String sportId) {
         Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
         mFragmentManagementListener.initFragment(newFragment, true);
-    }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
     }
 }

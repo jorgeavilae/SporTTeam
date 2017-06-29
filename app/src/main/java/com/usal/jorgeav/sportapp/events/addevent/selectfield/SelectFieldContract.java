@@ -18,6 +18,5 @@ public abstract class SelectFieldContract {
     public interface View {
         void showFields(Cursor cursor);
         Context getActivityContext();
-        SelectFieldFragment getThis();
     }
 }

@@ -16,9 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
@@ -28,12 +28,10 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 04/06/2017.
  */
 
-public class SearchUsersFragment extends Fragment implements SearchUsersContract.View, UsersAdapter.OnUserItemClickListener, UsernameDialog.UsernameDialogListener  {
+public class SearchUsersFragment extends BaseFragment implements SearchUsersContract.View, UsersAdapter.OnUserItemClickListener, UsernameDialog.UsernameDialogListener  {
     private static final String TAG = SearchUsersFragment.class.getSimpleName();
     public static final String BUNDLE_USERNAME = "BUNDLE_USERNAME";
 
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     private SearchUsersFragment mThis;
     SearchUsersContract.Presenter mSearchUsersPresenter;
     UsersAdapter mUsersRecyclerAdapter;
@@ -106,17 +104,11 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
     public void onAttach(Context context) {
         super.onAttach(context);
         mThis = this;
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
         mThis = null;
     }
 
@@ -130,16 +122,6 @@ public class SearchUsersFragment extends Fragment implements SearchUsersContract
     public void showUsers(Cursor cursor) {
         mUsersRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
-    }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public SearchUsersFragment getThis() {
-        return this;
     }
 
     @Override

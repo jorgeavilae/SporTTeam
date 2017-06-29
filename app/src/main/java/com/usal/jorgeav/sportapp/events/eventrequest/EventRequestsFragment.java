@@ -1,7 +1,6 @@
 package com.usal.jorgeav.sportapp.events.eventrequest;
 
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,19 +13,17 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EventRequestsFragment extends Fragment implements EventRequestsContract.View, EventsAdapter.OnEventItemClickListener {
+public class EventRequestsFragment extends BaseFragment implements EventRequestsContract.View, EventsAdapter.OnEventItemClickListener {
     private static final String TAG = EventRequestsFragment.class.getSimpleName();
 
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     EventRequestsContract.Presenter mEventRequestsPresenter;
     EventsAdapter mEventsRecyclerAdapter;
 
@@ -79,22 +76,6 @@ public class EventRequestsFragment extends Fragment implements EventRequestsCont
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mEventsRecyclerAdapter.replaceData(null);
@@ -104,17 +85,6 @@ public class EventRequestsFragment extends Fragment implements EventRequestsCont
     public void showEventRequests(Cursor cursor) {
         mEventsRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
-    }
-
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public EventRequestsFragment getThis() {
-        return this;
     }
 
     @Override

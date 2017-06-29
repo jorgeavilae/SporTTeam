@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.profile.friendrequests;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,9 +12,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import butterknife.BindView;
@@ -25,12 +24,10 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 25/05/2017.
  */
 
-public class FriendRequestsFragment extends Fragment implements FriendRequestsContract.View,
+public class FriendRequestsFragment extends BaseFragment implements FriendRequestsContract.View,
         UsersAdapter.OnUserItemClickListener {
     private static final String TAG = FriendRequestsFragment.class.getSimpleName();
 
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     FriendRequestsContract.Presenter mFriendRequestsPresenter;
     UsersAdapter mUsersRecyclerAdapter;
 
@@ -78,22 +75,6 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mUsersRecyclerAdapter.replaceData(null);
@@ -110,15 +91,4 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
         mUsersRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public FriendRequestsFragment getThis() {
-        return this;
-    }
-
 }

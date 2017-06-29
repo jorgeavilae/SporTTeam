@@ -18,6 +18,5 @@ public abstract class EventRequestsContract {
     public interface View {
         void showEventRequests(Cursor cursor);
         Context getActivityContext();
-        EventRequestsFragment getThis();
     }
 }

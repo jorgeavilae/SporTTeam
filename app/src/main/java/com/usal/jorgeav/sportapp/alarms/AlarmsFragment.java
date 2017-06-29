@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.alarms;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,21 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.AlarmAdapter;
 import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AlarmsFragment extends Fragment implements AlarmsContract.View, AlarmAdapter.OnAlarmitemClickListener {
+public class AlarmsFragment extends BaseFragment implements AlarmsContract.View, AlarmAdapter.OnAlarmitemClickListener {
     private static final String TAG = AlarmsFragment.class.getSimpleName();
 
     AlarmsContract.Presenter mAlarmsPresenter;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     @BindView(R.id.alarm_create_button)
     Button alarmCreateButton;
@@ -80,22 +77,6 @@ public class AlarmsFragment extends Fragment implements AlarmsContract.View, Ala
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mAlarmsRecyclerAdapter.replaceData(null);
@@ -105,16 +86,6 @@ public class AlarmsFragment extends Fragment implements AlarmsContract.View, Ala
     public void showAlarms(Cursor cursor) {
         mAlarmsRecyclerAdapter.replaceData(cursor);
         if (cursor != null) mFragmentManagementListener.showContent();
-    }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public Fragment getThis() {
-        return this;
     }
 
     @Override

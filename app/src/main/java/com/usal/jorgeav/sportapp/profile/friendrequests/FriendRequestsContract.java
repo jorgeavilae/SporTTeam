@@ -18,6 +18,5 @@ public abstract class FriendRequestsContract {
     public interface View {
         void showFriendRequests(Cursor cursor);
         Context getActivityContext();
-        FriendRequestsFragment getThis();
     }
 }

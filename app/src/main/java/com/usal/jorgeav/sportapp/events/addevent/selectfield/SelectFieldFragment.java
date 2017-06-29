@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.events.addevent.selectfield;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,10 +12,10 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.FieldsAdapter;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,12 +24,10 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class SelectFieldFragment extends Fragment implements SelectFieldContract.View, FieldsAdapter.OnFieldItemClickListener {
+public class SelectFieldFragment extends BaseFragment implements SelectFieldContract.View, FieldsAdapter.OnFieldItemClickListener {
     private static final String TAG = SelectFieldFragment.class.getSimpleName();
     public static final String BUNDLE_SPORT_ID = "BUNDLE_SPORT_ID";
 
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
     SelectFieldContract.Presenter mSelectFieldPresenter;
     FieldsAdapter mFieldsAdapter;
 
@@ -87,22 +84,6 @@ public class SelectFieldFragment extends Fragment implements SelectFieldContract
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mFieldsAdapter.replaceData(null);
@@ -112,16 +93,6 @@ public class SelectFieldFragment extends Fragment implements SelectFieldContract
     public void showFields(Cursor cursor) {
         mFieldsAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
-    }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
-    }
-
-    @Override
-    public SelectFieldFragment getThis() {
-        return this;
     }
 
     @Override

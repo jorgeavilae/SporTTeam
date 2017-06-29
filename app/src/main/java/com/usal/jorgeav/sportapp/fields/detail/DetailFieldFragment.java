@@ -1,11 +1,9 @@
 package com.usal.jorgeav.sportapp.fields.detail;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,8 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 
 import java.util.Locale;
@@ -24,7 +22,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailFieldFragment extends Fragment implements DetailFieldContract.View{
+public class DetailFieldFragment extends BaseFragment implements DetailFieldContract.View{
     private static final String TAG = DetailFieldFragment.class.getSimpleName();
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
     public static final String BUNDLE_SPORT_ID = "BUNDLE_SPORT_ID";
@@ -32,8 +30,6 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     private static String mFieldId = "";
     private static String mSportId = "";
     private DetailFieldContract.Presenter mPresenter;
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
 
     @BindView(R.id.field_detail_id)
     TextView textViewFieldId;
@@ -113,22 +109,6 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
-    }
-
-    @Override
     public void showFieldId(String id) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewFieldId.setText(id);
@@ -170,10 +150,5 @@ public class DetailFieldFragment extends Fragment implements DetailFieldContract
     public void showFieldClosingTime(String closing) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewFieldClosing.setText(closing);
-    }
-
-    @Override
-    public Context getActivityContext() {
-        return getActivity();
     }
 }

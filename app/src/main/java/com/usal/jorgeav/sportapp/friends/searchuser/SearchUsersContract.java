@@ -19,6 +19,5 @@ public abstract class SearchUsersContract {
     public interface View {
         void showUsers(Cursor cursor);
         Context getActivityContext();
-        SearchUsersFragment getThis();
     }
 }
