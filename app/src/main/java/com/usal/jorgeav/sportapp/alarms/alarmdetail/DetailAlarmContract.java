@@ -25,5 +25,7 @@ public abstract class DetailAlarmContract {
 
     public interface Presenter {
         void openAlarm(LoaderManager loaderManager, Bundle b);
+        void editAlarm();
+        void deleteAlarm(Bundle b);
     }
 }

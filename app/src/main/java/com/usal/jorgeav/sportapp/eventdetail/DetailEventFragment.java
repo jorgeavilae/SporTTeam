@@ -105,11 +105,11 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit) {
             Log.d(TAG, "onOptionsItemSelected: Edit");
-            // TODO: 27/06/2017
+            mPresenter.editEvent();
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
             Log.d(TAG, "onOptionsItemSelected: Delete");
-            // TODO: 27/06/2017
+            mPresenter.deleteEvent(getArguments());
             return true;
         }
         return false;
@@ -185,7 +185,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
-                mMenu.clear();
+                mMenu.clear(); 
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Cancelar peticion de entrada");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {

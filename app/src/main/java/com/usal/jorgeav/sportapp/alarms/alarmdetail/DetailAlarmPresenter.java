@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.alarms.alarmdetail;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.v4.content.Loader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
@@ -31,6 +33,19 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
         FirebaseSync.loadAnAlarm(alarmId);
         loaderManager.initLoader(SportteamLoader.LOADER_ALARM_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_ALARM_EVENTS_COINCIDENCE_ID, b, this);
+    }
+
+    @Override
+    public void editAlarm() {
+        // TODO: 30/06/2017
+    }
+
+    @Override
+    public void deleteAlarm(Bundle b) {
+        String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseActions.deleteAlarm(userId, alarmId);
+        ((Activity) mView.getActivityContext()).onBackPressed();
     }
 
     @Override

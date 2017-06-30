@@ -29,6 +29,8 @@ public abstract class DetailEventContract {
 
     public interface Presenter {
         void openEvent(LoaderManager loaderManager, Bundle b);
+        void editEvent();
+        void deleteEvent(Bundle b);
         void getRelationTypeBetweenThisEventAndI();
 
         void sendEventRequest(String eventId);

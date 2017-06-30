@@ -248,6 +248,9 @@ public class SportteamProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
                 break;
+            case CODE_ALARMS:
+                count = db.delete(TABLE_ALARM, selection, selectionArgs);
+                break;
             case CODE_FRIEND_REQUEST:
                 count = db.delete(TABLE_FRIENDS_REQUESTS, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(UserEntry.CONTENT_USER_RELATION_USER_URI, null);

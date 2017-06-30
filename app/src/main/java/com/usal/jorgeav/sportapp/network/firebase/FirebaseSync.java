@@ -223,33 +223,56 @@ public class FirebaseSync {
         listenerMap.put(myUserRef, childEventListener);
     }
 
-            static void loadEventsFromMyOwnEvents() {
+    private static void loadEventsFromMyOwnEvents() {
         String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_CREATED);
 
-        myUserRef.addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
             @Override
-            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    if(data.exists()) {
-                        loadAnEvent(data.getKey());
-                        //TODO cargar Usuarios que quieren entrar a este evento USER_REQUESTS
-                        loadUsersFromUserRequests(data.getKey());
-                        //TODO cargar Usuarios que no contestaron a invitaciones para este evento INVITATIONS
-                        loadUsersFromInvitationsSent(data.getKey());
-                    }
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.exists()) {
+                    loadAnEvent(dataSnapshot.getKey());
+                    //TODO cargar Usuarios que quieren entrar a este evento USER_REQUESTS
+                    loadUsersFromUserRequests(dataSnapshot.getKey());
+                    //TODO cargar Usuarios que no contestaron a invitaciones para este evento INVITATIONS
+                    loadUsersFromInvitationsSent(dataSnapshot.getKey());
                 }
+
+            }
+
+            @Override
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
+                onChildAdded(dataSnapshot, s);
+            }
+
+            @Override
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
+                String eventId = dataSnapshot.getKey();
+                MyApplication.getAppContext().getContentResolver().delete(
+                        SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                        SportteamContract.EventEntry.EVENT_ID + " = ? ",
+                        new String[]{eventId});
+                MyApplication.getAppContext().getContentResolver().delete(
+                        SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
+                        SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
+                        new String[]{eventId});
+
+            }
+
+            @Override
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
             public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
-        });
-//        No es necesario porque se actualiza manualmente cuando se crea un evento nuevo
-//        listenerMap.put(myUserRef, childEventListener);
+        };
+        myUserRef.addChildEventListener(childEventListener);
+        listenerMap.put(myUserRef, childEventListener);
     }
     private static void loadUsersFromUserRequests(String key) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -501,11 +524,11 @@ public class FirebaseSync {
         listenerMap.put(myUserRef, childEventListener);
     }
     
-            static void loadAlarmsFromMyAlarms() {
+    private static void loadAlarmsFromMyAlarms() {
         String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
+                .child(myUserID).child(FirebaseDBContract.User.ALARMS);
 
         myUserRef.addListenerForSingleValueEvent(new ExecutorValueEventListener() {
             @Override
@@ -527,8 +550,47 @@ public class FirebaseSync {
 
             }
         });
-//        No es necesario porque se actualiza manualmente cuando se crea una alarma nueva
-//        listenerMap.put(myUserRef, childEventListener);
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+            @Override
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.exists()) {
+                    Alarm a = UtilesDataSnapshot.dataSnapshotToAlarm(dataSnapshot);
+                    ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
+                    if (a.getmField() != null)
+                        loadAField(a.getmField());
+                }
+
+            }
+
+            @Override
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
+                onChildAdded(dataSnapshot, s);
+            }
+
+            @Override
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
+                String alarmId = dataSnapshot.getKey();
+                MyApplication.getAppContext().getContentResolver().delete(
+                        SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
+                        SportteamContract.AlarmEntry.ALARM_ID + " = ? ",
+                        new String[]{alarmId});
+
+            }
+
+            @Override
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        };
+        myUserRef.addChildEventListener(childEventListener);
+        listenerMap.put(myUserRef, childEventListener);
     }
 
     public static void loadAProfile(String userID) {
@@ -592,9 +654,9 @@ public class FirebaseSync {
     }
     public static void loadAnEvent(String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+        DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
-        myUserRef.child(eventId)
+        eventRef.child(eventId)
                 .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {

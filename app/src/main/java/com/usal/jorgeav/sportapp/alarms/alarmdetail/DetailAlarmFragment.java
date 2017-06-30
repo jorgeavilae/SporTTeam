@@ -86,11 +86,11 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit) {
             Log.d(TAG, "onOptionsItemSelected: Edit");
-            // TODO: 27/06/2017
+            mPresenter.editAlarm();
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
             Log.d(TAG, "onOptionsItemSelected: Delete");
-            // TODO: 27/06/2017
+            mPresenter.deleteAlarm(getArguments());
             return true;
         }
         return false;
