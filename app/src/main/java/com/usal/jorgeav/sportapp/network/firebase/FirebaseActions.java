@@ -77,7 +77,8 @@ public class FirebaseActions {
                 .child(myUserId)
                 .child(FirebaseDBContract.User.ALARMS);
 
-        alarm.setmId(myUserAlarmsRef.push().getKey());
+        if (TextUtils.isEmpty(alarm.getmId()))
+            alarm.setmId(myUserAlarmsRef.push().getKey());
 
         myUserAlarmsRef.child(alarm.getmId()).setValue(alarm.toMap());
     }

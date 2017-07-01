@@ -36,11 +36,6 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     }
 
     @Override
-    public void editAlarm() {
-        // TODO: 30/06/2017
-    }
-
-    @Override
     public void deleteAlarm(Bundle b) {
         String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();

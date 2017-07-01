@@ -60,7 +60,7 @@ public class AlarmsFragment extends BaseFragment implements AlarmsContract.View,
         alarmCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = NewAlarmFragment.newInstance();
+                Fragment fragment = NewAlarmFragment.newInstance(null);
                 mFragmentManagementListener.initFragment(fragment, true);
             }
         });

@@ -10,7 +10,7 @@ import java.util.HashMap;
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class NewEventContract {
+public abstract class NewEventContract {
 
     public interface Presenter {
         void openEvent(LoaderManager loaderManager, Bundle b);

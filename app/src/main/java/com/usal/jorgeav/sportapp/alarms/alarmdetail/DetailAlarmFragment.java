@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
+import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
@@ -86,7 +87,8 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit) {
             Log.d(TAG, "onOptionsItemSelected: Edit");
-            mPresenter.editAlarm();
+            Fragment fragment = NewAlarmFragment.newInstance(mAlarmId);
+            mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
             Log.d(TAG, "onOptionsItemSelected: Delete");
@@ -164,12 +166,11 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     public void showAlarmDate(Long dateFrom, Long dateTo) {
         if (dateFrom != null && dateFrom > 0) {
             ((BaseActivity) getActivity()).showContent();
-            this.textViewAlarmDate.setText(
-                    UtilesTime.millisToDateTimeString(dateFrom));
+            this.textViewAlarmDate.setText(UtilesTime.millisToDateString(dateFrom));
         }
         if (dateTo != null && dateTo > 0)
             this.textViewAlarmDate.setText(
-                    this.textViewAlarmDate.getText() + " - " + UtilesTime.millisToDateTimeString(dateTo));
+                    this.textViewAlarmDate.getText() + " - " + UtilesTime.millisToDateString(dateTo));
     }
 
     @Override

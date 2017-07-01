@@ -21,6 +21,7 @@
             android:name=".mainactivities.ProfileActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,21 +34,25 @@
             android:name=".mainactivities.EventsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".mainactivities.FriendsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".mainactivities.AlarmsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".mainactivities.FieldsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <provider
@@ -59,6 +64,7 @@
         <activity
             android:name=".mainactivities.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:windowSoftInputMode="stateHidden"
             android:parentActivityName=".mainactivities.BaseActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -67,6 +73,7 @@
         </activity>
         <activity android:name=".adduser.NewUserActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:windowSoftInputMode="stateHidden"
             android:parentActivityName=".mainactivities.BaseActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

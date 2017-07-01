@@ -54,8 +54,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             holder.textViewAlarmId.setText(mDataset.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID));
             holder.textViewAlarmSport.setText(mDataset.getString(SportteamContract.AlarmEntry.COLUMN_SPORT));
             holder.textViewAlarmPlace.setText(mDataset.getString(SportteamContract.AlarmEntry.COLUMN_FIELD));
-            holder.textViewAlarmDateFrom.setText(UtilesTime.millisToDateTimeString(dateFrom));
-            holder.textViewAlarmDateTo.setText(UtilesTime.millisToDateTimeString(dateTo));
+            holder.textViewAlarmDateFrom.setText(UtilesTime.millisToDateString(dateFrom));
+            holder.textViewAlarmDateTo.setText(UtilesTime.millisToDateString(dateTo));
             holder.textViewAlarmTotal.setText(String.format(Locale.getDefault(), "%2d/%2d",totalPlFrom,totalPlTo));
             holder.textViewAlarmEmpty.setText(String.format(Locale.getDefault(), "%2d/%2d",emptyPlFrom,emptyPlTo));
         }

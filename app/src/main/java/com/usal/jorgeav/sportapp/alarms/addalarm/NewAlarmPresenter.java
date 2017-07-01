@@ -1,25 +1,31 @@
 package com.usal.jorgeav.sportapp.alarms.addalarm;
 
 import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 /**
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class NewAlarmPresenter implements NewAlarmContract.Presenter {
+public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = NewAlarmPresenter.class.getSimpleName();
 
     NewAlarmContract.View mNewAlarmView;
@@ -29,10 +35,10 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter {
     }
 
     @Override
-    public void addAlarm(String sport, String field, String city, String dateFrom, String dateTo,
+    public void addAlarm(String alarmId, String sport, String field, String city, String dateFrom, String dateTo,
                          String totalFrom, String totalTo, String emptyFrom, String emptyTo) {
         Alarm a = new Alarm();
-        a.setmId(null);
+        a.setmId(alarmId);
 
         // An alarm is valid if sport and city are necessarily set
         if (isValidSport(sport))
@@ -91,6 +97,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter {
             return;
         }
 
+        Log.d(TAG, "addAlarm: "+a);
         FirebaseActions.addAlarm(a, FirebaseAuth.getInstance().getCurrentUser().getUid());
         ((AlarmsActivity)mNewAlarmView.getActivityContext()).newAlarmFieldSelected = null;
         ((AppCompatActivity)mNewAlarmView.getActivityContext()).onBackPressed();
@@ -155,5 +162,52 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter {
         return !TextUtils.isEmpty(emptyFrom) && Integer.valueOf(emptyFrom) > 0 &&
                 (TextUtils.isEmpty(emptyTo) || Integer.valueOf(emptyFrom) <= Integer.valueOf(emptyTo));
 
+    }
+
+    @Override
+    public void openAlarm(LoaderManager loaderManager, Bundle b) {
+        if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_ALARM_ID)) {
+            loaderManager.initLoader(SportteamLoader.LOADER_ALARM_ID, b, this);
+        }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String alarmId = args.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
+        switch (id) {
+            case SportteamLoader.LOADER_ALARM_ID:
+                return SportteamLoader
+                        .cursorLoaderOneAlarm(mNewAlarmView.getActivityContext(), alarmId);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        showAlarmDetails(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        showAlarmDetails(null);
+    }
+
+    private void showAlarmDetails(Cursor data) {
+        Alarm a = Utiles.cursorToAlarm(data);
+        if (a != null) {
+            mNewAlarmView.showAlarmSport(a.getmSport());
+            mNewAlarmView.showAlarmPlace(a.getmField());
+            mNewAlarmView.showAlarmCity(a.getmCity());
+            mNewAlarmView.showAlarmDate(a.getmDateFrom(), a.getmDateTo());
+            mNewAlarmView.showAlarmTotalPlayers(a.getmTotalPlayersFrom(), a.getmTotalPlayersTo());
+            mNewAlarmView.showAlarmEmptyPlayers(a.getmEmptyPlayersFrom(), a.getmEmptyPlayersTo());
+        } else {
+            mNewAlarmView.showAlarmSport(null);
+            mNewAlarmView.showAlarmPlace(null);
+            mNewAlarmView.showAlarmCity(null);
+            mNewAlarmView.showAlarmDate(0L, 0L);
+            mNewAlarmView.showAlarmTotalPlayers(-1L, -1L);
+            mNewAlarmView.showAlarmEmptyPlayers(-1L, -1L);
+        }
     }
 }

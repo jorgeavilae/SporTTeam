@@ -26,6 +26,7 @@ import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,10 +37,12 @@ import butterknife.ButterKnife;
 
 public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.View  {
     private static final String TAG = NewAlarmFragment.class.getSimpleName();
-    private static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
+    public static final String BUNDLE_ALARM_ID = "BUNDLE_ALARM_ID";
 
     NewAlarmContract.Presenter mNewAlarmPresenter;
+    private static boolean sInitialize;
 
+    ArrayAdapter<CharSequence> sportsAdapter;
     @BindView(R.id.new_alarm_sport)
     Spinner newAlarmSport;
     @BindView(R.id.new_alarm_field)
@@ -67,8 +70,15 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         // Required empty public constructor
     }
 
-    public static NewAlarmFragment newInstance() {
-        return new NewAlarmFragment();
+    public static NewAlarmFragment newInstance(@Nullable String alarmId) {
+        NewAlarmFragment naf = new NewAlarmFragment();
+        if (alarmId != null) {
+            Bundle b = new Bundle();
+            b.putString(BUNDLE_ALARM_ID, alarmId);
+            naf.setArguments(b);
+        }
+        sInitialize = false;
+        return naf;
     }
 
     @Override
@@ -89,9 +99,16 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
+        hideSoftKeyboard();
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
+
+            String alarmId = "";
+            if (getArguments() != null && getArguments().containsKey(BUNDLE_ALARM_ID))
+                alarmId = getArguments().getString(BUNDLE_ALARM_ID);
+
             mNewAlarmPresenter.addAlarm(
+                    alarmId,
                     newAlarmSport.getSelectedItem().toString(),
                     ((AlarmsActivity)getActivity()).newAlarmFieldSelected,
                     newAlarmCity.getText().toString(),
@@ -113,10 +130,10 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
         myCalendar = Calendar.getInstance();
 
-        final ArrayAdapter<CharSequence> adapter =
-                ArrayAdapter.createFromResource(getActivityContext(), R.array.sport_id, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        newAlarmSport.setAdapter(adapter);
+        sportsAdapter = ArrayAdapter.createFromResource(
+                getActivityContext(), R.array.sport_id, android.R.layout.simple_spinner_item);
+        sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        newAlarmSport.setAdapter(sportsAdapter);
 
         newAlarmFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,6 +220,9 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.alarms), this);
         mActionBarIconManagementListener.setToolbarAsUp();
+        if (sInitialize) return;
+        mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
+        sInitialize = true;
     }
 
     @Override
@@ -228,5 +248,52 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
     private String getSportSelected() {
         return newAlarmSport.getSelectedItem().toString();
+    }
+
+    @Override
+    public void showAlarmSport(String sport) {
+        if (sport != null && !TextUtils.isEmpty(sport))
+            newAlarmSport.setSelection(sportsAdapter.getPosition(sport));
+    }
+
+    @Override
+    public void showAlarmPlace(String place) {
+        if (place != null && !TextUtils.isEmpty(place) && getActivity() instanceof SelectFieldFragment.OnFieldSelected)
+            ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(place);
+    }
+
+    @Override
+    public void showAlarmCity(String city) {
+        if (city != null && !TextUtils.isEmpty(city))
+            newAlarmCity.setText(city);
+    }
+
+    @Override
+    public void showAlarmDate(Long dateFrom, Long dateTo) {
+        if (dateFrom != null && dateFrom > 0) {
+            newAlarmDateFrom.setText(UtilesTime.millisToDateString(dateFrom));
+            newAlarmDateTo.setEnabled(true);
+        }
+        if (dateTo != null && dateTo > 0)
+            newAlarmDateTo.setText(UtilesTime.millisToDateString(dateTo));
+
+    }
+
+    @Override
+    public void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo) {
+        if (totalPlayersFrom != null && totalPlayersFrom > -1)
+            newAlarmTotalFrom.setText(String.format(Locale.getDefault(), "%d", totalPlayersFrom));
+
+        if (totalPlayersTo != null && totalPlayersTo > -1)
+            newAlarmTotalTo.setText(String.format(Locale.getDefault(), "%d", totalPlayersTo));
+    }
+
+    @Override
+    public void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo) {
+        if (emptyPlayersFrom != null && emptyPlayersFrom > -1)
+            newAlarmEmptyFrom.setText(String.format(Locale.getDefault(), "%d", emptyPlayersFrom));
+
+        if (emptyPlayersTo != null && emptyPlayersTo > -1)
+            newAlarmEmptyTo.setText(String.format(Locale.getDefault(), "%d", emptyPlayersTo));
     }
 }
