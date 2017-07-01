@@ -25,7 +25,6 @@ import java.util.Map;
 
 public class FirebaseActions {
     public static final String TAG = FirebaseActions.class.getSimpleName();
-    //TODO Where to reload?
 
     // Add User
     public static Query getUserEmailReferenceEqualTo(String email) {
@@ -368,7 +367,7 @@ public class FirebaseActions {
                 Event e = mutableData.child(FirebaseDBContract.DATA).getValue(Event.class);
                 if (e == null) return Transaction.success(mutableData);
 
-                // TODO Doesn't work, fortunately it doesn't needed here (needed below)
+                // Doesn't work, fortunately it doesn't needed here, but needed below
                 // e.setEvent_id(mutableData.getKey());
 
                 if (e.getEmpty_players() > 0) {

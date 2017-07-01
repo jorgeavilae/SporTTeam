@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * Created by Jorge Avila on 14/06/2017.
@@ -33,32 +31,39 @@ import java.util.concurrent.Executors;
 public class FirebaseSync {
     public static final String TAG = FirebaseSync.class.getSimpleName();
 
-    private static final Executor executor = Executors.newSingleThreadExecutor();
     private static HashMap<DatabaseReference, ChildEventListener> listenerMap = new HashMap<>();
 
-    // TODO: 16/06/2017 Las sincronizaciones que no se guarda el listener tienen que borrarse cuando se actualicen
     public static void syncFirebaseDatabase() {
-        Log.d(TAG, "syncFirebaseDatabase: FirebaseCurrentUser() != null "+(FirebaseAuth.getInstance().getCurrentUser() != null));
-        Log.d(TAG, "syncFirebaseDatabase: listenerMap.isEmpty() "+(listenerMap.isEmpty()));
         if (FirebaseAuth.getInstance().getCurrentUser() != null && listenerMap.isEmpty()) {
-            //TODO Cargar Mis datos y deportes (una vez y reload cuando lo cambie)
+            // Load current user profile and sports
             loadAProfile(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            // Load fields from user city
             loadFieldsFromCity(Utiles.getCurrentCity(MyApplication.getAppContext(), FirebaseAuth.getInstance().getCurrentUser().getUid()));
-            //TODO Cargar Lista de mis amigos (cuando cambie) y Usuario (una vez)
+
+            // Load friends list and user data
             loadUsersFromFriends();
-            //TODO Cargar Usuarios de mis peticiones de amistad enviadas (cuando cambie)
+
+            // Load friends request sent list and user data
             loadUsersFromFriendsRequestsSent();
-            //TODO Cargar Usuarios de mis peticiones de amistad recibidas (cuando cambie)
+
+            // Load friends request received list and user data
             loadUsersFromFriendsRequestsReceived();
-            //TODO Cargar Eventos de mis eventos creados (cuando cambie)
+
+            // Load events created with data, users participants with data, users invited with data
+            // and user requests received with data
             loadEventsFromMyOwnEvents();
-            //TODO Cargar Eventos de mis eventos a los que asisto (cuando cambie)
+
+            // Load participation events with data
             loadEventsFromEventsParticipation();
-            //TODO Cargar Eventos de mis invitaciones a eventos (cuando cambie)
+
+            // Load events with data from invitations received by current user
             loadEventsFromInvitationsReceived();
-            //TODO Cargar Eventos de mis peticiones de asistencia a eventos enviadas (cuando cambie)
+
+            // Load events with data from participation requests sent by current user
             loadEventsFromEventsRequests();
-            //TODO Cargar mis Alarmas (una vez)
+
+            // Load alarms with data created by current user
             loadAlarmsFromMyAlarms();
         }
     }
@@ -234,9 +239,10 @@ public class FirebaseSync {
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
-                    //TODO cargar Usuarios que quieren entrar a este evento USER_REQUESTS
+
+                    // Load user requests received with data
                     loadUsersFromUserRequests(dataSnapshot.getKey());
-                    //TODO cargar Usuarios que no contestaron a invitaciones para este evento INVITATIONS
+                    // Load users invited with data
                     loadUsersFromInvitationsSent(dataSnapshot.getKey());
                 }
 
@@ -661,12 +667,14 @@ public class FirebaseSync {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
+                            // TODO: 01/07/2017 cambiar
                             Event e = UtilesDataSnapshot.dataSnapshotToEvent(dataSnapshot);
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
                             loadAField(e.getField_id());
-                            //TODO cargar Usuarios que participan en este evento PARTICIPANTS
+
+                            // Load users participants with data
                             loadUsersFromParticipants(dataSnapshot.getKey());
                         }
                     }
@@ -781,7 +789,7 @@ public class FirebaseSync {
                                         .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
                                 loadAField(e.getField_id());
                             }
-                            // TODO: 16/06/2017 comparar evento con alarmas
+                            // TODO: 16/06/2017 comparar evento con alarmas para que se muestren notificaciones
                         }
                     }
 
@@ -855,9 +863,4 @@ public class FirebaseSync {
                     }
                 });
     }
-    /* Esta llamada no es necesaria porque siempre va precedida de loadEventsFromCity
-     * Esta llamada deberia ser loadEventsFromCityWithSport pero no se puede hacer en Firebase
-     * Por ello para cargar eventos de una ciudad con un deporte se buscan en el Content Provider
-     * public static void loadEventsWithSport(String sportId) {}
-     */
 }

@@ -334,7 +334,7 @@ public final class SportteamLoader {
                     selectionArgs.toArray(new String[selectionArgs.size()]),
                     SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
             /*
-            SELECT event._id, event.eventId, event.sport, event.field, event.name, event.city, event.date, event.owner, event.totalPlayers, event.emptyPlayers
+            SELECT all event columns
             FROM event
                 LEFT JOIN eventsParticipation
                     ON (event.eventId = eventsParticipation.eventId AND eventsParticipation.userId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
@@ -354,29 +354,6 @@ public final class SportteamLoader {
                 event.date >= 1497823200000 AND event.date <= 1497909600000 AND
                 event.totalPlayers >= 22 AND event.totalPlayers <= 22 AND
                 event.emptyPlayers >= 2 AND event.emptyPlayers <= 2
-                )
-             */
-
-            /*
-            SELECT event._id, event.eventId, event.sport, event.field, event.name, event.city, event.date, event.owner, event.totalPlayers, event.emptyPlayers
-            FROM event
-                LEFT JOIN eventsParticipation
-                    ON (event.eventId = eventsParticipation.eventId AND eventsParticipation.userId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
-                LEFT JOIN eventInvitations
-                    ON (event.eventId = eventInvitations.eventId AND eventInvitations.userId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
-                LEFT JOIN eventRequest
-                    ON (event.eventId = eventRequest.eventId AND eventRequest.senderId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
-            WHERE (
-                event.city = ciudad AND
-                event.sport = running AND
-                event.owner <> XPs5mf8MZnXDAPjtyHkF0MqbzQ42 AND
-
-                eventsParticipation.eventId IS NULL AND
-                eventInvitations.eventId IS NULL AND
-                eventRequest.eventId IS NULL AND
-
-                event.date >= 1498082400000 AND event.date <= 1498082400000 AND
-                event.emptyPlayers >= 2
                 )
              */
         }

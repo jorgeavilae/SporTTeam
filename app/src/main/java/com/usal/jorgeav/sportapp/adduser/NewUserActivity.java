@@ -76,7 +76,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     Uri croppedImageUri;
 
     @BindView(R.id.new_user_toolbar)
-    Toolbar newUseerToolbar;
+    Toolbar newUserToolbar;
     @BindView(R.id.new_user_progressbar)
     ProgressBar newUserProgressbar;
     @BindView(R.id.new_user_content)
@@ -106,10 +106,10 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         setContentView(R.layout.activity_new_user);
         ButterKnife.bind(this);
 
-        setSupportActionBar(newUseerToolbar);
-        newUseerToolbar.setTitle("Add User");
-        newUseerToolbar.setNavigationIcon(R.drawable.ic_action_close);
-        newUseerToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        setSupportActionBar(newUserToolbar);
+        newUserToolbar.setTitle("Add User");
+        newUserToolbar.setNavigationIcon(R.drawable.ic_action_close);
+        newUserToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
