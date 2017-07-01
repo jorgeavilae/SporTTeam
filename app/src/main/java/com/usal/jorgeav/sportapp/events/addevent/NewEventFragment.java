@@ -187,8 +187,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated: ");
-        mFragmentManagementListener.setCurrentDisplayedFragment("New Event", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Nuevo evento", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         if (sInitialize) return;
         mNewEventPresenter.openEvent(getLoaderManager(), getArguments());

@@ -135,7 +135,7 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(UsersRequestsFragment.class.getSimpleName(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Peticiones para participar", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         mUsersRequestsPresenter.loadUsersRequests(getLoaderManager(), getArguments());
     }

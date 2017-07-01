@@ -190,7 +190,7 @@ public class BaseActivity extends AppCompatActivity
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_settings) {
             Log.d(TAG, "onOptionsItemSelected: Settings");
-            // TODO: 27/06/2017
+            // TODO: 27/06/2017 Settings
             return true;
         }
         return false;
@@ -246,8 +246,15 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public void setCurrentDisplayedFragment(String title, Fragment fragment) {
-        getSupportActionBar().setTitle(title);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(title);
         mDisplayedFragment = fragment;
+    }
+
+    @Override
+    public void setActionBarTitle(String title) {
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(title);
     }
 
     @Override

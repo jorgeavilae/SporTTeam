@@ -98,7 +98,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         mMenu = menu;
         super.onCreateOptionsMenu(mMenu, inflater);
         mMenu.clear();
-        inflater.inflate(R.menu.menu_edit_delete, mMenu);
     }
 
     @Override
@@ -142,6 +141,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         mRelation = relation;
         switch (relation) {
             case DetailEventPresenter.RELATION_TYPE_OWNER:
+                if (mMenu != null) getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
                 buttonUserRequests.setVisibility(View.VISIBLE);
                 buttonUserRequests.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -175,7 +175,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_NONE:
-                mMenu.clear();
+                if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Enviar peticion de entrada");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
@@ -187,7 +187,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
-                mMenu.clear(); 
+                if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Cancelar peticion de entrada");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
@@ -207,7 +207,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION:
-                mMenu.clear();
+                if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Contestar invitacion");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
@@ -232,7 +232,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_ASSISTANT:
-                mMenu.clear();
+                if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Abandonar partido");
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
@@ -252,13 +252,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 });
                 break;
             case DetailEventPresenter.RELATION_TYPE_BLOCKED:
-                mMenu.clear();
+                if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("No puedes asistir");
                 buttonSendRequest.setEnabled(false);
                 break;
             case DetailEventPresenter.RELATION_TYPE_ERROR:
-                mMenu.clear();
+                if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Error");
                 break;
@@ -268,8 +268,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //TODO poner de titulo event name?
-        mFragmentManagementListener.setCurrentDisplayedFragment(mEventId, this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Detalles de evento", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         mPresenter.openEvent(getLoaderManager(), getArguments());
     }
@@ -304,13 +303,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public void showEventName(String name) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewEventName.setText(name);
+        mFragmentManagementListener.setActionBarTitle(name);
     }
 
     @Override
     public void showEventDate(String date) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewEventDate.setText(date);
-
     }
 
     @Override

@@ -251,7 +251,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
     @Override
     public void showUserImage(String image) {
-        // TODO: 21/06/2017 buscar la imagen en almacenamiento y si no se descarga
         if (!this.getActivity().isDestroyed())
         GlideApp.with(this.getActivity())
                 .load(image)
@@ -264,6 +263,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void showUserName(String name) {
         userName.setText(name);
+        mFragmentManagementListener.setActionBarTitle(name);
     }
 
     @Override

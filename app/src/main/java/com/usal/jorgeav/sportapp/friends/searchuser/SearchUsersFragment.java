@@ -66,7 +66,7 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_clear_filter) {
             Log.d(TAG, "onOptionsItemSelected: Clear Filters");
-            // TODO: 27/06/2017
+            mSearchUsersPresenter.loadNearbyUsers(getLoaderManager(), getArguments());
             return true;
         }
         return false;
@@ -95,7 +95,7 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(SearchUsersFragment.class.getSimpleName(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Buscar usuarios", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         mSearchUsersPresenter.loadNearbyUsers(getLoaderManager(), getArguments());
     }

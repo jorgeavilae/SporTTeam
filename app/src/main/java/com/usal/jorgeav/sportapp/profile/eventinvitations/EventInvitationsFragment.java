@@ -65,7 +65,7 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(EventInvitationsFragment.class.getSimpleName(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Invitaciones recibidas", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         mEventInvitationsPresenter.loadEventInvitations(getLoaderManager(), getArguments());
     }

@@ -14,6 +14,7 @@ public abstract class ActivityContracts {
         void startMainFragment();
         void initFragment(@NotNull Fragment fragment, boolean isOnBackStack);
         void setCurrentDisplayedFragment(String title, Fragment fragment);
+        void setActionBarTitle(String title);
         void showContent();
         void hideContent();
     }

@@ -118,7 +118,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(mFieldId, this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Detalles de pista", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         mPresenter.openField(getLoaderManager(), getArguments());
     }
@@ -133,6 +133,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     public void showFieldName(String name) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewFieldName.setText(name);
+        mFragmentManagementListener.setActionBarTitle(name);
     }
 
     @Override

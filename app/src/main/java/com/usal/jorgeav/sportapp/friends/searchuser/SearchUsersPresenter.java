@@ -25,6 +25,8 @@ public class SearchUsersPresenter implements SearchUsersContract.Presenter, Load
 
     @Override
     public void loadNearbyUsers(LoaderManager loaderManager, Bundle b) {
+        loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_FROM_CITY);
+        loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_WITH_NAME);
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String city = Utiles.getCurrentCity(mSearchUsersView.getActivityContext(), currentUserID);
         FirebaseSync.loadUsersFromCity(city);

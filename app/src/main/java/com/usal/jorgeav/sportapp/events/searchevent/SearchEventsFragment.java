@@ -71,7 +71,7 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_clear_filter) {
             Log.d(TAG, "onOptionsItemSelected: Clear Filter");
-            // TODO: 27/06/2017
+            mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
             return true;
         }
         return false;
@@ -100,7 +100,7 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(SearchEventsFragment.class.getSimpleName(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Buscar eventos", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
     }

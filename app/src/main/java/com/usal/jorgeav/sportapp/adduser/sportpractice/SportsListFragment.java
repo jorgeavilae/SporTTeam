@@ -126,7 +126,7 @@ public class SportsListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(SportsListFragment.class.getSimpleName(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Selecciona deportes", this);
         if (mActionBarIconManagementListener != null) mActionBarIconManagementListener.setToolbarAsUp();
     }
 

@@ -78,7 +78,7 @@ public class SelectFieldFragment extends BaseFragment implements SelectFieldCont
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(getClass().getSimpleName(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Selecciona un campo", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         mSelectFieldPresenter.loadFieldsWithSport(getLoaderManager(), getArguments());
     }

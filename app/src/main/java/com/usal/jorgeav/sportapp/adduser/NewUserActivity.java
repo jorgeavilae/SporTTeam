@@ -412,8 +412,15 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
 
     @Override
     public void setCurrentDisplayedFragment(String title, Fragment fragment) {
-        getSupportActionBar().setTitle(title);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(title);
         mDisplayedFragment = fragment;
+    }
+
+    @Override
+    public void setActionBarTitle(String title) {
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(title);
     }
 
     @Override

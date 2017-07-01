@@ -218,7 +218,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.alarms), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Nueva alarma", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         if (sInitialize) return;
         mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());

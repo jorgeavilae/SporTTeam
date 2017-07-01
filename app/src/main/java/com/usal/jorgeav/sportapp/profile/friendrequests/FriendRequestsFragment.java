@@ -69,7 +69,7 @@ public class FriendRequestsFragment extends BaseFragment implements FriendReques
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(FriendRequestsFragment.class.getSimpleName(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Peticiones de amistad", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         mFriendRequestsPresenter.loadFriendRequests(getLoaderManager(), getArguments());
     }

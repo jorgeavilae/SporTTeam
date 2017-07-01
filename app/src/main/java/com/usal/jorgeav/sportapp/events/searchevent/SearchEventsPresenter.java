@@ -25,6 +25,8 @@ public class SearchEventsPresenter implements SearchEventsContract.Presenter, Lo
 
     @Override
     public void loadNearbyEvents(LoaderManager loaderManager, Bundle b) {
+        loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_FROM_CITY);
+        loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_WITH_SPORT);
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String city = Utiles.getCurrentCity(mSearchEventsView.getActivityContext(), currentUserID);
         FirebaseSync.loadEventsFromCity(city);
@@ -33,8 +35,6 @@ public class SearchEventsPresenter implements SearchEventsContract.Presenter, Lo
 
     @Override
     public void loadNearbyEventsWithSport(LoaderManager loaderManager, Bundle b) {
-//        String sportId = b.getString(SearchEventsFragment.BUNDLE_SPORT);
-//        FirebaseSync.loadEventsWithSport(sportId);
         loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_FROM_CITY);
         loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_WITH_SPORT);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_WITH_SPORT, b, this);

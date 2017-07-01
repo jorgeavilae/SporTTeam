@@ -70,7 +70,7 @@ public class EventRequestsFragment extends BaseFragment implements EventRequests
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(EventRequestsFragment.class.getSimpleName(), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment("Peticiones enviadas", this);
         mActionBarIconManagementListener.setToolbarAsUp();
         mEventRequestsPresenter.loadEventRequests(getLoaderManager(), getArguments());
     }

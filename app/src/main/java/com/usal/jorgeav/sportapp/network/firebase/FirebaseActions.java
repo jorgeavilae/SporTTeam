@@ -66,6 +66,7 @@ public class FirebaseActions {
             event.setEvent_id(eventsRef.push().getKey());
 
         eventsRef.child(event.getEvent_id()).setValue(event.toMap());
+        // Listener is attached to this reference so it doesn't need to reload
         myUserEventCreatedRef.child(event.getEvent_id()).setValue(currentTime);
         fieldsNextEventsRef.child(event.getEvent_id()).setValue(currentTime);
     }
@@ -80,6 +81,7 @@ public class FirebaseActions {
         if (TextUtils.isEmpty(alarm.getmId()))
             alarm.setmId(myUserAlarmsRef.push().getKey());
 
+        // Listener is attached to this reference so it doesn't need to reload
         myUserAlarmsRef.child(alarm.getmId()).setValue(alarm.toMap());
     }
 
