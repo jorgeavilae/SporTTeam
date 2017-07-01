@@ -149,12 +149,14 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
 
     @Override
     public void showUsersRequests(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mUsersRequestRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }
 
     @Override
     public void showRejectedUsers(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mUsersRejectedRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }

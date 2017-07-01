@@ -280,6 +280,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
     @Override
     public void showSports(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         sportsAdapter.replaceData(cursor);
     }
 

@@ -106,6 +106,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             mView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
             mView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
         } else {
+            // TODO: 01/07/2017 mView.limpiarUI();
             mView.showEventId("");
             mView.showEventSport("");
             mView.showEventPlace("", "");

@@ -96,6 +96,7 @@ public class InviteUserFragment extends BaseFragment implements InviteUserContra
 
     @Override
     public void showFriends(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mSendInvitationRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }

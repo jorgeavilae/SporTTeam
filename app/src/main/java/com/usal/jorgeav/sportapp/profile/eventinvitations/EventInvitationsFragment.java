@@ -78,6 +78,7 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
 
     @Override
     public void showEventInvitations(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mEventsRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }

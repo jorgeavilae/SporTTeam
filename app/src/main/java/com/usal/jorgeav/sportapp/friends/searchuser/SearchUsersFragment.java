@@ -120,6 +120,7 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
 
     @Override
     public void showUsers(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mUsersRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }

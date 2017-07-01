@@ -91,6 +91,7 @@ public class SelectFieldFragment extends BaseFragment implements SelectFieldCont
 
     @Override
     public void showFields(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mFieldsAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }

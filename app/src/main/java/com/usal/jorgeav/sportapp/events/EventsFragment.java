@@ -114,14 +114,16 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
     @Override
     public void showMyOwnEvents(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mMyOwnEventsRecyclerAdapter.replaceData(cursor);
-        if (cursor != null) mFragmentManagementListener.showContent();
+        mFragmentManagementListener.showContent();
     }
 
     @Override
     public void showParticipatesEvents(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mEventsParticipationRecyclerAdapter.replaceData(cursor);
-        if (cursor != null) mFragmentManagementListener.showContent();
+        mFragmentManagementListener.showContent();
     }
 
     @Override

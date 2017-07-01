@@ -92,6 +92,7 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
             mView.showAlarmTotalPlayers(a.getmTotalPlayersFrom(), a.getmTotalPlayersTo());
             mView.showAlarmEmptyPlayers(a.getmEmptyPlayersFrom(), a.getmEmptyPlayersTo());
         } else {
+            // TODO: 01/07/2017 mView.limpiarUI();
             mView.showAlarmId(null);
             mView.showAlarmSport(null);
             mView.showAlarmPlace(null, null);

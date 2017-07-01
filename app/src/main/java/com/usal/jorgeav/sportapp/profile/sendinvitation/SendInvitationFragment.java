@@ -92,6 +92,7 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
 
     @Override
     public void showEventsForInvitation(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mEventsRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }

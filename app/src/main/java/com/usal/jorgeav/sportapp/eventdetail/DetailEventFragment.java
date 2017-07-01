@@ -340,6 +340,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showParticipants(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
+        // todo añadir creador a esta lista
         usersAdapter.replaceData(cursor);
     }
 

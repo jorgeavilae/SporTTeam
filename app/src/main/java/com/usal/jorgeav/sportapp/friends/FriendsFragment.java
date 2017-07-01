@@ -87,6 +87,7 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
 
     @Override
     public void showFriends(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mFriendsRecyclerAdapter.replaceData(cursor);
         mFragmentManagementListener.showContent();
     }

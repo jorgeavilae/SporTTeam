@@ -100,6 +100,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
             mUserView.showUserAge(age);
             mUserView.showContent();
         } else {
+            // TODO: 01/07/2017 mView.limpiarUI();
             mUserView.showUserImage(null);
             mUserView.showUserName("");
             mUserView.showUserCity("");

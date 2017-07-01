@@ -165,6 +165,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             mNewEventView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
             mNewEventView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
         } else {
+            // TODO: 01/07/2017 mView.limpiarUI();
             mNewEventView.showEventSport("");
             mNewEventView.showEventPlace("");
             mNewEventView.showEventName("");

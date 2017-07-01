@@ -201,6 +201,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
 
     @Override
     public void showEvents(Cursor data) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         eventsAdapter.replaceData(data);
     }
 

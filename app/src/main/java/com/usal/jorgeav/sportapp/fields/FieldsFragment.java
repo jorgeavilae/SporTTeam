@@ -72,8 +72,9 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
 
     @Override
     public void showFields(Cursor cursor) {
+        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mFieldsRecyclerAdapter.replaceData(cursor);
-        if (cursor != null) mFragmentManagementListener.showContent();
+        mFragmentManagementListener.showContent();
     }
 
     @Override
