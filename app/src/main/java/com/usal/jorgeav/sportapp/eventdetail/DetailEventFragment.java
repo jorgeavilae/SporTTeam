@@ -26,6 +26,7 @@ import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
+import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
@@ -105,7 +106,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit) {
             Log.d(TAG, "onOptionsItemSelected: Edit");
-            mPresenter.editEvent();
+            Fragment fragment = NewEventFragment.newInstance(mEventId);
+            mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
             Log.d(TAG, "onOptionsItemSelected: Delete");

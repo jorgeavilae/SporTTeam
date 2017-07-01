@@ -2,6 +2,8 @@ package com.usal.jorgeav.sportapp;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
@@ -32,5 +34,15 @@ public abstract class BaseFragment extends Fragment {
 
     public Context getActivityContext() {
         return getActivity();
+    }
+
+    //Todo invoke when necesary
+    /* https://stackoverflow.com/a/1109108/4235666 */
+    public void hideSoftKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

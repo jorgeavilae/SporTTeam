@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +27,8 @@ import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,9 +39,12 @@ import butterknife.ButterKnife;
 
 public class NewEventFragment extends BaseFragment implements NewEventContract.View  {
     public static final String TAG = NewEventFragment.class.getSimpleName();
+    public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     NewEventContract.Presenter mNewEventPresenter;
+    private static boolean sInitialize;
 
+    ArrayAdapter<CharSequence> sportsAdapter;
     @BindView(R.id.new_event_sport)
     Spinner newEventSport;
     @BindView(R.id.new_event_field)
@@ -55,8 +61,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     EditText newEventTotal;
     @BindView(R.id.new_event_empty)
     EditText newEventEmpty;
+    HashMap<String, Boolean> mParticipants;
 
-    String fieldSelectedId;
     Calendar myCalendar;
     DatePickerDialog datePickerDialog;
     DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -82,8 +88,15 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         // Required empty public constructor
     }
 
-    public static NewEventFragment newInstance() {
-        return new NewEventFragment();
+    public static NewEventFragment newInstance(@Nullable String eventId) {
+        NewEventFragment nef = new NewEventFragment();
+        if (eventId != null) {
+            Bundle b = new Bundle();
+            b.putString(BUNDLE_EVENT_ID, eventId);
+            nef.setArguments(b);
+        }
+        sInitialize = false;
+        return nef;
     }
 
     @Override
@@ -104,9 +117,16 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
+        hideSoftKeyboard();
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
+
+            String eventId = "";
+            if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
+                eventId = getArguments().getString(BUNDLE_EVENT_ID);
+
             mNewEventPresenter.addEvent(
+                    eventId,
                     newEventSport.getSelectedItem().toString(),
                     ((EventsActivity)getActivity()).newEventFieldSelected,
                     newEventName.getText().toString(),
@@ -114,7 +134,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
-                    newEventEmpty.getText().toString());
+                    newEventEmpty.getText().toString(),
+                    mParticipants);
             return true;
         }
         return false;
@@ -127,9 +148,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
         myCalendar = Calendar.getInstance();
 
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivityContext(), R.array.sport_id, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        newEventSport.setAdapter(adapter);
+        sportsAdapter = ArrayAdapter.createFromResource(getActivityContext(), R.array.sport_id, android.R.layout.simple_spinner_item);
+        sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        newEventSport.setAdapter(sportsAdapter);
 
         newEventFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,6 +190,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         Log.d(TAG, "onActivityCreated: ");
         mFragmentManagementListener.setCurrentDisplayedFragment("New Event", this);
         mActionBarIconManagementListener.setToolbarAsUp();
+        if (sInitialize) return;
+        mNewEventPresenter.openEvent(getLoaderManager(), getArguments());
+        sInitialize = true;
     }
 
     @Override
@@ -186,5 +210,54 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     private String getSportSelected() {
         return newEventSport.getSelectedItem().toString();
+    }
+
+    @Override
+    public void showEventSport(String sport) {
+        if (sport != null && !TextUtils.isEmpty(sport))
+            newEventSport.setSelection(sportsAdapter.getPosition(sport));
+    }
+
+    @Override
+    public void showEventPlace(String place) {
+        if (place != null && !TextUtils.isEmpty(place) && getActivity() instanceof SelectFieldFragment.OnFieldSelected)
+            ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(place);
+    }
+
+    @Override
+    public void showEventName(String name) {
+        if (name != null && !TextUtils.isEmpty(name))
+        newEventName.setText(name);
+    }
+
+    @Override
+    public void showEventDate(long date) {
+        if (date > -1) {
+            newEventDate.setText(UtilesTime.millisToDateString(date));
+            newEventTime.setText(UtilesTime.millisToTimeString(date));
+        }
+    }
+
+    @Override
+    public void showEventCity(String city) {
+        if (city != null && !TextUtils.isEmpty(city))
+            newEventCity.setText(city);
+    }
+
+    @Override
+    public void showEventTotalPlayers(int totalPlayers) {
+        if (totalPlayers > -1)
+            newEventTotal.setText(String.format(Locale.getDefault(), "%d", totalPlayers));
+    }
+
+    @Override
+    public void showEventEmptyPlayers(int emptyPlayers) {
+        if (emptyPlayers > -1)
+            newEventEmpty.setText(String.format(Locale.getDefault(), "%d", emptyPlayers));
+    }
+
+    @Override
+    public void setParticipants(HashMap<String, Boolean> map) {
+        mParticipants = map;
     }
 }

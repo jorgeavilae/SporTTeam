@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.network.firebase;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -60,7 +61,9 @@ public class FirebaseActions {
                 .child(FirebaseDBContract.Field.NEXT_EVENTS);
 
         long currentTime = System.currentTimeMillis();
-        event.setEvent_id(eventsRef.push().getKey());
+
+        if (TextUtils.isEmpty(event.getEvent_id()))
+            event.setEvent_id(eventsRef.push().getKey());
 
         eventsRef.child(event.getEvent_id()).setValue(event.toMap());
         myUserEventCreatedRef.child(event.getEvent_id()).setValue(currentTime);

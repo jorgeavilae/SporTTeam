@@ -17,7 +17,7 @@ public abstract class DetailEventContract {
         void showEventPlace(String place, String sport);
         void showEventName(String name);
         void showEventDate(String date);
-        void showEventOwner(String time);
+        void showEventOwner(String city);
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);
         void showParticipants(Cursor cursor);
@@ -29,7 +29,6 @@ public abstract class DetailEventContract {
 
     public interface Presenter {
         void openEvent(LoaderManager loaderManager, Bundle b);
-        void editEvent();
         void deleteEvent(Bundle b);
         void getRelationTypeBetweenThisEventAndI();
 

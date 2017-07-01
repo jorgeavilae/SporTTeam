@@ -87,6 +87,16 @@ public final class SportteamLoader {
                 new String[]{eventId, String.valueOf(participate?1:0)},
                 SportteamContract.EventsParticipationEntry.USER_ID_TABLE_PREFIX + " ASC");
     }
+    public static CursorLoader cursorLoaderEventParticipantsNoData(Context context, String eventId) {
+        // Return user data for participants in eventId
+        return new CursorLoader(
+                context,
+                SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
+                SportteamContract.EventsParticipationEntry.EVENTS_PARTICIPATION_COLUMNS,
+                SportteamContract.EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " = ? ",
+                new String[]{eventId},
+                SportteamContract.EventsParticipationEntry.USER_ID_TABLE_PREFIX + " ASC");
+    }
 
 
 

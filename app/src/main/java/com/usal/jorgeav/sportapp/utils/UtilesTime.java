@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -55,9 +56,16 @@ public class UtilesTime {
     }
 
     public static String millisToTimeString(long millis) {
-        long min = millis/(60*1000);
-        long hor = min/60;
-        min -= hor*60;
-        return String.format(Locale.getDefault(), "%02d:%02d", hor,min);
+        Calendar cl = Calendar.getInstance();
+        cl.setTimeInMillis(millis);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return sdf.format(cl.getTime());
+    }
+
+    public static String millisToDateString(long millis) {
+        Calendar cl = Calendar.getInstance();
+        cl.setTimeInMillis(millis);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+        return sdf.format(cl.getTime());
     }
 }
