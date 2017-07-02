@@ -4,6 +4,7 @@ package com.usal.jorgeav.sportapp.fields;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,8 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
 
     @BindView(R.id.fields_list)
     RecyclerView fieldsRecyclerList;
+    @BindView(R.id.fields_placeholder)
+    ConstraintLayout fieldsPlaceholder;
 
     public FieldsFragment() {
         // Required empty public constructor
@@ -72,8 +75,15 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
 
     @Override
     public void showFields(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mFieldsRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            fieldsRecyclerList.setVisibility(View.VISIBLE);
+            fieldsPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            fieldsRecyclerList.setVisibility(View.INVISIBLE);
+            fieldsPlaceholder.setVisibility(View.VISIBLE);
+        }
+
         mFragmentManagementListener.showContent();
     }
 
