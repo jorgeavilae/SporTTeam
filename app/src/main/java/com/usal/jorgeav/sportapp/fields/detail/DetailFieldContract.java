@@ -18,6 +18,7 @@ public abstract class DetailFieldContract {
         void showFieldSport(String sport);
         void showFieldOpeningTime(String opening);
         void showFieldClosingTime(String closing);
+        void clearUI();
         Context getActivityContext();
     }
 

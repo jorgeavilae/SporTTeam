@@ -206,6 +206,17 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     }
 
     @Override
+    public void clearUI() {
+        this.textViewAlarmId.setText("");
+        this.textViewAlarmSport.setText("");
+        this.buttonAlarmPlace.setText("");
+        this.buttonAlarmPlace.setOnClickListener(null);
+        this.textViewAlarmDate.setText("");
+        this.textViewAlarmTotal.setText("");
+        this.textViewAlarmEmpty.setText("");
+    }
+
+    @Override
     public void onEventClick(String eventId) {
         Fragment newFragment = DetailEventFragment.newInstance(eventId);
         mFragmentManagementListener.initFragment(newFragment, true);

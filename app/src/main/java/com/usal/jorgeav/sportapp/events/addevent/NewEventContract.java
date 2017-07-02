@@ -28,6 +28,7 @@ public abstract class NewEventContract {
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);
         void setParticipants(HashMap<String, Boolean> map);
+        void clearUI();
         Context getActivityContext();
 
     }

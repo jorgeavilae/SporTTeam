@@ -202,13 +202,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
             mNewAlarmView.showAlarmTotalPlayers(a.getmTotalPlayersFrom(), a.getmTotalPlayersTo());
             mNewAlarmView.showAlarmEmptyPlayers(a.getmEmptyPlayersFrom(), a.getmEmptyPlayersTo());
         } else {
-            // TODO: 01/07/2017 mView.limpiarUI();
-            mNewAlarmView.showAlarmSport(null);
-            mNewAlarmView.showAlarmPlace(null);
-            mNewAlarmView.showAlarmCity(null);
-            mNewAlarmView.showAlarmDate(0L, 0L);
-            mNewAlarmView.showAlarmTotalPlayers(-1L, -1L);
-            mNewAlarmView.showAlarmEmptyPlayers(-1L, -1L);
+            mNewAlarmView.clearUI();
         }
     }
 }

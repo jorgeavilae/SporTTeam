@@ -19,6 +19,7 @@ public abstract class DetailAlarmContract {
         void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo);
         void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo);
         void showEvents(Cursor data);
+        void clearUI();
         Context getActivityContext();
 
     }

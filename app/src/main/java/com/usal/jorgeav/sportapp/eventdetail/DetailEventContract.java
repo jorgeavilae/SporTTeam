@@ -21,6 +21,7 @@ public abstract class DetailEventContract {
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);
         void showParticipants(Cursor cursor);
+        void clearUI();
         Context getActivityContext();
         String getEventID();
         void uiSetupForEventRelation(@DetailEventPresenter.EventRelationType int relation);

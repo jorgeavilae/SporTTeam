@@ -296,4 +296,18 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         if (emptyPlayersTo != null && emptyPlayersTo > -1)
             newAlarmEmptyTo.setText(String.format(Locale.getDefault(), "%d", emptyPlayersTo));
     }
+
+    @Override
+    public void clearUI() {
+        newAlarmSport.setSelection(0);
+        ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected("");
+        newAlarmCity.setText("");
+        newAlarmDateFrom.setText("");
+        newAlarmDateTo.setEnabled(false);
+        newAlarmDateTo.setText("");
+        newAlarmTotalFrom.setText("");
+        newAlarmTotalTo.setText("");
+        newAlarmEmptyFrom.setText("");
+        newAlarmEmptyTo.setText("");
+    }
 }

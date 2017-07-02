@@ -88,7 +88,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mMenu = menu;
-        Log.d(TAG, "onCreateOptionsMenu: mMenu "+mMenu);
         super.onCreateOptionsMenu(mMenu, inflater);
     }
 
@@ -251,7 +250,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
     @Override
     public void showUserImage(String image) {
-        if (!this.getActivity().isDestroyed())
+        userImage.setVisibility(View.VISIBLE);
         GlideApp.with(this.getActivity())
                 .load(image)
                 .error(R.drawable.profile_picture_placeholder)
@@ -282,6 +281,15 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     public void showSports(Cursor cursor) {
         // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         sportsAdapter.replaceData(cursor);
+    }
+
+    @Override
+    public void clearUI() {
+        this.userImage.setVisibility(View.INVISIBLE);
+        this.userName.setText("");
+        this.mFragmentManagementListener.setActionBarTitle("");
+        this.userCity.setText("");
+        this.userAge.setText("");
     }
 
     @Override

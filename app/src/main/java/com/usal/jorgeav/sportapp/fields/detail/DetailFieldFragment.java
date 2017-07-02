@@ -30,8 +30,6 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
     public static final String BUNDLE_SPORT_ID = "BUNDLE_SPORT_ID";
 
-    private static String mFieldId = "";
-    private static String mSportId = "";
     private DetailFieldContract.Presenter mPresenter;
 
     @BindView(R.id.field_detail_id)
@@ -107,11 +105,6 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         View root = inflater.inflate(R.layout.fragment_detail_field, container, false);
         ButterKnife.bind(this, root);
 
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID) && getArguments().containsKey(BUNDLE_SPORT_ID)) {
-            mFieldId = getArguments().getString(BUNDLE_FIELD_ID);
-            mSportId = getArguments().getString(BUNDLE_SPORT_ID);
-        }
-
         return root;
     }
 
@@ -166,5 +159,17 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     public void showFieldClosingTime(String closing) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewFieldClosing.setText(closing);
+    }
+
+    @Override
+    public void clearUI() {
+        this.textViewFieldId.setText("");
+        this.textViewFieldName.setText("");
+        this.mFragmentManagementListener.setActionBarTitle("");
+        this.textViewFieldAddress.setText("");
+        this.textViewFieldRating.setText("");
+        this.textViewFieldSport.setText("");
+        this.textViewFieldOpening.setText("");
+        this.textViewFieldClosing.setText("");
     }
 }

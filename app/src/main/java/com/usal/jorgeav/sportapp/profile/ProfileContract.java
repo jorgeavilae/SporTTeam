@@ -18,6 +18,7 @@ public abstract class ProfileContract {
         void showUserAge(int age);
         void showSports(Cursor cursor);
         void showContent();
+        void clearUI();
         Context getActivityContext();
         String getUserID();
         void uiSetupForUserRelation(@ProfilePresenter.UserRelationType int relation);

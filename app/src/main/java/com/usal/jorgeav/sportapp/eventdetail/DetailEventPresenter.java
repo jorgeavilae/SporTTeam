@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.eventdetail;
 
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.MergeCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
@@ -29,6 +31,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     private static final String TAG = DetailEventPresenter.class.getSimpleName();
 
     DetailEventContract.View mView;
+    String ownerUid = "";
     ContentObserver mContentObserver;
 
     public DetailEventPresenter(@NonNull DetailEventContract.View view) {
@@ -78,9 +81,23 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
                 showEventDetails(data);
                 break;
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
-                mView.showParticipants(data);
+                if (ownerUid != null && !TextUtils.isEmpty(ownerUid)) {
+                    Cursor c = addParticipantToCursor(data, ownerUid);
+                    mView.showParticipants(c);
+                }
                 break;
         }
+    }
+
+    /* https://stackoverflow.com/a/16440093/4235666 */
+    private Cursor addParticipantToCursor(Cursor data, String uid) {
+        Cursor uidCursor = MyApplication.getAppContext().getContentResolver().query(
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.UserEntry.USER_ID + " = ? ",
+                new String[]{uid},
+                null);
+        return new MergeCursor(new Cursor[] {uidCursor, data});
     }
 
     @Override
@@ -99,22 +116,17 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         if (data != null && data.moveToFirst()) {
             mView.showEventId(data.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
             mView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
-            mView.showEventPlace(data.getString(SportteamContract.EventEntry.COLUMN_FIELD), data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
+            mView.showEventPlace(data.getString(SportteamContract.EventEntry.COLUMN_FIELD),
+                                 data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             mView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mView.showEventDate(UtilesTime.millisToDateTimeString(data.getLong(SportteamContract.EventEntry.COLUMN_DATE)));
-            mView.showEventOwner(data.getString(SportteamContract.EventEntry.COLUMN_OWNER));
+            ownerUid = data.getString(SportteamContract.EventEntry.COLUMN_OWNER);
+            mView.showEventOwner(ownerUid);
             mView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
             mView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
         } else {
-            // TODO: 01/07/2017 mView.limpiarUI();
-            mView.showEventId("");
-            mView.showEventSport("");
-            mView.showEventPlace("", "");
-            mView.showEventName("");
-            mView.showEventDate("");
-            mView.showEventOwner("");
-            mView.showEventTotalPlayers(-1);
-            mView.showEventEmptyPlayers(-1);
+            ownerUid = "";
+            mView.clearUI();
         }
     }
 

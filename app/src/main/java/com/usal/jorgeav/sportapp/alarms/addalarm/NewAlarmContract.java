@@ -25,6 +25,7 @@ public abstract class NewAlarmContract {
         void showAlarmDate(Long dateFrom, Long dateTo);
         void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo);
         void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo);
+        void clearUI();
         Context getActivityContext();
     }
 }

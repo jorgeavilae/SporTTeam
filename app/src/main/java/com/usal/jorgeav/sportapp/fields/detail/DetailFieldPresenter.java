@@ -71,14 +71,7 @@ public class DetailFieldPresenter implements DetailFieldContract.Presenter, Load
             mView.showFieldOpeningTime(UtilesTime.millisToTimeString(data.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME)));
             mView.showFieldClosingTime(UtilesTime.millisToTimeString(data.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME)));
         } else {
-            // TODO: 01/07/2017 mView.limpiarUI();
-            mView.showFieldId("");
-            mView.showFieldName("");
-            mView.showFieldAddress("");
-            mView.showFieldRating(-1f);
-            mView.showFieldSport("");
-            mView.showFieldOpeningTime("");
-            mView.showFieldClosingTime("");
+            mView.clearUI();
         }
     }
 }

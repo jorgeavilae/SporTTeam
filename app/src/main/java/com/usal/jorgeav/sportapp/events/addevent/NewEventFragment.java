@@ -259,4 +259,16 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public void setParticipants(HashMap<String, Boolean> map) {
         mParticipants = map;
     }
+
+    @Override
+    public void clearUI() {
+        newEventSport.setSelection(0);
+        ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected("");
+        newEventName.setText("");
+        newEventDate.setText("");
+        newEventTime.setText("");
+        newEventCity.setText("");
+        newEventTotal.setText("");
+        newEventEmpty.setText("");
+    }
 }

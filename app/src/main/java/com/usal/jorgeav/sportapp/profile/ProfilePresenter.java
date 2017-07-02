@@ -74,7 +74,6 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
         }
     }
 
-    //todo cambiar null por algo como limpiarUI
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
@@ -100,11 +99,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
             mUserView.showUserAge(age);
             mUserView.showContent();
         } else {
-            // TODO: 01/07/2017 mView.limpiarUI();
-            mUserView.showUserImage(null);
-            mUserView.showUserName("");
-            mUserView.showUserCity("");
-            mUserView.showUserAge(-1);
+            mUserView.clearUI();
         }
     }
 

@@ -341,8 +341,21 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @Override
     public void showParticipants(Cursor cursor) {
         // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
-        // todo añadir creador a esta lista
         usersAdapter.replaceData(cursor);
+    }
+
+    @Override
+    public void clearUI() {
+        this.textViewEventId.setText("");
+        this.textViewEventSport.setText("");
+        this.buttonEventPlace.setText("");
+        this.buttonEventPlace.setOnClickListener(null);
+        this.textViewEventName.setText("");
+        this.mFragmentManagementListener.setActionBarTitle("");
+        this.textViewEventDate.setText("");
+        this.textViewEventOwner.setText("");
+        this.textViewEventTotal.setText("");
+        this.textViewEventEmpty.setText("");
     }
 
     @Override
