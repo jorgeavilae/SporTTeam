@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.profile.friendrequests;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +34,8 @@ public class FriendRequestsFragment extends BaseFragment implements FriendReques
 
     @BindView(R.id.recycler_list)
     RecyclerView friendRequestsList;
+    @BindView(R.id.list_placeholder)
+    ConstraintLayout friendRequestsPlaceholder;
 
     public FriendRequestsFragment() {
         // Required empty public constructor
@@ -88,8 +91,14 @@ public class FriendRequestsFragment extends BaseFragment implements FriendReques
 
     @Override
     public void showFriendRequests(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mUsersRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            friendRequestsList.setVisibility(View.VISIBLE);
+            friendRequestsPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            friendRequestsList.setVisibility(View.INVISIBLE);
+            friendRequestsPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 }

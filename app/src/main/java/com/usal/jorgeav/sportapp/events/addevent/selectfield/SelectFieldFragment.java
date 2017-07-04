@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.events.addevent.selectfield;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +34,8 @@ public class SelectFieldFragment extends BaseFragment implements SelectFieldCont
 
     @BindView(R.id.recycler_list)
     RecyclerView fieldsSelectionList;
+    @BindView(R.id.list_placeholder)
+    ConstraintLayout fieldsSelectionPlaceholder;
 
     public SelectFieldFragment() {
         // Required empty public constructor
@@ -91,8 +94,14 @@ public class SelectFieldFragment extends BaseFragment implements SelectFieldCont
 
     @Override
     public void showFields(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mFieldsAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            fieldsSelectionList.setVisibility(View.VISIBLE);
+            fieldsSelectionPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            fieldsSelectionList.setVisibility(View.INVISIBLE);
+            fieldsSelectionPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 

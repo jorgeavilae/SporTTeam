@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,8 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
 
     @BindView(R.id.search_events_list)
     RecyclerView searchEventsList;
+    @BindView(R.id.search_events_placeholder)
+    ConstraintLayout searchEventsPlaceholder;
     @BindView(R.id.search_events_button)
     Button searchEventsButton;
 
@@ -126,6 +129,13 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
     @Override
     public void showEvents(Cursor cursor) {
         mEventsRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            searchEventsList.setVisibility(View.VISIBLE);
+            searchEventsPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            searchEventsList.setVisibility(View.INVISIBLE);
+            searchEventsPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 

@@ -4,6 +4,7 @@ package com.usal.jorgeav.sportapp.events.eventrequest;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +30,8 @@ public class EventRequestsFragment extends BaseFragment implements EventRequests
 
     @BindView(R.id.recycler_list)
     RecyclerView eventRequestsList;
+    @BindView(R.id.list_placeholder)
+    ConstraintLayout eventRequestsPlaceholder;
 
     public EventRequestsFragment() {
         // Required empty public constructor
@@ -83,8 +86,14 @@ public class EventRequestsFragment extends BaseFragment implements EventRequests
 
     @Override
     public void showEventRequests(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mEventsRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            eventRequestsList.setVisibility(View.VISIBLE);
+            eventRequestsPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            eventRequestsList.setVisibility(View.INVISIBLE);
+            eventRequestsPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 

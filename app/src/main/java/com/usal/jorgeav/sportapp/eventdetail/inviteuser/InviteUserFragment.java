@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +38,8 @@ public class InviteUserFragment extends BaseFragment implements InviteUserContra
 
     @BindView(R.id.recycler_list)
     RecyclerView sendInvitationRecyclerList;
+    @BindView(R.id.list_placeholder)
+    ConstraintLayout sendInvitationPlaceholder;
 
     public InviteUserFragment() {
         // Required empty public constructor
@@ -96,8 +99,14 @@ public class InviteUserFragment extends BaseFragment implements InviteUserContra
 
     @Override
     public void showFriends(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mSendInvitationRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            sendInvitationRecyclerList.setVisibility(View.VISIBLE);
+            sendInvitationPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            sendInvitationRecyclerList.setVisibility(View.INVISIBLE);
+            sendInvitationPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 

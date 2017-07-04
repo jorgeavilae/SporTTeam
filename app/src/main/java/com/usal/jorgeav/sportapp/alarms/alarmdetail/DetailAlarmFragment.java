@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,6 +55,8 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     @BindView(R.id.alarm_detail_events_coincidence_list)
     RecyclerView eventsCoincidenceList;
     EventsAdapter eventsAdapter;
+    @BindView(R.id.alarm_detail_events_placeholder)
+    ConstraintLayout eventsCoincidencePlaceholder;
 
     public DetailAlarmFragment() {
         // Required empty public constructor
@@ -101,7 +104,6 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View root = inflater.inflate(R.layout.fragment_detail_alarm, container, false);
         ButterKnife.bind(this, root);
 
@@ -201,8 +203,15 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
 
     @Override
     public void showEvents(Cursor data) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         eventsAdapter.replaceData(data);
+        if (data != null && data.getCount() > 0) {
+            eventsCoincidenceList.setVisibility(View.VISIBLE);
+            eventsCoincidencePlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            eventsCoincidenceList.setVisibility(View.INVISIBLE);
+            eventsCoincidencePlaceholder.setVisibility(View.VISIBLE);
+        }
+        mFragmentManagementListener.showContent();
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.events;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,9 +38,13 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     EventsAdapter mMyOwnEventsRecyclerAdapter;
     @BindView(R.id.my_own_events_list)
     RecyclerView myOwnEventsRecyclerList;
+    @BindView(R.id.my_own_events_placeholder)
+    ConstraintLayout myOwnEventsPlaceholder;
     EventsAdapter mEventsParticipationRecyclerAdapter;
     @BindView(R.id.my_events_participation_list)
     RecyclerView eventsParticipationRecyclerList;
+    @BindView(R.id.my_events_participation_placeholder)
+    ConstraintLayout eventsParticipationPlaceholder;
 
     public EventsFragment() {
         // Required empty public constructor
@@ -114,15 +119,27 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
     @Override
     public void showMyOwnEvents(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mMyOwnEventsRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            myOwnEventsRecyclerList.setVisibility(View.VISIBLE);
+            myOwnEventsPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            myOwnEventsRecyclerList.setVisibility(View.INVISIBLE);
+            myOwnEventsPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 
     @Override
     public void showParticipatesEvents(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mEventsParticipationRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            eventsParticipationRecyclerList.setVisibility(View.VISIBLE);
+            eventsParticipationPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            eventsParticipationRecyclerList.setVisibility(View.INVISIBLE);
+            eventsParticipationPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 

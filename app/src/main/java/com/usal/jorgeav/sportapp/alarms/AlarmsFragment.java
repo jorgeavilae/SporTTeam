@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.alarms;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +31,8 @@ public class AlarmsFragment extends BaseFragment implements AlarmsContract.View,
     AlarmAdapter mAlarmsRecyclerAdapter;
     @BindView(R.id.alarms_list)
     RecyclerView alarmsRecyclerList;
+    @BindView(R.id.alarms_placeholder)
+    ConstraintLayout alarmsPlaceholder;
 
     public AlarmsFragment() {
         // Required empty public constructor
@@ -84,8 +87,14 @@ public class AlarmsFragment extends BaseFragment implements AlarmsContract.View,
 
     @Override
     public void showAlarms(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mAlarmsRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            alarmsRecyclerList.setVisibility(View.VISIBLE);
+            alarmsPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            alarmsRecyclerList.setVisibility(View.INVISIBLE);
+            alarmsPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -72,6 +73,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @BindView(R.id.event_detail_participants_list)
     RecyclerView eventParticipantsList;
     UsersAdapter usersAdapter;
+    @BindView(R.id.event_detail_participants_placeholder)
+    ConstraintLayout eventParticipantsPlaceholder;
 
     public DetailEventFragment() {
         // Required empty public constructor
@@ -340,8 +343,15 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showParticipants(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         usersAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            eventParticipantsList.setVisibility(View.VISIBLE);
+            eventParticipantsPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            eventParticipantsList.setVisibility(View.INVISIBLE);
+            eventParticipantsPlaceholder.setVisibility(View.VISIBLE);
+        }
+        mFragmentManagementListener.showContent();
     }
 
     @Override

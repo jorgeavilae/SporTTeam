@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.friends;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +35,8 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
     Button friendsSearchButton;
     @BindView(R.id.friends_list)
     RecyclerView friendsRecyclerList;
+    @BindView(R.id.friends_placeholder)
+    ConstraintLayout friendsPlaceholder;
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -87,8 +90,14 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
 
     @Override
     public void showFriends(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mFriendsRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            friendsRecyclerList.setVisibility(View.VISIBLE);
+            friendsPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            friendsRecyclerList.setVisibility(View.INVISIBLE);
+            friendsPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 

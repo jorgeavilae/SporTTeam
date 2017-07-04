@@ -106,6 +106,19 @@
             tools:listitem="@layout/sport_profile_item_list"
             tools:orientation="horizontal" />
 
+        <include
+            android:id="@+id/user_sport_placeholder"
+            layout="@layout/list_placeholder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="0dp"
+            android:visibility="invisible"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_age" />
+
         <Button
             android:id="@+id/user_send_invitation"
             android:layout_width="wrap_content"

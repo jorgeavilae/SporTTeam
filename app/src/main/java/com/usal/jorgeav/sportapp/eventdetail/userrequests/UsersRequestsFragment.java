@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,9 +38,13 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
     UsersAdapter mUsersRequestRecyclerAdapter;
     @BindView(R.id.user_requests_list)
     RecyclerView usersRequestsList;
+    @BindView(R.id.user_requests_placeholder)
+    ConstraintLayout userRequestPlaceholder;
     UsersAdapter mUsersRejectedRecyclerAdapter;
     @BindView(R.id.user_rejected_list)
     RecyclerView usersRejectedList;
+    @BindView(R.id.user_rejected_placeholder)
+    ConstraintLayout usersRejectedPlaceholder;
 
     public UsersRequestsFragment() {
         // Required empty public constructor
@@ -149,15 +154,27 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
 
     @Override
     public void showUsersRequests(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mUsersRequestRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            usersRequestsList.setVisibility(View.VISIBLE);
+            userRequestPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            usersRequestsList.setVisibility(View.INVISIBLE);
+            userRequestPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 
     @Override
     public void showRejectedUsers(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mUsersRejectedRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            usersRejectedList.setVisibility(View.VISIBLE);
+            usersRejectedPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            usersRejectedList.setVisibility(View.INVISIBLE);
+            usersRejectedPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 }

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -58,6 +59,8 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @BindView(R.id.user_sport_list)
     RecyclerView userSportList;
     ProfileSportsAdapter sportsAdapter;
+    @BindView(R.id.user_sport_placeholder)
+    ConstraintLayout userSportPlaceholder;
     @BindView(R.id.user_edit_sport)
     Button userEditSportListButton;
     @BindView(R.id.user_event_invitations)
@@ -279,8 +282,15 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
     @Override
     public void showSports(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         sportsAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            userSportList.setVisibility(View.VISIBLE);
+            userSportPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            userSportList.setVisibility(View.INVISIBLE);
+            userSportPlaceholder.setVisibility(View.VISIBLE);
+        }
+        mFragmentManagementListener.showContent();
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +39,8 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
 
     @BindView(R.id.search_users_list)
     RecyclerView searchUsersList;
+    @BindView(R.id.search_users_placeholder)
+    ConstraintLayout searchUsersPlaceholder;
     @BindView(R.id.search_users_button)
     Button searchUsersButton;
 
@@ -120,8 +123,14 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
 
     @Override
     public void showUsers(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mUsersRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            searchUsersList.setVisibility(View.VISIBLE);
+            searchUsersPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            searchUsersList.setVisibility(View.INVISIBLE);
+            searchUsersPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 

@@ -4,6 +4,7 @@ package com.usal.jorgeav.sportapp.profile.eventinvitations;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +30,8 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
 
     @BindView(R.id.recycler_list)
     RecyclerView eventInvitationsList;
+    @BindView(R.id.list_placeholder)
+    ConstraintLayout eventInvitationsPlaceholder;
 
     public EventInvitationsFragment() {
         // Required empty public constructor
@@ -78,8 +81,14 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
 
     @Override
     public void showEventInvitations(Cursor cursor) {
-        // TODO: 01/07/2017 si es null o esta vacio mostrar placeholder
         mEventsRecyclerAdapter.replaceData(cursor);
+        if (cursor != null && cursor.getCount() > 0) {
+            eventInvitationsList.setVisibility(View.VISIBLE);
+            eventInvitationsPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            eventInvitationsList.setVisibility(View.INVISIBLE);
+            eventInvitationsPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 
