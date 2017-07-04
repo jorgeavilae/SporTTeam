@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -34,6 +35,14 @@ public abstract class BaseFragment extends Fragment {
 
     public Context getActivityContext() {
         return getActivity();
+    }
+
+    public BaseFragment getThis() { return this;}
+
+    public void resetBackStack() {
+        getActivity().getSupportFragmentManager().popBackStack(
+                getActivity().getSupportFragmentManager().getBackStackEntryAt(0).getId(),
+                FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     //Todo invoke when necesary

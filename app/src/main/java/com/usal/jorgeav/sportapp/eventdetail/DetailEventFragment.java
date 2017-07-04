@@ -114,6 +114,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         } else if (item.getItemId() == R.id.action_delete) {
             Log.d(TAG, "onOptionsItemSelected: Delete");
             mPresenter.deleteEvent(getArguments());
+            ((BaseActivity)getActivity()).hideContent();
             return true;
         }
         return false;

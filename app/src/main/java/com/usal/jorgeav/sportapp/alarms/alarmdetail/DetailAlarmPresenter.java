@@ -39,7 +39,7 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     public void deleteAlarm(Bundle b) {
         String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        FirebaseActions.deleteAlarm(userId, alarmId);
+        FirebaseActions.deleteAlarm(mView.getThis(), userId, alarmId);
         ((Activity) mView.getActivityContext()).onBackPressed();
     }
 

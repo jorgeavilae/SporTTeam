@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
+
 /**
  * Created by Jorge Avila on 26/04/2017.
  */
@@ -23,6 +25,7 @@ public abstract class DetailEventContract {
         void showParticipants(Cursor cursor);
         void clearUI();
         Context getActivityContext();
+        BaseFragment getThis();
         String getEventID();
         void uiSetupForEventRelation(@DetailEventPresenter.EventRelationType int relation);
 

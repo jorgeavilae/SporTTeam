@@ -56,8 +56,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     @Override
     public void deleteEvent(Bundle b) {
         String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
-        FirebaseActions.deleteEvent(eventId);
-        // TODO: 30/06/2017 mostrar loading
+        FirebaseActions.deleteEvent(mView.getThis(), eventId);
     }
 
     @Override

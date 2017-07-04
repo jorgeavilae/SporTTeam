@@ -10,6 +10,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Sport;
@@ -487,13 +488,14 @@ public class FirebaseActions {
         });
     }
 
-    public static void deleteAlarm(String userId, String alarmId) {
+    public static void deleteAlarm(BaseFragment baseFragment, String userId, String alarmId) {
         //Delete Alarm in my User
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                 .child(userId).child(FirebaseDBContract.User.ALARMS).child(alarmId).removeValue();
+        baseFragment.resetBackStack();
     }
 
-    public static void deleteEvent(String eventId) {
+    public static void deleteEvent(final BaseFragment baseFragment, String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
@@ -556,6 +558,8 @@ public class FirebaseActions {
                     }
 
                     database.updateChildren(childDeletes);
+
+                    baseFragment.resetBackStack();
                 }
             }
 
