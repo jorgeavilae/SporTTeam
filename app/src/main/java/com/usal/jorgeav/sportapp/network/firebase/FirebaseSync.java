@@ -667,15 +667,17 @@ public class FirebaseSync {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            // TODO: 01/07/2017 cambiar
-                            Event e = UtilesDataSnapshot.dataSnapshotToEvent(dataSnapshot);
+                            Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
+                            e.setEvent_id(dataSnapshot.getKey());
+
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
                             loadAField(e.getField_id());
 
                             // Load users participants with data
-                            loadUsersFromParticipants(dataSnapshot.getKey());
+                            if (e.getParticipants() != null)
+                                loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
                         }
                     }
 
@@ -710,39 +712,22 @@ public class FirebaseSync {
                     }
                 });
     }
-    private static void loadUsersFromParticipants(String key) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+    private static void loadUsersFromParticipants(String eventId, Map<String, Boolean> participants) {
+        MyApplication.getAppContext().getContentResolver()
+                .delete(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
+                        SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
+                        new String[]{eventId});
 
-        eventsRef.child(key + "/" + FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.PARTICIPANTS)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
-                            MyApplication.getAppContext().getContentResolver()
-                                    .delete(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
-                                            SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
-                                            new String[]{eventId});
+        for (Map.Entry<String, Boolean> entry : participants.entrySet()) {
+            loadAProfile(entry.getKey());
 
-                            for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                if (data.exists()) {
-                                    loadAProfile(data.getKey());
-
-                                    ContentValues cvData = UtilesDataSnapshot
-                                            .dataSnapshotEventsParticipationToContentValues(data, eventId, false);
-                                    MyApplication.getAppContext().getContentResolver()
-                                            .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
-
-                    }
-                });
+            ContentValues cv = new ContentValues();
+            cv.put(SportteamContract.EventsParticipationEntry.USER_ID, entry.getKey());
+            cv.put(SportteamContract.EventsParticipationEntry.EVENT_ID, eventId);
+            cv.put(SportteamContract.EventsParticipationEntry.PARTICIPATES, entry.getValue() ? 1 : 0);
+            MyApplication.getAppContext().getContentResolver()
+                    .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cv);
+        }
     }
 
     public static void loadFieldsFromCity(String city) {

@@ -320,6 +320,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public void showEventOwner(String owner) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewEventOwner.setText(owner);
+        mPresenter.loadParticipants(getLoaderManager(), getArguments());
 
     }
 

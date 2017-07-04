@@ -54,6 +54,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     }
 
     @Override
+    public void loadParticipants(LoaderManager loaderManager, Bundle b) {
+        String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
+        loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
+    }
+
+    @Override
     public void deleteEvent(Bundle b) {
         String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
         FirebaseActions.deleteEvent(mView.getThis(), eventId);
@@ -80,6 +86,9 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
                 showEventDetails(data);
                 break;
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
+                /* ownerUid should have a value because this loader
+                 * is initialized after this value was set in UI
+                 */
                 if (ownerUid != null && !TextUtils.isEmpty(ownerUid)) {
                     Cursor c = addParticipantToCursor(data, ownerUid);
                     mView.showParticipants(c);

@@ -33,6 +33,7 @@ public abstract class DetailEventContract {
 
     public interface Presenter {
         void openEvent(LoaderManager loaderManager, Bundle b);
+        void loadParticipants(LoaderManager loaderManager, Bundle b);
         void deleteEvent(Bundle b);
         void getRelationTypeBetweenThisEventAndI();
 

@@ -193,7 +193,7 @@ public class UtilesDataSnapshot {
 
     public static ContentValues dataSnapshotEventsParticipationToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheParticipant) {
         String userId, eventId;
-        if(iAmTheParticipant) {
+        if(iAmTheParticipant) { //todo always true?
             eventId = dataSnapshot.getKey();
             userId = key;
         } else {
