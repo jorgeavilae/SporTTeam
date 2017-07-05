@@ -165,6 +165,7 @@ public class PlaceAutocompleteAdapter
 
             // Submit the query to the autocomplete API and retrieve a PendingResult that will
             // contain the results when the query completes.
+            /*https://developers.google.com/android/reference/com/google/android/gms/common/api/PendingResult*/
             PendingResult<AutocompletePredictionBuffer> results = Places.GeoDataApi
                     .getAutocompletePredictions(mGoogleApiClient, constraint.toString(),
                             mBounds, mPlaceFilter);

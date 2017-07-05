@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,10 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 14/06/2017.
- */
-
 public class FirebaseSync {
     public static final String TAG = FirebaseSync.class.getSimpleName();
 
@@ -36,10 +33,13 @@ public class FirebaseSync {
     public static void syncFirebaseDatabase() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null && listenerMap.isEmpty()) {
             // Load current user profile and sports
-            loadAProfile(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+            String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+
+            loadAProfile(myUserID);
 
             // Load fields from user city
-            loadFieldsFromCity(Utiles.getCurrentCity(MyApplication.getAppContext(), FirebaseAuth.getInstance().getCurrentUser().getUid()));
+            loadFieldsFromCity(Utiles.getCurrentCity(MyApplication.getAppContext(), myUserID));
 
             // Load friends list and user data
             loadUsersFromFriends();
@@ -76,7 +76,9 @@ public class FirebaseSync {
     }
 
     private static void loadUsersFromFriends() {
-        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = "";
+        if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS);
@@ -86,7 +88,9 @@ public class FirebaseSync {
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
                     loadAProfile(dataSnapshot.getKey());
-                    String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    String myUserID = "";
+                    if (fUser != null) myUserID = fUser.getUid();
                     ContentValues cvData = UtilesDataSnapshot.dataSnapshotFriendToContentValues(dataSnapshot, myUserID);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI, cvData);
@@ -96,7 +100,9 @@ public class FirebaseSync {
             @Override
             public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
                 loadAProfile(dataSnapshot.getKey());
-                String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String myUserID = "";
+                if (fUser != null) myUserID = fUser.getUid();
                 ContentValues cvData = UtilesDataSnapshot.dataSnapshotFriendToContentValues(dataSnapshot, myUserID);
                 MyApplication.getAppContext().getContentResolver()
                         .insert(SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI, cvData);
@@ -105,7 +111,9 @@ public class FirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String myUserID = "";
+                if (fUser != null) myUserID = fUser.getUid();
                 String userId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI,
@@ -129,7 +137,8 @@ public class FirebaseSync {
         listenerMap.put(myUserRef, childEventListener);
     }
     private static void loadUsersFromFriendsRequestsSent() {
-        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT);
@@ -140,7 +149,8 @@ public class FirebaseSync {
                 if(dataSnapshot.exists()) {
                     loadAProfile(dataSnapshot.getKey());
 
-                    String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                     ContentValues cvData = UtilesDataSnapshot.dataSnapshotFriendRequestToContentValues(dataSnapshot, myUserID, true);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
@@ -154,7 +164,8 @@ public class FirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                String senderId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String senderId = ""; if (fUser != null) senderId = fUser.getUid();
                 String receiverId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
@@ -177,7 +188,8 @@ public class FirebaseSync {
         listenerMap.put(myUserRef, childEventListener);
     }
     private static void loadUsersFromFriendsRequestsReceived() {
-        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED);
@@ -188,7 +200,8 @@ public class FirebaseSync {
                 if(dataSnapshot.exists()) {
                     loadAProfile(dataSnapshot.getKey());
 
-                    String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                     ContentValues cvData = UtilesDataSnapshot.dataSnapshotFriendRequestToContentValues(dataSnapshot, myUserID, false);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
@@ -202,7 +215,8 @@ public class FirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                String receiverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String receiverId = ""; if (fUser != null) receiverId = fUser.getUid();
                 String senderId = dataSnapshot.getKey();
                 Log.d(TAG, "onChildRemoved: sender "+senderId);
                 Log.d(TAG, "onChildRemoved: receiver "+receiverId);
@@ -229,7 +243,8 @@ public class FirebaseSync {
     }
 
     private static void loadEventsFromMyOwnEvents() {
-        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_CREATED);
@@ -378,7 +393,8 @@ public class FirebaseSync {
     }
 
     private static void loadEventsFromEventsParticipation() {
-        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION);
@@ -389,7 +405,8 @@ public class FirebaseSync {
                 if(dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
 
-                    String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                     ContentValues cvData = UtilesDataSnapshot
                             .dataSnapshotEventsParticipationToContentValues(dataSnapshot, myUserID, true);
                     MyApplication.getAppContext().getContentResolver()
@@ -405,7 +422,8 @@ public class FirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                 String eventId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
@@ -429,7 +447,8 @@ public class FirebaseSync {
         listenerMap.put(myUserRef, childEventListener);
     }
     private static void loadEventsFromInvitationsReceived() {
-        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS);
@@ -440,7 +459,8 @@ public class FirebaseSync {
                 if(dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
 
-                    String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                     ContentValues cvData = UtilesDataSnapshot
                             .dataSnapshotEventInvitationsToContentValues(dataSnapshot, myUserID, true);
                     MyApplication.getAppContext().getContentResolver()
@@ -456,7 +476,8 @@ public class FirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                 String eventId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
@@ -479,7 +500,8 @@ public class FirebaseSync {
         listenerMap.put(myUserRef, childEventListener);
     }
     private static void loadEventsFromEventsRequests() {
-        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_REQUESTS);
@@ -490,7 +512,8 @@ public class FirebaseSync {
                 if (dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
 
-                    String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                     ContentValues cvData = UtilesDataSnapshot
                             .dataSnapshotEventsRequestsToContentValues(dataSnapshot, myUserID, true);
                     MyApplication.getAppContext().getContentResolver()
@@ -506,7 +529,8 @@ public class FirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                 String eventId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,
@@ -531,7 +555,8 @@ public class FirebaseSync {
     }
     
     private static void loadAlarmsFromMyAlarms() {
-        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID).child(FirebaseDBContract.User.ALARMS);
@@ -633,7 +658,8 @@ public class FirebaseSync {
 
     }
     public static void loadAnAlarm(String alarmId) {
-        String myUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
@@ -668,6 +694,7 @@ public class FirebaseSync {
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
+                            if (e == null) return;
                             e.setEvent_id(dataSnapshot.getKey());
 
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
@@ -696,7 +723,7 @@ public class FirebaseSync {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
+                            ArrayList<ContentValues> cvArray = new ArrayList<>();
                             List<Field> fields = UtilesDataSnapshot.dataSnapshotToFieldList(dataSnapshot);
                             cvArray.addAll(UtilesDataSnapshot.fieldsArrayToContentValues(fields));
 
@@ -740,7 +767,7 @@ public class FirebaseSync {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            ArrayList<ContentValues> cvArray = new ArrayList<ContentValues>();
+                            ArrayList<ContentValues> cvArray = new ArrayList<>();
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 List<Field> fields = UtilesDataSnapshot.dataSnapshotToFieldList(data);
                                 cvArray.addAll(UtilesDataSnapshot.fieldsArrayToContentValues(fields));
