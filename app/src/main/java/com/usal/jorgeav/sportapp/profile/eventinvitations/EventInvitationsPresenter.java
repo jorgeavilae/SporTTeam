@@ -7,6 +7,7 @@ import android.support.v4.content.Loader;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 /**
  * Created by Jorge Avila on 27/05/2017.
@@ -23,6 +24,7 @@ public class EventInvitationsPresenter implements EventInvitationsContract.Prese
 
     @Override
     public void loadEventInvitations(LoaderManager loaderManager, Bundle b) {
+        FirebaseSync.loadEventsFromInvitationsReceived();
         loaderManager.initLoader(SportteamLoader.LOADER_EVENT_INVITATIONS_RECEIVED_ID, b, this);
 
     }

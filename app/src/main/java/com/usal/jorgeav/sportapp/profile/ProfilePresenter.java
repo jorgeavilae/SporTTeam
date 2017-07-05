@@ -44,6 +44,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     public void openUser(LoaderManager loaderManager, Bundle b) {
         String userId = b.getString(ProfileFragment.BUNDLE_INSTANCE_UID);
         FirebaseSync.loadAProfile(userId);
+        FirebaseSync.loadUsersFromFriendsRequestsSent();
         loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_SPORTS_ID, b, this);
     }

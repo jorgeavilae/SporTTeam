@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 /**
  * Created by Jorge Avila on 29/05/2017.
@@ -29,6 +30,8 @@ public class InvitationsSentPresenter implements InvitationsSentContract.Present
 
     @Override
     public void loadEventInvitationsSent(LoaderManager loaderManager, Bundle bundle) {
+        String eventId = bundle.getString(InvitationsSentFragment.BUNDLE_EVENT_ID);
+        FirebaseSync.loadUsersFromInvitationsSent(eventId);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENT_INVITATIONS_SENT_ID, bundle, this);
     }
 

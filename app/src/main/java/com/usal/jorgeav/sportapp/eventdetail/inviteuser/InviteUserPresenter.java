@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 /**
  * Created by Jorge Avila on 29/05/2017.
@@ -32,6 +33,7 @@ public class InviteUserPresenter implements InviteUserContract.Presenter, Loader
 
     @Override
     public void loadFriends(LoaderManager loaderManager, Bundle bundle) {
+        FirebaseSync.loadUsersFromFriends();
         loaderManager.initLoader(SportteamLoader.LOADER_USERS_FOR_INVITE_ID, bundle, this);
     }
 

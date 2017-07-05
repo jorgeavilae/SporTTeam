@@ -4,8 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-
 /**
  * Created by Jorge Avila on 22/06/2017.
  */
@@ -24,9 +22,9 @@ public class SportteamSyncIntentService extends IntentService {
         /*
          * Performs the network request for updated database: attach listeners to
          * FirebaseDatabaseReferences, parses the DataSnapshot from that listeners, and
-         * inserts the data into our ContentProvider.
+         * inserts the data into ContentProvider.
          */
-        FirebaseSync.syncFirebaseDatabase();
+//        FirebaseSync.syncFirebaseDatabase();
 
     }
 }

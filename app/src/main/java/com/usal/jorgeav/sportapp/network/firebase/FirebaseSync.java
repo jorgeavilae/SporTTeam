@@ -17,7 +17,6 @@ import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
-import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesDataSnapshot;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class FirebaseSync {
 
     private static HashMap<DatabaseReference, ChildEventListener> listenerMap = new HashMap<>();
 
-    public static void syncFirebaseDatabase() {
+    /*public static void syncFirebaseDatabase() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null && listenerMap.isEmpty()) {
             // Load current user profile and sports
             FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -66,7 +65,7 @@ public class FirebaseSync {
             // Load alarms with data created by current user
             loadAlarmsFromMyAlarms();
         }
-    }
+    }*/
     public static void detachListeners() {
         for (Map.Entry<DatabaseReference, ChildEventListener> entry : listenerMap.entrySet()) {
             Log.d(TAG, "detachListeners: ref "+entry.getKey());
@@ -75,7 +74,7 @@ public class FirebaseSync {
         listenerMap.clear();
     }
 
-    private static void loadUsersFromFriends() {
+    public static void loadUsersFromFriends() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = "";
         if (fUser != null) myUserID = fUser.getUid();
@@ -133,10 +132,13 @@ public class FirebaseSync {
 
             }
         };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
     }
-    private static void loadUsersFromFriendsRequestsSent() {
+    public static void loadUsersFromFriendsRequestsSent() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -184,10 +186,13 @@ public class FirebaseSync {
 
             }
         };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
     }
-    private static void loadUsersFromFriendsRequestsReceived() {
+    public static void loadUsersFromFriendsRequestsReceived() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -238,11 +243,14 @@ public class FirebaseSync {
 
             }
         };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
     }
 
-    private static void loadEventsFromMyOwnEvents() {
+    public static void loadEventsFromMyOwnEvents() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -292,10 +300,13 @@ public class FirebaseSync {
 
             }
         };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
     }
-    private static void loadUsersFromUserRequests(String key) {
+    public static void loadUsersFromUserRequests(String key) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
                 .child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS);
@@ -340,10 +351,13 @@ public class FirebaseSync {
 
             }
         };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
     }
-    private static void loadUsersFromInvitationsSent(String key) {
+    public static void loadUsersFromInvitationsSent(String key) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
                 .child(key + "/" + FirebaseDBContract.Event.INVITATIONS);
@@ -388,11 +402,14 @@ public class FirebaseSync {
 
             }
         };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
     }
 
-    private static void loadEventsFromEventsParticipation() {
+    public static void loadEventsFromEventsParticipation() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -443,10 +460,13 @@ public class FirebaseSync {
 
             }
         };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
     }
-    private static void loadEventsFromInvitationsReceived() {
+    public static void loadEventsFromInvitationsReceived() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -496,10 +516,13 @@ public class FirebaseSync {
 
             }
         };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
     }
-    private static void loadEventsFromEventsRequests() {
+    public static void loadEventsFromEventsRequests() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -550,11 +573,14 @@ public class FirebaseSync {
 
             }
         };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
     }
-    
-    private static void loadAlarmsFromMyAlarms() {
+
+    public static void loadAlarmsFromMyAlarms() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -620,8 +646,11 @@ public class FirebaseSync {
 
             }
         };
-        myUserRef.addChildEventListener(childEventListener);
-        listenerMap.put(myUserRef, childEventListener);
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
     }
 
     public static void loadAProfile(String userID) {

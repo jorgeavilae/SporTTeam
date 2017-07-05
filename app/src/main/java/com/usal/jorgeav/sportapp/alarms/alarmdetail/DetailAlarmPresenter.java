@@ -11,7 +11,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 /**
@@ -30,7 +29,9 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     @Override
     public void openAlarm(LoaderManager loaderManager, Bundle b) {
         String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
-        FirebaseSync.loadAnAlarm(alarmId);
+        // The only fragment initializing this one is AlarmsFragment
+        // in which this method it's already invoked
+        // FirebaseSync.loadAnAlarm(alarmId);
         loaderManager.initLoader(SportteamLoader.LOADER_ALARM_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_ALARM_EVENTS_COINCIDENCE_ID, b, this);
     }

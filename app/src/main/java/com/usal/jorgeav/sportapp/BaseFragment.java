@@ -27,6 +27,12 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+//        FirebaseSync.detachListeners();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         hideSoftKeyboard();

@@ -7,6 +7,7 @@ import android.support.v4.content.Loader;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 public class FriendRequestsPresenter implements FriendRequestsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = FriendRequestsPresenter.class.getSimpleName();
@@ -19,6 +20,7 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
 
     @Override
     public void loadFriendRequests(LoaderManager loaderManager, Bundle b) {
+        FirebaseSync.loadUsersFromFriendsRequestsReceived();
         loaderManager.initLoader(SportteamLoader.LOADER_FRIENDS_REQUESTS_ID, b, this);
     }
 

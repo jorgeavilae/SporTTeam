@@ -7,6 +7,7 @@ import android.support.v4.content.Loader;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 /**
  * Created by Jorge Avila on 26/05/2017.
@@ -23,6 +24,7 @@ public class FriendsPresenter implements FriendsContract.Presenter, LoaderManage
 
     @Override
     public void loadFriend(LoaderManager loaderManager, Bundle b) {
+        FirebaseSync.loadUsersFromFriends();
         loaderManager.initLoader(SportteamLoader.LOADER_FRIENDS_ID, b, this);
     }
 

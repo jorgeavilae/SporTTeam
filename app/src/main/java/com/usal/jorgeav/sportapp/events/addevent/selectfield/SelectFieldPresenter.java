@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 /**
  * Created by Jorge Avila on 06/06/2017.
@@ -23,8 +27,11 @@ public class SelectFieldPresenter implements SelectFieldContract.Presenter, Load
 
     @Override
     public void loadFieldsWithSport(LoaderManager loaderManager, Bundle b) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        String city = Utiles.getCurrentCity(mSelectFieldsView.getActivityContext(), myUserID);
+        FirebaseSync.loadFieldsFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_WITH_SPORT, b, this);
-
     }
 
     @Override

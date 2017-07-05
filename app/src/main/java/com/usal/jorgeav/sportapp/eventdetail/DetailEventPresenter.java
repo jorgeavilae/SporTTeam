@@ -55,7 +55,6 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
 
     @Override
     public void loadParticipants(LoaderManager loaderManager, Bundle b) {
-        String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
     }
 

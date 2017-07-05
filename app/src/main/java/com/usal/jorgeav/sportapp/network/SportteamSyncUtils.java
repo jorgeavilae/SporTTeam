@@ -21,7 +21,7 @@ public class SportteamSyncUtils {
          * This method starts an IntentService to attach listeners from FirebaseDatabase
          * Those listeners performs inserts into Content Provider
          */
-        startServiceToAttachListeners(context);
+//        startServiceToAttachListeners(context);
 
         /*
          * Only perform schedule once per app lifetime. If schedule has already been

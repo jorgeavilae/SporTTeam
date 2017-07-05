@@ -6,6 +6,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 /**
  * Created by Jorge Avila on 23/04/2017.
@@ -22,6 +23,7 @@ public class AlarmsPresenter implements AlarmsContract.Presenter, LoaderManager.
 
     @Override
     public void loadAlarms(LoaderManager loaderManager, Bundle b) {
+        FirebaseSync.loadAlarmsFromMyAlarms();
         loaderManager.initLoader(SportteamLoader.LOADER_MY_ALARMS_ID, b, this);
     }
 

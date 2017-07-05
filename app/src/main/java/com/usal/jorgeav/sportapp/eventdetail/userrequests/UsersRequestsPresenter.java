@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 /**
  * Created by Jorge Avila on 29/05/2017.
@@ -43,6 +44,8 @@ public class UsersRequestsPresenter implements UsersRequestsContract.Presenter, 
 
     @Override
     public void loadUsersRequests(LoaderManager loaderManager, Bundle b) {
+        String eventId = b.getString(UsersRequestsFragment.BUNDLE_EVENT_ID);
+        FirebaseSync.loadUsersFromUserRequests(eventId);
         loaderManager.initLoader(SportteamLoader.LOADER_USERS_REQUESTS_RECEIVED_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
     }

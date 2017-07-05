@@ -7,6 +7,7 @@ import android.support.v4.content.Loader;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 /**
  * Created by Jorge Avila on 23/04/2017.
@@ -23,6 +24,8 @@ public class EventsPresenter implements EventsContract.Presenter, LoaderManager.
 
     @Override
     public void loadEvents(LoaderManager loaderManager, Bundle b) {
+        FirebaseSync.loadEventsFromMyOwnEvents();
+        FirebaseSync.loadEventsFromEventsParticipation();
         loaderManager.initLoader(SportteamLoader.LOADER_MY_EVENTS_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_MY_EVENTS_PARTICIPATION_ID, b, this);
     }
