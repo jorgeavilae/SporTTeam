@@ -127,7 +127,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
             myOwnEventsRecyclerList.setVisibility(View.INVISIBLE);
             myOwnEventsPlaceholder.setVisibility(View.VISIBLE);
         }
-        mFragmentManagementListener.showContent();
+        showContent();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
             eventsParticipationRecyclerList.setVisibility(View.INVISIBLE);
             eventsParticipationPlaceholder.setVisibility(View.VISIBLE);
         }
-        mFragmentManagementListener.showContent();
+        showContent();
     }
 
     @Override

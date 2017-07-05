@@ -56,6 +56,7 @@ public class BaseActivity extends AppCompatActivity
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private Boolean shouldDetachFirebaseListener;
 
 
     @Override
@@ -103,6 +104,8 @@ public class BaseActivity extends AppCompatActivity
                 }
             }
         };
+
+        shouldDetachFirebaseListener = true;
     }
 
     private void debugTrickyErrors() {
@@ -191,6 +194,7 @@ public class BaseActivity extends AppCompatActivity
         if (item.getItemId() == R.id.action_settings) {
             Log.d(TAG, "onOptionsItemSelected: Settings");
             // TODO: 27/06/2017 Settings
+            finish();
             return true;
         }
         return false;
@@ -219,6 +223,9 @@ public class BaseActivity extends AppCompatActivity
                 case R.id.nav_fields:
                     intent = new Intent(this, FieldsActivity.class); break;
             }
+            // Do not invoke detachListeners in onPause if it's a
+            // navigation between activities of Nav menu
+            shouldDetachFirebaseListener = false;
 
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
@@ -328,21 +335,13 @@ public class BaseActivity extends AppCompatActivity
         toolbarIconTransition.removeCallbacks(transitionToUp);
 
         if (mAuthListener != null) {
-            Log.d(TAG, "onStop: detach listeners");
             mAuth.removeAuthStateListener(mAuthListener);
-            /* To detach listener before been reattached in new activity start lifecycle need
-             * to put this call in onPause()
-             * https://developer.android.com/guide/components/activities/activity-lifecycle.html#soafa
-             * Subsection: Coordinating activities
-             */
-            FirebaseSync.detachListeners();
         }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: attach listeners");
         mAuth.addAuthStateListener(mAuthListener);
         SportteamSyncUtils.initialize(this);
     }
@@ -355,6 +354,8 @@ public class BaseActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // This prevent to detach listeners on orientation changes and activity transitions
+        if (isFinishing() && shouldDetachFirebaseListener) FirebaseSync.detachListeners();
     }
 
     @Override

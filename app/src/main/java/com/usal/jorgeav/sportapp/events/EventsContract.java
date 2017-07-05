@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
+
 /**
  * Created by Jorge Avila on 23/04/2017.
  */
@@ -19,5 +21,6 @@ public abstract class EventsContract {
         void showMyOwnEvents(Cursor cursor);
         void showParticipatesEvents(Cursor cursor);
         Context getActivityContext();
+        BaseFragment getThis();
     }
 }
