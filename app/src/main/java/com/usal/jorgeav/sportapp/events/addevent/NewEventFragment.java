@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.events.addevent;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -13,15 +14,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.Places;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
@@ -44,6 +53,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     NewEventContract.Presenter mNewEventPresenter;
     private static boolean sInitialize;
 
+    private GoogleApiClient mGoogleApiClient;
+    private PlaceAutocompleteAdapter mAdapter;
+
     ArrayAdapter<CharSequence> sportsAdapter;
     @BindView(R.id.new_event_sport)
     Spinner newEventSport;
@@ -53,6 +65,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     EditText newEventName;
     @BindView(R.id.new_event_city)
     EditText newEventCity;
+    @BindView(R.id.new_event_autocomplete_city)
+    AutoCompleteTextView newEventAutocompleteCity;
     @BindView(R.id.new_event_date)
     EditText newEventDate;
     @BindView(R.id.new_event_time)
@@ -104,6 +118,18 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        if (mGoogleApiClient == null)
+            mGoogleApiClient = new GoogleApiClient
+                    .Builder(getActivity())
+                    .addApi(Places.GEO_DATA_API)
+                    .enableAutoManage(getActivity(), new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                            Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
+                        }
+                    })
+                    .build();
+
         mNewEventPresenter = new NewEventPresenter(this);
     }
 
@@ -130,7 +156,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                     newEventSport.getSelectedItem().toString(),
                     ((EventsActivity)getActivity()).newEventFieldSelected,
                     newEventName.getText().toString(),
-                    newEventCity.getText().toString(),
+                    ((EventsActivity)getActivity()).newEventCitySelected,
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
@@ -145,6 +171,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_new_event, container, false);
         ButterKnife.bind(this, root);
+
+        setAutocompleteTextView();
 
         myCalendar = Calendar.getInstance();
 
@@ -182,6 +210,36 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         });
 
         return root;
+    }
+
+    private void setAutocompleteTextView() {
+        // Set up the adapter that will retrieve suggestions from
+        // the Places Geo Data API that cover Spain
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
+                /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
+                .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
+                .build();
+
+        mAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, null, typeFilter);
+        newEventAutocompleteCity.setAdapter(mAdapter);
+
+        newEventAutocompleteCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                /*
+                 Retrieve the place ID of the selected item from the Adapter.
+                 The adapter stores each Place suggestion in a AutocompletePrediction from which we
+                 read the place ID and title.
+                  */
+                AutocompletePrediction item = mAdapter.getItem(position);
+                if (item != null) {
+                    CharSequence primaryText = item.getPrimaryText(null);
+                    Log.i(TAG, "Autocomplete item selected: " + primaryText);
+                    ((EventsActivity)getActivity()).setCity(primaryText.toString());
+                }
+            }
+        });
     }
 
     @Override
@@ -239,8 +297,10 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     @Override
     public void showEventCity(String city) {
-        if (city != null && !TextUtils.isEmpty(city))
+        if (city != null && !TextUtils.isEmpty(city)) {
             newEventCity.setText(city);
+            ((EventsActivity) getActivity()).setCity(city);
+        }
     }
 
     @Override
@@ -268,6 +328,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         newEventDate.setText("");
         newEventTime.setText("");
         newEventCity.setText("");
+        ((EventsActivity) getActivity()).setCity("");
         newEventTotal.setText("");
         newEventEmpty.setText("");
     }

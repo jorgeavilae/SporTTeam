@@ -2,16 +2,8 @@ package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.MenuItem;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
@@ -25,43 +17,8 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
 
     private static final String INSTANCE_NEW_EVENT_FIELD = "INSTANCE_NEW_EVENT_FIELD";
     public String newEventFieldSelected = null;
-
-    private GoogleApiClient mGoogleApiClient;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mGoogleApiClient = new GoogleApiClient
-                .Builder(this)
-                .addApi(Places.GEO_DATA_API)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Log.e(TAG, "onConnectionFailed: GoogleApiClient "+connectionResult);
-                    }
-                })
-                .build();
-
-
-
-        SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
-                getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
-        if (autocompleteFragment != null)
-            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                @Override
-                public void onPlaceSelected(Place place) {
-                    // TODO: Get info about the selected place.
-                    Log.i(TAG, "Place: " + place.getName());
-                }
-
-                @Override
-                public void onError(Status status) {
-                    // TODO: Handle the error.
-                    Log.i(TAG, "An error occurred: " + status);
-                }
-            });
-    }
+    private static final String INSTANCE_NEW_EVENT_CITY = "INSTANCE_NEW_EVENT_CITY";
+    public String newEventCitySelected = null;
 
     @Override
     public void startMainFragment() {
@@ -80,12 +37,17 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
     public void retrieveFieldSelected(String fieldId) {
         newEventFieldSelected = fieldId;
     }
+    public void setCity(String city) {
+        newEventCitySelected = city;
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (newEventFieldSelected != null)
             outState.putString(INSTANCE_NEW_EVENT_FIELD, newEventFieldSelected);
+        if (newEventCitySelected != null)
+            outState.putString(INSTANCE_NEW_EVENT_CITY, newEventCitySelected);
     }
 
     @Override
@@ -93,5 +55,7 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_EVENT_FIELD))
             newEventFieldSelected = savedInstanceState.getString(INSTANCE_NEW_EVENT_FIELD);
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_EVENT_CITY))
+            newEventCitySelected = savedInstanceState.getString(INSTANCE_NEW_EVENT_CITY);
     }
 }
