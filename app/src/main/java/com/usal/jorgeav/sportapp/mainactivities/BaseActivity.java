@@ -343,6 +343,7 @@ public class BaseActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+        // TODO: 05/07/2017 what if I init all listener: now would init once per app instance
         SportteamSyncUtils.initialize(this);
     }
 

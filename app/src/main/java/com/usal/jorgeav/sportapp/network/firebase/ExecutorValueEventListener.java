@@ -1,10 +1,10 @@
 package com.usal.jorgeav.sportapp.network.firebase;
 
-import android.os.AsyncTask;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.concurrent.Executor;
 
 /**
  * Created by Jorge Avila on 27/06/2017.
@@ -21,31 +21,43 @@ import com.google.firebase.database.ValueEventListener;
  */
 // TODO: 27/06/2017 memory leak
 public abstract class ExecutorValueEventListener implements ValueEventListener {
-//    protected final Executor executor;
-    public ExecutorValueEventListener() {
-//        this.executor = executor;
+    private final Executor executor;
+    public ExecutorValueEventListener(final Executor executor) {
+        this.executor = executor;
     }
 
     @Override
-    public void onDataChange(DataSnapshot dataSnapshot) {
-        new AsyncTask<Object, Void, Void>() {
+    public void onDataChange(final DataSnapshot dataSnapshot) {
+        executor.execute(new Runnable() {
             @Override
-            protected Void doInBackground(Object... objects) {
-                onDataChangeExecutor((DataSnapshot) objects[0]);
-                return null;
+            public void run() {
+                onDataChangeExecutor(dataSnapshot);
             }
-        }.execute(dataSnapshot);
+        });
+//        new AsyncTask<Object, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Object... objects) {
+//                onDataChangeExecutor((DataSnapshot) objects[0]);
+//                return null;
+//            }
+//        }.execute(dataSnapshot);
     }
 
     @Override
     public void onCancelled(final DatabaseError databaseError) {
-        new AsyncTask<Object, Void, Void>() {
+        executor.execute(new Runnable() {
             @Override
-            protected Void doInBackground(Object... objects) {
-                onCancelledExecutor((DatabaseError) objects[0]);
-                return null;
+            public void run() {
+                onCancelledExecutor(databaseError);
             }
-        }.execute(databaseError);
+        });
+//        new AsyncTask<Object, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Object... objects) {
+//                onCancelledExecutor((DatabaseError) objects[0]);
+//                return null;
+//            }
+//        }.execute(databaseError);
     }
 
     protected abstract void onDataChangeExecutor(DataSnapshot dataSnapshot);

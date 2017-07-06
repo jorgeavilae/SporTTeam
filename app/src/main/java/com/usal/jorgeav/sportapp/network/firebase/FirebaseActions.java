@@ -19,6 +19,7 @@ import com.usal.jorgeav.sportapp.data.User;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * Created by Jorge Avila on 18/05/2017.
@@ -499,7 +500,8 @@ public class FirebaseActions {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
-        eventRef.child(eventId).addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+        final Executor executor = new AppExecutor().provideAppExecutor();
+        eventRef.child(eventId).addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
             @Override
             public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {

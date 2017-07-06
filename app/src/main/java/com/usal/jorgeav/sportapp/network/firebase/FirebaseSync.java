@@ -23,9 +23,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 public class FirebaseSync {
     public static final String TAG = FirebaseSync.class.getSimpleName();
+
+    private static final Executor executor = new AppExecutor().provideAppExecutor();
 
     private static HashMap<DatabaseReference, ChildEventListener> listenerMap = new HashMap<>();
 
@@ -82,7 +85,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS);
 
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(executor) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
@@ -145,7 +148,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT);
 
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(executor) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -199,7 +202,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED);
 
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(executor) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -257,7 +260,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_CREATED);
 
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(executor) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -311,7 +314,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
                 .child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS);
 
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(executor) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -362,7 +365,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
                 .child(key + "/" + FirebaseDBContract.Event.INVITATIONS);
 
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(executor) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -416,7 +419,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION);
 
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(executor) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -473,7 +476,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS);
 
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(executor) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -529,7 +532,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_REQUESTS);
 
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(executor) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
@@ -587,7 +590,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID).child(FirebaseDBContract.User.ALARMS);
 
-        myUserRef.addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+        myUserRef.addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
             @Override
             public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -607,7 +610,7 @@ public class FirebaseSync {
 
             }
         });
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener() {
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(executor) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -658,7 +661,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
         myUserRef.child(userID)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -694,7 +697,7 @@ public class FirebaseSync {
                 .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
 
         myUserRef.child(alarmId)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -718,7 +721,7 @@ public class FirebaseSync {
         DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
         eventRef.child(eventId)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -748,7 +751,7 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
 
         myUserRef.child(fieldId)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -792,7 +795,7 @@ public class FirebaseSync {
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
 
         fieldsRef.orderByChild(filter).equalTo(city)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -819,7 +822,7 @@ public class FirebaseSync {
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
 
         eventsRef.orderByChild(filter).equalTo(city)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -846,7 +849,7 @@ public class FirebaseSync {
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
 
         usersRef.orderByChild(filter).equalTo(city)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -880,7 +883,7 @@ public class FirebaseSync {
         /* https://stackoverflow.com/a/40633692/4235666
          * https://firebase.google.com/docs/database/admin/retrieve-data */
         usersRef.orderByChild(filter).startAt(username).endAt(username+"\uf8ff")
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener() {
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
