@@ -19,11 +19,6 @@ import com.usal.jorgeav.sportapp.data.User;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
-
-/**
- * Created by Jorge Avila on 18/05/2017.
- */
 
 public class FirebaseActions {
     public static final String TAG = FirebaseActions.class.getSimpleName();
@@ -500,23 +495,23 @@ public class FirebaseActions {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
-        final Executor executor = new AppExecutor().provideAppExecutor();
-        eventRef.child(eventId).addListenerForSingleValueEvent(new ExecutorValueEventListener(executor) {
+        eventRef.child(eventId).addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
+                    if (e == null) return;
                     e.setEvent_id(dataSnapshot.getKey());
 
-                    ArrayList<String> participantsUserId = new ArrayList<String>();
+                    ArrayList<String> participantsUserId = new ArrayList<>();
                     if (e.getParticipants() != null)
-                        participantsUserId.addAll(new ArrayList<String>(e.getParticipants().keySet()));
+                        participantsUserId.addAll(new ArrayList<>(e.getParticipants().keySet()));
 
-                    ArrayList<String> invitationsUserId = new ArrayList<String>();
+                    ArrayList<String> invitationsUserId = new ArrayList<>();
                     DataSnapshot dataInvitations = dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS);
                     for (DataSnapshot data : dataInvitations.getChildren()) invitationsUserId.add(data.getKey());
 
-                    ArrayList<String> requestsUserId = new ArrayList<String>();
+                    ArrayList<String> requestsUserId = new ArrayList<>();
                     DataSnapshot dataRequests = dataSnapshot.child(FirebaseDBContract.Event.USER_REQUESTS);
                     for (DataSnapshot data : dataRequests.getChildren()) requestsUserId.add(data.getKey());
 
