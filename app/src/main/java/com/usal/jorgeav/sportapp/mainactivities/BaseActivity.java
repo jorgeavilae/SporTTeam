@@ -21,10 +21,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.usal.jorgeav.sportapp.GlideApp;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
@@ -90,7 +93,7 @@ public class BaseActivity extends AppCompatActivity
                 if (fuser != null) {
                     // User is signed in
                     Log.d(TAG, "userID: "+fuser.getUid());
-
+                    setUserInfoInNavigationDrawer(mNavigationView, fuser);
                     if(mDisplayedFragment == null)
                         startMainFragment();
                 } else {
@@ -106,6 +109,20 @@ public class BaseActivity extends AppCompatActivity
         };
 
         shouldDetachFirebaseListener = true;
+    }
+
+    private void setUserInfoInNavigationDrawer(NavigationView mNavigationView, FirebaseUser fuser) {
+        ImageView image = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_image);
+        TextView title = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_title);
+        TextView subtitle = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_subtitle);
+
+        title.setText(fuser.getDisplayName());
+        subtitle.setText(fuser.getEmail());
+        GlideApp.with(this)
+                .load(fuser.getPhotoUrl())
+                .error(R.drawable.profile_picture_placeholder)
+                .placeholder(R.drawable.profile_picture_placeholder)
+                .into(image);
     }
 
     private void debugTrickyErrors() {

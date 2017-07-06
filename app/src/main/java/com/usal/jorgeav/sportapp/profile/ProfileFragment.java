@@ -290,7 +290,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             userSportList.setVisibility(View.INVISIBLE);
             userSportPlaceholder.setVisibility(View.VISIBLE);
         }
-        mFragmentManagementListener.showContent();
     }
 
     @Override
@@ -300,11 +299,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         this.mFragmentManagementListener.setActionBarTitle("");
         this.userCity.setText("");
         this.userAge.setText("");
-    }
-
-    @Override
-    public void showContent() {
-        mFragmentManagementListener.showContent();
     }
 
     @Override

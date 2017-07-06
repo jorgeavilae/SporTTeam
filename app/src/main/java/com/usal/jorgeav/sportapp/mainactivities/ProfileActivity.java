@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
@@ -23,11 +24,10 @@ public class ProfileActivity extends BaseActivity implements SportsListFragment.
     public void startMainFragment() {
         super.startMainFragment();
 
-        String userId = null;
-        try { userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        } catch (NullPointerException e) { e.printStackTrace(); }
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
 
-        initFragment(ProfileFragment.newInstance(userId), false);
+        initFragment(ProfileFragment.newInstance(myUserID), false);
         mNavigationView.setCheckedItem(R.id.nav_profile);
     }
 
@@ -38,11 +38,12 @@ public class ProfileActivity extends BaseActivity implements SportsListFragment.
 
     @Override
     public void retrieveSportsSelected(List<Sport> sportsSelected) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         HashMap<String, Float> sportsMap = new HashMap<>();
         if (sportsSelected != null)
             for (Sport sport : sportsSelected)
                 sportsMap.put(sport.getmName(), sport.getPunctuation());
-        FirebaseActions.updateSports(userId, sportsMap);
+        FirebaseActions.updateSports(myUserID, sportsMap);
     }
 }

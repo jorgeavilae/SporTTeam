@@ -31,6 +31,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -366,6 +368,17 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                             StorageMetadata metadata = taskSnapshot.getMetadata();
                             if (metadata != null) {
                                 Uri downloadUrl = metadata.getDownloadUrl();
+
+                                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                                if (fUser != null) {
+                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                            .setDisplayName(newUserName.getText().toString())
+                                            .setPhotoUri(downloadUrl)
+                                            .build();
+                                    fUser.updateProfile(profileUpdates);
+                                }
+
                                 User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                                         newUserEmail.getText().toString(),
                                         newUserName.getText().toString(),
