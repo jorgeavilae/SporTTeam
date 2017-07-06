@@ -25,6 +25,15 @@ public final class FirebaseDBContract {
         public static final String EVENTS_INVITATIONS = "events_invitations_received";
         public static final String EVENTS_REQUESTS = "events_requests";
         public static final String ALARMS = "alarms";
+        public static final String NOTIFICATIONS = "notifications";
+    }
+
+    public static final class Notification {
+        public static final String CHECKED = "checked";
+        public static final String MESSAGE = "message";
+        public static final String EXTRA_DATA = "extra_data";
+        public static final String DATE = "date";
+        // TODO: 06/07/2017 quiza necesite mas parametros, por ejemplo para ver si se tiene que mandar otra vez o para un mensaje o para ver que evento la produjo
     }
 
     public static final class Alarm {

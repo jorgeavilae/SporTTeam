@@ -11,8 +11,11 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.usal.jorgeav.sportapp.BaseFragment;
+import com.usal.jorgeav.sportapp.MyApplication;
+import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
+import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 
@@ -92,12 +95,21 @@ public class FirebaseActions {
         String userFriendRequestReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid + "/"
                 + FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED + "/" + myUid;
 
+        //Set Friend Request Received MyNotification in other User
+        String notificationId = myUid + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT;
+        String userFriendRequestReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                + otherUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         long currentTime = System.currentTimeMillis();
+        String notificationMessage = MyApplication.getAppContext()
+                .getString(R.string.notification_friend_request_received);
+        MyNotification n = new MyNotification(false, notificationMessage, myUid);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(userFriendRequestSent, currentTime);
         childUpdates.put(userFriendRequestReceived, currentTime);
+        childUpdates.put(userFriendRequestReceivedNotification, n.toMap());
 
         database.updateChildren(childUpdates);
     }
@@ -110,11 +122,17 @@ public class FirebaseActions {
         String userFriendRequestReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid + "/"
                 + FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED + "/" + myUid;
 
+        //Delete Friend Request Received MyNotification in other User
+        String notificationId = myUid + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT;
+        String userFriendRequestReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                + otherUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(userFriendRequestSent, null);
         childUpdates.put(userFriendRequestReceived, null);
+        childUpdates.put(userFriendRequestReceivedNotification, null);
 
         database.updateChildren(childUpdates);
     }
@@ -131,6 +149,11 @@ public class FirebaseActions {
         String myUserFriendsRequestReceived =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                 + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED + "/" + otherUid;
 
+        //Delete Friend Request Received MyNotification in my User
+        String notificationId = otherUid + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT;
+        String userFriendRequestReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                + myUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+
         //Delete Friend Request Sent in other User
         String otherUserFriendsRequestSent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
                 + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT + "/" + myUid;
@@ -142,6 +165,7 @@ public class FirebaseActions {
         childUpdates.put(myUserFriends, currentTime);
         childUpdates.put(otherUserFriends, currentTime);
         childUpdates.put(myUserFriendsRequestReceived, null);
+        childUpdates.put(userFriendRequestReceivedNotification, null);
         childUpdates.put(otherUserFriendsRequestSent, null);
 
         database.updateChildren(childUpdates);
@@ -151,6 +175,11 @@ public class FirebaseActions {
         String myUserFriendsRequestReceived =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                 + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED + "/" + otherUid;
 
+        //Delete Friend Request Received MyNotification in my User
+        String notificationId = otherUid + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT;
+        String userFriendRequestReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                + myUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+
         //Delete Friend Request Sent in other User
         String otherUserFriendsRequestSent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
                 + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT + "/" + myUid;
@@ -159,6 +188,7 @@ public class FirebaseActions {
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(myUserFriendsRequestReceived, null);
+        childUpdates.put(userFriendRequestReceivedNotification, null);
         childUpdates.put(otherUserFriendsRequestSent, null);
 
         database.updateChildren(childUpdates);

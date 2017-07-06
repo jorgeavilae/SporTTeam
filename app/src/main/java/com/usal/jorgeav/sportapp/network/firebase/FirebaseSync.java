@@ -15,9 +15,11 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.utils.UtilesDataSnapshot;
+import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -587,26 +589,6 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID).child(FirebaseDBContract.User.ALARMS);
 
-        myUserRef.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-            @Override
-            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    if(data.exists()) {
-                        Alarm a = UtilesDataSnapshot.dataSnapshotToAlarm(data);
-                        ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
-                        MyApplication.getAppContext().getContentResolver()
-                                .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
-                        if (a.getmField() != null)
-                            loadAField(a.getmField());
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelledExecutor(DatabaseError databaseError) {
-
-            }
-        });
         ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
@@ -651,6 +633,34 @@ public class FirebaseSync {
             listenerMap.put(myUserRef, childEventListener);
             Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
         }
+    }
+    public static void loadMyNotifications() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS);
+
+        myUserRef.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        MyNotification n = data.getValue(MyNotification.class);
+                        if (n == null) return;
+                        if (!n.getChecked()){
+                            UtilesNotification.createNotification(MyApplication.getAppContext(), n);
+                            // TODO: 06/07/2017 quiza haya que diferenciar el tipo de notificacion
+                        }
+                    }
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        });
+        Log.d(TAG, "loadMyNotifications");
     }
 
     public static void loadAProfile(String userID) {

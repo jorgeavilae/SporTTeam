@@ -1,17 +1,9 @@
 package com.usal.jorgeav.sportapp.network;
 
-import android.app.job.JobParameters;
-import android.app.job.JobService;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
+import com.firebase.jobdispatcher.JobParameters;
+import com.firebase.jobdispatcher.JobService;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
-
-/**
- * Created by Jorge Avila on 22/06/2017.
- */
-
-// TODO: 22/06/2017 Alternativa para versiones anteriores
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class SportteamFirebaseJobService extends JobService {
 
     /**
@@ -27,17 +19,22 @@ public class SportteamFirebaseJobService extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         /* Avisar al usuario cuando:
-         *  - Recibe peticion de amistad
-         *  - Contestan peticion de amistad enviada por el (aceptan o rechazan)
+         *  - Recibe peticion de amistad                                        UID sender
+         *  - Contestan peticion de amistad enviada por el (aceptan o rechazan) UID receiver
          *
-         *  - Recibe invitacion a evento
-         *  - Contestan peticion a evento enviada por el (aceptan o rechazan)
+         *  - Recibe invitacion a evento                                        EID
+         *  - Contestan peticion a evento enviada por el (aceptan o rechazan)   EID
          *
-         *  - Se completa un evento al que asisto
-         *  - Se cambia un evento al que asisto
+         *  - Se completa un evento al que asisto                               EID
+         *  - Se cambia o borra un evento al que asisto                         EID
          *
-         *  - Se crea un evento que coincide con alguna de mis alarmas
+         *  - Recordatorio de que un evento se va a producir                    EID
+         *  - Despues de producirse un evento para calificar a los demas o poner resultado
+         *
+         *  - Se crea un evento que coincide con alguna de mis alarmas          AID
          */
+        FirebaseSync.loadMyNotifications();
+        jobFinished(jobParameters, false);
         return false;
     }
 
@@ -49,6 +46,7 @@ public class SportteamFirebaseJobService extends JobService {
      */
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
+        jobFinished(jobParameters, false);
         return false;
     }
 }

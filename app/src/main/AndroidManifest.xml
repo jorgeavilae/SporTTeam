@@ -85,11 +85,6 @@
                 android:value="com.usal.jorgeav.sportapp.mainactivities.BaseActivity" />
         </activity>
 
-        <!--This is required for immediate syncs -->
-        <service
-            android:name=".network.SportteamSyncIntentService"
-            android:exported="false" />
-
         <!-- This is the Service declaration used in conjunction with FirebaseJobDispatcher -->
         <service
             android:name=".network.SportteamFirebaseJobService"
