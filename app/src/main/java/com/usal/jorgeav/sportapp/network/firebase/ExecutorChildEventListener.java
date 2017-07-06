@@ -6,10 +6,6 @@ import com.google.firebase.database.DatabaseError;
 
 import java.util.concurrent.Executor;
 
-/**
- * Created by Jorge Avila on 27/06/2017.
- */
-
 /* ChildEventListener & ValueEventListener callbacks are invoked in the UI main thread so for
  * heavy operations, such as store data in Content Provider, it recommended to use another thread
  * https://stackoverflow.com/a/39060380/4235666
@@ -18,9 +14,9 @@ import java.util.concurrent.Executor;
  * https://github.com/CodingDoug/white-label-event-app/commit/917ff279febce1977635226fe9181cc1ff099656
  * https://github.com/CodingDoug/white-label-event-app/blob/3adbbb62e2c94feb14fb709af02da1b4742915c1/app/src/main/java/com/hyperaware/conference/android/dagger/AppExecutorsModule.java
  */
-public abstract class ExecutorChildEventListener implements ChildEventListener {
+abstract class ExecutorChildEventListener implements ChildEventListener {
     private final Executor executor;
-    public ExecutorChildEventListener(final Executor executor) {
+    ExecutorChildEventListener(final Executor executor) {
         this.executor = executor;
     }
 

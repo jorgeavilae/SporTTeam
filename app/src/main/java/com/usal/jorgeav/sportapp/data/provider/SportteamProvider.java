@@ -149,7 +149,7 @@ public class SportteamProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         mOpenHelper = new SportteamDBHelper(getContext());
-        return false;
+        return true;
     }
 
     @Override
