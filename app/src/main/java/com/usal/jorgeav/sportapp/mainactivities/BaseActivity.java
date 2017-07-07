@@ -33,6 +33,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -100,6 +101,7 @@ public class BaseActivity extends AppCompatActivity
                     // User is signed out
                     Log.d(TAG, "userID: null");
                     FirebaseSync.detachListeners();
+                    UtilesNotification.clearAllNotifications(BaseActivity.this);
                     Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);

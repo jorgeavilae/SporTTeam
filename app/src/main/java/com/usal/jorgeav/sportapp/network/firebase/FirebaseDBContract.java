@@ -1,5 +1,10 @@
 package com.usal.jorgeav.sportapp.network.firebase;
 
+import android.support.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * Created by Jorge Avila on 19/05/2017.
  */
@@ -28,10 +33,19 @@ public final class FirebaseDBContract {
         public static final String NOTIFICATIONS = "notifications";
     }
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({NOTIFICATION_TYPE_ERROR, NOTIFICATION_TYPE_USER,
+            NOTIFICATION_TYPE_EVENT, NOTIFICATION_TYPE_ALARM})
+    public @interface NotificationTypes {}
+    public static final int NOTIFICATION_TYPE_ERROR = -1;
+    public static final int NOTIFICATION_TYPE_USER = 1;
+    public static final int NOTIFICATION_TYPE_EVENT = 2;
+    public static final int NOTIFICATION_TYPE_ALARM = 3;
     public static final class Notification {
         public static final String CHECKED = "checked";
         public static final String MESSAGE = "message";
         public static final String EXTRA_DATA = "extra_data";
+        public static final String TYPE = "type";
         public static final String DATE = "date";
         // TODO: 06/07/2017 quiza necesite mas parametros, por ejemplo para ver si se tiene que mandar otra vez o para un mensaje o para ver que evento la produjo
     }

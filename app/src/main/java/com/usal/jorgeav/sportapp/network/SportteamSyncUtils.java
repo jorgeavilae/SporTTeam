@@ -60,7 +60,6 @@ public class SportteamSyncUtils {
         Driver driver = new GooglePlayDriver(context);
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
 
-        // TODO: 06/07/2017 no crear notificaciones de notificaciones que estan o estuvieron en la barra de notificaciones
         /* Create the Job to periodically sync */
         Job syncJob = dispatcher.newJobBuilder()
                 /* The Service that will be used to sync data */

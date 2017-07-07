@@ -18,6 +18,7 @@ import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesDataSnapshot;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
@@ -646,11 +647,23 @@ public class FirebaseSync {
             public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        MyNotification n = data.getValue(MyNotification.class);
-                        if (n == null) return;
-                        if (!n.getChecked()){
-                            UtilesNotification.createNotification(MyApplication.getAppContext(), n);
-                            // TODO: 06/07/2017 quiza haya que diferenciar el tipo de notificacion
+                        MyNotification notification = data.getValue(MyNotification.class);
+                        if (notification == null) return;
+                        if (!notification.getChecked()) {
+                            @FirebaseDBContract.NotificationTypes int type = notification.getType();
+                            switch (type) {
+                                case FirebaseDBContract.NOTIFICATION_TYPE_USER:
+                                    User user = Utiles.getUserFromContentProvider(notification.getExtra_data());
+                                    UtilesNotification.createNotification(MyApplication.getAppContext(), notification, user);
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_ERROR:
+                                    break;
+                            }
+                            FirebaseActions.checkNotification(data.getRef().toString());
                         }
                     }
             }

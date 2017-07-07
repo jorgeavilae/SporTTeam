@@ -18,6 +18,7 @@ public class SportteamFirebaseJobService extends JobService {
      */
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
+        // TODO: 07/07/2017  
         /* Avisar al usuario cuando:
          *  - Recibe peticion de amistad                                        UID sender
          *  - Contestan peticion de amistad enviada por el (aceptan o rechazan) UID receiver

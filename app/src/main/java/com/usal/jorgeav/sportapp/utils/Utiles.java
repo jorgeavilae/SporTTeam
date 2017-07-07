@@ -2,8 +2,12 @@ package com.usal.jorgeav.sportapp.utils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.util.Log;
 
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
+import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
 /**
@@ -60,5 +64,29 @@ public class Utiles {
                     emptyPlFrom, emptyPlTo);
     }
         return null;
+    }
+
+    public static User getUserFromContentProvider(String userId) {
+        Log.d(TAG, "getUserFromContentProvider: "+userId);
+        User u = null;
+        Cursor c = MyApplication.getAppContext().getContentResolver().query(
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.UserEntry.USER_ID + " = ? ",
+                new String[]{userId},
+                null);
+        if (c != null) {
+            Log.d(TAG, "getUserFromContentProvider: "+ DatabaseUtils.dumpCursorToString(c));
+            if (c.getCount() == 1 && c.moveToFirst()) {
+                String email = c.getString(SportteamContract.UserEntry.COLUMN_EMAIL);
+                String name = c.getString(SportteamContract.UserEntry.COLUMN_NAME);
+                String city = c.getString(SportteamContract.UserEntry.COLUMN_CITY);
+                int age = c.getInt(SportteamContract.UserEntry.COLUMN_AGE);
+                String photoUrl = c.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
+                u = new User(userId, email, name, city, age, photoUrl, null);
+            }
+            c.close();
+        }
+        return u;
     }
 }
