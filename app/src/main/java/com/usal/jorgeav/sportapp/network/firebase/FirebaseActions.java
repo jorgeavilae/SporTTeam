@@ -176,7 +176,7 @@ public class FirebaseActions {
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(myUserFriends, currentTime);
         childUpdates.put(otherUserFriends, currentTime);
-        childUpdates.put(userFriendNotification, n);
+        childUpdates.put(userFriendNotification, n.toMap());
         childUpdates.put(myUserFriendsRequestReceived, null);
         childUpdates.put(userFriendRequestReceivedNotification, null);
         childUpdates.put(otherUserFriendsRequestSent, null);
@@ -241,12 +241,23 @@ public class FirebaseActions {
         String userInvitationReceivedEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
                 + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS + "/" + eventId;
 
+        //Set Invitation Received MyNotification in other User
+        String notificationId = eventId + FirebaseDBContract.Event.INVITATIONS;
+        String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                + uid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         long currentTime = System.currentTimeMillis();
+        String notificationMessage = MyApplication.getAppContext()
+                .getString(R.string.notification_event_invitation_received);
+        @FirebaseDBContract.NotificationTypes
+        Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
+        MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(eventInvitationSentUser, currentTime);
         childUpdates.put(userInvitationReceivedEvent, currentTime);
+        childUpdates.put(userInvitationReceivedNotification, n.toMap());
 
         database.updateChildren(childUpdates);
     }
@@ -259,11 +270,17 @@ public class FirebaseActions {
         String userInvitationReceivedEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
                 + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS + "/" + eventId;
 
+        //Delete Invitation Received MyNotification in other User
+        String notificationId = eventId + FirebaseDBContract.Event.INVITATIONS;
+        String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                + uid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(eventInvitationSentUser, null);
         childUpdates.put(userInvitationReceivedEvent, null);
+        childUpdates.put(userInvitationReceivedNotification, null);
 
         database.updateChildren(childUpdates);
     }
@@ -335,12 +352,18 @@ public class FirebaseActions {
                 String eventInvitationUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
                         + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + uid;
 
+                //Delete Invitation Received MyNotification in other User
+                String notificationId = eventId + FirebaseDBContract.Event.INVITATIONS;
+                String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                        + uid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
                 Map<String, Object> childUpdates = new HashMap<>();
                 childUpdates.put(userParticipationEvent, true);
                 childUpdates.put(userInvitationEvent, null);
                 childUpdates.put(eventInvitationUser, null);
+                childUpdates.put(userInvitationReceivedNotification, null);
 
                 database.updateChildren(childUpdates);
 
@@ -363,11 +386,17 @@ public class FirebaseActions {
         String eventInvitationUser = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
                 + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + uid;
 
+        //Delete Invitation Received MyNotification in other User
+        String notificationId = eventId + FirebaseDBContract.Event.INVITATIONS;
+        String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                + uid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(userInvitationEvent, null);
         childUpdates.put(eventInvitationUser, null);
+        childUpdates.put(userInvitationReceivedNotification, null);
 
         database.updateChildren(childUpdates);
     }

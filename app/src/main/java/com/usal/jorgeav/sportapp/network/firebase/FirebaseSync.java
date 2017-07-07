@@ -654,9 +654,19 @@ public class FirebaseSync {
                             switch (type) {
                                 case FirebaseDBContract.NOTIFICATION_TYPE_USER:
                                     User user = Utiles.getUserFromContentProvider(notification.getExtra_data());
+                                    if (user == null) {
+                                        loadAProfileAndNotify(notification);
+                                        continue;
+                                    }
                                     UtilesNotification.createNotification(MyApplication.getAppContext(), notification, user);
                                     break;
                                 case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
+                                    Event event = Utiles.getEventFromContentProvider(notification.getExtra_data());
+                                    if (event == null) {
+                                        loadAnEventAndNotify(notification);
+                                        continue;
+                                    }
+                                    UtilesNotification.createNotification(MyApplication.getAppContext(), notification, event);
                                     break;
                                 case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
                                     break;
@@ -707,7 +717,41 @@ public class FirebaseSync {
 
                     }
                 });
+    }
+    private static void loadAProfileAndNotify(final MyNotification notification) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
+        myUserRef.child(notification.getExtra_data())
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+                    @Override
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            User anUser = UtilesDataSnapshot.dataSnapshotToUser(dataSnapshot);
+
+                            ContentValues cvData = UtilesDataSnapshot.dataUserToContentValues(anUser);
+                            MyApplication.getAppContext().getContentResolver()
+                                    .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
+
+                            List<ContentValues> cvSports = UtilesDataSnapshot.sportUserToContentValues(anUser);
+                            MyApplication.getAppContext().getContentResolver()
+                                    .delete(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                            SportteamContract.UserSportEntry.USER_ID + " = ? ",
+                                            new String[]{anUser.getmId()});
+                            MyApplication.getAppContext().getContentResolver()
+                                    .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                            cvSports.toArray(new ContentValues[cvSports.size()]));
+
+                            //Notify
+                            UtilesNotification.createNotification(MyApplication.getAppContext(), notification, anUser);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelledExecutor(DatabaseError databaseError) {
+
+                    }
+                });
     }
     public static void loadAnAlarm(String alarmId) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -757,6 +801,39 @@ public class FirebaseSync {
                             // Load users participants with data
                             if (e.getParticipants() != null)
                                 loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelledExecutor(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+    private static void loadAnEventAndNotify(final MyNotification notification) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+
+        eventRef.child(notification.getExtra_data())
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+                    @Override
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
+                            if (e == null) return;
+                            e.setEvent_id(dataSnapshot.getKey());
+
+                            ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
+                            MyApplication.getAppContext().getContentResolver()
+                                    .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                            loadAField(e.getField_id());
+
+                            // Load users participants with data
+                            if (e.getParticipants() != null)
+                                loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+
+                            //Notify
+                            UtilesNotification.createNotification(MyApplication.getAppContext(), notification, e);
                         }
                     }
 

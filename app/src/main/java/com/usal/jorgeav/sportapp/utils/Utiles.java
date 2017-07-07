@@ -2,11 +2,11 @@ package com.usal.jorgeav.sportapp.utils;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.util.Log;
 
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
+import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
@@ -67,7 +67,6 @@ public class Utiles {
     }
 
     public static User getUserFromContentProvider(String userId) {
-        Log.d(TAG, "getUserFromContentProvider: "+userId);
         User u = null;
         Cursor c = MyApplication.getAppContext().getContentResolver().query(
                 SportteamContract.UserEntry.CONTENT_USER_URI,
@@ -76,7 +75,6 @@ public class Utiles {
                 new String[]{userId},
                 null);
         if (c != null) {
-            Log.d(TAG, "getUserFromContentProvider: "+ DatabaseUtils.dumpCursorToString(c));
             if (c.getCount() == 1 && c.moveToFirst()) {
                 String email = c.getString(SportteamContract.UserEntry.COLUMN_EMAIL);
                 String name = c.getString(SportteamContract.UserEntry.COLUMN_NAME);
@@ -84,9 +82,42 @@ public class Utiles {
                 int age = c.getInt(SportteamContract.UserEntry.COLUMN_AGE);
                 String photoUrl = c.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
                 u = new User(userId, email, name, city, age, photoUrl, null);
-            }
+            } else if (c.getCount() == 0)
+                Log.e(TAG, "getUserFromContentProvider: User with ID "+userId+" not found");
+            else
+                Log.e(TAG, "getUserFromContentProvider: More than one user with ID "+userId+" ("+c.getCount()+")");
             c.close();
-        }
+        } else
+            Log.e(TAG, "getUserFromContentProvider: Error with user "+userId);
         return u;
+    }
+
+    public static Event getEventFromContentProvider(String eventId) {
+        Event e = null;
+        Cursor c = MyApplication.getAppContext().getContentResolver().query(
+                SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                SportteamContract.EventEntry.EVENT_COLUMNS,
+                SportteamContract.EventEntry.EVENT_ID + " = ? ",
+                new String[]{eventId},
+                null);
+        if (c != null) {
+            if (c.getCount() == 1 && c.moveToFirst()) {
+                String sport = c.getString(SportteamContract.EventEntry.COLUMN_SPORT);
+                String field = c.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+                String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
+                String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
+                Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
+                String owner = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
+                int totalPl = c.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
+                int emptyPl = c.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
+                e = new Event(eventId, sport, field, name, city, date, owner, totalPl, emptyPl, null);
+            } else if (c.getCount() == 0)
+                Log.e(TAG, "getEventFromContentProvider: Event with ID "+eventId+" not found");
+            else
+                Log.e(TAG, "getEventFromContentProvider: More than one event with ID "+eventId+" ("+c.getCount()+")");
+            c.close();
+        } else
+            Log.e(TAG, "getEventFromContentProvider: Error with event "+eventId);
+        return e;
     }
 }
