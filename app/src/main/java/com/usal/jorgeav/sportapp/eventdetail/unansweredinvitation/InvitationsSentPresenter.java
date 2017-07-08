@@ -6,6 +6,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
@@ -24,8 +26,10 @@ public class InvitationsSentPresenter implements InvitationsSentContract.Present
     }
     @Override
     public void deleteInvitationToThisEvent(String eventId, String uid) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
         if (!TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
-            FirebaseActions.deleteInvitationToThisEvent(eventId, uid);
+            FirebaseActions.deleteInvitationToThisEvent(myUid, eventId, uid);
     }
 
     @Override
@@ -39,9 +43,11 @@ public class InvitationsSentPresenter implements InvitationsSentContract.Present
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case SportteamLoader.LOADER_EVENT_INVITATIONS_SENT_ID:
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String myUid = ""; if (fUser != null) myUid = fUser.getUid();
                 String eventId = args.getString(InvitationsSentFragment.BUNDLE_EVENT_ID);
                 return SportteamLoader
-                        .cursorLoaderUsersForEventInvitationsSent(mEventInvitationsView.getActivityContext(), eventId);
+                        .cursorLoaderUsersForEventInvitationsSent(mEventInvitationsView.getActivityContext(), eventId, myUid);
         }
         return null;
     }

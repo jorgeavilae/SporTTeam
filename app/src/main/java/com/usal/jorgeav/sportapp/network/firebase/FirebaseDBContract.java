@@ -27,10 +27,32 @@ public final class FirebaseDBContract {
         public static final String FRIENDS_REQUESTS_RECEIVED = "friends_requests_received";
         public static final String EVENTS_CREATED = "events_created";
         public static final String EVENTS_PARTICIPATION = "events_participation";
-        public static final String EVENTS_INVITATIONS = "events_invitations_received";
+        public static final String EVENTS_INVITATIONS_SENT = "events_invitations_sent";
+        public static final String EVENTS_INVITATIONS_RECEIVED = "events_invitations_received";
         public static final String EVENTS_REQUESTS = "events_requests";
         public static final String ALARMS = "alarms";
         public static final String NOTIFICATIONS = "notifications";
+    }
+
+    public static final class Event {
+        public static final String SPORT = "sport_id";
+        public static final String FIELD = "field_id";
+        public static final String CITY = "city";
+        public static final String NAME = "name";
+        public static final String DATE = "date";
+        public static final String TOTAL_PLAYERS = "total_players";
+        public static final String EMPTY_PLAYERS = "empty_players";
+        public static final String OWNER = "owner";
+        public static final String PARTICIPANTS = "participants";
+        public static final String INVITATIONS = "invitations_sent";
+        public static final String USER_REQUESTS = "user_requests";
+    }
+
+    public static final class Invitation {
+        public static final String SENDER = "sender";
+        public static final String RECEIVER = "receiver";
+        public static final String EVENT = "event";
+        public static final String DATE = "date";
     }
 
     @Retention(RetentionPolicy.SOURCE)
@@ -60,20 +82,6 @@ public final class FirebaseDBContract {
         public static final String TOTAL_PLAYERS_TO = "total_players_to";
         public static final String EMPTY_PLAYERS_FROM = "empty_players_from";
         public static final String EMPTY_PLAYERS_TO = "empty_players_to";
-    }
-
-    public static final class Event {
-        public static final String SPORT = "sport_id";
-        public static final String FIELD = "field_id";
-        public static final String CITY = "city";
-        public static final String NAME = "name";
-        public static final String DATE = "date";
-        public static final String TOTAL_PLAYERS = "total_players";
-        public static final String EMPTY_PLAYERS = "empty_players";
-        public static final String OWNER = "owner";
-        public static final String PARTICIPANTS = "participants";
-        public static final String INVITATIONS = "invitations_sent";
-        public static final String USER_REQUESTS = "user_requests";
     }
 
     public static final class Field {

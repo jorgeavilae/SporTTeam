@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
+import com.usal.jorgeav.sportapp.data.Invitation;
 
 /**
  * Created by Jorge Avila on 26/04/2017.
@@ -39,8 +40,9 @@ public abstract class DetailEventContract {
 
         void sendEventRequest(String eventId);
         void cancelEventRequest(String eventId);
-        void acceptEventInvitation(String eventId);
-        void declineEventInvitation(String eventId);
+        void acceptEventInvitation(String eventId, String sender);
+        Invitation getEventInvitation();
+        void declineEventInvitation(String eventId, String sender);
         void quitEvent(String eventId);
         void quitEvent(String userId, String eventId);
 

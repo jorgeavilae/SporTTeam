@@ -15,6 +15,7 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
+import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
@@ -232,94 +233,73 @@ public class FirebaseActions {
         database.updateChildren(childUpdates);
     }
 
-    public static void sendInvitationToThisEvent(String eventId, String uid) {
-        //Set Invitation Sent in my Event
-        String eventInvitationSentUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
-                + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + uid;
+    // User otherUid receive an invitation to the event eventId, from user myUid
+    public static void sendInvitationToThisEvent(String myUid, String eventId, String otherUid) {
+        //Set Invitation Sent in myUid
+        String userInvitationSent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
+                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + eventId;
 
-        //Set Invitation Received in other User
-        String userInvitationReceivedEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS + "/" + eventId;
+        //Set Invitation Sent in Event
+        String eventInvitationSent =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + otherUid;
 
-        //Set Invitation Received MyNotification in other User
-        String notificationId = eventId + FirebaseDBContract.Event.INVITATIONS;
+        //Set Invitation Received in otherUid
+        String userInvitationReceived =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
+                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + eventId;
+
+        //Set Invitation Received MyNotification in otherUid
+        String notificationId = eventId + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED;
         String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
-                + uid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+                + otherUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        // Invitation object
         long currentTime = System.currentTimeMillis();
+        Invitation invitation = new Invitation(myUid, otherUid, eventId, currentTime);
+
+        // Notification object
         String notificationMessage = MyApplication.getAppContext()
                 .getString(R.string.notification_event_invitation_received);
         @FirebaseDBContract.NotificationTypes
         Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
         MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
 
+        // Updates
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(eventInvitationSentUser, currentTime);
-        childUpdates.put(userInvitationReceivedEvent, currentTime);
+        childUpdates.put(userInvitationSent, invitation.toMap());
+        childUpdates.put(eventInvitationSent, invitation.toMap());
+        childUpdates.put(userInvitationReceived, invitation.toMap());
         childUpdates.put(userInvitationReceivedNotification, n.toMap());
 
-        database.updateChildren(childUpdates);
+        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
-    public static void deleteInvitationToThisEvent(String eventId, String uid) {
-        //Delete Invitation Sent in my Event
-        String eventInvitationSentUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
-                + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + uid;
+    public static void deleteInvitationToThisEvent(String myUid, String eventId, String otherUid) {
+        //Delete Invitation Sent in myUid
+        String userInvitationSent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
+                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + eventId;
 
-        //Delete Invitation Received in other User
-        String userInvitationReceivedEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS + "/" + eventId;
+        //Delete Invitation Sent in Event
+        String eventInvitationSent =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + otherUid;
 
-        //Delete Invitation Received MyNotification in other User
-        String notificationId = eventId + FirebaseDBContract.Event.INVITATIONS;
+        //Delete Invitation Received in otherUid
+        String userInvitationReceived =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
+                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + eventId;
+
+        //Delete Invitation Received MyNotification in otherUid
+        String notificationId = eventId + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED;
         String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
-                + uid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+                + otherUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(eventInvitationSentUser, null);
-        childUpdates.put(userInvitationReceivedEvent, null);
+        childUpdates.put(userInvitationSent, null);
+        childUpdates.put(eventInvitationSent, null);
+        childUpdates.put(userInvitationReceived, null);
         childUpdates.put(userInvitationReceivedNotification, null);
 
-        database.updateChildren(childUpdates);
+        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
-    public static void sendEventRequest(String uid, String eventId) {
-        //Set User Request in that Event
-        String eventRequestsUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
-                + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + uid;
 
-        //Set Event Request in my User
-        String userRequestsEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        long currentTime = System.currentTimeMillis();
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(eventRequestsUser, currentTime);
-        childUpdates.put(userRequestsEvent, currentTime);
-
-        database.updateChildren(childUpdates);
-    }
-    public static void cancelEventRequest(String uid, String eventId) {
-        //Delete User Request in that Event
-        String eventRequestsUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
-                + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + uid;
-
-        //Delete Event Request in that my User
-        String userRequestsEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(eventRequestsUser, null);
-        childUpdates.put(userRequestsEvent, null);
-
-        database.updateChildren(childUpdates);
-    }
-    public static void acceptEventInvitation(final String uid, final String eventId) {
+    public static void acceptEventInvitation(final String myUid, final String eventId, final String sender) {
         //Add Assistant User to that Event
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -335,34 +315,39 @@ public class FirebaseActions {
 
                 if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
-                    e.addToParticipants(uid, true);
+                    e.addToParticipants(myUid, true);
                 }
 
                 mutableData.setValue(e);
 
                 //Add Assistant Event to my User
-                String userParticipationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
+                String userParticipationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                         + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION + "/" + eventId;
 
-                //Delete Event Invitation Received in my User
-                String userInvitationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                        + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS + "/" + eventId;
+                //Delete Invitation Received in my User
+                String userInvitationReceived =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
+                        + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + eventId;
 
-                //Delete Event Invitation Sent in that Event
-                String eventInvitationUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
-                        + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + uid;
+                //Delete Invitation Sent in Event
+                String eventInvitationSent =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                        + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + myUid;
+
+                //Delete Invitation Sent in other User
+                String userInvitationSent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + sender
+                        + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + eventId;
 
                 //Delete Invitation Received MyNotification in other User
-                String notificationId = eventId + FirebaseDBContract.Event.INVITATIONS;
+                String notificationId = eventId + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED;
                 String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
-                        + uid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+                        + myUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
                 Map<String, Object> childUpdates = new HashMap<>();
                 childUpdates.put(userParticipationEvent, true);
-                childUpdates.put(userInvitationEvent, null);
-                childUpdates.put(eventInvitationUser, null);
+                childUpdates.put(userInvitationReceived, null);
+                childUpdates.put(userInvitationSent, null);
+                childUpdates.put(eventInvitationSent, null);
                 childUpdates.put(userInvitationReceivedNotification, null);
 
                 database.updateChildren(childUpdates);
@@ -377,25 +362,30 @@ public class FirebaseActions {
             }
         });
     }
-    public static void declineEventInvitation(String uid, String eventId) {
-        //Delete Event Invitation Received in my User
-        String userInvitationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS + "/" + eventId;
+    public static void declineEventInvitation(String myUid, String eventId, String sender) {
+        //Delete Invitation Received in my User
+        String userInvitationReceived =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
+                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + eventId;
 
-        //Delete Event Invitation Sent in that Event
-        String eventInvitationUser = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
-                + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + uid;
+        //Delete Invitation Sent in Event
+        String eventInvitationSent =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + myUid;
 
-        //Delete Invitation Received MyNotification in other User
-        String notificationId = eventId + FirebaseDBContract.Event.INVITATIONS;
+        //Delete Invitation Sent in other User
+        String userInvitationSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + sender
+                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + eventId;
+
+        //Delete Invitation Received MyNotification in my User
+        String notificationId = eventId + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED;
         String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
-                + uid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+                + myUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(userInvitationEvent, null);
-        childUpdates.put(eventInvitationUser, null);
+        childUpdates.put(userInvitationReceived, null);
+        childUpdates.put(eventInvitationSent, null);
+        childUpdates.put(userInvitationSent, null);
         childUpdates.put(userInvitationReceivedNotification, null);
 
         database.updateChildren(childUpdates);
@@ -432,6 +422,41 @@ public class FirebaseActions {
                 // Transaction completed
             }
         });
+    }
+    public static void sendEventRequest(String uid, String eventId) {
+        //Set User Request in that Event
+        String eventRequestsUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + uid;
+
+        //Set Event Request in my User
+        String userRequestsEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
+                + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        long currentTime = System.currentTimeMillis();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(eventRequestsUser, currentTime);
+        childUpdates.put(userRequestsEvent, currentTime);
+
+        database.updateChildren(childUpdates);
+    }
+    public static void cancelEventRequest(String uid, String eventId) {
+        //Delete User Request in that Event
+        String eventRequestsUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + uid;
+
+        //Delete Event Request in that my User
+        String userRequestsEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
+                + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(eventRequestsUser, null);
+        childUpdates.put(userRequestsEvent, null);
+
+        database.updateChildren(childUpdates);
     }
     public static void acceptUserRequestToThisEvent(final String uid, final String eventId) {
         //Add Assistant User to my Event
@@ -587,9 +612,14 @@ public class FirebaseActions {
                     if (e.getParticipants() != null)
                         participantsUserId.addAll(new ArrayList<>(e.getParticipants().keySet()));
 
-                    ArrayList<String> invitationsUserId = new ArrayList<>();
+                    // TODO: 08/07/2017
+                    ArrayList<String> invitationsSentUserId = new ArrayList<>();
+                    ArrayList<String> invitationsReceivedUserId = new ArrayList<>();
                     DataSnapshot dataInvitations = dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS);
-                    for (DataSnapshot data : dataInvitations.getChildren()) invitationsUserId.add(data.getKey());
+                    for (DataSnapshot data : dataInvitations.getChildren()) {
+                        invitationsReceivedUserId.add(data.getKey());
+                        invitationsSentUserId.add(data.child(FirebaseDBContract.Invitation.SENDER).getValue(String.class));
+                    }
 
                     ArrayList<String> requestsUserId = new ArrayList<>();
                     DataSnapshot dataRequests = dataSnapshot.child(FirebaseDBContract.Event.USER_REQUESTS);
@@ -620,11 +650,19 @@ public class FirebaseActions {
                         childDeletes.put(eventInUserParticipation, null);
                     }
 
+                    // TODO: 08/07/2017
                     //Delete Event in User invitations received
-                    for (String userInvitation : invitationsUserId) {
-                        String eventInUserInvitation = "/" + FirebaseDBContract.TABLE_USERS + "/" + userInvitation
-                                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS + "/" + e.getEvent_id();
-                        childDeletes.put(eventInUserInvitation, null);
+                    for (String userInvitation : invitationsReceivedUserId) {
+                        String eventInUserInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + userInvitation
+                                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + e.getEvent_id();
+                        childDeletes.put(eventInUserInvitationReceived, null);
+                    }
+
+                    //Delete Event in User invitations sent
+                    for (String userInvitation : invitationsSentUserId) {
+                        String eventInUserInvitationSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + userInvitation
+                                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + e.getEvent_id();
+                        childDeletes.put(eventInUserInvitationSent, null);
                     }
 
                     //Delete Event in User event requests send

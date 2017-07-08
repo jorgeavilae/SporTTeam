@@ -126,14 +126,15 @@ public final class SportteamLoader {
 
 
     public static final int LOADER_EVENT_INVITATIONS_SENT_ID = 4100;
-    public static CursorLoader cursorLoaderUsersForEventInvitationsSent(Context context, String eventId) {
+    public static CursorLoader cursorLoaderUsersForEventInvitationsSent(Context context, String eventId, String myUserId) {
         // Return user data for invitations sent in eventId
         return new CursorLoader(
                 context,
                 SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_USER_URI,
                 SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " = ? ",
-                new String[]{eventId},
+                SportteamContract.EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " = ? AND "
+                +SportteamContract.EventsInvitationEntry.SENDER_ID_TABLE_PREFIX + " = ? ",
+                new String[]{eventId, myUserId},
                 SportteamContract.EventsInvitationEntry.DATE_TABLE_PREFIX + " ASC");
     }
     public static final int LOADER_EVENT_INVITATIONS_RECEIVED_ID = 4200;
@@ -143,7 +144,7 @@ public final class SportteamLoader {
                 context,
                 SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI,
                 SportteamContract.EventEntry.EVENT_COLUMNS,
-                SportteamContract.EventsInvitationEntry.USER_ID_TABLE_PREFIX + " = ? ",
+                SportteamContract.EventsInvitationEntry.RECEIVER_ID_TABLE_PREFIX + " = ? ",
                 new String[]{myUserId},
                 SportteamContract.EventsInvitationEntry.DATE_TABLE_PREFIX + " ASC");
     }
@@ -339,7 +340,7 @@ public final class SportteamLoader {
                 LEFT JOIN eventsParticipation
                     ON (event.eventId = eventsParticipation.eventId AND eventsParticipation.userId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
                 LEFT JOIN eventInvitations
-                    ON (event.eventId = eventInvitations.eventId AND eventInvitations.userId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
+                    ON (event.eventId = eventInvitations.eventId AND eventInvitations.receiverId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
                 LEFT JOIN eventRequest
                     ON (event.eventId = eventRequest.eventId AND eventRequest.senderId = XPs5mf8MZnXDAPjtyHkF0MqbzQ42 )
             WHERE (
@@ -363,6 +364,7 @@ public final class SportteamLoader {
     public static final int LOADER_EVENTS_FOR_INVITATION_ID = 8100;
     public static CursorLoader cursorLoaderEventsForInvitation(Context context, String myUserID, String otherUserID) {
         // Return all of my events data in which otherUser has no relation
+        // TODO: 08/07/2017 Add event in participation
         return new CursorLoader(
                 context,
                 SportteamContract.JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI,
@@ -381,6 +383,24 @@ public final class SportteamLoader {
                 SportteamContract.JoinQueryEntries.WHERE_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS,
                 SportteamContract.JoinQueryEntries.queryMyFriendsWithoutRelationWithMyEventsArguments(myUserID, eventId),
                 SportteamContract.FriendsEntry.DATE_TABLE_PREFIX + " ASC");
+    }
+
+    public static Cursor simpleQueryUserId(Context context, String userId) {
+        return context.getContentResolver().query(
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.UserEntry.USER_ID + " = ? ",
+                new String[]{userId},
+                null);
+    }
+
+    public static Cursor simpleQueryEventId(Context context, String eventId) {
+        return context.getContentResolver().query(
+                SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                SportteamContract.EventEntry.EVENT_COLUMNS,
+                SportteamContract.EventEntry.EVENT_ID + " = ? ",
+                new String[]{eventId},
+                null);
     }
 
     public static Cursor simpleQueryFieldId(Context context, String fieldId) {

@@ -6,6 +6,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -209,21 +210,12 @@ public class UtilesDataSnapshot {
         return cv;
     }
 
-    public static ContentValues dataSnapshotEventInvitationsToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheReceiver) {
-        String userId, eventId;
-        if(iAmTheReceiver) {
-            eventId = dataSnapshot.getKey();
-            userId = key;
-        } else {
-            eventId = key;
-            userId = dataSnapshot.getKey();
-        }
-        long date = ((Number) dataSnapshot.getValue()).longValue();
-
+    public static ContentValues invitationToContentValues(Invitation invitation) {
         ContentValues cv = new ContentValues();
-        cv.put(SportteamContract.EventsInvitationEntry.USER_ID, userId);
-        cv.put(SportteamContract.EventsInvitationEntry.EVENT_ID, eventId);
-        cv.put(SportteamContract.EventsInvitationEntry.DATE, date);
+        cv.put(SportteamContract.EventsInvitationEntry.RECEIVER_ID, invitation.getReceiver());
+        cv.put(SportteamContract.EventsInvitationEntry.SENDER_ID, invitation.getSender());
+        cv.put(SportteamContract.EventsInvitationEntry.EVENT_ID, invitation.getEvent());
+        cv.put(SportteamContract.EventsInvitationEntry.DATE, invitation.getDate());
         return cv;
     }
 

@@ -84,7 +84,7 @@ public class BaseActivity extends AppCompatActivity
         hideContent();
 
         //TODO borrar
-        // reiniciarContentProviderYSalir();
+//        reiniciarContentProviderYSalir();
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {

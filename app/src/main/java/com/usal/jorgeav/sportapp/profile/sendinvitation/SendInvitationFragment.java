@@ -108,6 +108,7 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
 
     @Override
     public void onEventClick(String eventId) {
+        // TODO: 08/07/2017 crear dialog para invitar al usuario del que vengo a este fragment, invitarlo al eventId
         Fragment newFragment = DetailEventFragment.newInstance(eventId);
         mFragmentManagementListener.initFragment(newFragment, true);
     }

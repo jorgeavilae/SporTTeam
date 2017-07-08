@@ -222,13 +222,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         builder.setMessage("Quieres asistir a este evento?")
                                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        mPresenter.acceptEventInvitation(mEventId);
+                                        mPresenter.acceptEventInvitation(mEventId, mPresenter.getEventInvitation().getSender());
                                     }
                                 })
                                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        mPresenter.declineEventInvitation(mEventId);
+                                        mPresenter.declineEventInvitation(mEventId, mPresenter.getEventInvitation().getSender());
                                     }
                                 });
                         builder.create().show();
@@ -252,6 +252,26 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                                 })
                                 .setNegativeButton("No", null);
                         builder.create().show();
+                    }
+                });
+                buttonSendInvitation.setVisibility(View.VISIBLE);
+                buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //DONE ver lista de amigos para enviarles invitaciones
+                        Fragment fragment = InviteUserFragment.newInstance(mEventId);
+                        mFragmentManagementListener.initFragment(fragment, true);
+                    }
+                });
+                buttonUnansweredInvitations.setVisibility(View.VISIBLE);
+                buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //DONE ver invitaciones enviadas y no contestadas
+                        if(mEventId != null) {
+                            Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
+                            mFragmentManagementListener.initFragment(fragment, true);
+                        }
                     }
                 });
                 break;

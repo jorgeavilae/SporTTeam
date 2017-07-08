@@ -9,6 +9,7 @@ import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 
 /**
  * Created by Jorge Avila on 17/05/2017.
@@ -68,12 +69,7 @@ public class Utiles {
 
     public static User getUserFromContentProvider(String userId) {
         User u = null;
-        Cursor c = MyApplication.getAppContext().getContentResolver().query(
-                SportteamContract.UserEntry.CONTENT_USER_URI,
-                SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.UserEntry.USER_ID + " = ? ",
-                new String[]{userId},
-                null);
+        Cursor c = SportteamLoader.simpleQueryUserId(MyApplication.getAppContext(), userId);
         if (c != null) {
             if (c.getCount() == 1 && c.moveToFirst()) {
                 String email = c.getString(SportteamContract.UserEntry.COLUMN_EMAIL);
@@ -94,12 +90,7 @@ public class Utiles {
 
     public static Event getEventFromContentProvider(String eventId) {
         Event e = null;
-        Cursor c = MyApplication.getAppContext().getContentResolver().query(
-                SportteamContract.EventEntry.CONTENT_EVENT_URI,
-                SportteamContract.EventEntry.EVENT_COLUMNS,
-                SportteamContract.EventEntry.EVENT_ID + " = ? ",
-                new String[]{eventId},
-                null);
+        Cursor c = SportteamLoader.simpleQueryEventId(MyApplication.getAppContext(), eventId);
         if (c != null) {
             if (c.getCount() == 1 && c.moveToFirst()) {
                 String sport = c.getString(SportteamContract.EventEntry.COLUMN_SPORT);

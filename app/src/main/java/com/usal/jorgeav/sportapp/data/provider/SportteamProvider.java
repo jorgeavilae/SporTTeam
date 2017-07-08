@@ -622,7 +622,7 @@ public class SportteamProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        /* TODO Posible Problema: Deberia haber updates?
+        /* TODO Deberia haber updates?
          * Los cambios en la DDBB se hacen contra Firebase que los trae y los INSERTA
          * En DBHelper esta puesto ON CONFLICT REPLACE
          */

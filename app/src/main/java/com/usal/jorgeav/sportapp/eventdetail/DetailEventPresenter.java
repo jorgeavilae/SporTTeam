@@ -13,7 +13,9 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.MyApplication;
+import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
@@ -32,6 +34,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
 
     DetailEventContract.View mView;
     String ownerUid = "";
+    Invitation mInvitation = null;
     ContentObserver mContentObserver;
 
     public DetailEventPresenter(@NonNull DetailEventContract.View view) {
@@ -162,7 +165,8 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             @Override
             protected Integer doInBackground(Void... voids) {
                 try {
-                    String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    String myUid = ""; if (fUser != null) myUid = fUser.getUid();
 
                     //Owner?
                     Cursor cursorOwner = mView.getActivityContext().getContentResolver().query(
@@ -183,11 +187,15 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
                     Cursor cursorReceiver = mView.getActivityContext().getContentResolver().query(
                             SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
                             SportteamContract.EventsInvitationEntry.EVENT_INVITATIONS_COLUMNS,
-                            SportteamContract.EventsInvitationEntry.EVENT_ID + " = ?",
-                            new String[]{mView.getEventID()},
+                            SportteamContract.EventsInvitationEntry.EVENT_ID + " = ? AND "
+                            + SportteamContract.EventsInvitationEntry.RECEIVER_ID + " = ? ",
+                            new String[]{mView.getEventID(), myUid},
                             null);
                     if (cursorReceiver != null) {
-                        if(cursorReceiver.getCount() > 0) {
+                        if(cursorReceiver.getCount() > 0 && cursorReceiver.moveToFirst()) {
+                            String sender = cursorReceiver.getString(SportteamContract.EventsInvitationEntry.COLUMN_SENDER_ID);
+                            Long date = cursorReceiver.getLong(SportteamContract.EventsInvitationEntry.COLUMN_DATE);
+                            mInvitation = new Invitation(sender, myUid, mView.getEventID(), date);
                             cursorReceiver.close();
                             return RELATION_TYPE_I_RECEIVE_INVITATION;
                         }
@@ -263,35 +271,45 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
 
     @Override
     public void sendEventRequest(String eventId) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
         if (!TextUtils.isEmpty(eventId))
             FirebaseActions.sendEventRequest(myUid, eventId);
     }
 
     @Override
     public void cancelEventRequest(String eventId) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
         if (!TextUtils.isEmpty(eventId))
             FirebaseActions.cancelEventRequest(myUid, eventId);
     }
 
     @Override
-    public void acceptEventInvitation(String eventId) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(eventId))
-            FirebaseActions.acceptEventInvitation(myUid, eventId);
+    public void acceptEventInvitation(String eventId, String sender) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(sender))
+            FirebaseActions.acceptEventInvitation(myUid, eventId, sender);
     }
 
     @Override
-    public void declineEventInvitation(String eventId) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(eventId))
-            FirebaseActions.declineEventInvitation(myUid, eventId);
+    public Invitation getEventInvitation() {
+        return mInvitation;
+    }
+
+    @Override
+    public void declineEventInvitation(String eventId, String sender) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(sender))
+            FirebaseActions.declineEventInvitation(myUid, eventId, sender);
     }
 
     @Override
     public void quitEvent(String eventId) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
         if (!TextUtils.isEmpty(eventId))
             FirebaseActions.quitEvent(myUid, eventId);
     }

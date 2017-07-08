@@ -216,19 +216,6 @@ android:layout_height="wrap_content">
         app:layout_constraintRight_toLeftOf="@+id/guideline2"
         android:layout_marginRight="8dp" />
 
-    <fragment
-        android:id="@+id/place_autocomplete_fragment"
-        android:name="com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/guideline2"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_event_empty" />
-
     <AutoCompleteTextView
         android:id="@+id/new_event_autocomplete_city"
         android:layout_width="0dp"

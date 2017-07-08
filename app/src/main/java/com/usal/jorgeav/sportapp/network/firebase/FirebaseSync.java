@@ -15,6 +15,7 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -360,20 +361,35 @@ public class FirebaseSync {
             Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
         }
     }
-    public static void loadUsersFromInvitationsSent(String key) {
+
+    // Retrieve all invitations, sent by the current user or others, in order to not
+    // invite same user twice.
+    // TODO: 08/07/2017 cargar ussuarios de mis eventos creados y participando=true
+    public static void loadUsersFromInvitationsSent(String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
-                .child(key + "/" + FirebaseDBContract.Event.INVITATIONS);
+                .child(eventId + "/" + FirebaseDBContract.Event.INVITATIONS);
 
         ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
-                    loadAProfile(dataSnapshot.getKey());
+                    Invitation invitation = dataSnapshot.getValue(Invitation.class);
+                    if (invitation == null) {
+                        Log.e(TAG, "loadUsersFromInvitationsSent: onChildAddedExecutor: parse Invitation null");
+                        return;
+                    }
 
-                    String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
-                    ContentValues cvData = UtilesDataSnapshot
-                            .dataSnapshotEventInvitationsToContentValues(dataSnapshot, eventId, false);
+                    // Load receiver
+                    loadAProfile(invitation.getReceiver());
+
+                    // Load sender. It could be the current user. It could be other user, in such
+                    // case that user would be load in loadParticipants or loadOwner.
+
+                    // Load event. Not needed cause this invitation is for one of the current
+                    // user's events or participation ones.
+
+                    ContentValues cvData = UtilesDataSnapshot.invitationToContentValues(invitation);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI, cvData);
                 }
@@ -391,7 +407,7 @@ public class FirebaseSync {
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
                         SportteamContract.EventsInvitationEntry.EVENT_ID + " = ? AND "
-                                +SportteamContract.EventsInvitationEntry.USER_ID + " = ? ",
+                                + SportteamContract.EventsInvitationEntry.RECEIVER_ID + " = ? ",
                         new String[]{eventId, userId});
             }
 
@@ -424,6 +440,8 @@ public class FirebaseSync {
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
+                    // Load users invited with data
+                    loadUsersFromInvitationsSent(dataSnapshot.getKey());
 
                     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
                     String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
@@ -474,18 +492,24 @@ public class FirebaseSync {
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS);
+                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED);
 
         ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
-                    loadAnEvent(dataSnapshot.getKey());
+                    Invitation invitation = dataSnapshot.getValue(Invitation.class);
+                    if (invitation == null) {
+                        Log.e(TAG, "loadEventsFromInvitationsReceived: onChildAddedExecutor: parse Invitation null");
+                        return;
+                    }
+                    // Load Event
+                    loadAnEvent(invitation.getEvent());
 
-                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-                    ContentValues cvData = UtilesDataSnapshot
-                            .dataSnapshotEventInvitationsToContentValues(dataSnapshot, myUserID, true);
+                    // Load User who send me this invitation
+                    loadAProfile(invitation.getSender());
+
+                    ContentValues cvData = UtilesDataSnapshot.invitationToContentValues(invitation);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI, cvData);
                 }
@@ -505,7 +529,7 @@ public class FirebaseSync {
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
                         SportteamContract.EventsInvitationEntry.EVENT_ID + " = ? AND "
-                                +SportteamContract.EventsInvitationEntry.USER_ID + " = ? ",
+                                + SportteamContract.EventsInvitationEntry.RECEIVER_ID + " = ? ",
                         new String[]{eventId, myUserID});
             }
 
@@ -655,7 +679,7 @@ public class FirebaseSync {
                                 case FirebaseDBContract.NOTIFICATION_TYPE_USER:
                                     User user = Utiles.getUserFromContentProvider(notification.getExtra_data());
                                     if (user == null) {
-                                        loadAProfileAndNotify(notification);
+                                        loadAProfileAndNotify(data.getRef().toString(), notification);
                                         continue;
                                     }
                                     UtilesNotification.createNotification(MyApplication.getAppContext(), notification, user);
@@ -663,7 +687,7 @@ public class FirebaseSync {
                                 case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
                                     Event event = Utiles.getEventFromContentProvider(notification.getExtra_data());
                                     if (event == null) {
-                                        loadAnEventAndNotify(notification);
+                                        loadAnEventAndNotify(data.getRef().toString(), notification);
                                         continue;
                                     }
                                     UtilesNotification.createNotification(MyApplication.getAppContext(), notification, event);
@@ -718,7 +742,7 @@ public class FirebaseSync {
                     }
                 });
     }
-    private static void loadAProfileAndNotify(final MyNotification notification) {
+    private static void loadAProfileAndNotify(final String notificationRef, final MyNotification notification) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
@@ -744,6 +768,7 @@ public class FirebaseSync {
 
                             //Notify
                             UtilesNotification.createNotification(MyApplication.getAppContext(), notification, anUser);
+                            FirebaseActions.checkNotification(notificationRef);
                         }
                     }
 
@@ -796,6 +821,7 @@ public class FirebaseSync {
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                            loadAProfile(e.getOwner());
                             loadAField(e.getField_id());
 
                             // Load users participants with data
@@ -810,7 +836,7 @@ public class FirebaseSync {
                     }
                 });
     }
-    private static void loadAnEventAndNotify(final MyNotification notification) {
+    private static void loadAnEventAndNotify(final String notificationRef, final MyNotification notification) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
@@ -826,6 +852,7 @@ public class FirebaseSync {
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                            loadAProfile(e.getOwner());
                             loadAField(e.getField_id());
 
                             // Load users participants with data
@@ -834,6 +861,7 @@ public class FirebaseSync {
 
                             //Notify
                             UtilesNotification.createNotification(MyApplication.getAppContext(), notification, e);
+                            FirebaseActions.checkNotification(notificationRef);
                         }
                     }
 

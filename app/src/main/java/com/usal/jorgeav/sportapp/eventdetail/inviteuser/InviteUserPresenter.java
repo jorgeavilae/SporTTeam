@@ -7,6 +7,7 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
@@ -27,8 +28,10 @@ public class InviteUserPresenter implements InviteUserContract.Presenter, Loader
 
     @Override
     public void sendInvitationToThisEvent(String eventId, String uid) {
-        if (!TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
-            FirebaseActions.sendInvitationToThisEvent(eventId, uid);
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
+            FirebaseActions.sendInvitationToThisEvent(myUid, eventId, uid);
     }
 
     @Override
@@ -41,7 +44,8 @@ public class InviteUserPresenter implements InviteUserContract.Presenter, Loader
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case SportteamLoader.LOADER_USERS_FOR_INVITE_ID:
-                String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String currentUserID = ""; if (fUser != null) currentUserID = fUser.getUid();
                 String eventID = args.getString(InviteUserFragment.BUNDLE_EVENT_ID);
                 return SportteamLoader
                         .cursorLoaderUsersForInvite(mSendInvitationView.getActivityContext(), currentUserID, eventID);

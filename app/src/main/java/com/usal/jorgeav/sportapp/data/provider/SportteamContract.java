@@ -540,33 +540,37 @@ public final class SportteamContract {
                 .build();
 
         /* Column names */
-        public static final String USER_ID = "userId";
+        public static final String RECEIVER_ID = "receiverId";
+        public static final String SENDER_ID = "senderId";
         public static final String EVENT_ID = "eventId";
         public static final String DATE = "date";
 
         /* Column names with table prefix */
-        public static final String USER_ID_TABLE_PREFIX = TABLE_EVENT_INVITATIONS + "." + USER_ID;
+        public static final String RECEIVER_ID_TABLE_PREFIX = TABLE_EVENT_INVITATIONS + "." + RECEIVER_ID;
+        public static final String SENDER_ID_TABLE_PREFIX = TABLE_EVENT_INVITATIONS + "." + SENDER_ID;
         public static final String EVENT_ID_TABLE_PREFIX = TABLE_EVENT_INVITATIONS + "." + EVENT_ID;
         public static final String DATE_TABLE_PREFIX = TABLE_EVENT_INVITATIONS + "." + DATE;
 
         /* All column projection */
         public static final String[] EVENT_INVITATIONS_COLUMNS = {
                 TABLE_EVENT_INVITATIONS + "."  +EventsInvitationEntry._ID,
-                USER_ID_TABLE_PREFIX,
+                RECEIVER_ID_TABLE_PREFIX,
+                SENDER_ID_TABLE_PREFIX,
                 EVENT_ID_TABLE_PREFIX,
                 DATE_TABLE_PREFIX
         };
 
         /* Column indexes */
         public static final int COLUMN_ID = 0;
-        public static final int COLUMN_USER_ID = 1;
-        public static final int COLUMN_EVENT_ID = 2;
-        public static final int COLUMN_DATE = 3;
+        public static final int COLUMN_RECEIVER_ID = 1;
+        public static final int COLUMN_SENDER_ID = 2;
+        public static final int COLUMN_EVENT_ID = 3;
+        public static final int COLUMN_DATE = 4;
 
         /* Join for CONTENT_EVENT_INVITATIONS_WITH_USER_URI */
         public static final String TABLES_EVENT_INVITATIONS_JOIN_USER =
                 TABLE_EVENT_INVITATIONS + " INNER JOIN " + TABLE_USER + " ON "
-                    + EventsInvitationEntry.USER_ID_TABLE_PREFIX + " = " + UserEntry.USER_ID_TABLE_PREFIX;
+                    + EventsInvitationEntry.RECEIVER_ID_TABLE_PREFIX + " = " + UserEntry.USER_ID_TABLE_PREFIX;
 
         /* Join for CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI */
         public static final String TABLES_EVENT_INVITATIONS_JOIN_EVENT =
@@ -660,6 +664,7 @@ public final class SportteamContract {
     public static final class JoinQueryEntries {
         /* The base CONTENT_URI used to query the event table for my events without
            relation with one particular friend from the content provider */
+        // TODO: 08/07/2017 Incluir eventos en los que participo
         public static final Uri CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND)
                 .build();
@@ -671,7 +676,7 @@ public final class SportteamContract {
                         + " AND " + EventsParticipationEntry.USER_ID_TABLE_PREFIX + " = ? )"
                     + " LEFT JOIN " + TABLE_EVENT_INVITATIONS + " ON ("
                         + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX
-                        + " AND " + EventsInvitationEntry.USER_ID_TABLE_PREFIX + " = ? )"
+                        + " AND " + EventsInvitationEntry.RECEIVER_ID_TABLE_PREFIX + " = ? )"
                     + " LEFT JOIN " + TABLE_EVENTS_REQUESTS + " ON ("
                         + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX
                         + " AND " + EventRequestsEntry.SENDER_ID_TABLE_PREFIX + " = ? )";
@@ -690,7 +695,7 @@ public final class SportteamContract {
          *      LEFT JOIN eventsParticipation
          *          ON (event.eventId = eventsParticipation.eventId AND eventsParticipation.userId = ? )
          *      LEFT JOIN eventInvitations
-         *          ON (event.eventId = eventInvitations.eventId AND eventInvitations.userId = ? )
+         *          ON (event.eventId = eventInvitations.eventId AND eventInvitations.receiverId = ? )
          *      LEFT JOIN eventRequest
          *          ON (event.eventId = eventRequest.eventId AND eventRequest.senderId = ? )
          * WHERE (event.owner = ?
@@ -751,11 +756,14 @@ public final class SportteamContract {
                 TABLE_USER
                         + " INNER JOIN " + TABLE_FRIENDS + " ON ("
                         + UserEntry.USER_ID_TABLE_PREFIX + " = " + FriendsEntry.USER_ID_TABLE_PREFIX + " )"
+                        + " LEFT JOIN " + TABLE_EVENT + " ON ("
+                        + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventEntry.OWNER_TABLE_PREFIX
+                        + " AND " + EventEntry.EVENT_ID_TABLE_PREFIX + " = ? )"
                         + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " ON ("
                         + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventsParticipationEntry.USER_ID_TABLE_PREFIX
                         + " AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " = ? )"
                         + " LEFT JOIN " + TABLE_EVENT_INVITATIONS + " ON ("
-                        + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventsInvitationEntry.USER_ID_TABLE_PREFIX
+                        + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventsInvitationEntry.RECEIVER_ID_TABLE_PREFIX
                         + " AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " = ? )"
                         + " LEFT JOIN " + TABLE_EVENTS_REQUESTS + " ON ("
                         + UserEntry.USER_ID_TABLE_PREFIX + " = " + EventRequestsEntry.SENDER_ID_TABLE_PREFIX
@@ -763,12 +771,13 @@ public final class SportteamContract {
         /* WHERE for CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI */
         public static final String WHERE_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS =
                 FriendsEntry.MY_USER_ID_TABLE_PREFIX + " = ? "
+                        + "AND " + EventEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
                         + "AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
                         + "AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
                         + "AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " IS NULL ";
         /* Arguments fro JOIN and WHERE in CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
         public static String[] queryMyFriendsWithoutRelationWithMyEventsArguments(String myUserId, String eventId) {
-            return new String[]{eventId, eventId, eventId, myUserId};
+            return new String[]{eventId, eventId, eventId, eventId, myUserId};
         }
         /* SELECT all columns from users table
          * FROM user
@@ -777,7 +786,7 @@ public final class SportteamContract {
          *      LEFT JOIN eventsParticipation
          *          ON (user.uid = eventsParticipation.userId AND eventsParticipation.eventId = ? )
          *      LEFT JOIN eventInvitations
-         *          ON (user.uid = eventInvitations.userId AND eventInvitations.eventId = ? )
+         *          ON (user.uid = eventInvitations.receiverId AND eventInvitations.eventId = ? )
          *      LEFT JOIN eventRequest
          *          ON (user.uid = eventRequest.senderId AND eventRequest.eventId = ? )
          * WHERE (friends.myUserId = ?
