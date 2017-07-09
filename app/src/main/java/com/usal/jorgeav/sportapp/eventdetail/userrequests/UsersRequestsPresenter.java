@@ -6,6 +6,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
@@ -26,14 +28,16 @@ public class UsersRequestsPresenter implements UsersRequestsContract.Presenter, 
 
     @Override
     public void acceptUserRequestToThisEvent(String eventId, String uid) {
-        if (!TextUtils.isEmpty(eventId))
+        if (!TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
             FirebaseActions.acceptUserRequestToThisEvent(uid, eventId);
     }
 
     @Override
     public void declineUserRequestToThisEvent(String eventId, String uid) {
-        if (!TextUtils.isEmpty(eventId))
-            FirebaseActions.declineUserRequestToThisEvent(uid, eventId);
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        if (!TextUtils.isEmpty(myUserID) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
+            FirebaseActions.declineUserRequestToThisEvent(uid, eventId, myUserID);
     }
 
     @Override

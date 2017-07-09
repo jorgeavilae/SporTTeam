@@ -24,10 +24,10 @@ public class SportteamFirebaseJobService extends JobService {
          *
          *  - Recibe invitacion a evento                                        EID
          *  - Acepta/Rechaza invitacion a evento                                EID
-        // TODO: 07/07/2017
          *  - Recibe peticion de usuario a evento                               EID
          *  - Contestan peticion a evento enviada por el (aceptan o rechazan)   EID
          *
+        // TODO: 07/07/2017
          *  - Se completa un evento al que asisto                               EID
          *  - Se va alguien de un evento al que asisto                               EID
          *  - Se cambia o borra un evento al que asisto                         EID

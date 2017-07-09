@@ -36,5 +36,7 @@
     <string name="notification_event_invitation_accepted">Your event invitation had been accepted</string>
     <string name="notification_event_invitation_declined">Your event invitation had been declined</string>
     <string name="notification_event_request_received">Some user wants to participate in your event</string>
+    <string name="notification_event_request_accepted">Your event request had been accepted</string>
+    <string name="notification_event_request_declined">Your event request had been declined</string>
 
 </resources>

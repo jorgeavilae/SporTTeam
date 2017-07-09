@@ -77,7 +77,7 @@ public class UtilesNotification {
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
                     .setContentTitle(fNotification.getMessage())
-                    .setContentText(event.getOwner() + " invite you to play " + event.getSport_id())
+                    .setContentText(event.getOwner() + " invite you to play " + event.getSport_id()) //// TODO: 09/07/2017  cambiar msg
 //                .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setContentIntent(contentIntent(context))
