@@ -21,6 +21,7 @@ import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,9 +108,11 @@ public class FirebaseActions {
         long currentTime = System.currentTimeMillis();
         String notificationMessage = MyApplication.getAppContext()
                 .getString(R.string.notification_friend_request_received);
-        @FirebaseDBContract.NotificationTypes
+        @FirebaseDBContract.NotificationDataTypes
         Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_USER;
-        MyNotification n = new MyNotification(false, notificationMessage, myUid, type, currentTime);
+        @UtilesNotification.NotificationType
+        Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_FRIEND_REQUEST_RECEIVED;
+        MyNotification n = new MyNotification(notificationType, false, notificationMessage, myUid, type, currentTime);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(userFriendRequestSent, currentTime);
@@ -172,9 +175,11 @@ public class FirebaseActions {
         long currentTime = System.currentTimeMillis();
         String notificationMessage = MyApplication.getAppContext()
                 .getString(R.string.notification_friend_request_accepted);
-        @FirebaseDBContract.NotificationTypes
+        @FirebaseDBContract.NotificationDataTypes
         Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_USER;
-        MyNotification n = new MyNotification(false, notificationMessage, myUid, type, currentTime);
+        @UtilesNotification.NotificationType
+        Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_FRIEND_REQUEST_ACCEPTED;
+        MyNotification n = new MyNotification(notificationType, false, notificationMessage, myUid, type, currentTime);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(myUserFriends, currentTime);
@@ -261,9 +266,11 @@ public class FirebaseActions {
         // Notification object
         String notificationMessage = MyApplication.getAppContext()
                 .getString(R.string.notification_event_invitation_received);
-        @FirebaseDBContract.NotificationTypes
+        @FirebaseDBContract.NotificationDataTypes
         Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-        MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
+        @UtilesNotification.NotificationType
+        Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_RECEIVED;
+        MyNotification n = new MyNotification(notificationType, false, notificationMessage, eventId, type, currentTime);
 
         // Updates
         Map<String, Object> childUpdates = new HashMap<>();
@@ -351,9 +358,11 @@ public class FirebaseActions {
                 long currentTime = System.currentTimeMillis();
                 String notificationMessage = MyApplication.getAppContext()
                         .getString(R.string.notification_event_invitation_accepted);
-                @FirebaseDBContract.NotificationTypes
+                @FirebaseDBContract.NotificationDataTypes
                 Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-                MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
+                @UtilesNotification.NotificationType
+                Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED;
+                MyNotification n = new MyNotification(notificationType, false, notificationMessage, eventId, type, currentTime);
 
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
@@ -404,9 +413,11 @@ public class FirebaseActions {
         long currentTime = System.currentTimeMillis();
         String notificationMessage = MyApplication.getAppContext()
                 .getString(R.string.notification_event_invitation_declined);
-        @FirebaseDBContract.NotificationTypes
+        @FirebaseDBContract.NotificationDataTypes
         Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-        MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
+        @UtilesNotification.NotificationType
+        Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_DECLINED;
+        MyNotification n = new MyNotification(notificationType, false, notificationMessage, eventId, type, currentTime);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
@@ -474,9 +485,11 @@ public class FirebaseActions {
         long currentTime = System.currentTimeMillis();
         String notificationMessage = MyApplication.getAppContext()
                 .getString(R.string.notification_event_request_received);
-        @FirebaseDBContract.NotificationTypes
+        @FirebaseDBContract.NotificationDataTypes
         Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-        MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
+        @UtilesNotification.NotificationType
+        Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_RECEIVED;
+        MyNotification n = new MyNotification(notificationType, false, notificationMessage, eventId, type, currentTime);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(userRequestsEventSent, currentTime);
@@ -544,9 +557,11 @@ public class FirebaseActions {
                 long currentTime = System.currentTimeMillis();
                 String notificationMessage = MyApplication.getAppContext()
                         .getString(R.string.notification_event_request_accepted);
-                @FirebaseDBContract.NotificationTypes
+                @FirebaseDBContract.NotificationDataTypes
                 Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-                MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
+                @UtilesNotification.NotificationType
+                Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_ACCEPTED;
+                MyNotification n = new MyNotification(notificationType, false, notificationMessage, eventId, type, currentTime);
 
                 //Delete Event Request Sent in that User
                 String userEventRequestsSentEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
@@ -601,9 +616,11 @@ public class FirebaseActions {
         long currentTime = System.currentTimeMillis();
         String notificationMessage = MyApplication.getAppContext()
                 .getString(R.string.notification_event_request_declined);
-        @FirebaseDBContract.NotificationTypes
+        @FirebaseDBContract.NotificationDataTypes
         Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-        MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
+        @UtilesNotification.NotificationType
+        Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_DECLINED;
+        MyNotification n = new MyNotification(notificationType, false, notificationMessage, eventId, type, currentTime);
 
         //Delete Event Request Sent in that User
         String userRequestsSentEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
@@ -655,18 +672,22 @@ public class FirebaseActions {
 
         // Notification object
         String notificationMessage;
+        @UtilesNotification.NotificationType
+        Long notificationType;
         if (isComplete) {
             notificationMessage = MyApplication.getAppContext()
                     .getString(R.string.notification_event_complete);
+            notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_COMPLETE;
         } else {
             notificationMessage = MyApplication.getAppContext()
                     .getString(R.string.notification_event_someone_quit);
+            notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_SOMEONE_QUIT;
         }
         MyNotification n;
         long currentTime = System.currentTimeMillis();
-        @FirebaseDBContract.NotificationTypes
+        @FirebaseDBContract.NotificationDataTypes
         Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-        n = new MyNotification(false, notificationMessage, event.getEvent_id(), type, currentTime);
+        n = new MyNotification(notificationType, false, notificationMessage, event.getEvent_id(), type, currentTime);
 
         //Set Event complete MyNotification in participant
         String notificationId = event.getEvent_id() + FirebaseDBContract.Event.EMPTY_PLAYERS;
@@ -813,7 +834,7 @@ public class FirebaseActions {
         });
     }
 
-    public static void checkNotification(String ref) {
+    static void checkNotification(String ref) {
         FirebaseDatabase.getInstance().getReferenceFromUrl(ref)
                 .child(FirebaseDBContract.Notification.CHECKED).setValue(true);
     }

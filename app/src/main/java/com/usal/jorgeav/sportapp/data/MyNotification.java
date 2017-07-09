@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.data;
 
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,10 +11,11 @@ import java.util.Map;
  */
 
 public class MyNotification {
+    Long notification_type;
     Boolean checked;
     String message;
     String extra_data;
-    Long type;
+    Long data_type;
     Long date;
     // TODO: 06/07/2017 necesita mas parametros, hay que ponerlos tambien en FirebaseActions.java
 
@@ -21,12 +23,43 @@ public class MyNotification {
         // Default constructor required for calls to DataSnapshot.getValue(MyNotification.class)
     }
 
-    public MyNotification(Boolean checked, String message, String extra_data, Long type, Long date) {
+    public MyNotification(Long notification_type, Boolean checked, String message, String extra_data, Long data_type, Long date) {
+        this.notification_type = notification_type;
         this.checked = checked;
         this.message = message;
         this.extra_data = extra_data;
-        this.type = type;
+        this.data_type = data_type;
         this.date = date;
+    }
+
+    @UtilesNotification.NotificationType
+    public int getNotification_type() {
+        return longToNotificationType(notification_type);
+    }
+
+    @UtilesNotification.NotificationType
+    private int longToNotificationType(Long type) {
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_FRIEND_REQUEST_RECEIVED)
+            return UtilesNotification.NOTIFICATION_ID_FRIEND_REQUEST_RECEIVED;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_FRIEND_REQUEST_ACCEPTED)
+            return UtilesNotification.NOTIFICATION_ID_FRIEND_REQUEST_ACCEPTED;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_RECEIVED)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_RECEIVED;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_DECLINED)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_DECLINED;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_RECEIVED)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_RECEIVED;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_ACCEPTED)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_ACCEPTED;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_DECLINED)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_DECLINED;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_COMPLETE)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_COMPLETE;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_SOMEONE_QUIT)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_SOMEONE_QUIT;
+        return UtilesNotification.NOTIFICATION_ID_ERROR;
     }
 
     public Boolean getChecked() {
@@ -41,12 +74,13 @@ public class MyNotification {
         return extra_data;
     }
 
-    public int getType() {
-        return longToNotificationType(type);
+    @FirebaseDBContract.NotificationDataTypes
+    public int getData_type() {
+        return longToNotificationDataType(data_type);
     }
 
-    @FirebaseDBContract.NotificationTypes
-    private int longToNotificationType(Long type) {
+    @FirebaseDBContract.NotificationDataTypes
+    private int longToNotificationDataType(Long type) {
         if (type == (long) FirebaseDBContract.NOTIFICATION_TYPE_USER)
             return FirebaseDBContract.NOTIFICATION_TYPE_USER;
         if (type == (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT)
@@ -62,10 +96,11 @@ public class MyNotification {
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
+        result.put(FirebaseDBContract.Notification.NOTIFICATION_TYPE, notification_type);
         result.put(FirebaseDBContract.Notification.CHECKED, checked);
         result.put(FirebaseDBContract.Notification.MESSAGE, message);
         result.put(FirebaseDBContract.Notification.EXTRA_DATA, extra_data);
-        result.put(FirebaseDBContract.Notification.TYPE, type);
+        result.put(FirebaseDBContract.Notification.DATA_TYPE, data_type);
         result.put(FirebaseDBContract.Notification.DATE, date);
         return result;
     }

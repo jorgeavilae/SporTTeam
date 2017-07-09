@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -12,13 +13,34 @@ import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * Created by Jorge Avila on 06/07/2017.
  */
 
 public class UtilesNotification {
 
-    private static final int NOTIFICATION_ID = 1;
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({NOTIFICATION_ID_ERROR,
+            NOTIFICATION_ID_FRIEND_REQUEST_RECEIVED, NOTIFICATION_ID_FRIEND_REQUEST_ACCEPTED,
+            NOTIFICATION_ID_EVENT_INVITATION_RECEIVED, NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED,
+            NOTIFICATION_ID_EVENT_INVITATION_DECLINED, NOTIFICATION_ID_EVENT_REQUEST_RECEIVED,
+            NOTIFICATION_ID_EVENT_REQUEST_ACCEPTED, NOTIFICATION_ID_EVENT_REQUEST_DECLINED,
+            NOTIFICATION_ID_EVENT_COMPLETE, NOTIFICATION_ID_EVENT_SOMEONE_QUIT})
+    public @interface NotificationType {}
+    public static final int NOTIFICATION_ID_ERROR = 0;
+    public static final int NOTIFICATION_ID_FRIEND_REQUEST_RECEIVED = 1;
+    public static final int NOTIFICATION_ID_FRIEND_REQUEST_ACCEPTED = 2;
+    public static final int NOTIFICATION_ID_EVENT_INVITATION_RECEIVED = 3;
+    public static final int NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED = 4;
+    public static final int NOTIFICATION_ID_EVENT_INVITATION_DECLINED = 5;
+    public static final int NOTIFICATION_ID_EVENT_REQUEST_RECEIVED = 6;
+    public static final int NOTIFICATION_ID_EVENT_REQUEST_ACCEPTED = 7;
+    public static final int NOTIFICATION_ID_EVENT_REQUEST_DECLINED = 8;
+    public static final int NOTIFICATION_ID_EVENT_COMPLETE = 9;
+    public static final int NOTIFICATION_ID_EVENT_SOMEONE_QUIT = 10;
 
     public static void clearAllNotifications(Context context) {
         NotificationManager notificationManager = (NotificationManager)
@@ -43,7 +65,7 @@ public class UtilesNotification {
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             // Pass in a unique ID of your choosing for the notification and notificationBuilder.build()
-            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+            notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
         }
     }
     private static NotificationCompat.Action drinkWaterAction(Context context) {
@@ -88,7 +110,7 @@ public class UtilesNotification {
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             // Pass in a unique ID of your choosing for the notification and notificationBuilder.build()
-            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+            notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
         }
     }
 }

@@ -675,7 +675,7 @@ public class FirebaseSync {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         MyNotification notification = data.getValue(MyNotification.class);
                         if (notification == null) return;
-                        @FirebaseDBContract.NotificationTypes int type = notification.getType();
+                        @FirebaseDBContract.NotificationDataTypes int type = notification.getData_type();
                         switch (type) {
                             case FirebaseDBContract.NOTIFICATION_TYPE_USER:
                                 User user = Utiles.getUserFromContentProvider(notification.getExtra_data());

@@ -58,16 +58,17 @@ public final class FirebaseDBContract {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({NOTIFICATION_TYPE_ERROR, NOTIFICATION_TYPE_USER,
             NOTIFICATION_TYPE_EVENT, NOTIFICATION_TYPE_ALARM})
-    public @interface NotificationTypes {}
+    public @interface NotificationDataTypes {}
     public static final int NOTIFICATION_TYPE_ERROR = -1;
     public static final int NOTIFICATION_TYPE_USER = 1;
     public static final int NOTIFICATION_TYPE_EVENT = 2;
     public static final int NOTIFICATION_TYPE_ALARM = 3;
     public static final class Notification {
+        public static final String NOTIFICATION_TYPE = "notification_type";
         public static final String CHECKED = "checked";
         public static final String MESSAGE = "message";
         public static final String EXTRA_DATA = "extra_data";
-        public static final String TYPE = "type";
+        public static final String DATA_TYPE = "data_type";
         public static final String DATE = "date";
         // TODO: 06/07/2017 quiza necesite mas parametros, por ejemplo para ver si se tiene que mandar otra vez o para un mensaje o para ver que evento la produjo
     }
