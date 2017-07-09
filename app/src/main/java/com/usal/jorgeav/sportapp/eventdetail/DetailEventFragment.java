@@ -183,6 +183,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Enviar peticion de entrada");
+                buttonSendRequest.setEnabled(true);
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -190,11 +191,14 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         mPresenter.sendEventRequest(mEventId);
                     }
                 });
+                buttonSendInvitation.setVisibility(View.INVISIBLE);
+                buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
                 if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Cancelar peticion de entrada");
+                buttonSendRequest.setEnabled(true);
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -210,11 +214,14 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         builder.create().show();
                     }
                 });
+                buttonSendInvitation.setVisibility(View.INVISIBLE);
+                buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION:
                 if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Contestar invitacion");
+                buttonSendRequest.setEnabled(true);
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -235,11 +242,14 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         builder.create().show();
                     }
                 });
+                buttonSendInvitation.setVisibility(View.INVISIBLE);
+                buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
             case DetailEventPresenter.RELATION_TYPE_ASSISTANT:
                 if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Abandonar partido");
+                buttonSendRequest.setEnabled(true);
                 buttonSendRequest.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -281,11 +291,16 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("No puedes asistir");
                 buttonSendRequest.setEnabled(false);
+                buttonSendInvitation.setVisibility(View.INVISIBLE);
+                buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
             case DetailEventPresenter.RELATION_TYPE_ERROR:
                 if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Error");
+                buttonSendRequest.setEnabled(false);
+                buttonSendInvitation.setVisibility(View.INVISIBLE);
+                buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
         }
     }

@@ -316,6 +316,7 @@ public class FirebaseActions {
                 if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToParticipants(myUid, true);
+                    if (e.getEmpty_players() == 0) eventCompleteNotifications(true, eventId, e.getParticipants());
                 }
 
                 mutableData.setValue(e);
@@ -419,7 +420,7 @@ public class FirebaseActions {
         database.updateChildren(childUpdates);
     }
     public static void quitEvent(final String uid, final String eventId) {
-        //Delete Assistant User to that Event
+        //Delete Assistant User to that Event (uid can be another user, not the current one)
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
                 .child(eventId).child(FirebaseDBContract.DATA);
@@ -434,10 +435,12 @@ public class FirebaseActions {
 
                 e.setEmpty_players(e.getEmpty_players() + 1);
                 e.deleteParticipant(uid);
+                // The event isn't complete because this quit
+                if (e.getEmpty_players() == 1) eventCompleteNotifications(false, eventId, e.getParticipants());
 
                 mutableData.setValue(e);
 
-                //Delete Assistant Event to my User
+                //Delete Assistant Event to User
                 FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
                         .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).removeValue();
 
@@ -525,6 +528,7 @@ public class FirebaseActions {
                 if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToParticipants(otherUid, true);
+                    if (e.getEmpty_players() == 0) eventCompleteNotifications(true, eventId, e.getParticipants());
                 }
 
                 mutableData.child(FirebaseDBContract.DATA).setValue(e);
@@ -647,6 +651,34 @@ public class FirebaseActions {
         childUpdates.put(eventParticipationUser, null);
 
         database.updateChildren(childUpdates);
+    }
+
+    private static void eventCompleteNotifications(boolean send, String eventId, HashMap<String, Boolean> participants) {
+        // Notification object
+        MyNotification n;
+        if (send) {
+            long currentTime = System.currentTimeMillis();
+            String notificationMessage = MyApplication.getAppContext()
+                    .getString(R.string.notification_event_complete);
+            @FirebaseDBContract.NotificationTypes
+            Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
+            n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
+        } else {
+            n = null;
+        }
+
+        //Set Event complete MyNotification in participant
+        String notificationId = eventId + FirebaseDBContract.Event.EMPTY_PLAYERS;
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        for (Map.Entry<String, Boolean> entry : participants.entrySet())
+            if (entry.getValue()) {
+                String eventCompleteNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                        + entry.getKey() + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+                childUpdates.put(eventCompleteNotification, (n!=null?n.toMap():null));
+            }
+
+        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
     public static void voteField(String fieldId, String sportId, final float vote) {
