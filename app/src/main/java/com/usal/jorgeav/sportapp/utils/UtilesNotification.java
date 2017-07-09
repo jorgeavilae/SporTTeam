@@ -27,22 +27,24 @@ public class UtilesNotification {
     }
 
     public static void createNotification(Context context, MyNotification fNotification, User user) {
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
-                .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
-                .setContentTitle(fNotification.getMessage())
-                .setContentText(user.getmName())
+        if (!fNotification.getChecked()) {
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+                    .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
+                    .setContentTitle(fNotification.getMessage())
+                    .setContentText(user.getmName())
 //                .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
-                .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setContentIntent(contentIntent(context))
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setAutoCancel(true);
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setContentIntent(contentIntent(context))
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setAutoCancel(true);
 
-        NotificationManager notificationManager = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Pass in a unique ID of your choosing for the notification and notificationBuilder.build()
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+            // Pass in a unique ID of your choosing for the notification and notificationBuilder.build()
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        }
     }
     private static NotificationCompat.Action drinkWaterAction(Context context) {
 //        Intent incrementWaterCountIntent = new Intent(context, WaterReminderIntentService.class);
@@ -70,21 +72,23 @@ public class UtilesNotification {
     }
 
     public static void createNotification(Context context, MyNotification fNotification, Event event) {
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
-                .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
-                .setContentTitle(fNotification.getMessage())
-                .setContentText(event.getOwner() + " invite you to play " + event.getSport_id())
+        if (!fNotification.getChecked()) {
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+                    .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
+                    .setContentTitle(fNotification.getMessage())
+                    .setContentText(event.getOwner() + " invite you to play " + event.getSport_id())
 //                .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
-                .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setContentIntent(contentIntent(context))
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setAutoCancel(true);
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setContentIntent(contentIntent(context))
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setAutoCancel(true);
 
-        NotificationManager notificationManager = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Pass in a unique ID of your choosing for the notification and notificationBuilder.build()
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+            // Pass in a unique ID of your choosing for the notification and notificationBuilder.build()
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        }
     }
 }

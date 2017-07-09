@@ -201,7 +201,10 @@ public class UtilesDataSnapshot {
             eventId = key;
             userId = dataSnapshot.getKey();
         }
-        int participation = ((Boolean) dataSnapshot.getValue()) ? 1 : 0;
+        int participation = 0;
+        Boolean participationBoolean = dataSnapshot.getValue(Boolean.class);
+        if (participationBoolean != null)
+            participation = participationBoolean ? 1 : 0;
 
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.EventsParticipationEntry.USER_ID, userId);

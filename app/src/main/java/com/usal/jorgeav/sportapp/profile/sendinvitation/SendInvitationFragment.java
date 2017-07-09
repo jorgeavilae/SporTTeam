@@ -1,11 +1,13 @@
 package com.usal.jorgeav.sportapp.profile.sendinvitation;
 
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,6 +32,7 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
     private static final String TAG = SendInvitationFragment.class.getSimpleName();
 
     public static final String BUNDLE_INSTANCE_UID = "BUNDLE_INSTANCE_UID";
+    private String mUserId;
     SendInvitationContract.Presenter mSendInvitationPresenter;
     EventsAdapter mEventsRecyclerAdapter;
 
@@ -64,6 +67,9 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
+            mUserId = getArguments().getString(BUNDLE_INSTANCE_UID);
     }
 
     @Override
@@ -107,9 +113,18 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
     }
 
     @Override
-    public void onEventClick(String eventId) {
-        // TODO: 08/07/2017 crear dialog para invitar al usuario del que vengo a este fragment, invitarlo al eventId
-        Fragment newFragment = DetailEventFragment.newInstance(eventId);
-        mFragmentManagementListener.initFragment(newFragment, true);
+    public void onEventClick(final String eventId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setPositiveButton("Send Invitation", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                mSendInvitationPresenter.sendInvitationToThisUser(eventId, mUserId);
+            }
+        }).setNeutralButton("See details", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Fragment newFragment = DetailEventFragment.newInstance(eventId);
+                mFragmentManagementListener.initFragment(newFragment, true);
+            }
+        });
+        builder.create().show();
     }
 }

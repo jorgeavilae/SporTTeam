@@ -13,6 +13,7 @@ public abstract class SendInvitationContract {
 
     public interface Presenter {
         void loadEventsForInvitation(LoaderManager loaderManager, Bundle b);
+        void sendInvitationToThisUser(String eventId, String uid);
     }
 
     public interface View {

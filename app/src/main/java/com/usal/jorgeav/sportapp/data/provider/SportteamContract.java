@@ -662,18 +662,19 @@ public final class SportteamContract {
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_NOT_FRIENDS_USERS_WITH_NAME = "notFriendsName_users";
     public static final class JoinQueryEntries {
-        /* The base CONTENT_URI used to query the event table for my events without
-           relation with one particular friend from the content provider */
-        // TODO: 08/07/2017 Incluir eventos en los que participo
+        /* The base CONTENT_URI used to query the event table for my events or my participation ones
+           without relation with one particular friend from the content provider */
         public static final Uri CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND)
                 .build();
         /* JOIN for CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
         public static final String TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS =
                 TABLE_EVENT
-                    + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " ON ("
-                        + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX
-                        + " AND " + EventsParticipationEntry.USER_ID_TABLE_PREFIX + " = ? )"
+                    + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " p1 ON ("
+                        + EventEntry.EVENT_ID_TABLE_PREFIX + " = p1." + EventsParticipationEntry.EVENT_ID + " )"
+                    + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " p2 ON ("
+                        + EventEntry.EVENT_ID_TABLE_PREFIX + " = p2." + EventsParticipationEntry.EVENT_ID
+                        + " AND p2." + EventsParticipationEntry.USER_ID + " = ? )"
                     + " LEFT JOIN " + TABLE_EVENT_INVITATIONS + " ON ("
                         + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX
                         + " AND " + EventsInvitationEntry.RECEIVER_ID_TABLE_PREFIX + " = ? )"
@@ -682,24 +683,27 @@ public final class SportteamContract {
                         + " AND " + EventRequestsEntry.SENDER_ID_TABLE_PREFIX + " = ? )";
         /* WHERE for CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
         public static final String WHERE_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND =
-                EventEntry.OWNER_TABLE_PREFIX + " = ? "
-                    + "AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
+                "( " + EventEntry.OWNER_TABLE_PREFIX + " = ? OR p1." + EventsParticipationEntry.USER_ID + " = ? ) "
+                    + "AND p2." + EventsParticipationEntry.EVENT_ID + " IS NULL "
                     + "AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
                     + "AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " IS NULL ";
         /* Arguments fro JOIN and WHERE in CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
         public static String[] queryMyEventsWithoutRelationWithFriendArguments(String ownerId, String friendId) {
-            return new String[]{friendId, friendId, friendId, ownerId};
+            return new String[]{friendId, friendId, friendId, ownerId, ownerId};
         }
-        /* SELECT all columns from event table
+        /* SELECT
          * FROM event
-         *      LEFT JOIN eventsParticipation
-         *          ON (event.eventId = eventsParticipation.eventId AND eventsParticipation.userId = ? )
+         *      LEFT JOIN eventsParticipation p1
+         *          ON (event.eventId = p1.eventId )
+         *      LEFT JOIN eventsParticipation p2
+         *          ON (event.eventId = p2.eventId AND p2.userId = friendId )
          *      LEFT JOIN eventInvitations
-         *          ON (event.eventId = eventInvitations.eventId AND eventInvitations.receiverId = ? )
+         *          ON (event.eventId = eventInvitations.eventId AND eventInvitations.receiverId = friendId )
          *      LEFT JOIN eventRequest
-         *          ON (event.eventId = eventRequest.eventId AND eventRequest.senderId = ? )
-         * WHERE (event.owner = ?
-         *      AND eventsParticipation.eventId IS NULL
+         *          ON (event.eventId = eventRequest.eventId AND eventRequest.senderId = friendId )
+         * WHERE (
+         *      ( event.owner = ownerId OR p1.userId = ownerId )
+         *      AND p2.eventId IS NULL
          *      AND eventInvitations.eventId IS NULL
          *      AND eventRequest.eventId IS NULL )
          * ORDER BY event.date ASC

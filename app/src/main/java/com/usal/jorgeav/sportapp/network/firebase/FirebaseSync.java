@@ -310,23 +310,32 @@ public class FirebaseSync {
             Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
         }
     }
-    public static void loadUsersFromUserRequests(String key) {
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
-                .child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS);
+    public static void loadEventsFromEventsParticipation() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION);
 
         ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
-                    loadAProfile(dataSnapshot.getKey());
+                    loadAnEvent(dataSnapshot.getKey());
 
-                    String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
+                    // Load users invited with data if I participate
+                    Boolean participation = dataSnapshot.getValue(Boolean.class);
+                    if (participation != null && participation)
+                        loadUsersFromInvitationsSent(dataSnapshot.getKey());
+
+                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                     ContentValues cvData = UtilesDataSnapshot
-                            .dataSnapshotEventsRequestsToContentValues(dataSnapshot, eventId, false);
+                            .dataSnapshotEventsParticipationToContentValues(dataSnapshot, myUserID, true);
                     MyApplication.getAppContext().getContentResolver()
-                            .insert(SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI, cvData);
+                            .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
                 }
+
             }
 
             @Override
@@ -336,13 +345,15 @@ public class FirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
-                String senderId = dataSnapshot.getKey();
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+                String eventId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
-                        SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,
-                        SportteamContract.EventRequestsEntry.EVENT_ID + " = ? AND "
-                                +SportteamContract.EventRequestsEntry.SENDER_ID + " = ? ",
-                        new String[]{eventId, senderId});
+                        SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
+                        SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
+                                + SportteamContract.EventsParticipationEntry.USER_ID + " = ? ",
+                        new String[]{eventId, myUserID});
+
             }
 
             @Override
@@ -364,7 +375,6 @@ public class FirebaseSync {
 
     // Retrieve all invitations, sent by the current user or others, in order to not
     // invite same user twice.
-    // TODO: 08/07/2017 cargar ussuarios de mis eventos creados y participando=true
     public static void loadUsersFromInvitationsSent(String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -427,66 +437,6 @@ public class FirebaseSync {
             Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
         }
     }
-
-    public static void loadEventsFromEventsParticipation() {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION);
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
-            @Override
-            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
-                    loadAnEvent(dataSnapshot.getKey());
-                    // Load users invited with data
-                    loadUsersFromInvitationsSent(dataSnapshot.getKey());
-
-                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-                    ContentValues cvData = UtilesDataSnapshot
-                            .dataSnapshotEventsParticipationToContentValues(dataSnapshot, myUserID, true);
-                    MyApplication.getAppContext().getContentResolver()
-                            .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
-                }
-
-            }
-
-            @Override
-            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
-                onChildAdded(dataSnapshot, s);
-            }
-
-            @Override
-            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-                String eventId = dataSnapshot.getKey();
-                MyApplication.getAppContext().getContentResolver().delete(
-                        SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
-                        SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
-                                + SportteamContract.EventsParticipationEntry.USER_ID + " = ? ",
-                        new String[]{eventId, myUserID});
-
-            }
-
-            @Override
-            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelledExecutor(DatabaseError databaseError) {
-
-            }
-        };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
-        }
-    }
     public static void loadEventsFromInvitationsReceived() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
@@ -531,6 +481,58 @@ public class FirebaseSync {
                         SportteamContract.EventsInvitationEntry.EVENT_ID + " = ? AND "
                                 + SportteamContract.EventsInvitationEntry.RECEIVER_ID + " = ? ",
                         new String[]{eventId, myUserID});
+            }
+
+            @Override
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        };
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
+        }
+    }
+
+    public static void loadUsersFromUserRequests(String key) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
+                .child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS);
+
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.exists()) {
+                    loadAProfile(dataSnapshot.getKey());
+
+                    String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
+                    ContentValues cvData = UtilesDataSnapshot
+                            .dataSnapshotEventsRequestsToContentValues(dataSnapshot, eventId, false);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI, cvData);
+                }
+            }
+
+            @Override
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
+                onChildAdded(dataSnapshot, s);
+            }
+
+            @Override
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
+                String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
+                String senderId = dataSnapshot.getKey();
+                MyApplication.getAppContext().getContentResolver().delete(
+                        SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,
+                        SportteamContract.EventRequestsEntry.EVENT_ID + " = ? AND "
+                                +SportteamContract.EventRequestsEntry.SENDER_ID + " = ? ",
+                        new String[]{eventId, senderId});
             }
 
             @Override
@@ -673,32 +675,30 @@ public class FirebaseSync {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         MyNotification notification = data.getValue(MyNotification.class);
                         if (notification == null) return;
-                        if (!notification.getChecked()) {
-                            @FirebaseDBContract.NotificationTypes int type = notification.getType();
-                            switch (type) {
-                                case FirebaseDBContract.NOTIFICATION_TYPE_USER:
-                                    User user = Utiles.getUserFromContentProvider(notification.getExtra_data());
-                                    if (user == null) {
-                                        loadAProfileAndNotify(data.getRef().toString(), notification);
-                                        continue;
-                                    }
-                                    UtilesNotification.createNotification(MyApplication.getAppContext(), notification, user);
-                                    break;
-                                case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
-                                    Event event = Utiles.getEventFromContentProvider(notification.getExtra_data());
-                                    if (event == null) {
-                                        loadAnEventAndNotify(data.getRef().toString(), notification);
-                                        continue;
-                                    }
-                                    UtilesNotification.createNotification(MyApplication.getAppContext(), notification, event);
-                                    break;
-                                case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
-                                    break;
-                                case FirebaseDBContract.NOTIFICATION_TYPE_ERROR:
-                                    break;
-                            }
-                            FirebaseActions.checkNotification(data.getRef().toString());
+                        @FirebaseDBContract.NotificationTypes int type = notification.getType();
+                        switch (type) {
+                            case FirebaseDBContract.NOTIFICATION_TYPE_USER:
+                                User user = Utiles.getUserFromContentProvider(notification.getExtra_data());
+                                if (user == null) {
+                                    loadAProfileAndNotify(data.getRef().toString(), notification);
+                                    continue;
+                                }
+                                UtilesNotification.createNotification(MyApplication.getAppContext(), notification, user);
+                                break;
+                            case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
+                                Event event = Utiles.getEventFromContentProvider(notification.getExtra_data());
+                                if (event == null) {
+                                    loadAnEventAndNotify(data.getRef().toString(), notification);
+                                    continue;
+                                }
+                                UtilesNotification.createNotification(MyApplication.getAppContext(), notification, event);
+                                break;
+                            case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
+                                break;
+                            case FirebaseDBContract.NOTIFICATION_TYPE_ERROR:
+                                break;
                         }
+                        FirebaseActions.checkNotification(data.getRef().toString());
                     }
             }
 
@@ -838,7 +838,7 @@ public class FirebaseSync {
     }
     private static void loadAnEventAndNotify(final String notificationRef, final MyNotification notification) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+        final DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
         eventRef.child(notification.getExtra_data())
                 .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
@@ -862,6 +862,10 @@ public class FirebaseSync {
                             //Notify
                             UtilesNotification.createNotification(MyApplication.getAppContext(), notification, e);
                             FirebaseActions.checkNotification(notificationRef);
+                        } else {
+                            Log.e(TAG, "loadAnEventAndNotify: onDataChangeExecutor: Event "
+                                    + notification.getExtra_data() + " doesn't exist");
+                            FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
                         }
                     }
 

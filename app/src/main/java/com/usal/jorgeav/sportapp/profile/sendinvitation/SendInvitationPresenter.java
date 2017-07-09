@@ -4,9 +4,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 /**
@@ -26,6 +29,14 @@ public class SendInvitationPresenter implements SendInvitationContract.Presenter
     public void loadEventsForInvitation(LoaderManager loaderManager, Bundle b) {
         FirebaseSync.loadEventsFromMyOwnEvents();
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_FOR_INVITATION_ID, b, this);
+    }
+
+    @Override
+    public void sendInvitationToThisUser(String eventId, String uid) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
+            FirebaseActions.sendInvitationToThisEvent(myUid, eventId, uid);
     }
 
     @Override

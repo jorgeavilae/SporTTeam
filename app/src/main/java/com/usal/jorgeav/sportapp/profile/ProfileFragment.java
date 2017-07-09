@@ -169,7 +169,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
          * En otro caso: Icono de seguir? -> onClick: seguir
          */
         if (relation != ProfilePresenter.RELATION_TYPE_ME) {
-            mMenu.clear();
+            if (mMenu != null) mMenu.clear();
             Log.d(TAG, "uiSetupForUserRelation: mMenu " + mMenu);
             Log.d(TAG, "uiSetupForUserRelation: relation " + relation);
             switch (relation) {

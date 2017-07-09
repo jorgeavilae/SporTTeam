@@ -10,11 +10,9 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by Jorge Avila on 07/06/2017.
- */
 
 public final class SportteamLoader {
+    @SuppressWarnings("unused")
     private static final String TAG = SportteamLoader.class.getSimpleName();
 
     public static final int LOADER_PROFILE_ID = 1010;
@@ -364,7 +362,6 @@ public final class SportteamLoader {
     public static final int LOADER_EVENTS_FOR_INVITATION_ID = 8100;
     public static CursorLoader cursorLoaderEventsForInvitation(Context context, String myUserID, String otherUserID) {
         // Return all of my events data in which otherUser has no relation
-        // TODO: 08/07/2017 Add event in participation
         return new CursorLoader(
                 context,
                 SportteamContract.JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI,

@@ -95,6 +95,7 @@ public class BaseActivity extends AppCompatActivity
                     // User is signed in
                     Log.d(TAG, "userID: "+fuser.getUid());
                     setUserInfoInNavigationDrawer(mNavigationView, fuser);
+                    FirebaseSync.loadMyNotifications();
                     if(mDisplayedFragment == null)
                         startMainFragment();
                 } else {

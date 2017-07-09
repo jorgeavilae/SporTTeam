@@ -612,7 +612,6 @@ public class FirebaseActions {
                     if (e.getParticipants() != null)
                         participantsUserId.addAll(new ArrayList<>(e.getParticipants().keySet()));
 
-                    // TODO: 08/07/2017
                     ArrayList<String> invitationsSentUserId = new ArrayList<>();
                     ArrayList<String> invitationsReceivedUserId = new ArrayList<>();
                     DataSnapshot dataInvitations = dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS);
@@ -650,7 +649,6 @@ public class FirebaseActions {
                         childDeletes.put(eventInUserParticipation, null);
                     }
 
-                    // TODO: 08/07/2017
                     //Delete Event in User invitations received
                     for (String userInvitation : invitationsReceivedUserId) {
                         String eventInUserInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + userInvitation
