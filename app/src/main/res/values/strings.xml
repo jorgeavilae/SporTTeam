@@ -33,5 +33,7 @@
     <string name="notification_friend_request_received">You have a new friend request</string>
     <string name="notification_friend_request_accepted">You have a new friend!!</string>
     <string name="notification_event_invitation_received">You have a new event invitation</string>
+    <string name="notification_event_invitation_accepted">Your event invitation had been accepted</string>
+    <string name="notification_event_invitation_declined">Your event invitation had been declined</string>
 
 </resources>

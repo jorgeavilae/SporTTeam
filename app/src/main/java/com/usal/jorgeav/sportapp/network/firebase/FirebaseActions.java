@@ -341,6 +341,19 @@ public class FirebaseActions {
                 String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                         + myUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
+                //Set Invitation Accept MyNotification in other User
+                String notificationAcceptedId = eventId + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT;
+                String userInvitationAcceptedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                        + sender + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationAcceptedId;
+
+                // Notification object
+                long currentTime = System.currentTimeMillis();
+                String notificationMessage = MyApplication.getAppContext()
+                        .getString(R.string.notification_event_invitation_accepted);
+                @FirebaseDBContract.NotificationTypes
+                Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
+                MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
+
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
                 Map<String, Object> childUpdates = new HashMap<>();
@@ -349,6 +362,7 @@ public class FirebaseActions {
                 childUpdates.put(userInvitationSent, null);
                 childUpdates.put(eventInvitationSent, null);
                 childUpdates.put(userInvitationReceivedNotification, null);
+                childUpdates.put(userInvitationAcceptedNotification, n.toMap());
 
                 database.updateChildren(childUpdates);
 
@@ -380,6 +394,19 @@ public class FirebaseActions {
         String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                 + myUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
+        //Set Invitation Declined MyNotification in other User
+        String notificationDeclinedId = eventId + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT;
+        String userInvitationDeclinedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                + sender + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationDeclinedId;
+
+        // Notification object
+        long currentTime = System.currentTimeMillis();
+        String notificationMessage = MyApplication.getAppContext()
+                .getString(R.string.notification_event_invitation_declined);
+        @FirebaseDBContract.NotificationTypes
+        Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
+        MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -387,6 +414,7 @@ public class FirebaseActions {
         childUpdates.put(eventInvitationSent, null);
         childUpdates.put(userInvitationSent, null);
         childUpdates.put(userInvitationReceivedNotification, null);
+        childUpdates.put(userInvitationDeclinedNotification, n.toMap());
 
         database.updateChildren(childUpdates);
     }
