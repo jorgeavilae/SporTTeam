@@ -3,6 +3,8 @@ package com.usal.jorgeav.sportapp.network.firebase;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -309,14 +311,12 @@ public class FirebaseActions {
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Event e = mutableData.getValue(Event.class);
                 if (e == null) return Transaction.success(mutableData);
-
-                // Doesn't work, fortunately it doesn't needed
-                // e.setEvent_id(mutableData.getKey());
+                e.setEvent_id(eventId);
 
                 if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToParticipants(myUid, true);
-                    if (e.getEmpty_players() == 0) eventCompleteNotifications(true, eventId, e.getParticipants());
+                    if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
                 }
 
                 mutableData.setValue(e);
@@ -429,14 +429,12 @@ public class FirebaseActions {
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Event e = mutableData.getValue(Event.class);
                 if (e == null) return Transaction.success(mutableData);
-
-                // Doesn't work, fortunately it doesn't needed
-                // e.setEvent_id(mutableData.getKey());
+                e.setEvent_id(eventId);
 
                 e.setEmpty_players(e.getEmpty_players() + 1);
                 e.deleteParticipant(uid);
                 // The event isn't complete because this quit
-                if (e.getEmpty_players() == 1) eventCompleteNotifications(false, eventId, e.getParticipants());
+                if (e.getEmpty_players() == 1) eventCompleteNotifications(false, e);
 
                 mutableData.setValue(e);
 
@@ -521,19 +519,17 @@ public class FirebaseActions {
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Event e = mutableData.child(FirebaseDBContract.DATA).getValue(Event.class);
                 if (e == null) return Transaction.success(mutableData);
-
-                // Doesn't work, fortunately it doesn't needed here, but needed below
-                // e.setEvent_id(mutableData.getKey());
+                e.setEvent_id(eventId);
 
                 if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToParticipants(otherUid, true);
-                    if (e.getEmpty_players() == 0) eventCompleteNotifications(true, eventId, e.getParticipants());
+                    if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
                 }
 
                 mutableData.child(FirebaseDBContract.DATA).setValue(e);
 
-                /* This actions must be performed in here https://stackoverflow.com/a/39608139/4235666*/
+                /* This actions must be performed in here https://stackoverflow.com/a/39608139/4235666 */
 
                 //Add Assistant Event to that User
                 String userParticipationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
@@ -653,30 +649,41 @@ public class FirebaseActions {
         database.updateChildren(childUpdates);
     }
 
-    private static void eventCompleteNotifications(boolean send, String eventId, HashMap<String, Boolean> participants) {
+    private static void eventCompleteNotifications(boolean isComplete, Event event) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+
         // Notification object
-        MyNotification n;
-        if (send) {
-            long currentTime = System.currentTimeMillis();
-            String notificationMessage = MyApplication.getAppContext()
+        String notificationMessage;
+        if (isComplete) {
+            notificationMessage = MyApplication.getAppContext()
                     .getString(R.string.notification_event_complete);
-            @FirebaseDBContract.NotificationTypes
-            Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-            n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
         } else {
-            n = null;
+            notificationMessage = MyApplication.getAppContext()
+                    .getString(R.string.notification_event_someone_quit);
         }
+        MyNotification n;
+        long currentTime = System.currentTimeMillis();
+        @FirebaseDBContract.NotificationTypes
+        Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
+        n = new MyNotification(false, notificationMessage, event.getEvent_id(), type, currentTime);
 
         //Set Event complete MyNotification in participant
-        String notificationId = eventId + FirebaseDBContract.Event.EMPTY_PLAYERS;
+        String notificationId = event.getEvent_id() + FirebaseDBContract.Event.EMPTY_PLAYERS;
 
         Map<String, Object> childUpdates = new HashMap<>();
-        for (Map.Entry<String, Boolean> entry : participants.entrySet())
-            if (entry.getValue()) {
+        for (Map.Entry<String, Boolean> entry : event.getParticipants().entrySet())
+            if (entry.getValue() && !entry.getKey().equals(myUserID)) {
                 String eventCompleteNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                         + entry.getKey() + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
-                childUpdates.put(eventCompleteNotification, (n!=null?n.toMap():null));
+                childUpdates.put(eventCompleteNotification, n.toMap());
             }
+
+        if (!event.getOwner().equals(myUserID)) {
+            String eventCompleteNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                    + event.getOwner() + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+            childUpdates.put(eventCompleteNotification, n.toMap());
+        }
 
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
