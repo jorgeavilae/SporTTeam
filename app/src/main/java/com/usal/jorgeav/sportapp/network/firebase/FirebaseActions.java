@@ -451,40 +451,62 @@ public class FirebaseActions {
             }
         });
     }
-    public static void sendEventRequest(String uid, String eventId) {
+
+    public static void sendEventRequest(String uid, String eventId, String ownerId) {
+        //Set Event Request Sent in my User
+        String userRequestsEventSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
+                + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
+
         //Set User Request in that Event
         String eventRequestsUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
                 + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + uid;
 
-        //Set Event Request in my User
-        String userRequestsEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
-                + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
+        //Set Event Request Received in ownerId
+        // TODO: 09/07/2017 Do I really need this?
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        //Set User Request MyNotification in ownerId
+        String notificationId = eventId + FirebaseDBContract.User.EVENTS_REQUESTS;
+        String userRequestsEventReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                + ownerId + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+
+        // Notification object
         long currentTime = System.currentTimeMillis();
+        String notificationMessage = MyApplication.getAppContext()
+                .getString(R.string.notification_event_request_received);
+        @FirebaseDBContract.NotificationTypes
+        Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
+        MyNotification n = new MyNotification(false, notificationMessage, eventId, type, currentTime);
 
         Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(userRequestsEventSent, currentTime);
         childUpdates.put(eventRequestsUser, currentTime);
-        childUpdates.put(userRequestsEvent, currentTime);
+        childUpdates.put(userRequestsEventReceivedNotification, n.toMap());
 
-        database.updateChildren(childUpdates);
+        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
-    public static void cancelEventRequest(String uid, String eventId) {
-        //Delete User Request in that Event
-        String eventRequestsUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
-                + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + uid;
-
-        //Delete Event Request in that my User
-        String userRequestsEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
+    public static void cancelEventRequest(String myUid, String eventId, String ownerId) {
+        // Delete Event Request in that my User
+        String userRequestsSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                 + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        // Delete User Request in that Event
+        String eventRequestsUser =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + myUid;
+
+        // Delete Event Request Received in ownerId
+        // TODO: 09/07/2017 Do I really need this?
+
+        // Delete User Request MyNotification in ownerId
+        String notificationId = eventId + FirebaseDBContract.User.EVENTS_REQUESTS;
+        String userRequestsEventReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                + ownerId + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
         Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(userRequestsSent, null);
         childUpdates.put(eventRequestsUser, null);
-        childUpdates.put(userRequestsEvent, null);
+        childUpdates.put(userRequestsEventReceivedNotification, null);
 
-        database.updateChildren(childUpdates);
+        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
     public static void acceptUserRequestToThisEvent(final String uid, final String eventId) {
         //Add Assistant User to my Event

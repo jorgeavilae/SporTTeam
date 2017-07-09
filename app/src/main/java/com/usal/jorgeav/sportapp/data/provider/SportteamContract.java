@@ -8,6 +8,7 @@ import android.provider.BaseColumns;
  * Created by Jorge Avila on 17/05/2017.
  */
 
+@SuppressWarnings("WeakerAccess")
 public final class SportteamContract {
 
     /*
@@ -668,7 +669,7 @@ public final class SportteamContract {
                 .appendPath(PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND)
                 .build();
         /* JOIN for CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
-        public static final String TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS =
+        public static final String TABLES_EVENTS_JOIN_PARTICIPATION_P_JOIN_INVITATIONS_JOIN_REQUESTS =
                 TABLE_EVENT
                     + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " p1 ON ("
                         + EventEntry.EVENT_ID_TABLE_PREFIX + " = p1." + EventsParticipationEntry.EVENT_ID + " )"
@@ -716,7 +717,17 @@ public final class SportteamContract {
                 .appendPath(PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME)
                 .build();
         /* JOIN for CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
-        /* Already defined TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS */
+        public static final String TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS =
+                TABLE_EVENT
+                        + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " ON ("
+                        + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX
+                        + " AND " + EventsParticipationEntry.USER_ID_TABLE_PREFIX + " = ? )"
+                        + " LEFT JOIN " + TABLE_EVENT_INVITATIONS + " ON ("
+                        + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX
+                        + " AND " + EventsInvitationEntry.RECEIVER_ID_TABLE_PREFIX + " = ? )"
+                        + " LEFT JOIN " + TABLE_EVENTS_REQUESTS + " ON ("
+                        + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX
+                        + " AND " + EventRequestsEntry.SENDER_ID_TABLE_PREFIX + " = ? )";
         /* WHERE for CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
         public static final String WHERE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME =
                 EventEntry.CITY_TABLE_PREFIX + " = ? "

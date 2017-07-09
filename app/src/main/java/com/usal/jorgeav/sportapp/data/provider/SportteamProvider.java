@@ -553,7 +553,7 @@ public class SportteamProvider extends ContentProvider {
                         sortOrder);
                 break;
             case CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND:
-                builder.setTables(JoinQueryEntries.TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS);
+                builder.setTables(JoinQueryEntries.TABLES_EVENTS_JOIN_PARTICIPATION_P_JOIN_INVITATIONS_JOIN_REQUESTS);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
                         projection,
                         selection,

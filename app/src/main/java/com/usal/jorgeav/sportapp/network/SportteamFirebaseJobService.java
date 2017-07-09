@@ -29,6 +29,7 @@ public class SportteamFirebaseJobService extends JobService {
          *  - Contestan peticion a evento enviada por el (aceptan o rechazan)   EID
          *
          *  - Se completa un evento al que asisto                               EID
+         *  - Se va alguien de un evento al que asisto                               EID
          *  - Se cambia o borra un evento al que asisto                         EID
          *
          *  - Recordatorio de que un evento se va a producir                    EID

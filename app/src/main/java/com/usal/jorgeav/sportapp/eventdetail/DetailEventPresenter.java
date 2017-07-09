@@ -273,16 +273,16 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     public void sendEventRequest(String eventId) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUid = ""; if (fUser != null) myUid = fUser.getUid();
-        if (!TextUtils.isEmpty(eventId))
-            FirebaseActions.sendEventRequest(myUid, eventId);
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(ownerUid))
+            FirebaseActions.sendEventRequest(myUid, eventId, ownerUid);
     }
 
     @Override
     public void cancelEventRequest(String eventId) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUid = ""; if (fUser != null) myUid = fUser.getUid();
-        if (!TextUtils.isEmpty(eventId))
-            FirebaseActions.cancelEventRequest(myUid, eventId);
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(ownerUid))
+            FirebaseActions.cancelEventRequest(myUid, eventId, ownerUid);
     }
 
     @Override

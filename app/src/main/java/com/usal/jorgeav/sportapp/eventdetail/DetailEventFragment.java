@@ -42,6 +42,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private static String mEventId = "";
+    private static String mOwnerId = "";
     @DetailEventPresenter.EventRelationType int mRelation;
     private DetailEventContract.Presenter mPresenter;
 
@@ -338,6 +339,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showEventOwner(String owner) {
+        mOwnerId = owner;
         ((BaseActivity)getActivity()).showContent();
         this.textViewEventOwner.setText(owner);
         mPresenter.loadParticipants(getLoaderManager(), getArguments());
