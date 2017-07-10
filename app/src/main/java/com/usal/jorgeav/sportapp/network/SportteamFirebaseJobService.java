@@ -1,10 +1,17 @@
 package com.usal.jorgeav.sportapp.network;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 public class SportteamFirebaseJobService extends JobService {
+    public static final String TAG = SportteamFirebaseJobService.class.getSimpleName();
 
     /**
      * The entry point to your Job. Implementations should offload work to another thread of
@@ -18,6 +25,8 @@ public class SportteamFirebaseJobService extends JobService {
      */
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
+        Log.d(TAG, "onStartJob: ");
+        FirebaseSync.loadMyNotifications();
         /* Avisar al usuario cuando:
          *  - Recibe peticion de amistad                                        UID sender
          *  - Contestan peticion de amistad enviada por el (aceptan o rechazan) UID receiver
@@ -29,15 +38,20 @@ public class SportteamFirebaseJobService extends JobService {
          *
          *  - Se completa un evento al que asisto                               EID
          *  - Se va alguien de un evento al que asisto                          EID
-        // TODO: 07/07/2017
          *  - Se cambia o borra un evento al que asisto                         EID
          *
+        // TODO: 07/07/2017
+         *  - Se crea un evento que coincide con alguna de mis alarmas          AID
          *  - Recordatorio de que un evento se va a producir                    EID
          *  - Despues de producirse un evento para calificar a los demas o poner resultado
          *
-         *  - Se crea un evento que coincide con alguna de mis alarmas          AID
          */
-        FirebaseSync.loadMyNotifications();
+
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+        if (!TextUtils.isEmpty(myUid))
+            FirebaseSync.loadEventsFromCity(Utiles.getCurrentCity(this, myUid));
+
         jobFinished(jobParameters, false);
         return false;
     }

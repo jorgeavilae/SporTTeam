@@ -280,14 +280,7 @@ public final class SportteamLoader {
                 null);
     }
     public static CursorLoader cursorLoaderAlarmCoincidence(Context context, String alarmId, String myUserId) {
-        // Return user data for participants in eventId
-        Alarm alarm = Utiles.cursorToAlarm(
-                context.getContentResolver().query(
-                    SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
-                    SportteamContract.AlarmEntry.ALARM_COLUMNS,
-                    SportteamContract.AlarmEntry.ALARM_ID + " = ?",
-                    new String[]{alarmId},
-                    null));
+        Alarm alarm = Utiles.cursorToAlarm(simpleQueryAlarmId(context, alarmId));
 
         if (alarm != null) {
             String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
@@ -406,6 +399,15 @@ public final class SportteamLoader {
                 SportteamContract.FieldEntry.FIELDS_COLUMNS,
                 SportteamContract.FieldEntry.FIELD_ID + " = ? ",
                 new String[]{fieldId},
+                null);
+    }
+
+    public static Cursor simpleQueryAlarmId(Context context, String alarmId) {
+        return context.getContentResolver().query(
+                SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
+                SportteamContract.AlarmEntry.ALARM_COLUMNS,
+                SportteamContract.AlarmEntry.ALARM_ID + " = ?",
+                new String[]{alarmId},
                 null);
     }
 }

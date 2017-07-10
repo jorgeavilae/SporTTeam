@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.utils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.content.CursorLoader;
 import android.util.Log;
 
 import com.usal.jorgeav.sportapp.MyApplication;
@@ -10,6 +11,8 @@ import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+
+import java.util.ArrayList;
 
 /**
  * Created by Jorge Avila on 17/05/2017.
@@ -63,7 +66,7 @@ public class Utiles {
                     dateFrom, dateTo,
                     totalPlFrom, totalPlTo,
                     emptyPlFrom, emptyPlTo);
-    }
+        }
         return null;
     }
 
@@ -110,5 +113,40 @@ public class Utiles {
         } else
             Log.e(TAG, "getEventFromContentProvider: Error with event "+eventId);
         return e;
+    }
+
+    public static ArrayList<Alarm> getAllAlarms(Context context) {
+        Cursor c = context.getContentResolver().query(
+                SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
+                SportteamContract.AlarmEntry.ALARM_COLUMNS,
+                null, null, null);
+        if (c != null) {
+            ArrayList<Alarm> result = new ArrayList<>();
+            if (c.getCount() > 0) {
+                while (c.moveToNext()) {
+                    Alarm a = cursorToAlarm(c); // TODO: 10/07/2017 error memory en este metodo
+                    if (a != null) result.add(a);
+                }
+            } else
+                Log.e(TAG, "getAllAlarms: No alarms");
+            c.close();
+            return result;
+        } else
+            Log.e(TAG, "getAllAlarms: Error with alarms");
+        return null;
+    }
+
+    public static boolean thereIsEventCoincidence(Context context, String alarmId, String myUserId) {
+        CursorLoader cl = SportteamLoader.cursorLoaderAlarmCoincidence(context, alarmId, myUserId);
+        if (cl != null) {
+            Cursor c = MyApplication.getAppContext().getContentResolver().query(
+                    cl.getUri(), cl.getProjection(), cl.getSelection(),
+                    cl.getSelectionArgs(), cl.getSortOrder());
+            if (c != null) {
+                if (c.getCount() > 0) return true;
+                c.close();
+            }
+        }
+        return false;
     }
 }

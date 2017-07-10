@@ -43,6 +43,7 @@
     <string name="notification_event_edit">The event has been changed</string>
     <string name="notification_event_delete">The event has been deleted</string>
     <string name="notification_event_delete_msg">The %1$s event in %2$s on %3$s has been canceled</string>
+    <string name="notification_alarm_event">Some event coincidence in your area</string>
 
 
 </resources>

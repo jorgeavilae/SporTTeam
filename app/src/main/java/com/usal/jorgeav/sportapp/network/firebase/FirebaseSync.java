@@ -661,6 +661,7 @@ public class FirebaseSync {
             Log.d(TAG, "loadUsersFromFriends: attachListener ref " + myUserRef);
         }
     }
+
     public static void loadMyNotifications() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
@@ -966,6 +967,7 @@ public class FirebaseSync {
                                 loadAField(e.getField_id());
                             }
                             // TODO: 16/06/2017 comparar evento con alarmas para que se muestren notificaciones
+                            FirebaseActions.checkAlarmsForNotifications();
                         }
                     }
 

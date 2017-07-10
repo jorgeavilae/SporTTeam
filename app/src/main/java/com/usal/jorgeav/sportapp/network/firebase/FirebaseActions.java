@@ -21,11 +21,13 @@ import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FirebaseActions {
@@ -909,5 +911,34 @@ public class FirebaseActions {
     static void checkNotification(String ref) {
         FirebaseDatabase.getInstance().getReferenceFromUrl(ref)
                 .child(FirebaseDBContract.Notification.CHECKED).setValue(true);
+    }
+
+    public static void checkAlarmsForNotifications() {
+        List<Alarm> alarms = Utiles.getAllAlarms(MyApplication.getAppContext());
+        if (alarms == null || alarms.size() <= 0) return;
+
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        if(TextUtils.isEmpty(myUserID)) return;
+
+        for (Alarm a : alarms) {
+            Log.d(TAG, "checkAlarmsForNotifications: "+a.getmId()+ " "+myUserID);
+//            if (Utiles.thereIsEventCoincidence(MyApplication.getAppContext(), a.getmId(), myUserID)) {
+//                // Alarm with ID a.getmId() has some Event Coincidence. Notify
+//                long currentTime = System.currentTimeMillis();
+//                String notificationMessage = MyApplication.getAppContext()
+//                        .getString(R.string.notification_alarm_event);
+//                @FirebaseDBContract.NotificationDataTypes
+//                Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_ALARM;
+//                @UtilesNotification.NotificationType
+//                Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_ALARM_EVENT;
+//                MyNotification n = new MyNotification(notificationType, false, notificationMessage, a.getmId(), type, currentTime);
+//
+//                FirebaseDatabase.getInstance().getReference().child(FirebaseDBContract.TABLE_USERS)
+//                        .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
+//                        .child(a.getmId() + FirebaseDBContract.User.ALARMS)
+//                        .setValue(n.toMap());
+//            }
+        }
     }
 }

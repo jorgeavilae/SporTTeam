@@ -110,7 +110,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         if (getArguments() != null && getArguments().containsKey(BUNDLE_ALARM_ID))
             mAlarmId = getArguments().getString(BUNDLE_ALARM_ID);
 
-        eventsAdapter = new EventsAdapter(null, null);
+        eventsAdapter = new EventsAdapter(null, this);
         eventsCoincidenceList.setAdapter(eventsAdapter);
         eventsCoincidenceList.setHasFixedSize(true);
         eventsCoincidenceList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
