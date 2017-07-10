@@ -48,7 +48,10 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                     Integer.valueOf(total), Integer.valueOf(empty), participants);
 
             Log.d(TAG, "addEvent: "+event);
-            FirebaseActions.addEvent(event);
+            if(TextUtils.isEmpty(event.getEvent_id()))
+                FirebaseActions.addEvent(event);
+            else
+                FirebaseActions.editEvent(event);
             ((EventsActivity)mNewEventView.getActivityContext()).newEventFieldSelected = null;
             ((AppCompatActivity)mNewEventView.getActivityContext()).onBackPressed();
         } else

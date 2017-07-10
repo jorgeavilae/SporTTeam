@@ -677,6 +677,9 @@ public class FirebaseSync {
                         if (notification == null) return;
                         @FirebaseDBContract.NotificationDataTypes int type = notification.getData_type();
                         switch (type) {
+                            case FirebaseDBContract.NOTIFICATION_TYPE_NONE:
+                                UtilesNotification.createNotification(MyApplication.getAppContext(), notification);
+                                break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_USER:
                                 User user = Utiles.getUserFromContentProvider(notification.getExtra_data());
                                 if (user == null) {

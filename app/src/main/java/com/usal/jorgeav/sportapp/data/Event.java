@@ -63,7 +63,7 @@ public class Event implements Parcelable {
     }
 
     public String getName() {
-        return name;
+        return (name!=null?name:"");
     }
 
     public Long getDate() {

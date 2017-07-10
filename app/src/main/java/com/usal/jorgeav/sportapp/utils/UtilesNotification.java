@@ -28,7 +28,8 @@ public class UtilesNotification {
             NOTIFICATION_ID_EVENT_INVITATION_RECEIVED, NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED,
             NOTIFICATION_ID_EVENT_INVITATION_DECLINED, NOTIFICATION_ID_EVENT_REQUEST_RECEIVED,
             NOTIFICATION_ID_EVENT_REQUEST_ACCEPTED, NOTIFICATION_ID_EVENT_REQUEST_DECLINED,
-            NOTIFICATION_ID_EVENT_COMPLETE, NOTIFICATION_ID_EVENT_SOMEONE_QUIT})
+            NOTIFICATION_ID_EVENT_COMPLETE, NOTIFICATION_ID_EVENT_SOMEONE_QUIT,
+            NOTIFICATION_ID_EVENT_EDIT, NOTIFICATION_ID_EVENT_DELETE})
     public @interface NotificationType {}
     public static final int NOTIFICATION_ID_ERROR = 0;
     public static final int NOTIFICATION_ID_FRIEND_REQUEST_RECEIVED = 1;
@@ -41,11 +42,34 @@ public class UtilesNotification {
     public static final int NOTIFICATION_ID_EVENT_REQUEST_DECLINED = 8;
     public static final int NOTIFICATION_ID_EVENT_COMPLETE = 9;
     public static final int NOTIFICATION_ID_EVENT_SOMEONE_QUIT = 10;
+    public static final int NOTIFICATION_ID_EVENT_EDIT = 11;
+    public static final int NOTIFICATION_ID_EVENT_DELETE = 12;
 
     public static void clearAllNotifications(Context context) {
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
+    }
+
+    public static void createNotification(Context context, MyNotification fNotification) {
+        if (!fNotification.getChecked()) {
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+                    .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
+                    .setContentTitle(fNotification.getMessage())
+                    .setContentText(fNotification.getExtra_data())
+//                .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setContentIntent(contentIntent(context))
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setAutoCancel(true);
+
+            NotificationManager notificationManager = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            // Pass in a unique ID of your choosing for the notification and notificationBuilder.build()
+            notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
+        }
     }
 
     public static void createNotification(Context context, MyNotification fNotification, User user) {

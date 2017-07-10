@@ -57,9 +57,11 @@ public final class FirebaseDBContract {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({NOTIFICATION_TYPE_ERROR, NOTIFICATION_TYPE_USER,
-            NOTIFICATION_TYPE_EVENT, NOTIFICATION_TYPE_ALARM})
+            NOTIFICATION_TYPE_EVENT, NOTIFICATION_TYPE_ALARM,
+            NOTIFICATION_TYPE_NONE})
     public @interface NotificationDataTypes {}
     public static final int NOTIFICATION_TYPE_ERROR = -1;
+    public static final int NOTIFICATION_TYPE_NONE = 0;
     public static final int NOTIFICATION_TYPE_USER = 1;
     public static final int NOTIFICATION_TYPE_EVENT = 2;
     public static final int NOTIFICATION_TYPE_ALARM = 3;

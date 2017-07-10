@@ -53,7 +53,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     NewEventContract.Presenter mNewEventPresenter;
     private static boolean sInitialize;
 
-    private GoogleApiClient mGoogleApiClient;
+    // Static prevent double initialization with same ID
+    private static GoogleApiClient mGoogleApiClient;
     private PlaceAutocompleteAdapter mAdapter;
 
     ArrayAdapter<CharSequence> sportsAdapter;
