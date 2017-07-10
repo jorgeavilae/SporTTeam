@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -42,8 +43,11 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         if (mDataset.moveToPosition(position)) {
             String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
             float level = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);
+            int iconDrawableId = MyApplication.getAppContext().getResources()
+                    .getIdentifier(name , "drawable", MyApplication.getAppContext().getPackageName());
             holder.textViewSportName.setText(name);
             holder.textViewSportLevel.setText(String.format(Locale.getDefault(), "%.2f", level));
+            holder.imageViewSportIcon.setImageResource(iconDrawableId);
         }
     }
 

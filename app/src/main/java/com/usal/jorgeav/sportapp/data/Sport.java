@@ -3,12 +3,15 @@ package com.usal.jorgeav.sportapp.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.usal.jorgeav.sportapp.MyApplication;
+
 /**
  * Created by Jorge Avila on 25/05/2017.
  */
 
 public class Sport implements Parcelable {
     String mName;
+    int iconDrawableId;
     float punctuation;
     int votes;
 
@@ -18,12 +21,18 @@ public class Sport implements Parcelable {
 
     public Sport(String mName, float punctuation, int votes) {
         this.mName = mName;
+        this.iconDrawableId = MyApplication.getAppContext().getResources()
+                .getIdentifier(mName , "drawable", MyApplication.getAppContext().getPackageName());
         this.punctuation = punctuation;
         this.votes = votes;
     }
 
     public String getmName() {
         return mName;
+    }
+
+    public int getIconDrawableId() {
+        return iconDrawableId;
     }
 
     public float getPunctuation() {

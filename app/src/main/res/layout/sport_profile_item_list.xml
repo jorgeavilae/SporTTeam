@@ -10,7 +10,7 @@
         android:id="@+id/sport_profile_item_icon"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView

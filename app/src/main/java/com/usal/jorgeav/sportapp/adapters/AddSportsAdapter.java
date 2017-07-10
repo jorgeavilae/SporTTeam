@@ -45,6 +45,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
             float level = s.getPunctuation();
             holder.textViewSportName.setText(name);
             holder.ratingBarSportLevel.setRating(level);
+            holder.imageViewSportIcon.setImageResource(s.getIconDrawableId());
         }
     }
 
