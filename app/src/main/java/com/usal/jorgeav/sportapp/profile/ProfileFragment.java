@@ -248,6 +248,11 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             mActionBarIconManagementListener.setToolbarAsNav();
         else
             mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mProfilePresenter.openUser(getLoaderManager(), getArguments());
     }
 

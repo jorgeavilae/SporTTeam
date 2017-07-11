@@ -3,7 +3,9 @@ package com.usal.jorgeav.sportapp.utils;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
@@ -13,6 +15,7 @@ import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.mainactivities.FriendsActivity;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -22,6 +25,9 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 public class UtilesNotification {
+    public static final String TAG = UtilesNotification.class.getSimpleName();
+
+    private static final int PROFILE_PENDING_INTENT_ID = 1;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({NOTIFICATION_ID_ERROR,
@@ -60,7 +66,7 @@ public class UtilesNotification {
                     .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
                     .setContentTitle(fNotification.getMessage())
                     .setContentText(fNotification.getExtra_data())
-//                .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setContentIntent(contentIntent(context))
                     .setPriority(Notification.PRIORITY_HIGH)
@@ -79,11 +85,11 @@ public class UtilesNotification {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
-                    .setContentTitle(fNotification.getMessage())
-                    .setContentText(user.getmName())
-//                .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
-                    .setDefaults(Notification.DEFAULT_VIBRATE)
-                    .setContentIntent(contentIntent(context))
+                    .setContentTitle(user.getmName())
+                    .setContentText(fNotification.getMessage())
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setContentIntent(contentProfileIntent(context, user.getmId()))
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setAutoCancel(true);
 
@@ -110,7 +116,7 @@ public class UtilesNotification {
     }
 
     private static PendingIntent contentIntent(Context context) {
-//        Intent startActivityIntent = new Intent(context, MainActivity.class);
+//        Intent startActivityIntent = new Intent(context, BaseActivity.class);
 //        return PendingIntent.getActivity(
 //                context,
 //                WATER_REMINDER_PENDING_INTENT_ID,
@@ -119,14 +125,25 @@ public class UtilesNotification {
         return null;
     }
 
+    private static PendingIntent contentProfileIntent(Context context, String userId) {
+        /* https://stackoverflow.com/a/24927301/4235666 */
+        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, FriendsActivity.class));
+        startActivityIntent.putExtra(FriendsActivity.USERID_PENDING_INTENT_EXTRA, userId);
+        return PendingIntent.getActivity(
+                context,
+                PROFILE_PENDING_INTENT_ID,
+                startActivityIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
     public static void createNotification(Context context, MyNotification fNotification, Event event) {
         if (!fNotification.getChecked()) {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
                     .setContentTitle(fNotification.getMessage())
-                    .setContentText(event.getOwner() + " invite you to play " + event.getSport_id()) //// TODO: 09/07/2017  cambiar msg
-//                .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
+                    .setContentText(event.getOwner() + " invite you to play " + event.getSport_id()) // TODO: 09/07/2017  cambiar msg
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setContentIntent(contentIntent(context))
                     .setPriority(Notification.PRIORITY_HIGH)
@@ -147,7 +164,7 @@ public class UtilesNotification {
                     .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
                     .setContentTitle(fNotification.getMessage())
                     .setContentText(alarm.getmId()) //// TODO: 09/07/2017  cambiar msg
-//                .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setContentIntent(contentIntent(context))
                     .setPriority(Notification.PRIORITY_HIGH)

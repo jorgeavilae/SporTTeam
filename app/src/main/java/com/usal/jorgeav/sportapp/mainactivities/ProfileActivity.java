@@ -19,11 +19,11 @@ import java.util.List;
  */
 
 public class ProfileActivity extends BaseActivity implements SportsListFragment.OnSportsSelected {
+    public static final String TAG = ProfileActivity.class.getSimpleName();
 
     @Override
     public void startMainFragment() {
         super.startMainFragment();
-
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
 

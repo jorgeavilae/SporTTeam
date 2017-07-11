@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract.AlarmEntry;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract.JoinQueryEntries;
@@ -156,8 +155,8 @@ public class SportteamProvider extends ContentProvider {
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int rowsInserted = 0;
-        Log.d(TAG, "bulkInsert: uri "+uri);
-        Log.d(TAG, "bulkInsert: values "+values);
+//        Log.d(TAG, "bulkInsert: uri "+uri);
+//        Log.d(TAG, "bulkInsert: values "+values);
         switch (sUriMatcher.match(uri)) {
             case CODE_EVENTS:
                 rowsInserted = bulkInsert(uri, values, db, TABLE_EVENT);
@@ -283,7 +282,7 @@ public class SportteamProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        Log.d(TAG, "delete: uri "+uri.toString());
+//        Log.d(TAG, "delete: uri "+uri.toString());
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
@@ -360,8 +359,8 @@ public class SportteamProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        Log.d(TAG, "insert: uri "+uri.toString());
-        Log.d(TAG, "insert: values "+values);
+//        Log.d(TAG, "insert: uri "+uri.toString());
+//        Log.d(TAG, "insert: values "+values);
         getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }
@@ -626,7 +625,7 @@ public class SportteamProvider extends ContentProvider {
          * Los cambios en la DDBB se hacen contra Firebase que los trae y los INSERTA
          * En DBHelper esta puesto ON CONFLICT REPLACE
          */
-        Log.e(TAG, "update: uri "+uri.toString());
+//        Log.e(TAG, "update: uri "+uri.toString());
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count = 0;
         switch (sUriMatcher.match(uri)) {

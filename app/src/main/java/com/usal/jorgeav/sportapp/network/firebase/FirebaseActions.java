@@ -12,6 +12,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
@@ -920,24 +921,38 @@ public class FirebaseActions {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         if(TextUtils.isEmpty(myUserID)) return;
+        final String finalMyUserID = myUserID;
 
-        for (Alarm a : alarms) {
-            Log.d(TAG, "checkAlarmsForNotifications: "+a.getmId()+ " "+myUserID);
+        for (final Alarm a : alarms) {
             if (Utiles.thereIsEventCoincidence(a, myUserID)) {
-                // Alarm a has some Event Coincidence. Notify
-                long currentTime = System.currentTimeMillis();
-                String notificationMessage = MyApplication.getAppContext()
-                        .getString(R.string.notification_alarm_event);
-                @FirebaseDBContract.NotificationDataTypes
-                Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_ALARM;
-                @UtilesNotification.NotificationType
-                Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_ALARM_EVENT;
-                MyNotification n = new MyNotification(notificationType, false, notificationMessage, a.getmId(), type, currentTime);
-
-                FirebaseDatabase.getInstance().getReference().child(FirebaseDBContract.TABLE_USERS)
+                FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                         .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
                         .child(a.getmId() + FirebaseDBContract.User.ALARMS)
-                        .setValue(n.toMap());
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (!dataSnapshot.exists()) {
+                                    // Alarm a has some Event Coincidence and
+                                    // notification doesn't exists. Notify
+                                    long currentTime = System.currentTimeMillis();
+                                    String notificationMessage = MyApplication.getAppContext()
+                                            .getString(R.string.notification_alarm_event);
+                                    @FirebaseDBContract.NotificationDataTypes
+                                    Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_ALARM;
+                                    @UtilesNotification.NotificationType
+                                    Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_ALARM_EVENT;
+                                    MyNotification n = new MyNotification(notificationType, false, notificationMessage, a.getmId(), type, currentTime);
+
+                                    FirebaseDatabase.getInstance().getReference().child(FirebaseDBContract.TABLE_USERS)
+                                            .child(finalMyUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
+                                            .child(a.getmId() + FirebaseDBContract.User.ALARMS)
+                                            .setValue(n.toMap());
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) { }
+                        });
             }
         }
     }

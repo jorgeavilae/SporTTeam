@@ -95,6 +95,8 @@ public class BaseActivity extends AppCompatActivity
                     // User is signed in
                     Log.d(TAG, "userID: "+fuser.getUid());
                     setUserInfoInNavigationDrawer(mNavigationView, fuser);
+                    // TODO: 05/07/2017 what if I init all listener: now would init once per app instance
+                    SportteamSyncUtils.initialize(BaseActivity.this);
                     FirebaseSync.loadMyNotifications();
                     if(mDisplayedFragment == null)
                         startMainFragment();
@@ -256,6 +258,13 @@ public class BaseActivity extends AppCompatActivity
         return true;
     }
 
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
     @Override
     public void startMainFragment() {
         // Activities must implement this
@@ -344,8 +353,9 @@ public class BaseActivity extends AppCompatActivity
     };
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
@@ -354,29 +364,12 @@ public class BaseActivity extends AppCompatActivity
         toolbarIconTransition.removeCallbacks(transitionToNav);
         toolbarIconTransition.removeCallbacks(transitionToUp);
 
+        // This prevent to detach listeners on orientation changes and activity transitions
+        if (isFinishing() && shouldDetachFirebaseListener) FirebaseSync.detachListeners();
+
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-        // TODO: 05/07/2017 what if I init all listener: now would init once per app instance
-        SportteamSyncUtils.initialize(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // This prevent to detach listeners on orientation changes and activity transitions
-        if (isFinishing() && shouldDetachFirebaseListener) FirebaseSync.detachListeners();
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 /**
  * Created by Jorge Avila on 22/06/2017.
@@ -39,6 +40,9 @@ public class SportteamSyncUtils {
      * @param context Context that will be passed to other methods
      */
     synchronized public static void initialize(@NonNull final Context context) {
+
+        FirebaseSync.syncFirebaseDatabase();
+
         /*
          * Only perform schedule once per app lifetime. If schedule has already been
          * performed, we have nothing else to do in this method.
