@@ -885,7 +885,7 @@ public class FirebaseActions {
                     String notificationTitle = MyApplication.getAppContext()
                             .getString(R.string.notification_title_event_delete);
                     String notificationMessage = MyApplication.getAppContext()
-                            .getString(R.string.notification_msg_event_delete_msg,
+                            .getString(R.string.notification_msg_event_delete,
                                     e.getName(), e.getCity(),
                                     UtilesTime.millisToDateTimeString(e.getDate()));
                     @FirebaseDBContract.NotificationDataTypes

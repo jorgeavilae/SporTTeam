@@ -106,6 +106,7 @@ public class MyNotification {
         HashMap<String, Object> result = new HashMap<>();
         result.put(FirebaseDBContract.Notification.NOTIFICATION_TYPE, notification_type);
         result.put(FirebaseDBContract.Notification.CHECKED, checked);
+        result.put(FirebaseDBContract.Notification.TITLE, title);
         result.put(FirebaseDBContract.Notification.MESSAGE, message);
         result.put(FirebaseDBContract.Notification.EXTRA_DATA, extra_data);
         result.put(FirebaseDBContract.Notification.DATA_TYPE, data_type);
