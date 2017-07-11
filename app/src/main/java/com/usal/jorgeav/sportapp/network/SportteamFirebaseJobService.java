@@ -40,8 +40,8 @@ public class SportteamFirebaseJobService extends JobService {
          *  - Se va alguien de un evento al que asisto                          EID
          *  - Se cambia o borra un evento al que asisto                         EID
          *
-        // TODO: 07/07/2017
          *  - Se crea un evento que coincide con alguna de mis alarmas          AID
+        // TODO: 07/07/2017
          *  - Recordatorio de que un evento se va a producir                    EID
          *  - Despues de producirse un evento para calificar a los demas o poner resultado
          *

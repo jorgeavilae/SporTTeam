@@ -2,7 +2,6 @@ package com.usal.jorgeav.sportapp.utils;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.content.CursorLoader;
 import android.util.Log;
 
 import com.usal.jorgeav.sportapp.MyApplication;
@@ -37,7 +36,7 @@ public class Utiles {
         return result;
     }
 
-    public static Alarm cursorToAlarm(Cursor cursor) {
+    public static Alarm cursorToSingleAlarm(Cursor cursor) {
         if (cursor != null && cursor.moveToFirst()) {
             String alarmId = cursor.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID);
             String sport = cursor.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
@@ -68,6 +67,38 @@ public class Utiles {
                     emptyPlFrom, emptyPlTo);
         }
         return null;
+    }
+
+    public static ArrayList<Alarm> cursorToMultipleAlarm(Cursor cursor) {
+        ArrayList<Alarm> result = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            String alarmId = cursor.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID);
+            String sport = cursor.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
+            String field = cursor.getString(SportteamContract.AlarmEntry.COLUMN_FIELD);
+            String city = cursor.getString(SportteamContract.AlarmEntry.COLUMN_CITY);
+            Long dateFrom = null;
+            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_DATE_FROM))
+                dateFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_FROM);
+            Long dateTo = null;
+            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_DATE_TO))
+                dateTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_TO);
+            Long totalPlFrom = null;
+            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM))
+                totalPlFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM);
+            Long totalPlTo = null;
+            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO))
+                totalPlTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO);
+            Long emptyPlFrom = null;
+            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM))
+                emptyPlFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM);
+            Long emptyPlTo = null;
+            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO))
+                emptyPlTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO);
+
+            result.add(new Alarm(alarmId, sport, field, city, dateFrom,
+                    dateTo, totalPlFrom, totalPlTo, emptyPlFrom, emptyPlTo));
+        }
+        return result;
     }
 
     public static User getUserFromContentProvider(String userId) {
@@ -115,6 +146,22 @@ public class Utiles {
         return e;
     }
 
+    public static Alarm getAlarmFromContentProvider(String alarmId) {
+        Alarm a = null;
+        Cursor c = SportteamLoader.simpleQueryAlarmId(MyApplication.getAppContext(), alarmId);
+        if (c != null) {
+            if (c.getCount() == 1 && c.moveToFirst()) {
+                a = cursorToSingleAlarm(c);
+            } else if (c.getCount() == 0)
+                Log.e(TAG, "getAlarmFromContentProvider: Alarm with ID "+alarmId+" not found");
+            else
+                Log.e(TAG, "getAlarmFromContentProvider: More than one alarm with ID "+alarmId+" ("+c.getCount()+")");
+            c.close();
+        } else
+            Log.e(TAG, "getAlarmFromContentProvider: Error with alarm "+alarmId);
+        return a;
+    }
+
     public static ArrayList<Alarm> getAllAlarms(Context context) {
         Cursor c = context.getContentResolver().query(
                 SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
@@ -123,10 +170,7 @@ public class Utiles {
         if (c != null) {
             ArrayList<Alarm> result = new ArrayList<>();
             if (c.getCount() > 0) {
-                while (c.moveToNext()) {
-                    Alarm a = cursorToAlarm(c); // TODO: 10/07/2017 error memory en este metodo
-                    if (a != null) result.add(a);
-                }
+                result.addAll(cursorToMultipleAlarm(c));
             } else
                 Log.e(TAG, "getAllAlarms: No alarms");
             c.close();
@@ -136,17 +180,13 @@ public class Utiles {
         return null;
     }
 
-    public static boolean thereIsEventCoincidence(Context context, String alarmId, String myUserId) {
-        CursorLoader cl = SportteamLoader.cursorLoaderAlarmCoincidence(context, alarmId, myUserId);
-        if (cl != null) {
-            Cursor c = MyApplication.getAppContext().getContentResolver().query(
-                    cl.getUri(), cl.getProjection(), cl.getSelection(),
-                    cl.getSelectionArgs(), cl.getSortOrder());
-            if (c != null) {
-                if (c.getCount() > 0) return true;
-                c.close();
-            }
+    public static boolean thereIsEventCoincidence(Alarm alarm, String myUserId) {
+        boolean result = false;
+        Cursor c = SportteamLoader.cursorAlarmCoincidence(MyApplication.getAppContext().getContentResolver(), alarm, myUserId);
+        if (c != null) {
+            if (c.getCount() > 0) result = true;
+            c.close();
         }
-        return false;
+        return result;
     }
 }

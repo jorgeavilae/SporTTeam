@@ -698,6 +698,12 @@ public class FirebaseSync {
                                 UtilesNotification.createNotification(MyApplication.getAppContext(), notification, event);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
+                                Alarm alarm = Utiles.getAlarmFromContentProvider(notification.getExtra_data());
+                                if (alarm == null) {
+                                    loadAnAlarmAndNotify(data.getRef().toString(), notification);
+                                    continue;
+                                }
+                                UtilesNotification.createNotification(MyApplication.getAppContext(), notification, alarm);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_ERROR:
                                 break;
@@ -800,6 +806,41 @@ public class FirebaseSync {
                                     .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
                             if (a.getmField() != null)
                                 loadAField(a.getmField());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelledExecutor(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+    public static void loadAnAlarmAndNotify(final String notificationRef, final MyNotification notification) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
+
+        myUserRef.child(notification.getExtra_data())
+                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+                    @Override
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Alarm a = UtilesDataSnapshot.dataSnapshotToAlarm(dataSnapshot);
+                            ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
+                            MyApplication.getAppContext().getContentResolver()
+                                    .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
+                            if (a.getmField() != null)
+                                loadAField(a.getmField());
+
+                            //Notify
+                            UtilesNotification.createNotification(MyApplication.getAppContext(), notification, a);
+                            FirebaseActions.checkNotification(notificationRef);
+                        } else {
+                            Log.e(TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Alarm "
+                                    + notification.getExtra_data() + " doesn't exist");
+                            FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
                         }
                     }
 

@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.data.provider;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.CursorLoader;
@@ -280,7 +281,7 @@ public final class SportteamLoader {
                 null);
     }
     public static CursorLoader cursorLoaderAlarmCoincidence(Context context, String alarmId, String myUserId) {
-        Alarm alarm = Utiles.cursorToAlarm(simpleQueryAlarmId(context, alarmId));
+        Alarm alarm = Utiles.cursorToSingleAlarm(simpleQueryAlarmId(context, alarmId));
 
         if (alarm != null) {
             String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
@@ -348,6 +349,52 @@ public final class SportteamLoader {
                 event.emptyPlayers >= 2 AND event.emptyPlayers <= 2
                 )
              */
+        }
+        return null;
+    }
+    public static Cursor cursorAlarmCoincidence(ContentResolver contentResolver, Alarm alarm, String myUserId) {
+        if (alarm != null) {
+            String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
+            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCitySportEventsWithoutRelationWithMeArguments(myUserId, alarm.getmCity(), alarm.getmSport())));
+
+            // field could be null
+            if (alarm.getmField() != null) {
+                selection += "AND " + SportteamContract.EventEntry.FIELD_TABLE_PREFIX + " = ? ";
+                selectionArgs.add(alarm.getmField());
+            }
+
+            // dateFrom must be at least today and dateTo should be greater than dateFrom or null
+            selection += "AND " + SportteamContract.EventEntry.DATE_TABLE_PREFIX + " >= ? ";
+            selectionArgs.add(alarm.getmDateFrom().toString());
+            if (alarm.getmDateTo() != null) {
+                selection += "AND " + SportteamContract.EventEntry.DATE_TABLE_PREFIX + " <= ? ";
+                selectionArgs.add(alarm.getmDateTo().toString());
+            }
+
+            // totalFrom could be null and totalTo should be greater than totalFrom or null
+            if (alarm.getmTotalPlayersFrom() != null) {
+                selection += "AND " + SportteamContract.EventEntry.TOTAL_PLAYERS_TABLE_PREFIX + " >= ? ";
+                selectionArgs.add(alarm.getmTotalPlayersFrom().toString());
+            }
+            if (alarm.getmTotalPlayersTo() != null) {
+                selection += "AND " + SportteamContract.EventEntry.TOTAL_PLAYERS_TABLE_PREFIX + " <= ? ";
+                selectionArgs.add(alarm.getmTotalPlayersTo().toString());
+            }
+
+            // emptyFrom must be at least 1 and emptyTo should be greater than emptyFrom or null
+            selection += "AND " + SportteamContract.EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " >= ? ";
+            selectionArgs.add(alarm.getmEmptyPlayersFrom().toString());
+            if (alarm.getmEmptyPlayersTo() != null) {
+                selection += "AND " + SportteamContract.EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " <= ? ";
+                selectionArgs.add(alarm.getmEmptyPlayersTo().toString());
+            }
+
+            return contentResolver.query(
+                    SportteamContract.JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI,
+                    SportteamContract.EventEntry.EVENT_COLUMNS,
+                    selection,
+                    selectionArgs.toArray(new String[selectionArgs.size()]),
+                    SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
         }
         return null;
     }

@@ -84,7 +84,7 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     }
 
     private void showAlarmDetails(Cursor data) {
-        Alarm a = Utiles.cursorToAlarm(data);
+        Alarm a = Utiles.cursorToSingleAlarm(data);
         if (a != null) {
             mView.showAlarmId(a.getmId());
             mView.showAlarmSport(a.getmSport());

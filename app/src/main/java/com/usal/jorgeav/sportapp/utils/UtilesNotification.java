@@ -9,6 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
@@ -125,6 +126,27 @@ public class UtilesNotification {
                     .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
                     .setContentTitle(fNotification.getMessage())
                     .setContentText(event.getOwner() + " invite you to play " + event.getSport_id()) //// TODO: 09/07/2017  cambiar msg
+//                .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setContentIntent(contentIntent(context))
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setAutoCancel(true);
+
+            NotificationManager notificationManager = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            // Pass in a unique ID of your choosing for the notification and notificationBuilder.build()
+            notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
+        }
+    }
+
+    public static void createNotification(Context context, MyNotification fNotification, Alarm alarm) {
+        if (!fNotification.getChecked()) {
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+                    .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
+                    .setContentTitle(fNotification.getMessage())
+                    .setContentText(alarm.getmId()) //// TODO: 09/07/2017  cambiar msg
 //                .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getExtra_data()))
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setContentIntent(contentIntent(context))

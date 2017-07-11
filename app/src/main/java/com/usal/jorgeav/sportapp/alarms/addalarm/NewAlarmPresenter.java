@@ -193,7 +193,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
     }
 
     private void showAlarmDetails(Cursor data) {
-        Alarm a = Utiles.cursorToAlarm(data);
+        Alarm a = Utiles.cursorToSingleAlarm(data);
         if (a != null) {
             mNewAlarmView.showAlarmSport(a.getmSport());
             mNewAlarmView.showAlarmPlace(a.getmField());
