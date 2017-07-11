@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.view.MenuItem;
 
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
 
@@ -15,6 +16,8 @@ import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment
 public class EventsActivity extends BaseActivity implements SelectFieldFragment.OnFieldSelected {
     private final static String TAG = EventsActivity.class.getSimpleName();
 
+    public static final String EVENTID_PENDING_INTENT_EXTRA = "EVENTID_PENDING_INTENT_EXTRA";
+
     private static final String INSTANCE_NEW_EVENT_FIELD = "INSTANCE_NEW_EVENT_FIELD";
     public String newEventFieldSelected = null;
     private static final String INSTANCE_NEW_EVENT_CITY = "INSTANCE_NEW_EVENT_CITY";
@@ -23,8 +26,12 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
     @Override
     public void startMainFragment() {
         super.startMainFragment();
+        String eventId = getIntent().getStringExtra(EVENTID_PENDING_INTENT_EXTRA);
 
         initFragment(EventsFragment.newInstance(), false);
+        if (eventId != null) {
+            initFragment(DetailEventFragment.newInstance(eventId), true);
+        }
         mNavigationView.setCheckedItem(R.id.nav_events);
     }
 

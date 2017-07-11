@@ -30,20 +30,32 @@
     <string name="error_field_required">This field is required</string>
 
 
-    <string name="notification_friend_request_received">You have a new friend request</string>
-    <string name="notification_friend_request_accepted">You have a new friend!!</string>
-    <string name="notification_event_invitation_received">You have a new event invitation</string>
-    <string name="notification_event_invitation_accepted">Your event invitation had been accepted</string>
-    <string name="notification_event_invitation_declined">Your event invitation had been declined</string>
-    <string name="notification_event_request_received">Some user wants to participate in your event</string>
-    <string name="notification_event_request_accepted">Your event request had been accepted</string>
-    <string name="notification_event_request_declined">Your event request had been declined</string>
-    <string name="notification_event_complete">The event is complete</string>
-    <string name="notification_event_someone_quit">The event isn\'t complete anymore</string>
-    <string name="notification_event_edit">The event has been changed</string>
-    <string name="notification_event_delete">The event has been deleted</string>
-    <string name="notification_event_delete_msg">The %1$s event in %2$s on %3$s has been canceled</string>
-    <string name="notification_alarm_event">Some event coincidence in your area</string>
+    <string name="notification_title_friend_request_received">New friend request</string>
+    <string name="notification_title_friend_request_accepted">New friend!!</string>
+    <string name="notification_title_event_invitation_received">New event invitation</string>
+    <string name="notification_title_event_invitation_accepted">Event invitation accepted</string>
+    <string name="notification_title_event_invitation_declined">Event invitation declined</string>
+    <string name="notification_title_event_request_received">New event request</string>
+    <string name="notification_title_event_request_accepted">Event request accepted</string>
+    <string name="notification_title_event_request_declined">Event request declined</string>
+    <string name="notification_title_event_complete">Event complete</string>
+    <string name="notification_title_event_someone_quit">Event incomplete</string>
+    <string name="notification_title_event_edit">Event edited</string>
+    <string name="notification_title_event_delete">Event cancelled</string>
+    <string name="notification_title_alarm_event">Event coincidence</string>
+    <string name="notification_msg_friend_request_received">You have a new friend request</string>
+    <string name="notification_msg_friend_request_accepted">You have a new friend!!</string>
+    <string name="notification_msg_event_invitation_received">You have a new event invitation</string>
+    <string name="notification_msg_event_invitation_accepted">Your event invitation had been accepted</string>
+    <string name="notification_msg_event_invitation_declined">Your event invitation had been declined</string>
+    <string name="notification_msg_event_request_received">Some user wants to participate in your event</string>
+    <string name="notification_msg_event_request_accepted">Your event request had been accepted</string>
+    <string name="notification_msg_event_request_declined">Your event request had been declined</string>
+    <string name="notification_msg_event_complete">The event is complete</string>
+    <string name="notification_msg_event_someone_quit">The event isn\'t complete anymore</string>
+    <string name="notification_msg_event_edit">The event has been changed</string>
+    <string name="notification_msg_event_delete">The %1$s event in %2$s on %3$s has been cancelled</string>
+    <string name="notification_msg_alarm_event">Some event coincidence in your area</string>
 
 
 </resources>

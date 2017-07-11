@@ -68,6 +68,7 @@ public final class FirebaseDBContract {
     public static final class Notification {
         public static final String NOTIFICATION_TYPE = "notification_type";
         public static final String CHECKED = "checked";
+        public static final String TITLE = "title";
         public static final String MESSAGE = "message";
         public static final String EXTRA_DATA = "extra_data";
         public static final String DATA_TYPE = "data_type";

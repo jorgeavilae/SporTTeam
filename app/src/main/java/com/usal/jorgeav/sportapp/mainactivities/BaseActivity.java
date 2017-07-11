@@ -258,7 +258,7 @@ public class BaseActivity extends AppCompatActivity
         return true;
     }
 
-
+    /* https://stackoverflow.com/a/6357330/4235666 */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);

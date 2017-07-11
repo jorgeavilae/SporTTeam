@@ -6,6 +6,7 @@ import android.view.MenuItem;
 
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.alarms.AlarmsFragment;
+import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
 
 /**
@@ -14,14 +15,20 @@ import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment
 
 public class AlarmsActivity extends BaseActivity implements SelectFieldFragment.OnFieldSelected {
 
+    public static final String ALARMID_PENDING_INTENT_EXTRA = "ALARMID_PENDING_INTENT_EXTRA";
+
     private static final String INSTANCE_NEW_ALARM_FIELD = "INSTANCE_NEW_ALARM_FIELD";
     public String newAlarmFieldSelected = null;
 
     @Override
     public void startMainFragment() {
         super.startMainFragment();
+        String alarmId = getIntent().getStringExtra(ALARMID_PENDING_INTENT_EXTRA);
 
         initFragment(AlarmsFragment.newInstance(), false);
+        if (alarmId != null) {
+            initFragment(DetailAlarmFragment.newInstance(alarmId), true);
+        }
         mNavigationView.setCheckedItem(R.id.nav_alarms);
     }
 

@@ -13,6 +13,7 @@ import java.util.Map;
 public class MyNotification {
     Long notification_type;
     Boolean checked;
+    String title;
     String message;
     String extra_data;
     Long data_type;
@@ -23,9 +24,10 @@ public class MyNotification {
         // Default constructor required for calls to DataSnapshot.getValue(MyNotification.class)
     }
 
-    public MyNotification(Long notification_type, Boolean checked, String message, String extra_data, Long data_type, Long date) {
+    public MyNotification(Long notification_type, Boolean checked, String title, String message, String extra_data, Long data_type, Long date) {
         this.notification_type = notification_type;
         this.checked = checked;
+        this.title = title;
         this.message = message;
         this.extra_data = extra_data;
         this.data_type = data_type;
@@ -64,6 +66,10 @@ public class MyNotification {
 
     public Boolean getChecked() {
         return checked;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public String getMessage() {
