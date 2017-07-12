@@ -123,6 +123,11 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment("Detalles de alarma", this);
         mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mPresenter.openAlarm(getLoaderManager(), getArguments());
     }
 

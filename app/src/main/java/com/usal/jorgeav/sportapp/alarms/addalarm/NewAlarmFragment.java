@@ -220,6 +220,11 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment("Nueva alarma", this);
         mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         if (sInitialize) return;
         mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
         sInitialize = true;

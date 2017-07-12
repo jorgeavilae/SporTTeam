@@ -100,6 +100,11 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment("Buscar usuarios", this);
         mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mSearchUsersPresenter.loadNearbyUsers(getLoaderManager(), getArguments());
     }
 

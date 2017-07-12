@@ -76,6 +76,11 @@ public class AlarmsFragment extends BaseFragment implements AlarmsContract.View,
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.alarms), this);
         mActionBarIconManagementListener.setToolbarAsNav();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mAlarmsPresenter.loadAlarms(getLoaderManager(), getArguments());
     }
 

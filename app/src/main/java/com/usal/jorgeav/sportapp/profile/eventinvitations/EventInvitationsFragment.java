@@ -70,6 +70,11 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment("Invitaciones recibidas", this);
         mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mEventInvitationsPresenter.loadEventInvitations(getLoaderManager(), getArguments());
     }
 

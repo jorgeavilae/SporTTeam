@@ -89,6 +89,11 @@ public class InvitationsSentFragment extends BaseFragment implements Invitations
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment("Usuarios invitados", this);
         mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mEventInvitationsPresenter.loadEventInvitationsSent(getLoaderManager(), getArguments());
     }
 

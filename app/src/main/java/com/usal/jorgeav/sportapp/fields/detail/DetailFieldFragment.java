@@ -113,6 +113,11 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment("Detalles de pista", this);
         mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mPresenter.openField(getLoaderManager(), getArguments());
     }
 

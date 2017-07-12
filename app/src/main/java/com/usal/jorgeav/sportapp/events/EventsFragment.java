@@ -107,6 +107,11 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         Log.d(TAG, "onActivityCreated: ");
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
         mActionBarIconManagementListener.setToolbarAsNav();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mEventsPresenter.loadEvents(getLoaderManager(), getArguments());
     }
 

@@ -88,6 +88,11 @@ public class InviteUserFragment extends BaseFragment implements InviteUserContra
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment("Selecciona usuario", this);
         mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mSendInvitationPresenter.loadFriends(getLoaderManager(), getArguments());
     }
 

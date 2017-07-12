@@ -105,6 +105,11 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment("Buscar eventos", this);
         mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
     }
 

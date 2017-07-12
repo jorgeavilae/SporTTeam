@@ -6,20 +6,17 @@ import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 06/07/2017.
- */
-
 public class MyNotification {
-    Long notification_type;
-    Boolean checked;
-    String title;
-    String message;
-    String extra_data;
-    Long data_type;
-    Long date;
+    private Long notification_type;
+    private Boolean checked;
+    private String title;
+    private String message;
+    private String extra_data;
+    private Long data_type;
+    private Long date;
     // TODO: 06/07/2017 necesita mas parametros, hay que ponerlos tambien en FirebaseActions.java
 
+    @SuppressWarnings("unused")
     public MyNotification() {
         // Default constructor required for calls to DataSnapshot.getValue(MyNotification.class)
     }

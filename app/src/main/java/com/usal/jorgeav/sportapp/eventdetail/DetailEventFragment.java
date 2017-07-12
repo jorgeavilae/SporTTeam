@@ -311,6 +311,11 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment("Detalles de evento", this);
         mActionBarIconManagementListener.setToolbarAsUp();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mPresenter.openEvent(getLoaderManager(), getArguments());
     }
 

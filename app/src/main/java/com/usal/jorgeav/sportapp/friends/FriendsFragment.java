@@ -79,6 +79,11 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.friends), this);
         mActionBarIconManagementListener.setToolbarAsNav();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         mFriendsPresenter.loadFriend(getLoaderManager(), getArguments());
     }
 
