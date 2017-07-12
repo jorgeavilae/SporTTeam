@@ -1,8 +1,12 @@
 package com.usal.jorgeav.sportapp.network.firebase;
 
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -13,6 +17,10 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
@@ -993,5 +1001,59 @@ public class FirebaseActions {
                         });
             }
         }
+    }
+
+    public static void storePhotoOnFirebase(Uri photo, OnSuccessListener<UploadTask.TaskSnapshot> listener) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference photoRef = storage.getReferenceFromUrl(Utiles.getFirebaseStorageRootReference())
+                .child(FirebaseDBContract.Storage.PROFILE_PICTURES).child(photo.getLastPathSegment());
+
+        // Create the file metadata
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpg")
+                .build();
+
+        // Upload file and metadata to the path
+        UploadTask uploadTask = photoRef.putFile(photo, metadata);
+
+        // Listen for state changes, errors, and completion of the upload.
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.e(TAG, "storePhotoOnFirebase:putFile:onFailure: ", exception);
+            }
+        }).addOnSuccessListener(listener);
+    }
+
+    public static void addSimulatedParticipant(final String eventId, final String name, Uri photoUriInFirebase, int age) {
+        //Add Assistant User to that Event
+        DatabaseReference eventRef = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_EVENTS)
+                .child(eventId).child(FirebaseDBContract.DATA);
+        eventRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Event e = mutableData.getValue(Event.class);
+                if (e == null) return Transaction.success(mutableData);
+                e.setEvent_id(eventId);
+
+                if (e.getEmpty_players() > 0) {
+                    e.setEmpty_players(e.getEmpty_players() - 1);
+                    //// TODO: 12/07/2017 How to represent this fake user
+                    e.addToParticipants(name, true);
+                    if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
+                }
+
+                mutableData.setValue(e);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+                // Transaction completed
+            }
+        });
     }
 }

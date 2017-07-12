@@ -156,7 +156,10 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
     public void startCropActivity(Uri imageFileUri) {
         long millis = System.currentTimeMillis();
         // Uri to store cropped photo in filesystem
-        photoUri = getAlbumStorageDir(imageFileUri.getLastPathSegment() + "_cropped" + millis);
+        if (imageFileUri.getLastPathSegment().contains("."))
+            photoUri = getAlbumStorageDir(imageFileUri.getLastPathSegment().replace(".","_cropped" + millis + "."));
+        else
+            photoUri = getAlbumStorageDir(imageFileUri.getLastPathSegment() + "_cropped" + millis);
         UCrop.of(imageFileUri, photoUri)
                 .withAspectRatio(1, 1)
                 .withMaxResultSize(512, 512)

@@ -101,6 +101,7 @@ public final class FirebaseDBContract {
     }
 
     public static final class Storage {
+        /* https://stackoverflow.com/questions/38779713/how-to-store-direct-link-to-an-image-using-firebase-storage */
         public static final String PROFILE_PICTURES = "profile_picture";
     }
 }
