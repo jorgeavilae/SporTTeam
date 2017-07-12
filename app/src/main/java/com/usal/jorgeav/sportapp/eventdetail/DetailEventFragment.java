@@ -25,11 +25,13 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
+import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
+import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import java.util.Locale;
@@ -71,6 +73,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     Button buttonUnansweredInvitations;
     @BindView(R.id.event_detail_send_request)
     Button buttonSendRequest;
+    @BindView(R.id.event_detail_simulate_participant)
+    Button buttonSimulateParticipant;
     @BindView(R.id.event_detail_participants_list)
     RecyclerView eventParticipantsList;
     UsersAdapter usersAdapter;
@@ -179,6 +183,21 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         }
                     }
                 });
+                buttonSimulateParticipant.setVisibility(View.VISIBLE);
+                buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //DONE añadir participante que no es usuario de la app
+                        if(mEventId != null
+                                && getActivity() instanceof EventsActivity) { //Necessary for photo picker
+                            Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
+                            mFragmentManagementListener.initFragment(fragment, true);
+                        } else
+                            Log.e(TAG, "uiSetupForEventRelation: buttonSimulateParticipant: onClick: "
+                                    + "eventId "+mEventId+ "\ngetActivity is EventsActivity? "
+                            + (getActivity() instanceof EventsActivity));
+                    }
+                });
                 break;
             case DetailEventPresenter.RELATION_TYPE_NONE:
                 if (mMenu != null) mMenu.clear();
@@ -192,6 +211,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         mPresenter.sendEventRequest(mEventId);
                     }
                 });
+                buttonSimulateParticipant.setVisibility(View.INVISIBLE);
                 buttonSendInvitation.setVisibility(View.INVISIBLE);
                 buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
@@ -215,6 +235,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         builder.create().show();
                     }
                 });
+                buttonSimulateParticipant.setVisibility(View.INVISIBLE);
                 buttonSendInvitation.setVisibility(View.INVISIBLE);
                 buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
@@ -243,6 +264,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         builder.create().show();
                     }
                 });
+                buttonSimulateParticipant.setVisibility(View.INVISIBLE);
                 buttonSendInvitation.setVisibility(View.INVISIBLE);
                 buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;

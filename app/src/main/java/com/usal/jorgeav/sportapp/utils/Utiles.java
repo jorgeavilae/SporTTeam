@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -19,6 +21,13 @@ import java.util.ArrayList;
 
 public class Utiles {
     private static final String TAG = Utiles.class.getSimpleName();
+
+    public static String getFirebaseStorageRootReference() {
+        /* https://firebase.google.com/docs/storage/android/create-reference?hl=es-419 */
+        /* https://stackoverflow.com/a/40647158/4235666 */
+        FirebaseOptions opts = FirebaseApp.getInstance().getOptions();
+        return "gs://" + opts.getStorageBucket();
+    }
 
     public static String getCurrentCity(Context context, String currentUserID) {
         // TODO: 23/06/2017 obtener de sharedPreferences
