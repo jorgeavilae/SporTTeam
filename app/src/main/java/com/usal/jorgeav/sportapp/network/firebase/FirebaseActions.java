@@ -416,7 +416,7 @@ public class FirebaseActions {
                         + myUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
                 //Set Invitation Accept MyNotification in other User
-                String notificationAcceptedId = eventId + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT;
+                String notificationAcceptedId = myUid + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + eventId;
                 String userInvitationAcceptedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                         + sender + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationAcceptedId;
 
@@ -474,7 +474,7 @@ public class FirebaseActions {
                 + myUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
         //Set Invitation Declined MyNotification in sender User
-        String notificationDeclinedId = eventId + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT;
+        String notificationDeclinedId = myUid + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + eventId;
         String userInvitationDeclinedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                 + sender + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationDeclinedId;
 
@@ -549,7 +549,7 @@ public class FirebaseActions {
         // TODO: 09/07/2017 Do I really need this?
 
         //Set User Request MyNotification in ownerId
-        String notificationId = eventId + FirebaseDBContract.User.EVENTS_REQUESTS;
+        String notificationId = uid + FirebaseDBContract.User.EVENTS_REQUESTS + eventId;
         String userRequestsEventReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                 + ownerId + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
@@ -586,7 +586,7 @@ public class FirebaseActions {
         // TODO: 09/07/2017 Do I really need this?
 
         // Delete User Request MyNotification in ownerId
-        String notificationId = eventId + FirebaseDBContract.User.EVENTS_REQUESTS;
+        String notificationId = myUid + FirebaseDBContract.User.EVENTS_REQUESTS + eventId;
         String userRequestsEventReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                 + ownerId + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
@@ -650,7 +650,7 @@ public class FirebaseActions {
                         + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + otherUid;
 
                 // Delete User Request MyNotification in ownerId
-                String notificationId = eventId + FirebaseDBContract.User.EVENTS_REQUESTS;
+                String notificationId = otherUid + FirebaseDBContract.User.EVENTS_REQUESTS + eventId;
                 String userRequestsEventReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                         + e.getOwner() + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
@@ -713,7 +713,7 @@ public class FirebaseActions {
 
         // Delete User Request MyNotification in ownerId
         // The current user is the owner cause is the only user who can accept/decline user requests
-        String notificationId = eventId + FirebaseDBContract.User.EVENTS_REQUESTS;
+        String notificationId = otherUid + FirebaseDBContract.User.EVENTS_REQUESTS + eventId;
         String userRequestsEventReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                 + myUserID + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
@@ -776,7 +776,7 @@ public class FirebaseActions {
         n = new MyNotification(notificationType, false, notificationTitle,
                 notificationMessage, event.getEvent_id(), type, currentTime);
 
-        //Set Event complete MyNotification in participant
+        //Set Event complete/incomplete MyNotification in participant
         String notificationId = event.getEvent_id() + FirebaseDBContract.Event.EMPTY_PLAYERS;
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -901,7 +901,7 @@ public class FirebaseActions {
                                 + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION + "/" + e.getEvent_id();
                         childDeletes.put(eventInUserParticipation, null);
 
-                        //Set Invitation Declined MyNotification in sender User
+                        //Set Event Deleted MyNotification in participants User
                         String notificationDeleteId = e.getEvent_id() + FirebaseDBContract.Event.OWNER;
                         String eventDeletedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                                 + userParticipation + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationDeleteId;

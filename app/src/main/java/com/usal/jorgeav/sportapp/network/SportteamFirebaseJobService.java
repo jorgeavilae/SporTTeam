@@ -26,19 +26,20 @@ public class SportteamFirebaseJobService extends JobService {
     public boolean onStartJob(JobParameters jobParameters) {
         FirebaseSync.loadMyNotifications();
         /* Avisar al usuario cuando:
-         *  - Recibe peticion de amistad                                        UID sender
-         *  - Contestan peticion de amistad enviada por el (aceptan o rechazan) UID receiver
+         *  - Recibe peticion de amistad - uid sender + "friends_requests_sent"             UID sender
+         *  - Aceptan peticion de amistad - uid receiver + "friends"                        UID receiver
          *
-         *  - Recibe invitacion a evento                                        EID
-         *  - Acepta/Rechaza invitacion a evento                                EID
-         *  - Recibe peticion de usuario a evento                               EID
-         *  - Contestan peticion a evento enviada por el (aceptan o rechazan)   EID
+         *  - Recibe invitacion a evento - eid + "events_invitations_received"              EID
+         *  - Acepta/Rechaza invitacion a evento - uid + "events_invitations_sent" + eid    EID
+         *  - Recibe peticion de usuario a evento - uid + "events_requests" + eid           EID
+         *  - Aceptan/Rechaza peticion a evento - eid + "events_participation"              EID
          *
-         *  - Se completa un evento al que asisto                               EID
-         *  - Se va alguien de un evento al que asisto                          EID
-         *  - Se cambia o borra un evento al que asisto                         EID
+         *  - Se completa un evento al que asisto - eid + "empty_players"                   EID
+         *  - Se va alguien de un evento al que asisto - eid + "empty_players"              EID
+         *  - Se cambia un evento al que asisto - eid + "owner"                             EID
+         *  - Se borra un evento al que asisto - eid + "owner"                              EID
          *
-         *  - Se crea un evento que coincide con alguna de mis alarmas          AID
+         *  - Se crea un evento que coincide con alguna alarma - aid + "alarms"             AID
         // TODO: 07/07/2017
          *  - Recordatorio de que un evento se va a producir                    EID
          *  - Despues de producirse un evento para calificar a los demas o poner resultado
