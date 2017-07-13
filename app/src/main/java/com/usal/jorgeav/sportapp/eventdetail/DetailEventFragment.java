@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,8 +22,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.SimulatedUsersAdapter;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
@@ -78,6 +82,9 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @BindView(R.id.event_detail_participants_list)
     RecyclerView eventParticipantsList;
     UsersAdapter usersAdapter;
+    @BindView(R.id.event_detail_simulated_participants_list)
+    RecyclerView eventSimulatedParticipantsList;
+    SimulatedUsersAdapter simulatedUsersAdapter;
     @BindView(R.id.event_detail_participants_placeholder)
     ConstraintLayout eventParticipantsPlaceholder;
 
@@ -140,6 +147,31 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         eventParticipantsList.setAdapter(usersAdapter);
         eventParticipantsList.setHasFixedSize(true);
         eventParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
+
+        SimulatedUsersAdapter.OnSimulatedUserItemClickListener listener = new SimulatedUsersAdapter.OnSimulatedUserItemClickListener() {
+            @Override
+            public void onUserClick(String ownerId, final String simulatedUserId) {
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+                if (TextUtils.isEmpty(myUid)) return;
+
+                if (myUid.equals(ownerId)) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                    builder.setMessage("Quieres borrar este participante simulado?")
+                            .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    mPresenter.deleteSimulatedUser(simulatedUserId, mEventId);
+                                }
+                            })
+                            .setNegativeButton("No", null);
+                    builder.create().show();
+                }
+            }
+        };
+        simulatedUsersAdapter = new SimulatedUsersAdapter(null, listener);
+        eventSimulatedParticipantsList.setAdapter(simulatedUsersAdapter);
+        eventSimulatedParticipantsList.setHasFixedSize(true);
+        eventSimulatedParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
 
         mPresenter.getRelationTypeBetweenThisEventAndI();
 
@@ -422,6 +454,12 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     }
 
     @Override
+    public void showSimulatedParticipants(Cursor cursor) {
+        simulatedUsersAdapter.replaceData(cursor);
+        mFragmentManagementListener.showContent();
+    }
+
+    @Override
     public void clearUI() {
         this.textViewEventId.setText("");
         this.textViewEventSport.setText("");
@@ -453,24 +491,34 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         super.onPause();
         mPresenter.unregisterUserRelationObserver();
         usersAdapter.replaceData(null);
+        simulatedUsersAdapter.replaceData(null);
     }
 
     @Override
     public void onUserClick(final String uid) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        builder.setMessage("Quieres expulsarlo del evento?")
-                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mPresenter.quitEvent(uid, mEventId);
-                    }
-                })
-                .setNegativeButton("No", null)
-                .setNeutralButton("See details", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Fragment newFragment = ProfileFragment.newInstance(uid);
-                        mFragmentManagementListener.initFragment(newFragment, true);
-                    }
-                });
-        builder.create().show();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+        if (TextUtils.isEmpty(myUid)) return;
+
+        if (myUid.equals(mOwnerId)) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+            builder.setMessage("Quieres expulsarlo del evento?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            mPresenter.quitEvent(uid, mEventId);
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Fragment newFragment = ProfileFragment.newInstance(uid);
+                            mFragmentManagementListener.initFragment(newFragment, true);
+                        }
+                    });
+            builder.create().show();
+        } else {
+            Fragment newFragment = ProfileFragment.newInstance(uid);
+            mFragmentManagementListener.initFragment(newFragment, true);
+        }
     }
 }

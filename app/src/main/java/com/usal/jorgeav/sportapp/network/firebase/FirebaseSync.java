@@ -878,7 +878,7 @@ public class FirebaseSync {
 
                             // Load simulated users participants with data
                             if (e.getSimulated_participants() != null)
-                                loadUsersFromSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
+                                loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
                         }
                     }
 
@@ -913,7 +913,7 @@ public class FirebaseSync {
 
                             // Load simulated users participants with data
                             if (e.getSimulated_participants() != null)
-                                loadUsersFromSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
+                                loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
 
                             //Notify
                             UtilesNotification.createNotification(MyApplication.getAppContext(), notification, e);
@@ -973,20 +973,23 @@ public class FirebaseSync {
                     .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cv);
         }
     }
-    private static void loadUsersFromSimulatedParticipants(String eventId, Map<String, SimulatedUser> simulatedParticipants) {
+    private static void loadSimulatedParticipants(String eventId, Map<String, SimulatedUser> simulatedParticipants) {
         MyApplication.getAppContext().getContentResolver()
-                .delete(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
-                        SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
+                .delete(SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI,
+                        SportteamContract.SimulatedParticipantEntry.EVENT_ID + " = ? ",
                         new String[]{eventId});
 
         for (Map.Entry<String, SimulatedUser> entry : simulatedParticipants.entrySet()) {
-
+            Log.d(TAG, "loadSimulatedParticipants: "+entry.getValue());
             ContentValues cv = new ContentValues();
-            cv.put(SportteamContract.EventsParticipationEntry.USER_ID, entry.getKey());
-            cv.put(SportteamContract.EventsParticipationEntry.EVENT_ID, eventId);
-            cv.put(SportteamContract.EventsParticipationEntry.PARTICIPATES, entry.getValue() ? 1 : 0);
+            cv.put(SportteamContract.SimulatedParticipantEntry.EVENT_ID, eventId);
+            cv.put(SportteamContract.SimulatedParticipantEntry.SIMULATED_USER_ID, entry.getKey());
+            cv.put(SportteamContract.SimulatedParticipantEntry.ALIAS, entry.getValue().getAlias());
+            cv.put(SportteamContract.SimulatedParticipantEntry.PROFILE_PICTURE, entry.getValue().getProfile_picture());
+            cv.put(SportteamContract.SimulatedParticipantEntry.AGE, entry.getValue().getAge());
+            cv.put(SportteamContract.SimulatedParticipantEntry.OWNER, entry.getValue().getOwner());
             MyApplication.getAppContext().getContentResolver()
-                    .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cv);
+                    .insert(SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI, cv);
         }
     }
 

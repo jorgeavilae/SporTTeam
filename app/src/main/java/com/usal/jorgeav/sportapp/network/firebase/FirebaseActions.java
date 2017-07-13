@@ -1069,4 +1069,37 @@ public class FirebaseActions {
             }
         });
     }
+    public static void deleteSimulatedParticipant(final String simulatedUid, final String eventId) {
+        //Delete Assistant User to that Event (uid can be another user, not the current one)
+        DatabaseReference eventRef = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_EVENTS)
+                .child(eventId).child(FirebaseDBContract.DATA);
+        eventRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Event e = mutableData.getValue(Event.class);
+                if (e == null) return Transaction.success(mutableData);
+                e.setEvent_id(eventId);
+
+                e.setEmpty_players(e.getEmpty_players() + 1);
+                e.deleteSimulatedParticipant(simulatedUid);
+                // The event isn't complete because this quit
+                if (e.getEmpty_players() == 1) eventCompleteNotifications(false, e);
+
+                mutableData.setValue(e);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+                // Transaction completed
+                if (b)
+                    Log.d(TAG, "deleteSimulatedParticipant: onComplete: Transaction completed");
+                else
+                    Log.e(TAG, "deleteSimulatedParticipant: onComplete: Transaction error "+databaseError);
+            }
+        });
+    }
 }

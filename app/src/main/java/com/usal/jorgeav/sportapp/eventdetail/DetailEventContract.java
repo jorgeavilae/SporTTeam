@@ -24,6 +24,7 @@ public abstract class DetailEventContract {
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);
         void showParticipants(Cursor cursor);
+        void showSimulatedParticipants(Cursor cursor);
         void clearUI();
         Context getActivityContext();
         BaseFragment getThis();
@@ -45,6 +46,7 @@ public abstract class DetailEventContract {
         void declineEventInvitation(String eventId, String sender);
         void quitEvent(String eventId);
         void quitEvent(String userId, String eventId);
+        void deleteSimulatedUser(String simulatedUserId, String eventId);
 
         void registerUserRelationObserver();
         void unregisterUserRelationObserver();

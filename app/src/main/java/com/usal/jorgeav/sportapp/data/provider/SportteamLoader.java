@@ -65,6 +65,7 @@ public final class SportteamLoader {
     }
     public static final int LOADER_EVENT_ID = 2010;
     public static final int LOADER_EVENTS_PARTICIPANTS_ID = 2011;
+    public static final int LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID = 2012;
     public static CursorLoader cursorLoaderOneEvent(Context context, String eventId) {
         // Return event data
         return new CursorLoader(
@@ -87,7 +88,7 @@ public final class SportteamLoader {
                 SportteamContract.EventsParticipationEntry.USER_ID_TABLE_PREFIX + " ASC");
     }
     public static CursorLoader cursorLoaderEventParticipantsNoData(Context context, String eventId) {
-        // Return user data for participants in eventId
+        // Return userId for participants in eventId
         return new CursorLoader(
                 context,
                 SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
@@ -95,6 +96,16 @@ public final class SportteamLoader {
                 SportteamContract.EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " = ? ",
                 new String[]{eventId},
                 SportteamContract.EventsParticipationEntry.USER_ID_TABLE_PREFIX + " ASC");
+    }
+    public static CursorLoader cursorLoaderEventSimulatedParticipants(Context context, String eventId) {
+        // Return user data for participants in eventId
+        return new CursorLoader(
+                context,
+                SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI,
+                SportteamContract.SimulatedParticipantEntry.SIMULATED_PARTICIPANTS_COLUMNS,
+                SportteamContract.SimulatedParticipantEntry.EVENT_ID_TABLE_PREFIX + " = ? ",
+                new String[]{eventId},
+                SportteamContract.SimulatedParticipantEntry.ALIAS_TABLE_PREFIX + " ASC");
     }
 
 

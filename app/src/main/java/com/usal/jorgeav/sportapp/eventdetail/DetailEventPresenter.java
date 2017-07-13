@@ -53,7 +53,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
         FirebaseSync.loadAnEvent(eventId);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENT_ID, b, this);
-        loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
+        loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID, b, this);
     }
 
     @Override
@@ -77,6 +77,9 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
                 return SportteamLoader
                         .cursorLoaderEventParticipants(mView.getActivityContext(), eventId, true);
+            case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
+                return SportteamLoader
+                        .cursorLoaderEventSimulatedParticipants(mView.getActivityContext(), eventId);
         }
         return null;
     }
@@ -95,6 +98,9 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
                     Cursor c = addParticipantToCursor(data, ownerUid);
                     mView.showParticipants(c);
                 }
+                break;
+            case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
+                mView.showSimulatedParticipants(data);
                 break;
         }
     }
@@ -119,6 +125,9 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
                 mView.showParticipants(null);
                 break;
+            case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
+                mView.showSimulatedParticipants(null);
+                break;
         }
     }
 
@@ -135,7 +144,8 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             mView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
             mView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
         } else {
-            ownerUid = "";
+            ownerUid = null;
+            mInvitation = null;
             mView.clearUI();
         }
     }
@@ -310,14 +320,21 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     public void quitEvent(String eventId) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUid = ""; if (fUser != null) myUid = fUser.getUid();
-        if (!TextUtils.isEmpty(eventId))
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId))
             FirebaseActions.quitEvent(myUid, eventId);
     }
 
     @Override
     public void quitEvent(String userId, String eventId) {
-        if (!TextUtils.isEmpty(eventId))
+        if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(eventId))
             FirebaseActions.quitEvent(userId, eventId);
+    }
+
+    @Override
+    public void deleteSimulatedUser(String simulatedUserId, String eventId) {
+        if (!TextUtils.isEmpty(simulatedUserId) && !TextUtils.isEmpty(eventId))
+            FirebaseActions.deleteSimulatedParticipant(simulatedUserId, eventId);
+
     }
 
     @Override

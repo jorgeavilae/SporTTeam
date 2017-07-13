@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract.AlarmEntry;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract.JoinQueryEntries;
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract.SimulatedParticipantEntry;
 
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.CONTENT_AUTHORITY;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.EventEntry;
@@ -33,6 +34,7 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVE
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENT_INVITATIONS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENT_INVITATIONS_WITH_EVENT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENT_INVITATIONS_WITH_USER;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENT_SIMULATED_PARTICIPANT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FIELDS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS_REQUESTS;
@@ -49,6 +51,7 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EV
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENTS_PARTICIPATION;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENTS_REQUESTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENT_INVITATIONS;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENT_SIMULATED_PARTICIPANT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_FIELD;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_FRIENDS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_FRIENDS_REQUESTS;
@@ -63,6 +66,7 @@ public class SportteamProvider extends ContentProvider {
     public static final int CODE_USER_SPORT = 110;
     public static final int CODE_FIELDS = 200;
     public static final int CODE_EVENTS = 300;
+    public static final int CODE_SIMULATED_PARTICIPANTS = 310;
     public static final int CODE_ALARMS = 400;
     public static final int CODE_FRIEND_REQUEST = 500;
     public static final int CODE_FRIEND_REQUEST_WITH_USER = 510;
@@ -100,6 +104,8 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, PATH_FIELDS, CODE_FIELDS);
         // This URI is content://com.usal.jorgeav.sportapp/events/
         matcher.addURI(authority, PATH_EVENTS, CODE_EVENTS);
+        // This URI is content://com.usal.jorgeav.sportapp/eventSimulatedParticipant/
+        matcher.addURI(authority, PATH_EVENT_SIMULATED_PARTICIPANT, CODE_SIMULATED_PARTICIPANTS);
         // This URI is content://com.usal.jorgeav.sportapp/events/
         matcher.addURI(authority, PATH_ALARMS, CODE_ALARMS);
         // This URI is content://com.usal.jorgeav.sportapp/friendRequests/
@@ -177,6 +183,12 @@ public class SportteamProvider extends ContentProvider {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
                 return rowsInserted;
+            case CODE_SIMULATED_PARTICIPANTS:
+                rowsInserted = bulkInsert(uri, values, db, TABLE_EVENT_SIMULATED_PARTICIPANT);
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return rowsInserted;
             case CODE_FRIEND_REQUEST:
                 rowsInserted = bulkInsert(uri, values, db, TABLE_FRIENDS_REQUESTS);
                 if (rowsInserted > 0) {
@@ -234,9 +246,9 @@ public class SportteamProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        int count = 0;
+        int count;
         switch (sUriMatcher.match(uri)) {
             case CODE_USER_SPORT:
                 count = db.delete(TABLE_USER_SPORTS, selection, selectionArgs);
@@ -246,6 +258,9 @@ public class SportteamProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
+                break;
+            case CODE_SIMULATED_PARTICIPANTS:
+                count = db.delete(TABLE_EVENT_SIMULATED_PARTICIPANT, selection, selectionArgs);
                 break;
             case CODE_ALARMS:
                 count = db.delete(TABLE_ALARM, selection, selectionArgs);
@@ -310,6 +325,10 @@ public class SportteamProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
+                break;
+            case CODE_SIMULATED_PARTICIPANTS:
+                _id = db.insert(TABLE_EVENT_SIMULATED_PARTICIPANT, null, values);
+                if ( _id > 0 ) returnUri = SimulatedParticipantEntry.buildSimulatedParticipantUriWith(_id);
                 break;
             case CODE_FIELDS:
                 _id = db.insert(TABLE_FIELD, null, values);
@@ -414,6 +433,16 @@ public class SportteamProvider extends ContentProvider {
             case CODE_USER_SPORT:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         TABLE_USER_SPORTS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_SIMULATED_PARTICIPANTS:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        TABLE_EVENT_SIMULATED_PARTICIPANT,
                         projection,
                         selection,
                         selectionArgs,

@@ -150,6 +150,7 @@ public class BaseActivity extends AppCompatActivity
         FirebaseAuth.getInstance().signOut();
         SportteamDBHelper db = new SportteamDBHelper(this);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT_SIMULATED_PARTICIPANT);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_ALARM);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER);

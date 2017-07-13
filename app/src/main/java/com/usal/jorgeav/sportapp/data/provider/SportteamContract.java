@@ -343,6 +343,62 @@ public final class SportteamContract {
 
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_EVENT_SIMULATED_PARTICIPANT = "eventSimulatedParticipant";
+    /* Used internally as the name of the simulated participant table. */
+    public static final String TABLE_EVENT_SIMULATED_PARTICIPANT = "eventSimulatedParticipant";
+    /* Inner class that defines the table contents of the simulated participant table
+     * This table store a row for every simulated participant in event in the event table */
+    public static final class SimulatedParticipantEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the eventSimulatedParticipant table from the content provider */
+        public static final Uri CONTENT_SIMULATED_PARTICIPANT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_EVENT_SIMULATED_PARTICIPANT)
+                .build();
+
+        /* Column names */
+        public static final String EVENT_ID = "eventId";
+        public static final String SIMULATED_USER_ID = "simulatedUserId";
+        public static final String ALIAS = "alias";
+        public static final String PROFILE_PICTURE = "picture";
+        public static final String AGE = "age";
+        public static final String OWNER = "owner";
+
+        /* Column names with table prefix*/
+        public static final String EVENT_ID_TABLE_PREFIX = TABLE_EVENT_SIMULATED_PARTICIPANT + "." + EVENT_ID;
+        public static final String SIMULATED_USER_ID_TABLE_PREFIX = TABLE_EVENT_SIMULATED_PARTICIPANT + "." + SIMULATED_USER_ID;
+        public static final String ALIAS_TABLE_PREFIX = TABLE_EVENT_SIMULATED_PARTICIPANT + "." + ALIAS;
+        public static final String PROFILE_PICTURE_TABLE_PREFIX = TABLE_EVENT_SIMULATED_PARTICIPANT + "." + PROFILE_PICTURE;
+        public static final String AGE_TABLE_PREFIX = TABLE_EVENT_SIMULATED_PARTICIPANT + "." + AGE;
+        public static final String OWNER_TABLE_PREFIX = TABLE_EVENT_SIMULATED_PARTICIPANT + "." + OWNER;
+
+        /* All column projection */
+        public static final String[] SIMULATED_PARTICIPANTS_COLUMNS = {
+                TABLE_EVENT_SIMULATED_PARTICIPANT + "." + SimulatedParticipantEntry._ID,
+                EVENT_ID_TABLE_PREFIX,
+                SIMULATED_USER_ID_TABLE_PREFIX,
+                ALIAS_TABLE_PREFIX,
+                PROFILE_PICTURE_TABLE_PREFIX,
+                AGE_TABLE_PREFIX,
+                OWNER_TABLE_PREFIX
+        };
+
+        /* Column indexes */
+        public static final int COLUMN_ID = 0;
+        public static final int COLUMN_EVENT_ID = 1;
+        public static final int COLUMN_SIMULATED_USER_ID = 2;
+        public static final int COLUMN_ALIAS = 3;
+        public static final int COLUMN_PROFILE_PICTURE = 4;
+        public static final int COLUMN_AGE = 5;
+        public static final int COLUMN_OWNER = 6;
+
+        /* URI for one eventSimulatedParticipant */
+        public static Uri buildSimulatedParticipantUriWith(long id) {
+            return ContentUris.withAppendedId(CONTENT_SIMULATED_PARTICIPANT_URI, id);
+        }
+    }
+
+
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_FRIENDS_REQUESTS = "friendRequests";
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_FRIENDS_REQUESTS_WITH_USER = "friendRequests_user";
