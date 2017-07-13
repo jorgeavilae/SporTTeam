@@ -11,6 +11,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -674,14 +675,14 @@ public class FirebaseSync {
         }
     }
 
-    public static void loadMyNotifications() {
+    public static void loadMyNotifications(ValueEventListener listener) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS);
 
-        myUserRef.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+        ExecutorValueEventListener defaultListener = new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
@@ -728,7 +729,10 @@ public class FirebaseSync {
             public void onCancelledExecutor(DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        if (listener == null) listener = defaultListener;
+        myUserRef.addListenerForSingleValueEvent(listener);
         Log.d(TAG, "loadMyNotifications");
     }
 
@@ -989,7 +993,6 @@ public class FirebaseSync {
                         new String[]{eventId});
 
         for (Map.Entry<String, SimulatedUser> entry : simulatedParticipants.entrySet()) {
-            Log.d(TAG, "loadSimulatedParticipants: "+entry.getValue());
             ContentValues cv = new ContentValues();
             cv.put(SportteamContract.SimulatedParticipantEntry.EVENT_ID, eventId);
             cv.put(SportteamContract.SimulatedParticipantEntry.SIMULATED_USER_ID, entry.getKey());

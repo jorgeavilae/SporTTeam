@@ -110,4 +110,17 @@ public class MyNotification {
         result.put(FirebaseDBContract.Notification.DATE, date);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "MyNotification{" +
+                "notification_type=" + notification_type +
+                ", checked=" + checked +
+                ", title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                ", extra_data='" + extra_data + '\'' +
+                ", data_type=" + data_type +
+                ", date=" + date +
+                '}';
+    }
 }

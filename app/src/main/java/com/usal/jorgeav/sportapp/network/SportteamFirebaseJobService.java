@@ -24,7 +24,7 @@ public class SportteamFirebaseJobService extends JobService {
      */
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        FirebaseSync.loadMyNotifications();
+        FirebaseSync.loadMyNotifications(null);
         /* Avisar al usuario cuando:
          *  - Recibe peticion de amistad - uid sender + "friends_requests_sent"             UID sender
          *  - Aceptan peticion de amistad - uid receiver + "friends"                        UID receiver
