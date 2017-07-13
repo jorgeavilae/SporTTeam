@@ -524,7 +524,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         String myUid = ""; if (fUser != null) myUid = fUser.getUid();
         if (TextUtils.isEmpty(myUid)) return;
 
-        if (myUid.equals(mOwnerId)) {
+        if (myUid.equals(mOwnerId) && !uid.equals(mOwnerId)) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
             builder.setMessage("Quieres expulsarlo del evento?")
                     .setPositiveButton("Si", new DialogInterface.OnClickListener() {
