@@ -2,7 +2,6 @@ package com.usal.jorgeav.sportapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +66,6 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
     public void replaceData(HashMap<String, MyNotification> notifications) {
         setDataset(notifications);
         notifyDataSetChanged();
-        Log.d(TAG, "replaceData: size "+(mDataset!=null?mDataset.size():"null"));
     }
 
     public void setDataset(Map<String, MyNotification> mDataset) {
@@ -100,11 +98,11 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
             int position = getAdapterPosition();
             Map.Entry<String, MyNotification> entry = getEntry(position);
             if (entry != null)
-                mClickListener.onMyNotificationClick(entry.getValue());
+                mClickListener.onMyNotificationClick(entry.getKey(), entry.getValue());
         }
     }
 
     public interface OnMyNotificationItemClickListener {
-        void onMyNotificationClick(MyNotification notification);
+        void onMyNotificationClick(String key, MyNotification notification);
     }
 }

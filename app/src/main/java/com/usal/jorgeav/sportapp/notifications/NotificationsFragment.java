@@ -1,11 +1,14 @@
 package com.usal.jorgeav.sportapp.notifications;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,10 +17,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.MyNotificationsAdapter;
+import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.data.MyNotification;
+import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
 import java.util.HashMap;
 
@@ -65,7 +74,7 @@ public class NotificationsFragment extends BaseFragment implements Notifications
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_clear_notifications) {
             Log.d(TAG, "onOptionsItemSelected: Clear Notifications");
-//
+            mPresenter.deleteAllNotifications();
             return true;
         }
         return false;
@@ -104,14 +113,11 @@ public class NotificationsFragment extends BaseFragment implements Notifications
 
     @Override
     public void showNotifications(HashMap<String, MyNotification> notifications) {
-        Log.d(TAG, "showNotifications: "+notifications);
         myNotificationsAdapter.replaceData(notifications);
         if (notifications != null && notifications.size() > 0) {
-            Log.d(TAG, "showNotifications: show");
             notificationsRecyclerList.setVisibility(View.VISIBLE);
             notificationsPlaceholder.setVisibility(View.INVISIBLE);
         } else {
-            Log.d(TAG, "showNotifications: placeholder");
             notificationsRecyclerList.setVisibility(View.INVISIBLE);
             notificationsPlaceholder.setVisibility(View.VISIBLE);
         }
@@ -119,7 +125,44 @@ public class NotificationsFragment extends BaseFragment implements Notifications
     }
 
     @Override
-    public void onMyNotificationClick(MyNotification notification) {
-        Log.d(TAG, "onMyNotificationClick: "+notification);
+    public void onMyNotificationClick(final String key, final MyNotification notification) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+        if (TextUtils.isEmpty(myUid)) return;
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+            builder.setMessage("Borrar esta notification?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            mPresenter.deleteNotification(key);
+                            mPresenter.loadNotifications();
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            @FirebaseDBContract.NotificationDataTypes int type = notification.getData_type();
+                            switch (type) {
+                                case FirebaseDBContract.NOTIFICATION_TYPE_NONE:
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_USER:
+                                    mFragmentManagementListener.initFragment(
+                                            ProfileFragment.newInstance(notification.getExtra_data()), true);
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
+                                    mFragmentManagementListener.initFragment(
+                                            DetailEventFragment.newInstance(notification.getExtra_data()), true);
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
+                                    mFragmentManagementListener.initFragment(
+                                            DetailAlarmFragment.newInstance(notification.getExtra_data()), true);
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_ERROR:
+                                    break;
+                            }
+                        }
+                    });
+            builder.create().show();
     }
 }

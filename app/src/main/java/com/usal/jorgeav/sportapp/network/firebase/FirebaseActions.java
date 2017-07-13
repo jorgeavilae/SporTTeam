@@ -959,6 +959,16 @@ public class FirebaseActions {
         FirebaseDatabase.getInstance().getReferenceFromUrl(ref)
                 .child(FirebaseDBContract.Notification.CHECKED).setValue(true);
     }
+    public static void deleteNotification(String myUserID, String notificationId) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
+                .child(notificationId).removeValue();
+    }
+    public static void deleteAllNotifications(String myUserID) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
+                .removeValue();
+    }
 
     public static void checkAlarmsForNotifications() {
         List<Alarm> alarms = Utiles.getAllAlarms(MyApplication.getAppContext());
@@ -1105,4 +1115,5 @@ public class FirebaseActions {
             }
         });
     }
+
 }

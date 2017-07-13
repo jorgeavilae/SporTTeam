@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.network.firebase;
 
 import android.content.ContentValues;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +46,8 @@ public class FirebaseSync {
 
             // Load fields from user city
             loadFieldsFromCity(Utiles.getCurrentCity(MyApplication.getAppContext(), myUserID));
+            // Load events from user city
+            loadEventsFromCity(Utiles.getCurrentCity(MyApplication.getAppContext(), myUserID));
 
             // Load friends list and user data
             loadUsersFromFriends();
@@ -678,6 +681,8 @@ public class FirebaseSync {
     public static void loadMyNotifications(ValueEventListener listener) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        if (TextUtils.isEmpty(myUserID)) return;
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS);

@@ -213,6 +213,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
             eventsCoincidenceList.setVisibility(View.VISIBLE);
             eventsCoincidencePlaceholder.setVisibility(View.INVISIBLE);
         } else {
+            // TODO: 13/07/2017 borrar notification de esta alarma si las hubiere o hubiese
             eventsCoincidenceList.setVisibility(View.INVISIBLE);
             eventsCoincidencePlaceholder.setVisibility(View.VISIBLE);
         }

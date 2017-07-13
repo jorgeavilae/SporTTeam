@@ -1,5 +1,9 @@
 package com.usal.jorgeav.sportapp.notifications;
 
+import android.text.TextUtils;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -7,6 +11,7 @@ import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -75,5 +80,24 @@ public class NotificationsPresenter implements NotificationsContract.Presenter {
 
             }
         });
+    }
+
+    @Override
+    public void deleteNotification(String key) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        if (TextUtils.isEmpty(myUserID)) return;
+
+        FirebaseActions.deleteNotification(myUserID, key);
+    }
+
+    @Override
+    public void deleteAllNotifications() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        if (TextUtils.isEmpty(myUserID)) return;
+
+        FirebaseActions.deleteAllNotifications(myUserID);
+
     }
 }
