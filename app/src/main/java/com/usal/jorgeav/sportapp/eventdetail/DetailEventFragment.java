@@ -43,12 +43,15 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailEventFragment extends BaseFragment implements DetailEventContract.View, UsersAdapter.OnUserItemClickListener {
+public class DetailEventFragment extends BaseFragment implements DetailEventContract.View,
+        UsersAdapter.OnUserItemClickListener,
+        SimulatedUsersAdapter.OnSimulatedUserItemClickListener {
     private static final String TAG = DetailEventFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
-    private static String mEventId = "";
-    private static String mOwnerId = "";
+    private String mEventId = "";
+    private String mOwnerId = "";
+    private boolean isFull = false;
     @DetailEventPresenter.EventRelationType int mRelation;
     private DetailEventContract.Presenter mPresenter;
 
@@ -148,27 +151,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         eventParticipantsList.setHasFixedSize(true);
         eventParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
 
-        SimulatedUsersAdapter.OnSimulatedUserItemClickListener listener = new SimulatedUsersAdapter.OnSimulatedUserItemClickListener() {
-            @Override
-            public void onUserClick(String ownerId, final String simulatedUserId) {
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                String myUid = ""; if (fUser != null) myUid = fUser.getUid();
-                if (TextUtils.isEmpty(myUid)) return;
-
-                if (myUid.equals(ownerId)) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                    builder.setMessage("Quieres borrar este participante simulado?")
-                            .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    mPresenter.deleteSimulatedUser(simulatedUserId, mEventId);
-                                }
-                            })
-                            .setNegativeButton("No", null);
-                    builder.create().show();
-                }
-            }
-        };
-        simulatedUsersAdapter = new SimulatedUsersAdapter(null, listener);
+        simulatedUsersAdapter = new SimulatedUsersAdapter(null, this);
         eventSimulatedParticipantsList.setAdapter(simulatedUsersAdapter);
         eventSimulatedParticipantsList.setHasFixedSize(true);
         eventSimulatedParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
@@ -195,15 +178,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         }
                     }
                 });
-                buttonSendInvitation.setVisibility(View.VISIBLE);
-                buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //DONE ver lista de amigos para enviarles invitaciones
-                        Fragment fragment = InviteUserFragment.newInstance(mEventId);
-                        mFragmentManagementListener.initFragment(fragment, true);
-                    }
-                });
                 buttonUnansweredInvitations.setVisibility(View.VISIBLE);
                 buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -215,35 +189,54 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         }
                     }
                 });
+                buttonSendInvitation.setVisibility(View.VISIBLE);
                 buttonSimulateParticipant.setVisibility(View.VISIBLE);
-                buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //DONE añadir participante que no es usuario de la app
-                        if(mEventId != null
-                                && getActivity() instanceof EventsActivity) { //Necessary for photo picker
-                            Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
+                if (!isFull) {
+                    buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //DONE ver lista de amigos para enviarles invitaciones
+                            Fragment fragment = InviteUserFragment.newInstance(mEventId);
                             mFragmentManagementListener.initFragment(fragment, true);
-                        } else
-                            Log.e(TAG, "uiSetupForEventRelation: buttonSimulateParticipant: onClick: "
-                                    + "eventId "+mEventId+ "\ngetActivity is EventsActivity? "
-                            + (getActivity() instanceof EventsActivity));
-                    }
-                });
+                        }
+                    });
+                    buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //DONE añadir participante que no es usuario de la app
+                            if (mEventId != null
+                                    && getActivity() instanceof EventsActivity) { //Necessary for photo picker
+                                Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
+                                mFragmentManagementListener.initFragment(fragment, true);
+                            } else
+                                Log.e(TAG, "uiSetupForEventRelation: buttonSimulateParticipant: onClick: "
+                                        + "eventId " + mEventId + "\ngetActivity is EventsActivity? "
+                                        + (getActivity() instanceof EventsActivity));
+                        }
+                    });
+                } else {
+                    buttonSendInvitation.setEnabled(false);
+                    buttonSimulateParticipant.setEnabled(false);
+                }
                 break;
             case DetailEventPresenter.RELATION_TYPE_NONE:
                 if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Enviar peticion de entrada");
-                buttonSendRequest.setEnabled(true);
-                buttonSendRequest.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                if (!isFull) {
+                    buttonSendRequest.setEnabled(true);
+                    buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
                         /*Enviar peticion de entrada*/
-                        mPresenter.sendEventRequest(mEventId);
-                    }
-                });
+                            mPresenter.sendEventRequest(mEventId);
+                        }
+                    });
+                } else {
+                    buttonSendRequest.setEnabled(false);
+                }
                 buttonSimulateParticipant.setVisibility(View.INVISIBLE);
+                buttonUserRequests.setVisibility(View.INVISIBLE);
                 buttonSendInvitation.setVisibility(View.INVISIBLE);
                 buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
@@ -268,6 +261,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                     }
                 });
                 buttonSimulateParticipant.setVisibility(View.INVISIBLE);
+                buttonUserRequests.setVisibility(View.INVISIBLE);
                 buttonSendInvitation.setVisibility(View.INVISIBLE);
                 buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
@@ -275,28 +269,33 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Contestar invitacion");
-                buttonSendRequest.setEnabled(true);
-                buttonSendRequest.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                if (!isFull) {
+                    buttonSendRequest.setEnabled(true);
+                    buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
                         /*Contestar invitacion*/
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                        builder.setMessage("Quieres asistir a este evento?")
-                                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        mPresenter.acceptEventInvitation(mEventId, mPresenter.getEventInvitation().getSender());
-                                    }
-                                })
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        mPresenter.declineEventInvitation(mEventId, mPresenter.getEventInvitation().getSender());
-                                    }
-                                });
-                        builder.create().show();
-                    }
-                });
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                            builder.setMessage("Quieres asistir a este evento?")
+                                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            mPresenter.acceptEventInvitation(mEventId, mPresenter.getEventInvitation().getSender());
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            mPresenter.declineEventInvitation(mEventId, mPresenter.getEventInvitation().getSender());
+                                        }
+                                    });
+                            builder.create().show();
+                        }
+                    });
+                } else {
+                    buttonSendRequest.setEnabled(false);
+                }
                 buttonSimulateParticipant.setVisibility(View.INVISIBLE);
+                buttonUserRequests.setVisibility(View.INVISIBLE);
                 buttonSendInvitation.setVisibility(View.INVISIBLE);
                 buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
@@ -320,15 +319,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         builder.create().show();
                     }
                 });
-                buttonSendInvitation.setVisibility(View.VISIBLE);
-                buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //DONE ver lista de amigos para enviarles invitaciones
-                        Fragment fragment = InviteUserFragment.newInstance(mEventId);
-                        mFragmentManagementListener.initFragment(fragment, true);
-                    }
-                });
                 buttonUnansweredInvitations.setVisibility(View.VISIBLE);
                 buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -340,12 +330,43 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         }
                     }
                 });
+                buttonSendInvitation.setVisibility(View.VISIBLE);
+                buttonSimulateParticipant.setVisibility(View.VISIBLE);
+                if (!isFull) {
+                    buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //DONE ver lista de amigos para enviarles invitaciones
+                            Fragment fragment = InviteUserFragment.newInstance(mEventId);
+                            mFragmentManagementListener.initFragment(fragment, true);
+                        }
+                    });
+                    buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //DONE añadir participante que no es usuario de la app
+                            if (mEventId != null
+                                    && getActivity() instanceof EventsActivity) { //Necessary for photo picker
+                                Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
+                                mFragmentManagementListener.initFragment(fragment, true);
+                            } else
+                                Log.e(TAG, "uiSetupForEventRelation: buttonSimulateParticipant: onClick: "
+                                        + "eventId " + mEventId + "\ngetActivity is EventsActivity? "
+                                        + (getActivity() instanceof EventsActivity));
+                        }
+                    });
+                } else {
+                    buttonSendInvitation.setEnabled(false);
+                    buttonSimulateParticipant.setEnabled(false);
+                }
                 break;
             case DetailEventPresenter.RELATION_TYPE_BLOCKED:
                 if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("No puedes asistir");
                 buttonSendRequest.setEnabled(false);
+                buttonSimulateParticipant.setVisibility(View.INVISIBLE);
+                buttonUserRequests.setVisibility(View.INVISIBLE);
                 buttonSendInvitation.setVisibility(View.INVISIBLE);
                 buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
@@ -354,6 +375,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Error");
                 buttonSendRequest.setEnabled(false);
+                buttonSimulateParticipant.setVisibility(View.INVISIBLE);
+                buttonUserRequests.setVisibility(View.INVISIBLE);
                 buttonSendInvitation.setVisibility(View.INVISIBLE);
                 buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
@@ -437,6 +460,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 buttonSendRequest.setEnabled(false);
             ((BaseActivity) getActivity()).showContent();
             this.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));
+            isFull = emptyPlayers <= 0;
         }
     }
 
@@ -519,6 +543,25 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         } else {
             Fragment newFragment = ProfileFragment.newInstance(uid);
             mFragmentManagementListener.initFragment(newFragment, true);
+        }
+    }
+
+    @Override
+    public void onSimulatedUserClick(String ownerId, final String simulatedUserId) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+        if (TextUtils.isEmpty(myUid)) return;
+
+        if (myUid.equals(ownerId) || myUid.equals(mOwnerId)) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+            builder.setMessage("Quieres borrar este participante simulado?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            mPresenter.deleteSimulatedUser(simulatedUserId, mEventId);
+                        }
+                    })
+                    .setNegativeButton("No", null);
+            builder.create().show();
         }
     }
 }

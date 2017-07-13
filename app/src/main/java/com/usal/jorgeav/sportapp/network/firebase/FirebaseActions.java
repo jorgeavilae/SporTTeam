@@ -1052,7 +1052,7 @@ public class FirebaseActions {
                     SimulatedUser su = new SimulatedUser(name, photo, (long)age, finalMyUserID);
                     e.addToSimulatedParticipants(simulatedParticipantKey, su);
                     if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
-                }
+                } // TODO: 13/07/2017 else: avisar al usuario de que no puede entrar nadie mas
 
                 mutableData.setValue(e);
                 return Transaction.success(mutableData);

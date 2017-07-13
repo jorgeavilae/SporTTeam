@@ -90,12 +90,12 @@ public class SimulatedUsersAdapter extends RecyclerView.Adapter<SimulatedUsersAd
             if (mDataset.moveToPosition(position)) {
                 String id = mDataset.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_SIMULATED_USER_ID);
                 String owner = mDataset.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_OWNER);
-                mClickListener.onUserClick(owner, id);
+                mClickListener.onSimulatedUserClick(owner, id);
             }
         }
     }
 
     public interface OnSimulatedUserItemClickListener {
-        void onUserClick(String ownerId, String simulatedUserId);
+        void onSimulatedUserClick(String ownerId, String simulatedUserId);
     }
 }
