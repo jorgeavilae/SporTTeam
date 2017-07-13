@@ -289,10 +289,21 @@ public class FirebaseSync {
                         SportteamContract.EventEntry.EVENT_ID + " = ? ",
                         new String[]{eventId});
                 MyApplication.getAppContext().getContentResolver().delete(
+                        SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI,
+                        SportteamContract.SimulatedParticipantEntry.EVENT_ID + " = ? ",
+                        new String[]{eventId});
+                MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
                         SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
                         new String[]{eventId});
-                // TODO: 13/07/2017 Borrar en invitation y en requests tables???
+                MyApplication.getAppContext().getContentResolver().delete(
+                        SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
+                        SportteamContract.EventsInvitationEntry.EVENT_ID + " = ? ",
+                        new String[]{eventId});
+                MyApplication.getAppContext().getContentResolver().delete(
+                        SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,
+                        SportteamContract.EventRequestsEntry.EVENT_ID + " = ? ",
+                        new String[]{eventId});
 
             }
 
@@ -355,7 +366,6 @@ public class FirebaseSync {
                         SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
                                 + SportteamContract.EventsParticipationEntry.USER_ID + " = ? ",
                         new String[]{eventId, myUserID});
-                // TODO: 13/07/2017 borrar invitation table que he enviado yo?
 
             }
 
@@ -393,7 +403,7 @@ public class FirebaseSync {
                         return;
                     }
 
-                    // Load receiver
+                    // Load receiver. Necessary cause it could be a sender's friend not mine.
                     loadAProfile(invitation.getReceiver());
 
                     // Load sender. It could be the current user. It could be other user, in such
@@ -459,8 +469,7 @@ public class FirebaseSync {
                     // Load Event
                     loadAnEvent(invitation.getEvent());
 
-                    // Load User who send me this invitation
-                    loadAProfile(invitation.getSender());
+                    // Load User who send me this invitation. Load in loadFriends
 
                     ContentValues cvData = UtilesDataSnapshot.invitationToContentValues(invitation);
                     MyApplication.getAppContext().getContentResolver()
