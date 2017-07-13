@@ -4,7 +4,6 @@ package com.usal.jorgeav.sportapp.notifications;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,25 +16,25 @@ import android.view.ViewGroup;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.FieldsAdapter;
+import com.usal.jorgeav.sportapp.adapters.MyNotificationsAdapter;
 import com.usal.jorgeav.sportapp.data.MyNotification;
-import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NotificationsFragment extends BaseFragment implements NotificationsContract.View, FieldsAdapter.OnFieldItemClickListener {
+public class NotificationsFragment extends BaseFragment implements NotificationsContract.View,
+        MyNotificationsAdapter.OnMyNotificationItemClickListener {
     private static final String TAG = NotificationsFragment.class.getSimpleName();
 
     NotificationsContract.Presenter mPresenter;
-    FieldsAdapter mFieldsRecyclerAdapter;
+    MyNotificationsAdapter myNotificationsAdapter;
 
-    @BindView(R.id.fields_list)
-    RecyclerView fieldsRecyclerList;
-    @BindView(R.id.fields_placeholder)
-    ConstraintLayout fieldsPlaceholder;
+    @BindView(R.id.recycler_list)
+    RecyclerView notificationsRecyclerList;
+    @BindView(R.id.list_placeholder)
+    ConstraintLayout notificationsPlaceholder;
 
     public NotificationsFragment() {
         // Required empty public constructor
@@ -51,7 +50,7 @@ public class NotificationsFragment extends BaseFragment implements Notifications
         setHasOptionsMenu(true);
 
         mPresenter = new NotificationsPresenter(this);
-//        mFieldsRecyclerAdapter = new FieldsAdapter(null, this);
+        myNotificationsAdapter = new MyNotificationsAdapter(null, this);
     }
 
     @Override
@@ -75,12 +74,12 @@ public class NotificationsFragment extends BaseFragment implements Notifications
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_fields, container, false);
+        View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
 
-        fieldsRecyclerList.setAdapter(mFieldsRecyclerAdapter);
-        fieldsRecyclerList.setHasFixedSize(true);
-        fieldsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        notificationsRecyclerList.setAdapter(myNotificationsAdapter);
+        notificationsRecyclerList.setHasFixedSize(true);
+        notificationsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         return root;
     }
 
@@ -100,26 +99,27 @@ public class NotificationsFragment extends BaseFragment implements Notifications
     @Override
     public void onPause() {
         super.onPause();
-        mFieldsRecyclerAdapter.replaceData(null);
+        myNotificationsAdapter.replaceData(null);
     }
 
     @Override
-    public void showNotifications(ArrayList<MyNotification> notifications) {
+    public void showNotifications(HashMap<String, MyNotification> notifications) {
         Log.d(TAG, "showNotifications: "+notifications);
-//        mFieldsRecyclerAdapter.replaceData(cursor);
-//        if (cursor != null && cursor.getCount() > 0) {
-//            fieldsRecyclerList.setVisibility(View.VISIBLE);
-//            fieldsPlaceholder.setVisibility(View.INVISIBLE);
-//        } else {
-//            fieldsRecyclerList.setVisibility(View.INVISIBLE);
-//            fieldsPlaceholder.setVisibility(View.VISIBLE);
-//        }
+        myNotificationsAdapter.replaceData(notifications);
+        if (notifications != null && notifications.size() > 0) {
+            Log.d(TAG, "showNotifications: show");
+            notificationsRecyclerList.setVisibility(View.VISIBLE);
+            notificationsPlaceholder.setVisibility(View.INVISIBLE);
+        } else {
+            Log.d(TAG, "showNotifications: placeholder");
+            notificationsRecyclerList.setVisibility(View.INVISIBLE);
+            notificationsPlaceholder.setVisibility(View.VISIBLE);
+        }
         mFragmentManagementListener.showContent();
     }
 
     @Override
-    public void onFieldClick(String fieldId, String sportId) {
-        Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
-        mFragmentManagementListener.initFragment(newFragment, true);
+    public void onMyNotificationClick(MyNotification notification) {
+        Log.d(TAG, "onMyNotificationClick: "+notification);
     }
 }
