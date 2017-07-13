@@ -534,6 +534,9 @@ public class FirebaseActions {
                 FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
                         .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).removeValue();
 
+                // TODO: 13/07/2017 borrar invitaciones al eventos enviadas por uid
+                // deleteInvitationToThisEvent(myUid, eventId, otherUid)
+
                 return Transaction.success(mutableData);
             }
 
