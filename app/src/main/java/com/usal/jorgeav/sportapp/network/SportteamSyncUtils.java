@@ -13,6 +13,8 @@ import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by Jorge Avila on 22/06/2017.
  */
@@ -26,10 +28,10 @@ public class SportteamSyncUtils {
      * writing out a bunch of multiplication ourselves and risk making a silly mistake.
      */
     private static final int SYNC_INTERVAL_HOURS = 3;
-//    private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS);
-//    private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / SYNC_INTERVAL_HOURS;
-    private static final int SYNC_INTERVAL_SECONDS = 5;
-    private static final int SYNC_FLEXTIME_SECONDS = 3;
+    private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS);
+    private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / SYNC_INTERVAL_HOURS;
+//    private static final int SYNC_INTERVAL_SECONDS = 5;
+//    private static final int SYNC_FLEXTIME_SECONDS = 3;
     // TODO: 06/07/2017  cambiar times
     // TODO: 06/07/2017
     // TODO: 06/07/2017

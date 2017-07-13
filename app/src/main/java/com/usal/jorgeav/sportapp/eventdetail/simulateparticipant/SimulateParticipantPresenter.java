@@ -2,7 +2,6 @@ package com.usal.jorgeav.sportapp.eventdetail.simulateparticipant;
 
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.UploadTask;
@@ -29,16 +28,15 @@ public class SimulateParticipantPresenter implements SimulateParticipantContract
 
     @Override
     public void addSimulatedParticipant(String eventId, String name, Uri photo, String age) {
-        if(eventId != null && !TextUtils.isEmpty(eventId) && TextUtils.isEmpty(name)
+        if(eventId != null && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(name)
                 && !TextUtils.isEmpty(age)) { //Validate arguments
             mEventId = eventId;
             mName = name;
             mAge = Integer.parseInt(age);
             if (photo != null)
                 storePhotoOnFirebase(photo);
-            else {
-                storeSimulatedParticipantInFirebase(null);
-            }
+            else
+                FirebaseActions.addSimulatedParticipant(mEventId, mName, null, mAge);
         }
         ((BaseActivity)mView.getActivityContext()).onBackPressed();
     }
@@ -49,17 +47,8 @@ public class SimulateParticipantPresenter implements SimulateParticipantContract
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // Handle successful uploads on complete
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                storeSimulatedParticipantInFirebase(downloadUrl);
+                FirebaseActions.addSimulatedParticipant(mEventId, mName, downloadUrl, mAge);
             }
         });
-    }
-
-    private void storeSimulatedParticipantInFirebase(Uri photoUriInFirebase) {
-
-        FirebaseActions.addSimulatedParticipant(mEventId, mName, photoUriInFirebase, mAge);
-        Log.d(TAG, "addSimulatedParticipant: eventId "+mEventId);
-        Log.d(TAG, "addSimulatedParticipant: name "+mName);
-        Log.d(TAG, "addSimulatedParticipant: photo "+photoUriInFirebase);
-        Log.d(TAG, "addSimulatedParticipant: age "+mAge);
     }
 }

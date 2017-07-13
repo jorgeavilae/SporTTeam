@@ -7,6 +7,7 @@ import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
+import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -67,7 +68,7 @@ public class UtilesDataSnapshot {
         Long total = dataNode.child(FirebaseDBContract.Event.TOTAL_PLAYERS).getValue(Long.class);
         Long empty = dataNode.child(FirebaseDBContract.Event.EMPTY_PLAYERS).getValue(Long.class);
 
-        return new Event(id,sport,field,name,city,date,owner,total.intValue(),empty.intValue(),new HashMap<String, Boolean>());
+        return new Event(id,sport,field,name,city,date,owner,total.intValue(),empty.intValue(),new HashMap<String, Boolean>(), new HashMap<String, SimulatedUser>());
     }
     public static ContentValues eventToContentValues (Event event) {
         ContentValues cv = new ContentValues();

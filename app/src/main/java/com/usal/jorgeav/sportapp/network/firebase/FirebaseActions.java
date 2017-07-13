@@ -28,6 +28,7 @@ import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
+import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -1026,9 +1027,14 @@ public class FirebaseActions {
         }).addOnSuccessListener(listener);
     }
 
-    public static void addSimulatedParticipant(final String eventId, final String name, Uri photoUriInFirebase, int age) {
+    public static void addSimulatedParticipant(final String eventId, final String name, final Uri photoUriInFirebase, final int age) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        if(TextUtils.isEmpty(myUserID)) return;
+        final String finalMyUserID = myUserID;
+
         //Add Assistant User to that Event
-        DatabaseReference eventRef = FirebaseDatabase.getInstance()
+        final DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
                 .child(eventId).child(FirebaseDBContract.DATA);
         eventRef.runTransaction(new Transaction.Handler() {
@@ -1038,10 +1044,13 @@ public class FirebaseActions {
                 if (e == null) return Transaction.success(mutableData);
                 e.setEvent_id(eventId);
 
+                String simulatedParticipantKey = eventRef
+                        .child(FirebaseDBContract.Event.PARTICIPANTS).push().getKey();
                 if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
-                    //// TODO: 12/07/2017 How to represent this fake user
-                    e.addToParticipants(name, true);
+                    String photo = photoUriInFirebase!=null?photoUriInFirebase.toString():null;
+                    SimulatedUser su = new SimulatedUser(name, photo, (long)age, finalMyUserID);
+                    e.addToSimulatedParticipants(simulatedParticipantKey, su);
                     if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
                 }
 
@@ -1053,6 +1062,10 @@ public class FirebaseActions {
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
+                if (b)
+                    Log.d(TAG, "addSimulatedParticipant: onComplete: Transaction completed");
+                else
+                    Log.e(TAG, "addSimulatedParticipant: onComplete: Transaction error "+databaseError);
             }
         });
     }

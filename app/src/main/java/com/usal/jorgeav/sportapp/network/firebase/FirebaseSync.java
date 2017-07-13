@@ -17,6 +17,7 @@ import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
+import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -291,6 +292,7 @@ public class FirebaseSync {
                         SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
                         SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
                         new String[]{eventId});
+                // TODO: 13/07/2017 Borrar en invitation y en requests tables???
 
             }
 
@@ -353,6 +355,7 @@ public class FirebaseSync {
                         SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
                                 + SportteamContract.EventsParticipationEntry.USER_ID + " = ? ",
                         new String[]{eventId, myUserID});
+                // TODO: 13/07/2017 borrar invitation table que he enviado yo?
 
             }
 
@@ -872,6 +875,10 @@ public class FirebaseSync {
                             // Load users participants with data
                             if (e.getParticipants() != null)
                                 loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+
+                            // Load simulated users participants with data
+                            if (e.getSimulated_participants() != null)
+                                loadUsersFromSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
                         }
                     }
 
@@ -903,6 +910,10 @@ public class FirebaseSync {
                             // Load users participants with data
                             if (e.getParticipants() != null)
                                 loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+
+                            // Load simulated users participants with data
+                            if (e.getSimulated_participants() != null)
+                                loadUsersFromSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
 
                             //Notify
                             UtilesNotification.createNotification(MyApplication.getAppContext(), notification, e);
@@ -962,6 +973,22 @@ public class FirebaseSync {
                     .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cv);
         }
     }
+    private static void loadUsersFromSimulatedParticipants(String eventId, Map<String, SimulatedUser> simulatedParticipants) {
+        MyApplication.getAppContext().getContentResolver()
+                .delete(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
+                        SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
+                        new String[]{eventId});
+
+        for (Map.Entry<String, SimulatedUser> entry : simulatedParticipants.entrySet()) {
+
+            ContentValues cv = new ContentValues();
+            cv.put(SportteamContract.EventsParticipationEntry.USER_ID, entry.getKey());
+            cv.put(SportteamContract.EventsParticipationEntry.EVENT_ID, eventId);
+            cv.put(SportteamContract.EventsParticipationEntry.PARTICIPATES, entry.getValue() ? 1 : 0);
+            MyApplication.getAppContext().getContentResolver()
+                    .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cv);
+        }
+    }
 
     public static void loadFieldsFromCity(String city) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -1002,12 +1029,13 @@ public class FirebaseSync {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 Event e = UtilesDataSnapshot.dataSnapshotToEvent(data);
+                                // TODO: 13/07/2017 comprobar que no soy owner ni participant antes de continuar
+                                // TODO: 13/07/2017 deberia cargar el perfil del owner y de los participants?
                                 ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                                 MyApplication.getAppContext().getContentResolver()
                                         .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
                                 loadAField(e.getField_id());
                             }
-                            // TODO: 16/06/2017 comparar evento con alarmas para que se muestren notificaciones
                             FirebaseActions.checkAlarmsForNotifications();
                         }
                     }

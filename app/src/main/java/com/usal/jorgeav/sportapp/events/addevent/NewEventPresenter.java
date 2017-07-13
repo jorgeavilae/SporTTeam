@@ -45,7 +45,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             Event event = new Event(
                     id, sport, field, name, city, dateMillis + timeMillis,
                     FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                    Integer.valueOf(total), Integer.valueOf(empty), participants);
+                    Integer.valueOf(total), Integer.valueOf(empty), participants, null); // TODO: 13/07/2017 simulatedParticipants se pierden
 
             Log.d(TAG, "addEvent: "+event);
             if(TextUtils.isEmpty(event.getEvent_id()))

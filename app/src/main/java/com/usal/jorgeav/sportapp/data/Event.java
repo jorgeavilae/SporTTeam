@@ -23,13 +23,15 @@ public class Event implements Parcelable {
     int total_players;
     int empty_players;
     HashMap<String, Boolean> participants;
+    HashMap<String, SimulatedUser> simulated_participants;
 
     public Event() {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
     public Event(String mId, String mSport, String mField, String mName, String mCity, Long mDate,
-                 String mOwner, int mTotalPlayers, int mEmptyPlayers, HashMap<String, Boolean> participants) {
+                 String mOwner, int mTotalPlayers, int mEmptyPlayers,
+                 HashMap<String, Boolean> participants, HashMap<String, SimulatedUser> simulated_participants) {
         this.event_id = mId;
         this.sport_id = mSport;
         this.field_id = mField;
@@ -40,6 +42,7 @@ public class Event implements Parcelable {
         this.total_players = mTotalPlayers;
         this.empty_players = mEmptyPlayers;
         this.participants = participants;
+        this.simulated_participants = simulated_participants;
     }
 
     public void setEvent_id(String event_id) {
@@ -90,6 +93,10 @@ public class Event implements Parcelable {
         return participants;
     }
 
+    public HashMap<String, SimulatedUser> getSimulated_participants() {
+        return simulated_participants;
+    }
+
     public void addToParticipants(String userId, Boolean participates) {
         if (this.participants == null) this.participants = new HashMap<String, Boolean>();
         this.participants.put(userId, participates);
@@ -98,6 +105,16 @@ public class Event implements Parcelable {
     public void deleteParticipant(String userId) {
         if (this.participants != null)
             this.participants.remove(userId);
+    }
+
+    public void addToSimulatedParticipants(String key, SimulatedUser participant) {
+        if (this.simulated_participants == null) this.simulated_participants = new HashMap<String, SimulatedUser>();
+        this.simulated_participants.put(key, participant);
+    }
+
+    public void deleteSimulatedParticipant(String key) {
+        if (this.simulated_participants != null)
+            this.simulated_participants.remove(key);
     }
 
     public Map<String, Object> toMap() {
@@ -119,6 +136,7 @@ public class Event implements Parcelable {
         result.put(FirebaseDBContract.Event.TOTAL_PLAYERS, this.total_players);
         result.put(FirebaseDBContract.Event.EMPTY_PLAYERS, this.empty_players);
         result.put(FirebaseDBContract.Event.PARTICIPANTS, this.participants);
+        result.put(FirebaseDBContract.Event.SIMULATED_PARTICIPANTS, this.simulated_participants);
         return result;
 
     }
@@ -207,6 +225,7 @@ public class Event implements Parcelable {
                 ", total_players=" + total_players +
                 ", empty_players=" + empty_players +
                 ", participants=" + (participants!=null?participants.toString():"null") +
+                ", simulated_participants=" + (simulated_participants!=null?simulated_participants.toString():"null") +
                 '}';
     }
 }

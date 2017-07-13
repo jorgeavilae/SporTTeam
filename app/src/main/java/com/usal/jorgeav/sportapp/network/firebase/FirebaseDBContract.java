@@ -44,6 +44,7 @@ public final class FirebaseDBContract {
         public static final String EMPTY_PLAYERS = "empty_players";
         public static final String OWNER = "owner";
         public static final String PARTICIPANTS = "participants";
+        public static final String SIMULATED_PARTICIPANTS = "simulated_participants";
         public static final String INVITATIONS = "invitations_sent";
         public static final String USER_REQUESTS = "user_requests";
     }
