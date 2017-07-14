@@ -30,6 +30,7 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
 
     private static final String INSTANCE_NEW_EVENT_FIELD = "INSTANCE_NEW_EVENT_FIELD";
     public String newEventFieldSelected = null;
+
     private static final String INSTANCE_NEW_EVENT_CITY = "INSTANCE_NEW_EVENT_CITY";
     public String newEventCitySelected = null;
 

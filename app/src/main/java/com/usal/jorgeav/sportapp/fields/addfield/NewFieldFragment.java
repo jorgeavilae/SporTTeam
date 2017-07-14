@@ -4,7 +4,6 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,12 +24,11 @@ import com.google.android.gms.location.places.Places;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
-import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -228,8 +226,9 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     @Override
     public void onStart() {
         super.onStart();
+        mNewFieldPresenter.loadNearbyFields(getLoaderManager(), getArguments());
         if (sInitialize) return;
-        mNewFieldPresenter.openField(getLoaderManager(), getArguments());
+//        mNewFieldPresenter.openField(getLoaderManager(), getArguments());
         sInitialize = true;
     }
 
@@ -251,64 +250,67 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     }
 
     @Override
-    public void showEventSport(String sport) {
-        if (sport != null && !TextUtils.isEmpty(sport))
-            newEventSport.setSelection(sportsAdapter.getPosition(sport));
-    }
-
-    @Override
-    public void showEventPlace(String place) {
+    public void retrieveFields(ArrayList<Field> dataList) {
 
     }
 
-    @Override
-    public void showEventName(String name) {
-        if (name != null && !TextUtils.isEmpty(name))
-        newEventName.setText(name);
-    }
-
-    @Override
-    public void showEventDate(long date) {
-        if (date > -1) {
-            newEventDate.setText(UtilesTime.millisToDateString(date));
-            newEventTime.setText(UtilesTime.millisToTimeString(date));
-        }
-    }
-
-    @Override
-    public void showEventCity(String city) {
-        if (city != null && !TextUtils.isEmpty(city)) {
-            newEventCity.setText(city);
-            ((EventsActivity) getActivity()).setCity(city);
-        }
-    }
-
-    @Override
-    public void showEventTotalPlayers(int totalPlayers) {
-        if (totalPlayers > -1)
-            newEventTotal.setText(String.format(Locale.getDefault(), "%d", totalPlayers));
-    }
-
-    @Override
-    public void showEventEmptyPlayers(int emptyPlayers) {
-        if (emptyPlayers > -1)
-            newEventEmpty.setText(String.format(Locale.getDefault(), "%d", emptyPlayers));
-    }
-
-    @Override
-    public void setParticipants(HashMap<String, Boolean> map) {
-        mParticipants = map;
-    }
+    //    @Override
+//    public void showEventSport(String sport) {
+//        if (sport != null && !TextUtils.isEmpty(sport))
+//            newEventSport.setSelection(sportsAdapter.getPosition(sport));
+//    }
+//
+//    @Override
+//    public void showEventPlace(String place) {
+//
+//    }
+//
+//    @Override
+//    public void showEventName(String name) {
+//        if (name != null && !TextUtils.isEmpty(name))
+//        newEventName.setText(name);
+//    }
+//
+//    @Override
+//    public void showEventDate(long date) {
+//        if (date > -1) {
+//            newEventDate.setText(UtilesTime.millisToDateString(date));
+//            newEventTime.setText(UtilesTime.millisToTimeString(date));
+//        }
+//    }
+//
+//    @Override
+//    public void showEventCity(String city) {
+//        if (city != null && !TextUtils.isEmpty(city)) {
+//            newEventCity.setText(city);
+//            ((EventsActivity) getActivity()).setCity(city);
+//        }
+//    }
+//
+//    @Override
+//    public void showEventTotalPlayers(int totalPlayers) {
+//        if (totalPlayers > -1)
+//            newEventTotal.setText(String.format(Locale.getDefault(), "%d", totalPlayers));
+//    }
+//
+//    @Override
+//    public void showEventEmptyPlayers(int emptyPlayers) {
+//        if (emptyPlayers > -1)
+//            newEventEmpty.setText(String.format(Locale.getDefault(), "%d", emptyPlayers));
+//    }
+//
+//    @Override
+//    public void setParticipants(HashMap<String, Boolean> map) {
+//        mParticipants = map;
+//    }
 
     @Override
     public void clearUI() {
-        newEventSport.setSelection(0);
-        newEventName.setText("");
-        newEventDate.setText("");
-        newEventTime.setText("");
-        newEventCity.setText("");
-        ((EventsActivity) getActivity()).setCity("");
-        newEventTotal.setText("");
-        newEventEmpty.setText("");
+        newFieldSport.setSelection(0);
+        newFieldAutocompleteAddress.setText("");
+        newFieldName.setText("");
+        newFieldOpenTime.setText("");
+        newFieldCloseTime.setText("");
+        newFieldRate.setRating(0f);
     }
 }
