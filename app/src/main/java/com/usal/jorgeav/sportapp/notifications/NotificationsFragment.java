@@ -148,15 +148,15 @@ public class NotificationsFragment extends BaseFragment implements Notifications
                                     break;
                                 case FirebaseDBContract.NOTIFICATION_TYPE_USER:
                                     mFragmentManagementListener.initFragment(
-                                            ProfileFragment.newInstance(notification.getExtra_data()), true);
+                                            ProfileFragment.newInstance(notification.getExtra_data_one()), true);
                                     break;
                                 case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
                                     mFragmentManagementListener.initFragment(
-                                            DetailEventFragment.newInstance(notification.getExtra_data()), true);
+                                            DetailEventFragment.newInstance(notification.getExtra_data_one()), true);
                                     break;
                                 case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
                                     mFragmentManagementListener.initFragment(
-                                            DetailAlarmFragment.newInstance(notification.getExtra_data()), true);
+                                            DetailAlarmFragment.newInstance(notification.getExtra_data_one()), true);
                                     break;
                                 case FirebaseDBContract.NOTIFICATION_TYPE_ERROR:
                                     break;

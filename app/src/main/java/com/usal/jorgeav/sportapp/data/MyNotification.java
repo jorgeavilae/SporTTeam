@@ -11,7 +11,8 @@ public class MyNotification {
     private Boolean checked;
     private String title;
     private String message;
-    private String extra_data;
+    private String extra_data_one;
+    private String extra_data_two;
     private Long data_type;
     private Long date;
     // TODO: 06/07/2017 necesita mas parametros, hay que ponerlos tambien en FirebaseActions.java
@@ -21,12 +22,13 @@ public class MyNotification {
         // Default constructor required for calls to DataSnapshot.getValue(MyNotification.class)
     }
 
-    public MyNotification(Long notification_type, Boolean checked, String title, String message, String extra_data, Long data_type, Long date) {
+    public MyNotification(Long notification_type, Boolean checked, String title, String message, String extra_data_one, String extra_data_two, Long data_type, Long date) {
         this.notification_type = notification_type;
         this.checked = checked;
         this.title = title;
         this.message = message;
-        this.extra_data = extra_data;
+        this.extra_data_one = extra_data_one;
+        this.extra_data_two = extra_data_two;
         this.data_type = data_type;
         this.date = date;
     }
@@ -73,8 +75,12 @@ public class MyNotification {
         return message;
     }
 
-    public String getExtra_data() {
-        return extra_data;
+    public String getExtra_data_one() {
+        return extra_data_one;
+    }
+
+    public String getExtra_data_two() {
+        return extra_data_two;
     }
 
     @FirebaseDBContract.NotificationDataTypes
@@ -105,7 +111,8 @@ public class MyNotification {
         result.put(FirebaseDBContract.Notification.CHECKED, checked);
         result.put(FirebaseDBContract.Notification.TITLE, title);
         result.put(FirebaseDBContract.Notification.MESSAGE, message);
-        result.put(FirebaseDBContract.Notification.EXTRA_DATA, extra_data);
+        result.put(FirebaseDBContract.Notification.EXTRA_DATA_ONE, extra_data_one);
+        result.put(FirebaseDBContract.Notification.EXTRA_DATA_TWO, extra_data_two);
         result.put(FirebaseDBContract.Notification.DATA_TYPE, data_type);
         result.put(FirebaseDBContract.Notification.DATE, date);
         return result;
@@ -118,7 +125,8 @@ public class MyNotification {
                 ", checked=" + checked +
                 ", title='" + title + '\'' +
                 ", message='" + message + '\'' +
-                ", extra_data='" + extra_data + '\'' +
+                ", extra_data_one='" + extra_data_one + '\'' +
+                ", extra_data_two='" + extra_data_two + '\'' +
                 ", data_type=" + data_type +
                 ", date=" + date +
                 '}';

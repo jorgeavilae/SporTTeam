@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.utils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.FirebaseApp;
@@ -110,7 +111,7 @@ public class Utiles {
         return result;
     }
 
-    public static User getUserFromContentProvider(String userId) {
+    public static User getUserFromContentProvider(@NonNull String userId) {
         User u = null;
         Cursor c = SportteamLoader.simpleQueryUserId(MyApplication.getAppContext(), userId);
         if (c != null) {
@@ -131,7 +132,7 @@ public class Utiles {
         return u;
     }
 
-    public static Event getEventFromContentProvider(String eventId) {
+    public static Event getEventFromContentProvider(@NonNull String eventId) {
         Event e = null;
         Cursor c = SportteamLoader.simpleQueryEventId(MyApplication.getAppContext(), eventId);
         if (c != null) {
@@ -155,7 +156,7 @@ public class Utiles {
         return e;
     }
 
-    public static Alarm getAlarmFromContentProvider(String alarmId) {
+    public static Alarm getAlarmFromContentProvider(@NonNull String alarmId) {
         Alarm a = null;
         Cursor c = SportteamLoader.simpleQueryAlarmId(MyApplication.getAppContext(), alarmId);
         if (c != null) {
@@ -189,11 +190,11 @@ public class Utiles {
         return null;
     }
 
-    public static boolean thereIsEventCoincidence(Alarm alarm, String myUserId) {
-        boolean result = false;
+    public static String thereIsEventCoincidence(Alarm alarm, String myUserId) {
+        String result = null;
         Cursor c = SportteamLoader.cursorAlarmCoincidence(MyApplication.getAppContext().getContentResolver(), alarm, myUserId);
         if (c != null) {
-            if (c.getCount() > 0) result = true;
+            if (c.getCount() > 0 && c.moveToFirst()) result = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
             c.close();
         }
         return result;

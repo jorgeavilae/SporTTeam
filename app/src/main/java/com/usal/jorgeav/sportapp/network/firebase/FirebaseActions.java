@@ -124,7 +124,7 @@ public class FirebaseActions {
             @FirebaseDBContract.NotificationDataTypes
             Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
             n = new MyNotification(notificationType, false, notificationTitle,
-                    notificationMessage, event.getEvent_id(), type, currentTime);
+                    notificationMessage, event.getEvent_id(), null, type, currentTime);
 
             //Set Event edited MyNotification in participant
             String notificationId = event.getEvent_id() + FirebaseDBContract.Event.OWNER;
@@ -181,7 +181,7 @@ public class FirebaseActions {
         @UtilesNotification.NotificationType
         Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_FRIEND_REQUEST_RECEIVED;
         MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                notificationMessage, myUid, type, currentTime);
+                notificationMessage, myUid, null, type, currentTime);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(userFriendRequestSent, currentTime);
@@ -251,7 +251,7 @@ public class FirebaseActions {
         @UtilesNotification.NotificationType
         Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_FRIEND_REQUEST_ACCEPTED;
         MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                notificationMessage, myUid, type, currentTime);
+                notificationMessage, myUid, null, type, currentTime);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(myUserFriends, currentTime);
@@ -345,7 +345,7 @@ public class FirebaseActions {
         @UtilesNotification.NotificationType
         Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_RECEIVED;
         MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                notificationMessage, eventId, type, currentTime);
+                notificationMessage, eventId, null, type, currentTime);
 
         // Updates
         Map<String, Object> childUpdates = new HashMap<>();
@@ -440,7 +440,7 @@ public class FirebaseActions {
                 @UtilesNotification.NotificationType
                 Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED;
                 MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                        notificationMessage, eventId, type, currentTime);
+                        notificationMessage, eventId, null, type, currentTime);
 
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
@@ -498,7 +498,7 @@ public class FirebaseActions {
         @UtilesNotification.NotificationType
         Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_DECLINED;
         MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                notificationMessage, eventId, type, currentTime);
+                notificationMessage, eventId, null, type, currentTime);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
@@ -576,7 +576,7 @@ public class FirebaseActions {
         @UtilesNotification.NotificationType
         Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_RECEIVED;
         MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                notificationMessage, eventId, type, currentTime);
+                notificationMessage, eventId, null, type, currentTime);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(userRequestsEventSent, currentTime);
@@ -651,7 +651,7 @@ public class FirebaseActions {
                 @UtilesNotification.NotificationType
                 Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_ACCEPTED;
                 MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                        notificationMessage, eventId, type, currentTime);
+                        notificationMessage, eventId, null, type, currentTime);
 
                 //Delete Event Request Sent in that User
                 String userEventRequestsSentEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
@@ -713,7 +713,7 @@ public class FirebaseActions {
         @UtilesNotification.NotificationType
         Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_REQUEST_DECLINED;
         MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                notificationMessage, eventId, type, currentTime);
+                notificationMessage, eventId, null, type, currentTime);
 
         //Delete Event Request Sent in that User
         String userRequestsSentEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
@@ -786,7 +786,7 @@ public class FirebaseActions {
         @FirebaseDBContract.NotificationDataTypes
         Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
         n = new MyNotification(notificationType, false, notificationTitle,
-                notificationMessage, event.getEvent_id(), type, currentTime);
+                notificationMessage, event.getEvent_id(), null, type, currentTime);
 
         //Set Event complete/incomplete MyNotification in participant
         String notificationId = event.getEvent_id() + FirebaseDBContract.Event.EMPTY_PLAYERS;
@@ -905,7 +905,7 @@ public class FirebaseActions {
                     @UtilesNotification.NotificationType
                     Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_DELETE;
                     MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                            notificationMessage, null, type, currentTime);
+                            notificationMessage, null, null, type, currentTime);
 
                     //Delete Event in User participation
                     for (String userParticipation : participantsUserId) {
@@ -980,7 +980,8 @@ public class FirebaseActions {
         final String finalMyUserID = myUserID;
 
         for (final Alarm a : alarms) {
-            if (Utiles.thereIsEventCoincidence(a, myUserID)) {
+            final String eventId = Utiles.thereIsEventCoincidence(a, myUserID);
+            if (eventId != null) {
                 FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                         .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
                         .child(a.getmId() + FirebaseDBContract.User.ALARMS)
@@ -1001,8 +1002,10 @@ public class FirebaseActions {
                                     Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_ALARM_EVENT;
                                     MyNotification n = new MyNotification(
                                             notificationType, false, notificationTitle,
-                                            notificationMessage, a.getmId(), type, currentTime);
+                                            notificationMessage, a.getmId(), eventId,
+                                            type, currentTime);
 
+                                    Log.d(TAG, "onDataChange: "+n.toMap());
                                     FirebaseDatabase.getInstance().getReference().child(FirebaseDBContract.TABLE_USERS)
                                             .child(finalMyUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
                                             .child(a.getmId() + FirebaseDBContract.User.ALARMS)
@@ -1013,6 +1016,7 @@ public class FirebaseActions {
                             @Override
                             public void onCancelled(DatabaseError databaseError) { }
                         });
+
             }
         }
     }

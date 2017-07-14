@@ -35,8 +35,8 @@ public class NotificationsPresenter implements NotificationsContract.Presenter {
         FirebaseSync.loadMyNotifications(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String, MyNotification> result = new HashMap<String, MyNotification>();
                 if(dataSnapshot.exists()) {
-                    HashMap<String, MyNotification> result = new HashMap<String, MyNotification>();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         MyNotification notification = data.getValue(MyNotification.class);
                         if (notification == null) return;
@@ -47,23 +47,27 @@ public class NotificationsPresenter implements NotificationsContract.Presenter {
                                 result.put(data.getKey(), notification);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_USER:
-                                User user = Utiles.getUserFromContentProvider(notification.getExtra_data());
+                                User user = Utiles.getUserFromContentProvider(notification.getExtra_data_one());
                                 if (user == null) {
-                                    FirebaseSync.loadAProfile(data.getRef().toString());
+                                    FirebaseSync.loadAProfile(notification.getExtra_data_one());
                                 }
                                 result.put(data.getKey(), notification);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
-                                Event event = Utiles.getEventFromContentProvider(notification.getExtra_data());
+                                Event event = Utiles.getEventFromContentProvider(notification.getExtra_data_one());
                                 if (event == null) {
-                                    FirebaseSync.loadAnEvent(data.getRef().toString());
+                                    FirebaseSync.loadAnEvent(notification.getExtra_data_one());
                                 }
                                 result.put(data.getKey(), notification);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
-                                Alarm alarm = Utiles.getAlarmFromContentProvider(notification.getExtra_data());
+                                Alarm alarm = Utiles.getAlarmFromContentProvider(notification.getExtra_data_one());
+                                Event eventCoincidence = Utiles.getEventFromContentProvider(notification.getExtra_data_two());
                                 if (alarm == null) {
-                                    FirebaseSync.loadAnAlarm(data.getRef().toString());
+                                    FirebaseSync.loadAnAlarm(notification.getExtra_data_one());
+                                }
+                                if (eventCoincidence == null) {
+                                    FirebaseSync.loadAnEvent(notification.getExtra_data_two());
                                 }
                                 result.put(data.getKey(), notification);
                                 break;
@@ -71,8 +75,8 @@ public class NotificationsPresenter implements NotificationsContract.Presenter {
                                 break;
                         }
                     }
-                    mView.showNotifications(result);
                 }
+                mView.showNotifications(result);
             }
 
             @Override
