@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Spinner;
@@ -23,8 +24,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Places;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
@@ -46,13 +47,15 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
 
     // Static prevent double initialization with same ID
     private static GoogleApiClient mGoogleApiClient;
-    private PlaceAutocompleteAdapter mAdapter;
+    private ArrayList<Field> mCityFields;
 
     ArrayAdapter<CharSequence> sportsAdapter;
     @BindView(R.id.new_field_sport)
     Spinner newFieldSport;
     @BindView(R.id.new_field_address)
     AutoCompleteTextView newFieldAutocompleteAddress;
+    @BindView(R.id.new_field_map_button)
+    Button newFieldMapButton;
     @BindView(R.id.new_field_name)
     EditText newFieldName;
     @BindView(R.id.new_field_open_time)
@@ -183,6 +186,16 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             }
         });
 
+        mCityFields = null;
+        newFieldMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onCreateView: onClick: "+mCityFields);
+                if (mCityFields != null)
+                    ((FieldsActivity)getActivity()).startMapActivityForResult(mCityFields);
+            }
+        });
+
         return root;
     }
 
@@ -251,7 +264,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
 
     @Override
     public void retrieveFields(ArrayList<Field> dataList) {
-
+        mCityFields = dataList;
     }
 
     //    @Override

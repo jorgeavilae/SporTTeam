@@ -114,33 +114,19 @@ public class Utiles {
 
     public static ArrayList<Field> cursorToMultipleField(Cursor cursor) {
         ArrayList<Field> result = new ArrayList<>();
-//        while (cursor.moveToNext()) {
-//            String alarmId = cursor.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID);
-//            String sport = cursor.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
-//            String field = cursor.getString(SportteamContract.AlarmEntry.COLUMN_FIELD);
-//            String city = cursor.getString(SportteamContract.AlarmEntry.COLUMN_CITY);
-//            Long dateFrom = null;
-//            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_DATE_FROM))
-//                dateFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_FROM);
-//            Long dateTo = null;
-//            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_DATE_TO))
-//                dateTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_TO);
-//            Long totalPlFrom = null;
-//            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM))
-//                totalPlFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM);
-//            Long totalPlTo = null;
-//            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO))
-//                totalPlTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO);
-//            Long emptyPlFrom = null;
-//            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM))
-//                emptyPlFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM);
-//            Long emptyPlTo = null;
-//            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO))
-//                emptyPlTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO);
-//
-//            result.add(new Alarm(alarmId, sport, field, city, dateFrom,
-//                    dateTo, totalPlFrom, totalPlTo, emptyPlFrom, emptyPlTo));
-//        }
+        while (cursor.moveToNext()) {
+            String fieldId = cursor.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
+            String name = cursor.getString(SportteamContract.FieldEntry.COLUMN_NAME);
+            String sport = cursor.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
+            String address = cursor.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
+            String city = cursor.getString(SportteamContract.FieldEntry.COLUMN_CITY);
+            float rating = cursor.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);
+            int votes = cursor.getInt(SportteamContract.FieldEntry.COLUMN_VOTES);
+            long openTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
+            long closeTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
+
+            result.add(new Field(fieldId, name, sport, address, city, rating, votes, openTime, closeTime));
+        }
         return result;
     }
 

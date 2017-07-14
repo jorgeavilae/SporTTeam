@@ -11,10 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.FieldsAdapter;
+import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 
 import butterknife.BindView;
@@ -26,6 +28,8 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
     FieldsContract.Presenter mFieldsPresenter;
     FieldsAdapter mFieldsRecyclerAdapter;
 
+    @BindView(R.id.fields_new_field)
+    Button fieldsNewField;
     @BindView(R.id.fields_list)
     RecyclerView fieldsRecyclerList;
     @BindView(R.id.fields_placeholder)
@@ -56,6 +60,14 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
         fieldsRecyclerList.setAdapter(mFieldsRecyclerAdapter);
         fieldsRecyclerList.setHasFixedSize(true);
         fieldsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
+        fieldsNewField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = NewFieldFragment.newInstance(null);
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
+        });
         return root;
     }
 

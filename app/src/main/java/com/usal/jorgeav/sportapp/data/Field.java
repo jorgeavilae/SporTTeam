@@ -108,4 +108,19 @@ public class Field implements Parcelable {
             return new Field[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Field{" +
+                "mId='" + mId + '\'' +
+                ", mName='" + mName + '\'' +
+                ", mSport='" + mSport + '\'' +
+                ", mAddress='" + mAddress + '\'' +
+                ", mCity='" + mCity + '\'' +
+                ", mRating=" + mRating +
+                ", mVotes=" + mVotes +
+                ", mOpeningTime=" + mOpeningTime +
+                ", mClosingTime=" + mClosingTime +
+                '}';
+    }
 }
