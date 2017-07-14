@@ -1005,7 +1005,6 @@ public class FirebaseActions {
                                             notificationMessage, a.getmId(), eventId,
                                             type, currentTime);
 
-                                    Log.d(TAG, "onDataChange: "+n.toMap());
                                     FirebaseDatabase.getInstance().getReference().child(FirebaseDBContract.TABLE_USERS)
                                             .child(finalMyUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
                                             .child(a.getmId() + FirebaseDBContract.User.ALARMS)

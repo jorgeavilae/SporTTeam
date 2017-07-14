@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.Alarm;
@@ -54,7 +53,6 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
                         .cursorLoaderOneAlarm(mView.getActivityContext(), alarmId);
             case SportteamLoader.LOADER_ALARM_EVENTS_COINCIDENCE_ID:
                 String myUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                Log.d(TAG, "onCreateLoader: "+alarmId + " " + myUserId);
                 return SportteamLoader
                         .cursorLoaderAlarmCoincidence(mView.getActivityContext(), alarmId, myUserId);
         }

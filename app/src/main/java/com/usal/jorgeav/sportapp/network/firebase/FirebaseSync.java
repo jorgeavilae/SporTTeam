@@ -694,9 +694,7 @@ public class FirebaseSync {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                         MyNotification notification = data.getValue(MyNotification.class);
                         if (notification == null) return;
-                        Log.d(TAG, "loadMyNotifications:onDataChangeExecutor: "+notification);
-                        Log.d(TAG, "loadMyNotifications:onDataChangeExecutor: "+notification.getExtra_data_one());
-                        Log.d(TAG, "loadMyNotifications:onDataChangeExecutor: "+notification.getExtra_data_two());
+
                         @FirebaseDBContract.NotificationDataTypes int type = notification.getData_type();
                         switch (type) {
                             case FirebaseDBContract.NOTIFICATION_TYPE_NONE:
