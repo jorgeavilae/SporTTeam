@@ -12,6 +12,7 @@ import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 import java.util.ArrayList;
 
@@ -34,7 +35,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         if(TextUtils.isEmpty(myUserID)) return;
 
-        String city = Utiles.getCurrentCity(mNewFieldView.getActivityContext(), myUserID);
+        String city = Utiles.getCurrentUserCity(mNewFieldView.getActivityContext(), myUserID);
 
         if (city != null) {
             FirebaseSync.loadFieldsFromCity(city);
@@ -174,7 +175,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
                 String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                 if(TextUtils.isEmpty(myUserID)) return null;
 
-                String city = Utiles.getCurrentCity(mNewFieldView.getActivityContext(), myUserID);
+                String city = Utiles.getCurrentUserCity(mNewFieldView.getActivityContext(), myUserID);
 
                 if (city != null)
                     return SportteamLoader
@@ -185,7 +186,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        ArrayList<Field> dataList = Utiles.cursorToMultipleField(data);
+        ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
         mNewFieldView.retrieveFields(dataList);
     }
 

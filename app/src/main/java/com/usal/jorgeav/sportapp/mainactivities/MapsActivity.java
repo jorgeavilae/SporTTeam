@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.ArrayList;
 
@@ -94,13 +95,20 @@ public class MapsActivity extends AppCompatActivity implements
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        for (Field f : mFieldsList) {
+            LatLng latLong = f.getLatLong();
+            if (latLong != null)
+                mMap.addMarker(new MarkerOptions().position(latLong).title(f.getmName() + " " + f.getmSport()));
+        }
         mMap.setMinZoomPreference(20); //Buildings
         mMap.setMinZoomPreference(5); //Continent
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+        // TODO: 14/07/2017 moveCamera to my City
+        String myUserId = Utiles.getCurrentUserId();
+        if (myUserId != null) {
+            LatLng myCityLatLong = Utiles.getCurrentUserCityLatLong(this, myUserId);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+        }
     }
 
     @Override

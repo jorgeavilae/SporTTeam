@@ -24,6 +24,7 @@ import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesDataSnapshot;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
@@ -46,9 +47,9 @@ public class FirebaseSync {
             loadAProfile(myUserID);
 
             // Load fields from user city
-            loadFieldsFromCity(Utiles.getCurrentCity(MyApplication.getAppContext(), myUserID));
+            loadFieldsFromCity(Utiles.getCurrentUserCity(MyApplication.getAppContext(), myUserID));
             // Load events from user city
-            loadEventsFromCity(Utiles.getCurrentCity(MyApplication.getAppContext(), myUserID));
+            loadEventsFromCity(Utiles.getCurrentUserCity(MyApplication.getAppContext(), myUserID));
 
             // Load friends list and user data
             loadUsersFromFriends();
@@ -701,7 +702,7 @@ public class FirebaseSync {
                                 UtilesNotification.createNotification(MyApplication.getAppContext(), notification);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_USER:
-                                User user = Utiles.getUserFromContentProvider(notification.getExtra_data_one());
+                                User user = UtilesContentProvider.getUserFromContentProvider(notification.getExtra_data_one());
                                 if (user == null) {
                                     loadAProfileAndNotify(data.getRef().toString(), notification);
                                     continue;
@@ -709,7 +710,7 @@ public class FirebaseSync {
                                 UtilesNotification.createNotification(MyApplication.getAppContext(), notification, user);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
-                                Event event = Utiles.getEventFromContentProvider(notification.getExtra_data_one());
+                                Event event = UtilesContentProvider.getEventFromContentProvider(notification.getExtra_data_one());
                                 if (event == null) {
                                     loadAnEventAndNotify(data.getRef().toString(), notification);
                                     continue;
@@ -717,8 +718,8 @@ public class FirebaseSync {
                                 UtilesNotification.createNotification(MyApplication.getAppContext(), notification, event);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
-                                Alarm alarm = Utiles.getAlarmFromContentProvider(notification.getExtra_data_one());
-                                Event eventCoincidence = Utiles.getEventFromContentProvider(notification.getExtra_data_two());
+                                Alarm alarm = UtilesContentProvider.getAlarmFromContentProvider(notification.getExtra_data_one());
+                                Event eventCoincidence = UtilesContentProvider.getEventFromContentProvider(notification.getExtra_data_two());
                                 if (alarm == null || eventCoincidence == null) {
                                     loadAnAlarmAndNotify(data.getRef().toString(), notification);
                                     continue;
@@ -1002,7 +1003,7 @@ public class FirebaseSync {
                         if (dataSnapshot.exists()) {
                             ArrayList<ContentValues> cvArray = new ArrayList<>();
                             List<Field> fields = UtilesDataSnapshot.dataSnapshotToFieldList(dataSnapshot);
-                            cvArray.addAll(UtilesDataSnapshot.fieldsArrayToContentValues(fields));
+                            cvArray.addAll(UtilesDataSnapshot.fieldsListToContentValues(fields));
 
                             MyApplication.getAppContext().getContentResolver()
                                     .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
@@ -1065,7 +1066,7 @@ public class FirebaseSync {
                             ArrayList<ContentValues> cvArray = new ArrayList<>();
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 List<Field> fields = UtilesDataSnapshot.dataSnapshotToFieldList(data);
-                                cvArray.addAll(UtilesDataSnapshot.fieldsArrayToContentValues(fields));
+                                cvArray.addAll(UtilesDataSnapshot.fieldsListToContentValues(fields));
                             }
                             MyApplication.getAppContext().getContentResolver()
                                     .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,

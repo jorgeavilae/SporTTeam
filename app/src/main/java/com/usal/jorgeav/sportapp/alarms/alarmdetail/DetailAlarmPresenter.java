@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
-import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 /**
  * Created by Jorge Avila on 26/04/2017.
@@ -84,7 +84,7 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     }
 
     private void showAlarmDetails(Cursor data) {
-        Alarm a = Utiles.cursorToSingleAlarm(data);
+        Alarm a = UtilesContentProvider.cursorToSingleAlarm(data);
         if (a != null) {
             mView.showAlarmId(a.getmId());
             mView.showAlarmSport(a.getmSport());

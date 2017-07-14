@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.support.v4.content.CursorLoader;
 
 import com.usal.jorgeav.sportapp.data.Alarm;
-import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -292,7 +292,7 @@ public final class SportteamLoader {
                 null);
     }
     public static CursorLoader cursorLoaderAlarmCoincidence(Context context, String alarmId, String myUserId) {
-        Alarm alarm = Utiles.cursorToSingleAlarm(simpleQueryAlarmId(context, alarmId));
+        Alarm alarm = UtilesContentProvider.cursorToSingleAlarm(simpleQueryAlarmId(context, alarmId));
 
         if (alarm != null) {
             String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;

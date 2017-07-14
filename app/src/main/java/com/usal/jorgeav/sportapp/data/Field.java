@@ -3,6 +3,8 @@ package com.usal.jorgeav.sportapp.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by Jorge Avila on 25/04/2017.
  */
@@ -122,5 +124,9 @@ public class Field implements Parcelable {
                 ", mOpeningTime=" + mOpeningTime +
                 ", mClosingTime=" + mClosingTime +
                 '}';
+    }
+
+    public LatLng getLatLong() {
+        return null;
     }
 }

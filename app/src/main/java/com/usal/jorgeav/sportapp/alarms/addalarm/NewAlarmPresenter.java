@@ -18,7 +18,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
-import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 /**
@@ -193,7 +193,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
     }
 
     private void showAlarmDetails(Cursor data) {
-        Alarm a = Utiles.cursorToSingleAlarm(data);
+        Alarm a = UtilesContentProvider.cursorToSingleAlarm(data);
         if (a != null) {
             mNewAlarmView.showAlarmSport(a.getmSport());
             mNewAlarmView.showAlarmPlace(a.getmField());

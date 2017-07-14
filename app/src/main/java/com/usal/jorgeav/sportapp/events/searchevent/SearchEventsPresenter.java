@@ -30,7 +30,7 @@ public class SearchEventsPresenter implements SearchEventsContract.Presenter, Lo
         loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_WITH_SPORT);
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        String city = Utiles.getCurrentCity(mSearchEventsView.getActivityContext(), myUserID);
+        String city = Utiles.getCurrentUserCity(mSearchEventsView.getActivityContext(), myUserID);
         FirebaseSync.loadEventsFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_FROM_CITY, b, this);
     }
@@ -46,7 +46,7 @@ public class SearchEventsPresenter implements SearchEventsContract.Presenter, Lo
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String city = Utiles.getCurrentCity(mSearchEventsView.getActivityContext(), currentUserID);
+        String city = Utiles.getCurrentUserCity(mSearchEventsView.getActivityContext(), currentUserID);
         switch (id) {
             case SportteamLoader.LOADER_EVENTS_FROM_CITY:
                 return SportteamLoader

@@ -14,7 +14,7 @@ import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 import java.util.HashMap;
 
@@ -47,22 +47,22 @@ public class NotificationsPresenter implements NotificationsContract.Presenter {
                                 result.put(data.getKey(), notification);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_USER:
-                                User user = Utiles.getUserFromContentProvider(notification.getExtra_data_one());
+                                User user = UtilesContentProvider.getUserFromContentProvider(notification.getExtra_data_one());
                                 if (user == null) {
                                     FirebaseSync.loadAProfile(notification.getExtra_data_one());
                                 }
                                 result.put(data.getKey(), notification);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
-                                Event event = Utiles.getEventFromContentProvider(notification.getExtra_data_one());
+                                Event event = UtilesContentProvider.getEventFromContentProvider(notification.getExtra_data_one());
                                 if (event == null) {
                                     FirebaseSync.loadAnEvent(notification.getExtra_data_one());
                                 }
                                 result.put(data.getKey(), notification);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
-                                Alarm alarm = Utiles.getAlarmFromContentProvider(notification.getExtra_data_one());
-                                Event eventCoincidence = Utiles.getEventFromContentProvider(notification.getExtra_data_two());
+                                Alarm alarm = UtilesContentProvider.getAlarmFromContentProvider(notification.getExtra_data_one());
+                                Event eventCoincidence = UtilesContentProvider.getEventFromContentProvider(notification.getExtra_data_two());
                                 if (alarm == null) {
                                     FirebaseSync.loadAnAlarm(notification.getExtra_data_one());
                                 }

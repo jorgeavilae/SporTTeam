@@ -32,6 +32,7 @@ import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -971,7 +972,7 @@ public class FirebaseActions {
     }
 
     public static void checkAlarmsForNotifications() {
-        List<Alarm> alarms = Utiles.getAllAlarms(MyApplication.getAppContext());
+        List<Alarm> alarms = UtilesContentProvider.getAllAlarmsFromContentProvider(MyApplication.getAppContext());
         if (alarms == null || alarms.size() < 1) return;
 
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -980,7 +981,7 @@ public class FirebaseActions {
         final String finalMyUserID = myUserID;
 
         for (final Alarm a : alarms) {
-            final String eventId = Utiles.thereIsEventCoincidence(a, myUserID);
+            final String eventId = UtilesContentProvider.eventsCoincidenceAlarmFromContentProvider(a, myUserID);
             if (eventId != null) {
                 FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                         .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS)

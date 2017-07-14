@@ -39,7 +39,7 @@ public class UtilesDataSnapshot {
         Alarm a = new Alarm(id,sport,field,city,dateFrom,dateTo,totalFrom,totalTo,emptyFrom,emptyTo);
         return a;
     }
-    public static ContentValues alarmToContentValues (Alarm alarm) {
+    public static ContentValues alarmToContentValues(Alarm alarm) {
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.AlarmEntry.ALARM_ID, alarm.getmId());
         cv.put(SportteamContract.AlarmEntry.SPORT, alarm.getmSport());
@@ -53,7 +53,6 @@ public class UtilesDataSnapshot {
         cv.put(SportteamContract.AlarmEntry.EMPTY_PLAYERS_TO, alarm.getmEmptyPlayersTo());
         return cv;
     }
-
 
     public static Event dataSnapshotToEvent(DataSnapshot data) {
         String id = data.getKey();
@@ -70,7 +69,7 @@ public class UtilesDataSnapshot {
 
         return new Event(id,sport,field,name,city,date,owner,total.intValue(),empty.intValue(),new HashMap<String, Boolean>(), new HashMap<String, SimulatedUser>());
     }
-    public static ContentValues eventToContentValues (Event event) {
+    public static ContentValues eventToContentValues(Event event) {
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.EventEntry.EVENT_ID, event.getEvent_id());
         cv.put(SportteamContract.EventEntry.SPORT, event.getSport_id());
@@ -107,7 +106,7 @@ public class UtilesDataSnapshot {
         }
         return result;
     }
-    public static List<ContentValues> fieldsArrayToContentValues (List<Field> fields) {
+    public static List<ContentValues> fieldsListToContentValues(List<Field> fields) {
         ArrayList<ContentValues> cvArray = new ArrayList<>();
         for (Field f : fields) {
             ContentValues cv = new ContentValues();
@@ -141,7 +140,7 @@ public class UtilesDataSnapshot {
 
         return new User(id,email,name,city,age,photoUrl,arraySports);
     }
-    public static ContentValues dataUserToContentValues (User user) {
+    public static ContentValues dataUserToContentValues(User user) {
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.UserEntry.USER_ID, user.getmId());
         cv.put(SportteamContract.UserEntry.EMAIL, user.getmEmail());
@@ -161,6 +160,16 @@ public class UtilesDataSnapshot {
             cvArray.add(cv);
         }
         return cvArray;
+    }
+
+    //dataSnapshotToInvitation: dataSnapshot.getValue(Invitation.class)
+    public static ContentValues invitationToContentValues(Invitation invitation) {
+        ContentValues cv = new ContentValues();
+        cv.put(SportteamContract.EventsInvitationEntry.RECEIVER_ID, invitation.getReceiver());
+        cv.put(SportteamContract.EventsInvitationEntry.SENDER_ID, invitation.getSender());
+        cv.put(SportteamContract.EventsInvitationEntry.EVENT_ID, invitation.getEvent());
+        cv.put(SportteamContract.EventsInvitationEntry.DATE, invitation.getDate());
+        return cv;
     }
 
     public static ContentValues dataSnapshotFriendRequestToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheSender) {
@@ -214,14 +223,6 @@ public class UtilesDataSnapshot {
         return cv;
     }
 
-    public static ContentValues invitationToContentValues(Invitation invitation) {
-        ContentValues cv = new ContentValues();
-        cv.put(SportteamContract.EventsInvitationEntry.RECEIVER_ID, invitation.getReceiver());
-        cv.put(SportteamContract.EventsInvitationEntry.SENDER_ID, invitation.getSender());
-        cv.put(SportteamContract.EventsInvitationEntry.EVENT_ID, invitation.getEvent());
-        cv.put(SportteamContract.EventsInvitationEntry.DATE, invitation.getDate());
-        return cv;
-    }
 
     public static ContentValues dataSnapshotEventsRequestsToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheSender) {
         String eventId, senderId;

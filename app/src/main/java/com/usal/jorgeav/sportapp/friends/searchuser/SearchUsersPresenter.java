@@ -30,7 +30,7 @@ public class SearchUsersPresenter implements SearchUsersContract.Presenter, Load
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_WITH_NAME);
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        String city = Utiles.getCurrentCity(mSearchUsersView.getActivityContext(), myUserID);
+        String city = Utiles.getCurrentUserCity(mSearchUsersView.getActivityContext(), myUserID);
         FirebaseSync.loadUsersFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_USERS_FROM_CITY, b, this);
     }
@@ -49,7 +49,7 @@ public class SearchUsersPresenter implements SearchUsersContract.Presenter, Load
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         switch (id) {
             case SportteamLoader.LOADER_USERS_FROM_CITY:
-                String city = Utiles.getCurrentCity(mSearchUsersView.getActivityContext(), currentUserID);
+                String city = Utiles.getCurrentUserCity(mSearchUsersView.getActivityContext(), currentUserID);
                 return SportteamLoader
                         .cursorLoaderUsersFromCity(mSearchUsersView.getActivityContext(), currentUserID, city);
             case SportteamLoader.LOADER_USERS_WITH_NAME:

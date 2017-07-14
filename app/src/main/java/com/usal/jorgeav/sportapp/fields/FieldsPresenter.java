@@ -27,7 +27,7 @@ public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.
     public void loadNearbyFields(LoaderManager loaderManager, Bundle b) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        String city = Utiles.getCurrentCity(mFieldsView.getActivityContext(), myUserID);
+        String city = Utiles.getCurrentUserCity(mFieldsView.getActivityContext(), myUserID);
         FirebaseSync.loadFieldsFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY, b, this);
     }
@@ -38,7 +38,7 @@ public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.
             case SportteamLoader.LOADER_FIELDS_FROM_CITY:
                 FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
                 String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-                String city = Utiles.getCurrentCity(mFieldsView.getActivityContext(), myUserID);
+                String city = Utiles.getCurrentUserCity(mFieldsView.getActivityContext(), myUserID);
                 return SportteamLoader
                         .cursorLoaderFieldsFromCity(mFieldsView.getActivityContext(), city);
         }

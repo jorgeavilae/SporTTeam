@@ -29,7 +29,7 @@ public class SelectFieldPresenter implements SelectFieldContract.Presenter, Load
     public void loadFieldsWithSport(LoaderManager loaderManager, Bundle b) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        String city = Utiles.getCurrentCity(mSelectFieldsView.getActivityContext(), myUserID);
+        String city = Utiles.getCurrentUserCity(mSelectFieldsView.getActivityContext(), myUserID);
         FirebaseSync.loadFieldsFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_WITH_SPORT, b, this);
     }
