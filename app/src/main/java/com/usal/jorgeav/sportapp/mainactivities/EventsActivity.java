@@ -56,6 +56,7 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
 
     @Override
     public void retrieveFieldSelected(String fieldId) {
+        // TODO: 15/07/2017 almacenar coordenadas aqui, deben ser las coordenas del field
         newEventFieldSelected = fieldId;
     }
     public void setCity(String city, LatLng coordinates) {

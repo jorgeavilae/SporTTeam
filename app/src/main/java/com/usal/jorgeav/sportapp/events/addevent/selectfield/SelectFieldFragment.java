@@ -112,6 +112,7 @@ public class SelectFieldFragment extends BaseFragment implements SelectFieldCont
 
     @Override
     public void onFieldClick(String fieldId, String sportId) {
+        // TODO: 15/07/2017 traerse tambien las coordenadas no solo el fieldId
         if (getActivity() instanceof OnFieldSelected)
             ((OnFieldSelected) getActivity()).retrieveFieldSelected(fieldId);
         Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);

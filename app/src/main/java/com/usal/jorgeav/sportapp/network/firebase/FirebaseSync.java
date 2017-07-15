@@ -27,6 +27,7 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesDataSnapshot;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,16 +41,18 @@ public class FirebaseSync {
 
     public static void syncFirebaseDatabase() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null && listenerMap.isEmpty()) {
-            // Load current user profile and sports
-            FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-            String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+            String myUserID = Utiles.getCurrentUserId();
+            if (TextUtils.isEmpty(myUserID)) return;
 
+            // Load current user profile and sports
             loadAProfile(myUserID);
+            UtilesPreferences.setCurrentUserCity(MyApplication.getAppContext());
+            UtilesPreferences.setCurrentUserCityCoords(MyApplication.getAppContext());
 
             // Load fields from user city
-            loadFieldsFromCity(Utiles.getCurrentUserCity(MyApplication.getAppContext(), myUserID));
+            loadFieldsFromCity(Utiles.getCurrentUserCity(MyApplication.getAppContext()));
             // Load events from user city
-            loadEventsFromCity(Utiles.getCurrentUserCity(MyApplication.getAppContext(), myUserID));
+            loadEventsFromCity(Utiles.getCurrentUserCity(MyApplication.getAppContext()));
 
             // Load friends list and user data
             loadUsersFromFriends();
@@ -75,6 +78,9 @@ public class FirebaseSync {
 
             // Load alarms with data created by current user
             loadAlarmsFromMyAlarms();
+
+            // Load notification and data
+            loadMyNotifications(null);
         }
     }
     public static void detachListeners() {

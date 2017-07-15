@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 import java.util.ArrayList;
 
@@ -105,7 +106,7 @@ public class MapsActivity extends AppCompatActivity implements
         // TODO: 14/07/2017 moveCamera to my City
         String myUserId = Utiles.getCurrentUserId();
         if (myUserId != null) {
-            LatLng myCityLatLong = Utiles.getCurrentUserCityLatLong(this, myUserId);
+            LatLng myCityLatLong = UtilesPreferences.getCurrentUserCityCoords(this);
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
             mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
         }

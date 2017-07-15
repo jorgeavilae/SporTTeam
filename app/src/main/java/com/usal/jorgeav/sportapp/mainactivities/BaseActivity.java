@@ -99,7 +99,6 @@ public class BaseActivity extends AppCompatActivity
                     setUserInfoInNavigationDrawer(mNavigationView, fuser);
                     // TODO: 05/07/2017 what if I init all listener: now would init once per app instance
                     SportteamSyncUtils.initialize(BaseActivity.this);
-                    FirebaseSync.loadMyNotifications(null);
                     if(mDisplayedFragment == null)
                         startMainFragment();
                 } else {

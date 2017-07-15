@@ -35,7 +35,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
         String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
         if(TextUtils.isEmpty(myUserID)) return;
 
-        String city = Utiles.getCurrentUserCity(mNewFieldView.getActivityContext(), myUserID);
+        String city = Utiles.getCurrentUserCity(mNewFieldView.getActivityContext());
 
         if (city != null) {
             FirebaseSync.loadFieldsFromCity(city);
@@ -175,7 +175,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
                 String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
                 if(TextUtils.isEmpty(myUserID)) return null;
 
-                String city = Utiles.getCurrentUserCity(mNewFieldView.getActivityContext(), myUserID);
+                String city = Utiles.getCurrentUserCity(mNewFieldView.getActivityContext());
 
                 if (city != null)
                     return SportteamLoader

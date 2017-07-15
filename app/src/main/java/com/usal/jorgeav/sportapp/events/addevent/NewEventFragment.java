@@ -163,6 +163,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                     ((EventsActivity)getActivity()).newEventFieldSelected,
                     newEventName.getText().toString(),
                     ((EventsActivity)getActivity()).newEventCitySelectedName,
+                    /*todo estas coordenads hay que cambiarlas por las del Field, no las de la ciudad */
                     ((EventsActivity)getActivity()).newEventCitySelectedCoord,
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),

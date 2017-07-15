@@ -56,6 +56,8 @@ public final class SportteamContract {
         public static final String NAME = "name";
         public static final String AGE = "age";
         public static final String CITY = "city";
+        public static final String CITY_LATITUDE = "cityLatitude";
+        public static final String CITY_LONGITUDE = "cityLongitude";
         public static final String PHOTO = "photo";
 
         /* Column names with table prefix*/
@@ -64,6 +66,8 @@ public final class SportteamContract {
         public static final String NAME_TABLE_PREFIX = TABLE_USER + "." + NAME;
         public static final String AGE_TABLE_PREFIX = TABLE_USER + "." + AGE;
         public static final String CITY_TABLE_PREFIX = TABLE_USER + "." + CITY;
+        public static final String CITY_LATITUDE_TABLE_PREFIX = TABLE_USER + "." + CITY_LATITUDE;
+        public static final String CITY_LONGITUDE_TABLE_PREFIX = TABLE_USER + "." + CITY_LONGITUDE;
         public static final String PHOTO_TABLE_PREFIX = TABLE_USER + "." + PHOTO;
 
         /* All column projection */
@@ -74,6 +78,8 @@ public final class SportteamContract {
                 NAME_TABLE_PREFIX,
                 AGE_TABLE_PREFIX,
                 CITY_TABLE_PREFIX,
+                CITY_LATITUDE_TABLE_PREFIX,
+                CITY_LONGITUDE_TABLE_PREFIX,
                 PHOTO_TABLE_PREFIX
         };
 
@@ -84,7 +90,9 @@ public final class SportteamContract {
         public static final int COLUMN_NAME = 3;
         public static final int COLUMN_AGE = 4;
         public static final int COLUMN_CITY = 5;
-        public static final int COLUMN_PHOTO = 6;
+        public static final int COLUMN_CITY_LATITUDE = 6;
+        public static final int COLUMN_CITY_LONGITUDE = 7;
+        public static final int COLUMN_PHOTO = 8;
 
         /* URI for one user */
         public static Uri buildUserUriWith(long id) {

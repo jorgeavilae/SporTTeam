@@ -3,8 +3,10 @@ package com.usal.jorgeav.sportapp.utils;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -109,10 +111,16 @@ public class UtilesContentProvider {
                 String email = c.getString(SportteamContract.UserEntry.COLUMN_EMAIL);
                 String name = c.getString(SportteamContract.UserEntry.COLUMN_NAME);
                 String city = c.getString(SportteamContract.UserEntry.COLUMN_CITY);
+                double latitude = c.getDouble(SportteamContract.UserEntry.COLUMN_CITY_LATITUDE);
+                double longitude = c.getDouble(SportteamContract.UserEntry.COLUMN_CITY_LONGITUDE);
+                Log.d(TAG, "getUserFromContentProvider: "+latitude);
+                Log.d(TAG, "getUserFromContentProvider: "+longitude);
                 int age = c.getInt(SportteamContract.UserEntry.COLUMN_AGE);
                 String photoUrl = c.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
-                // TODO: 15/07/2017 Update with ccords
-                u = new User(userId, email, name, city, null, age, photoUrl, null);
+
+                LatLng coord = null;
+                if (latitude > 0 && longitude > 0) coord = new LatLng(latitude, longitude);
+                u = new User(userId, email, name, city, coord, age, photoUrl, null);
             } else if (c.getCount() == 0)
                 Log.e(TAG, "getUserFromContentProvider: User with ID "+userId+" not found");
             else
@@ -121,6 +129,42 @@ public class UtilesContentProvider {
         } else
             Log.e(TAG, "getUserFromContentProvider: Error with user "+userId);
         return u;
+    }
+    static String getCurrentUserCityFromContentProvider() {
+        String currentUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(currentUserID)) return null;
+
+        String result = null;
+        Cursor c = MyApplication.getAppContext().getContentResolver().query(
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.UserEntry.USER_ID + " = ?",
+                new String[]{currentUserID},
+                null);
+        if (c != null && c.moveToFirst()) {
+            result = c.getString(SportteamContract.UserEntry.COLUMN_CITY);
+            c.close();
+        }
+        return result;
+    }
+    static LatLng getCurrentUserCityCoordsFromContentProvider() {
+        String currentUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(currentUserID)) return null;
+
+        LatLng result = null;
+        Cursor c = MyApplication.getAppContext().getContentResolver().query(
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                SportteamContract.UserEntry.USER_COLUMNS,
+                SportteamContract.UserEntry.USER_ID + " = ?",
+                new String[]{currentUserID},
+                null);
+        if (c != null && c.moveToFirst()) {
+            double latitude = c.getDouble(SportteamContract.UserEntry.COLUMN_CITY_LATITUDE);
+            double longitude = c.getDouble(SportteamContract.UserEntry.COLUMN_CITY_LONGITUDE);
+            result = new LatLng(latitude, longitude);
+            c.close();
+        }
+        return result;
     }
 
     public static Event getEventFromContentProvider(@NonNull String eventId) {

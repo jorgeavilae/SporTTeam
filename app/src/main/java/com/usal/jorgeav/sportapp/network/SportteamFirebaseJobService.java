@@ -49,7 +49,7 @@ public class SportteamFirebaseJobService extends JobService {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         String myUid = ""; if (fUser != null) myUid = fUser.getUid();
         if (!TextUtils.isEmpty(myUid))
-            FirebaseSync.loadEventsFromCity(Utiles.getCurrentUserCity(this, myUid));
+            FirebaseSync.loadEventsFromCity(Utiles.getCurrentUserCity(this));
 
         jobFinished(jobParameters, false);
         return false;

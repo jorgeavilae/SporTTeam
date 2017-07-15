@@ -19,7 +19,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
      * If you change the database schema, you must increment the database version or the onUpgrade
      * method will not be called.
      */
-    private static final int DATABASE_VERSION = 17;
+    private static final int DATABASE_VERSION = 18;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,13 +28,15 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + SportteamContract.TABLE_USER + " (" +
-                SportteamContract.UserEntry._ID         + " INTEGER PRIMARY KEY,"       +
-                SportteamContract.UserEntry.USER_ID     + " TEXT UNIQUE NOT NULL,"      +
-                SportteamContract.UserEntry.EMAIL       + " TEXT NOT NULL,"      +
-                SportteamContract.UserEntry.NAME        + " TEXT NOT NULL,"      +
-                SportteamContract.UserEntry.AGE         + " INTEGER,"                   +
-                SportteamContract.UserEntry.CITY        + " TEXT,"                      +
-                SportteamContract.UserEntry.PHOTO       + " TEXT,"                      +
+                SportteamContract.UserEntry._ID             + " INTEGER PRIMARY KEY,"       +
+                SportteamContract.UserEntry.USER_ID         + " TEXT UNIQUE NOT NULL,"      +
+                SportteamContract.UserEntry.EMAIL           + " TEXT NOT NULL,"             +
+                SportteamContract.UserEntry.NAME            + " TEXT NOT NULL,"             +
+                SportteamContract.UserEntry.AGE             + " INTEGER,"                   +
+                SportteamContract.UserEntry.CITY            + " TEXT,"                      +
+                SportteamContract.UserEntry.CITY_LATITUDE   + " REAL,"                      +
+                SportteamContract.UserEntry.CITY_LONGITUDE  + " REAL,"                      +
+                SportteamContract.UserEntry.PHOTO           + " TEXT,"                      +
                 " UNIQUE (" + SportteamContract.UserEntry.USER_ID + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_EVENT_TABLE = "CREATE TABLE " + SportteamContract.TABLE_EVENT + " (" +
@@ -42,7 +44,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.EventEntry.EVENT_ID           + " TEXT UNIQUE NOT NULL,"      +
                 SportteamContract.EventEntry.SPORT              + " TEXT NOT NULL,"             +
                 SportteamContract.EventEntry.FIELD              + " TEXT,"                      +
-                SportteamContract.EventEntry.NAME              + " TEXT,"                      +
+                SportteamContract.EventEntry.NAME               + " TEXT,"                      +
                 SportteamContract.EventEntry.CITY               + " TEXT,"                      +
                 SportteamContract.EventEntry.DATE               + " INTEGER,"                   +
                 SportteamContract.EventEntry.OWNER              + " TEXT NOT NULL,"             +
