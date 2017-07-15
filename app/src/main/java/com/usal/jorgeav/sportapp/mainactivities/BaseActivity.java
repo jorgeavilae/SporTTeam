@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -202,6 +204,7 @@ public class BaseActivity extends AppCompatActivity
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        hideSoftKeyboard();
         mToggle.onConfigurationChanged(newConfig);
     }
 
@@ -385,5 +388,14 @@ public class BaseActivity extends AppCompatActivity
     public void hideContent() {
         mContentFrame.setVisibility(View.INVISIBLE);
         mProgressbar.setVisibility(View.VISIBLE);
+    }
+
+    /* https://stackoverflow.com/a/1109108/4235666 */
+    public void hideSoftKeyboard() {
+        View view = getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

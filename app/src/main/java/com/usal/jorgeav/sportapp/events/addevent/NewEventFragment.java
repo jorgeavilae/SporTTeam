@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,9 +27,13 @@ import android.widget.TimePicker;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
@@ -64,8 +70,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     Button newEventFieldButton;
     @BindView(R.id.new_event_name)
     EditText newEventName;
-    @BindView(R.id.new_event_city)
-    EditText newEventCity;
     @BindView(R.id.new_event_autocomplete_city)
     AutoCompleteTextView newEventAutocompleteCity;
     @BindView(R.id.new_event_date)
@@ -130,6 +134,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                         }
                     })
                     .build();
+        else mGoogleApiClient.connect();
 
         mNewEventPresenter = new NewEventPresenter(this);
     }
@@ -157,8 +162,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                     newEventSport.getSelectedItem().toString(),
                     ((EventsActivity)getActivity()).newEventFieldSelected,
                     newEventName.getText().toString(),
-                    //todo cambiar ciudad ((EventsActivity)getActivity()).newEventCitySelected,
-                    "ciudad",
+                    ((EventsActivity)getActivity()).newEventCitySelectedName,
+                    ((EventsActivity)getActivity()).newEventCitySelectedCoord,
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
@@ -226,6 +231,23 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         mAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, null, typeFilter);
         newEventAutocompleteCity.setAdapter(mAdapter);
 
+        newEventAutocompleteCity.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                ((EventsActivity)getActivity()).setCity(null, null);
+            }
+        });
+
         newEventAutocompleteCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -236,9 +258,23 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                   */
                 AutocompletePrediction item = mAdapter.getItem(position);
                 if (item != null) {
-                    CharSequence primaryText = item.getPrimaryText(null);
-                    Log.i(TAG, "Autocomplete item selected: " + primaryText);
-                    ((EventsActivity)getActivity()).setCity(primaryText.toString());
+                    Log.i(TAG, "Autocomplete item selected: " + item.getPlaceId());
+                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, item.getPlaceId())
+                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                                @Override
+                                public void onResult(@NonNull PlaceBuffer places) {
+                                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
+                                        Place myPlace = places.get(0);
+                                        ((EventsActivity)getActivity())
+                                                .setCity(myPlace.getName().toString(), myPlace.getLatLng());
+                                        Log.i(TAG, "Place found: Name - " + myPlace.getName()
+                                                + " LatLng - " + myPlace.getLatLng());
+                                    } else {
+                                        Log.e(TAG, "Place not found");
+                                    }
+                                    places.release();
+                                }
+                            });
                 }
             }
         });
@@ -303,10 +339,10 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     }
 
     @Override
-    public void showEventCity(String city) {
+    public void showEventCity(String city, LatLng coordinates) {
         if (city != null && !TextUtils.isEmpty(city)) {
-            newEventCity.setText(city);
-            ((EventsActivity) getActivity()).setCity(city);
+            newEventAutocompleteCity.setText(city);
+            ((EventsActivity) getActivity()).setCity(city, coordinates);
         }
     }
 
@@ -334,8 +370,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         newEventName.setText("");
         newEventDate.setText("");
         newEventTime.setText("");
-        newEventCity.setText("");
-        ((EventsActivity) getActivity()).setCity("");
+        newEventAutocompleteCity.getText().clear();
+        ((EventsActivity) getActivity()).setCity(null, null);
         newEventTotal.setText("");
         newEventEmpty.setText("");
     }

@@ -9,7 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -17,6 +17,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.HashMap;
@@ -35,16 +36,17 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
     }
 
     @Override
-    public void addEvent(String id, String sport, String field, String name, String city,
+    public void addEvent(String id, String sport, String field, String name, String city, LatLng coord,
                          String date, String time, String total, String empty,
                          HashMap<String, Boolean> participants) {
-        if (isValidSport(sport) && isValidField(field, sport) && isValidName(name)
-                && isDateTimeCorrect(date, time) && isPlayersCorrect(total, empty)) {
+        String myUid = Utiles.getCurrentUserId();
+        if (isValidSport(sport) && isValidCity(city, coord) && isValidField(city, field, sport)
+                && isValidName(name)  && isValidOwner(myUid) && isDateTimeCorrect(date, time)
+                && isPlayersCorrect(total, empty)) {
             long dateMillis = UtilesTime.stringDateToMillis(date);
             long timeMillis = UtilesTime.stringTimeToMillis(time);
             Event event = new Event(
-                    id, sport, field, name, city, dateMillis + timeMillis,
-                    FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                    id, sport, field, name, city, coord, dateMillis + timeMillis, myUid,
                     Integer.valueOf(total), Integer.valueOf(empty), participants, null); // TODO: 13/07/2017 simulatedParticipants se pierden
 
             Log.d(TAG, "addEvent: "+event);
@@ -53,6 +55,8 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             else
                 FirebaseActions.editEvent(event);
             ((EventsActivity)mNewEventView.getActivityContext()).newEventFieldSelected = null;
+            ((EventsActivity)mNewEventView.getActivityContext()).newEventCitySelectedName = null;
+            ((EventsActivity)mNewEventView.getActivityContext()).newEventCitySelectedCoord = null;
             ((AppCompatActivity)mNewEventView.getActivityContext()).onBackPressed();
         } else
             Toast.makeText(mNewEventView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
@@ -67,19 +71,27 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isValidField(String field, String sport) {
+    private boolean isValidCity(String city, LatLng coord) {
+         /* todo isValidAddress ?? */
+         return true;
+    }
+
+    private boolean isValidField(String city, String field, String sport) {
         // Check if the sport doesn't need a field
         String[] arraySports = mNewEventView.getActivityContext().getResources().getStringArray(R.array.sport_id);
-        if (sport.equals(arraySports[0]) || sport.equals(arraySports[1])) return /* todo isValidAddress ?? */ true;
+        if (sport.equals(arraySports[0]) || sport.equals(arraySports[1])) return true;
 
         // Query database for the fieldId and checks if this sport exists
         Cursor c = SportteamLoader.simpleQueryFieldId(mNewEventView.getActivityContext(), field);
-        try {
-            while (c.moveToNext())
-                if (c.getString(SportteamContract.FieldEntry.COLUMN_SPORT).equals(sport)) {
-                    c.close(); return true;
-                }
-        } finally { c.close(); }
+        if (c != null)
+            try {
+                if (c.getCount() > 0)
+                    while (c.moveToFirst())
+                        if (c.getString(SportteamContract.FieldEntry.COLUMN_SPORT).equals(sport)
+                                && c.getString(SportteamContract.FieldEntry.COLUMN_CITY).equals(city)) {
+                            c.close(); return true;
+                        }
+            } finally { c.close(); }
         Log.e(TAG, "isValidField: not valid");
         return false;
     }
@@ -87,6 +99,12 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
     private boolean isValidName(String name) {
         if (!TextUtils.isEmpty(name)) return true;
         Log.e(TAG, "isValidName: not valid");
+        return false;
+    }
+
+    private boolean isValidOwner(String uid) {
+        if (!TextUtils.isEmpty(uid)) return true;
+        Log.e(TAG, "isValidOwner: not valid");
         return false;
     }
 
@@ -164,7 +182,9 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             mNewEventView.showEventPlace(data.getString(SportteamContract.EventEntry.COLUMN_FIELD));
             mNewEventView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mNewEventView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));
-            mNewEventView.showEventCity(data.getString(SportteamContract.EventEntry.COLUMN_CITY));
+            String city = data.getString(SportteamContract.EventEntry.COLUMN_CITY);
+            LatLng coordinates = null; // TODO: 15/07/2017 completar LatLng
+            mNewEventView.showEventCity(city, coordinates);
             mNewEventView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
             mNewEventView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
         } else {

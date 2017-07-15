@@ -21,6 +21,8 @@ public final class FirebaseDBContract {
         public static final String AGE = "age";
         public static final String PROFILE_PICTURE = "profile_picture";
         public static final String CITY = "city";
+        public static final String COORD_LATITUDE = "coord_latitude";
+        public static final String COORD_LONGITUDE = "coord_longitude";
         public static final String SPORTS_PRACTICED = "sports_practiced";
         public static final String FRIENDS = "friends";
         public static final String FRIENDS_REQUESTS_SENT = "friends_requests_sent";
@@ -38,6 +40,8 @@ public final class FirebaseDBContract {
         public static final String SPORT = "sport_id";
         public static final String FIELD = "field_id";
         public static final String CITY = "city";
+        public static final String COORD_LATITUDE = "coord_latitude";
+        public static final String COORD_LONGITUDE = "coord_longitude";
         public static final String NAME = "name";
         public static final String DATE = "date";
         public static final String TOTAL_PLAYERS = "total_players";
@@ -94,6 +98,8 @@ public final class FirebaseDBContract {
         public static final String NAME = "name";
         public static final String ADDRESS = "address";
         public static final String CITY = "city";
+        public static final String COORD_LATITUDE = "coord_latitude";
+        public static final String COORD_LONGITUDE = "coord_longitude";
         public static final String OPENING_TIME = "opening_time";
         public static final String CLOSING_TIME = "closing_time";
         public static final String SPORTS = "sports";

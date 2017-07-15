@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantContract;
@@ -31,8 +32,10 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
     private static final String INSTANCE_NEW_EVENT_FIELD = "INSTANCE_NEW_EVENT_FIELD";
     public String newEventFieldSelected = null;
 
-    private static final String INSTANCE_NEW_EVENT_CITY = "INSTANCE_NEW_EVENT_CITY";
-    public String newEventCitySelected = null;
+    private static final String INSTANCE_NEW_EVENT_CITY_NAME = "INSTANCE_NEW_EVENT_CITY_NAME";
+    public String newEventCitySelectedName = null;
+    private static final String INSTANCE_NEW_EVENT_CITY_COORD = "INSTANCE_NEW_EVENT_CITY_COORD";
+    public LatLng newEventCitySelectedCoord = null;
 
     @Override
     public void startMainFragment() {
@@ -55,8 +58,9 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
     public void retrieveFieldSelected(String fieldId) {
         newEventFieldSelected = fieldId;
     }
-    public void setCity(String city) {
-        newEventCitySelected = city;
+    public void setCity(String city, LatLng coordinates) {
+        newEventCitySelectedName = city;
+        newEventCitySelectedCoord = coordinates;
     }
 
     @Override
@@ -64,8 +68,10 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
         super.onSaveInstanceState(outState);
         if (newEventFieldSelected != null)
             outState.putString(INSTANCE_NEW_EVENT_FIELD, newEventFieldSelected);
-        if (newEventCitySelected != null)
-            outState.putString(INSTANCE_NEW_EVENT_CITY, newEventCitySelected);
+        if (newEventCitySelectedName != null)
+            outState.putString(INSTANCE_NEW_EVENT_CITY_NAME, newEventCitySelectedName);
+        if (newEventCitySelectedCoord != null)
+            outState.putParcelable(INSTANCE_NEW_EVENT_CITY_COORD, newEventCitySelectedCoord);
     }
 
     @Override
@@ -73,8 +79,10 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_EVENT_FIELD))
             newEventFieldSelected = savedInstanceState.getString(INSTANCE_NEW_EVENT_FIELD);
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_EVENT_CITY))
-            newEventCitySelected = savedInstanceState.getString(INSTANCE_NEW_EVENT_CITY);
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_EVENT_CITY_NAME))
+            newEventCitySelectedName = savedInstanceState.getString(INSTANCE_NEW_EVENT_CITY_NAME);
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_EVENT_CITY_COORD))
+            newEventCitySelectedCoord = savedInstanceState.getParcelable(INSTANCE_NEW_EVENT_CITY_COORD);
     }
 
     @Override

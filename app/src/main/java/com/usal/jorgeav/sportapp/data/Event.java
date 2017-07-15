@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
 import java.util.HashMap;
@@ -18,6 +19,8 @@ public class Event implements Parcelable {
     String field_id;
     String name;
     String city;
+    Double coord_latitude;
+    Double coord_longitude;
     Long date;
     String owner;
     int total_players;
@@ -29,14 +32,16 @@ public class Event implements Parcelable {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
-    public Event(String mId, String mSport, String mField, String mName, String mCity, Long mDate,
-                 String mOwner, int mTotalPlayers, int mEmptyPlayers,
+    public Event(String mId, String mSport, String mField, String mName, String mCity, LatLng coord,
+                 Long mDate, String mOwner, int mTotalPlayers, int mEmptyPlayers,
                  HashMap<String, Boolean> participants, HashMap<String, SimulatedUser> simulated_participants) {
         this.event_id = mId;
         this.sport_id = mSport;
         this.field_id = mField;
         this.name = mName;
         this.city = mCity;
+        this.coord_latitude = coord.latitude;
+        this.coord_longitude = coord.longitude;
         this.date = mDate;
         this.owner = mOwner;
         this.total_players = mTotalPlayers;
@@ -63,6 +68,14 @@ public class Event implements Parcelable {
 
     public String getCity() {
         return city;
+    }
+
+    public Double getCoord_latitude() {
+        return coord_latitude;
+    }
+
+    public Double getCoord_longitude() {
+        return coord_longitude;
     }
 
     public String getName() {
@@ -130,6 +143,8 @@ public class Event implements Parcelable {
         result.put(FirebaseDBContract.Event.SPORT, this.sport_id);
         result.put(FirebaseDBContract.Event.FIELD, this.field_id);
         result.put(FirebaseDBContract.Event.CITY, this.city);
+        result.put(FirebaseDBContract.Event.COORD_LATITUDE, this.coord_latitude);
+        result.put(FirebaseDBContract.Event.COORD_LONGITUDE, this.coord_longitude);
         result.put(FirebaseDBContract.Event.NAME, this.name);
         result.put(FirebaseDBContract.Event.OWNER, this.owner);
         result.put(FirebaseDBContract.Event.DATE, this.date);
