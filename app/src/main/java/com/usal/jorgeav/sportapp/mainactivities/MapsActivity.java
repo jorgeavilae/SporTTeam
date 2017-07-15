@@ -103,12 +103,16 @@ public class MapsActivity extends AppCompatActivity implements
         }
         mMap.setMinZoomPreference(20); //Buildings
         mMap.setMinZoomPreference(5); //Continent
-        // TODO: 14/07/2017 moveCamera to my City
+
         String myUserId = Utiles.getCurrentUserId();
         if (myUserId != null) {
             LatLng myCityLatLong = UtilesPreferences.getCurrentUserCityCoords(this);
+
+            if (myCityLatLong.latitude == 0 && myCityLatLong.longitude == 0)
+                myCityLatLong = new LatLng(UtilesPreferences.CACERES_LATITUDE, UtilesPreferences.CACERES_LONGITUDE);
+
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
-            mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
         }
     }
 

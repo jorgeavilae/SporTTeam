@@ -10,6 +10,12 @@ import com.google.android.gms.maps.model.LatLng;
  */
 
 public class UtilesPreferences {
+    // TODO Only for testing purpose, delete
+    public static final double SALAMANCA_LATITUDE = 40.9701039;
+    public static final double SALAMANCA_LONGITUDE = -5.6635397;
+    public static final double CACERES_LATITUDE = 39.4752765;
+    public static final double CACERES_LONGITUDE = -6.3724247;
+
     private static final String TAG = UtilesPreferences.class.getSimpleName();
 
     private static final String PREFS_FILE = "PREFS_FILE";
