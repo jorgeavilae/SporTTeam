@@ -40,8 +40,13 @@ public class Event implements Parcelable {
         this.field_id = mField;
         this.name = mName;
         this.city = mCity;
-        this.coord_latitude = coord.latitude;
-        this.coord_longitude = coord.longitude;
+        if (coord != null) {
+            this.coord_latitude = coord.latitude;
+            this.coord_longitude = coord.longitude;
+        } else {
+            this.coord_latitude = null;
+            this.coord_longitude = null;
+        }
         this.date = mDate;
         this.owner = mOwner;
         this.total_players = mTotalPlayers;
@@ -157,6 +162,25 @@ public class Event implements Parcelable {
     }
 
     @Override
+    public String toString() {
+        return "Event{" +
+                "event_id='" + event_id + '\'' +
+                ", sport_id='" + sport_id + '\'' +
+                ", field_id='" + field_id + '\'' +
+                ", name='" + name + '\'' +
+                ", city='" + city + '\'' +
+                ", coord_latitude=" + coord_latitude +
+                ", coord_longitude=" + coord_longitude +
+                ", date=" + date +
+                ", owner='" + owner + '\'' +
+                ", total_players=" + total_players +
+                ", empty_players=" + empty_players +
+                ", participants=" + participants +
+                ", simulated_participants=" + simulated_participants +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -165,12 +189,23 @@ public class Event implements Parcelable {
 
         if (total_players != event.total_players) return false;
         if (empty_players != event.empty_players) return false;
-        if (event_id != null ? !event_id.equals(event.event_id) : event.event_id != null) return false;
-        if (sport_id != null ? !sport_id.equals(event.sport_id) : event.sport_id != null) return false;
-        if (field_id != null ? !field_id.equals(event.field_id) : event.field_id != null) return false;
+        if (event_id != null ? !event_id.equals(event.event_id) : event.event_id != null)
+            return false;
+        if (sport_id != null ? !sport_id.equals(event.sport_id) : event.sport_id != null)
+            return false;
+        if (field_id != null ? !field_id.equals(event.field_id) : event.field_id != null)
+            return false;
+        if (name != null ? !name.equals(event.name) : event.name != null) return false;
         if (city != null ? !city.equals(event.city) : event.city != null) return false;
+        if (coord_latitude != null ? !coord_latitude.equals(event.coord_latitude) : event.coord_latitude != null)
+            return false;
+        if (coord_longitude != null ? !coord_longitude.equals(event.coord_longitude) : event.coord_longitude != null)
+            return false;
         if (date != null ? !date.equals(event.date) : event.date != null) return false;
-        return owner != null ? owner.equals(event.owner) : event.owner == null;
+        if (owner != null ? !owner.equals(event.owner) : event.owner != null) return false;
+        if (participants != null ? !participants.equals(event.participants) : event.participants != null)
+            return false;
+        return simulated_participants != null ? simulated_participants.equals(event.simulated_participants) : event.simulated_participants == null;
 
     }
 
@@ -179,14 +214,18 @@ public class Event implements Parcelable {
         int result = event_id != null ? event_id.hashCode() : 0;
         result = 31 * result + (sport_id != null ? sport_id.hashCode() : 0);
         result = 31 * result + (field_id != null ? field_id.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (city != null ? city.hashCode() : 0);
+        result = 31 * result + (coord_latitude != null ? coord_latitude.hashCode() : 0);
+        result = 31 * result + (coord_longitude != null ? coord_longitude.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
         result = 31 * result + (owner != null ? owner.hashCode() : 0);
         result = 31 * result + total_players;
         result = 31 * result + empty_players;
+        result = 31 * result + (participants != null ? participants.hashCode() : 0);
+        result = 31 * result + (simulated_participants != null ? simulated_participants.hashCode() : 0);
         return result;
     }
-
 
     @Override
     public int describeContents() {
@@ -198,7 +237,10 @@ public class Event implements Parcelable {
         dest.writeString(this.event_id);
         dest.writeString(this.sport_id);
         dest.writeString(this.field_id);
+        dest.writeString(this.name);
         dest.writeString(this.city);
+        dest.writeValue(this.coord_latitude);
+        dest.writeValue(this.coord_longitude);
         dest.writeValue(this.date);
         dest.writeString(this.owner);
         dest.writeInt(this.total_players);
@@ -209,7 +251,10 @@ public class Event implements Parcelable {
         this.event_id = in.readString();
         this.sport_id = in.readString();
         this.field_id = in.readString();
+        this.name = in.readString();
         this.city = in.readString();
+        this.coord_latitude = (Double) in.readValue(Double.class.getClassLoader());
+        this.coord_longitude = (Double) in.readValue(Double.class.getClassLoader());
         this.date = (Long) in.readValue(Long.class.getClassLoader());
         this.owner = in.readString();
         this.total_players = in.readInt();
@@ -227,22 +272,6 @@ public class Event implements Parcelable {
             return new Event[size];
         }
     };
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "event_id='" + event_id + '\'' +
-                ", sport_id='" + sport_id + '\'' +
-                ", field_id='" + field_id + '\'' +
-                ", city='" + city + '\'' +
-                ", date=" + date +
-                ", owner='" + owner + '\'' +
-                ", total_players=" + total_players +
-                ", empty_players=" + empty_players +
-                ", participants=" + (participants!=null?participants.toString():"null") +
-                ", simulated_participants=" + (simulated_participants!=null?simulated_participants.toString():"null") +
-                '}';
-    }
 }
 
 
