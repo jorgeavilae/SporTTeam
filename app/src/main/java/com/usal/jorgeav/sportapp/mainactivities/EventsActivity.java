@@ -89,6 +89,7 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // Results of select image and crop Activity when add a simulated User
         EasyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
             @Override
             public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {

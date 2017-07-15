@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.data;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
 import java.util.HashMap;
@@ -15,15 +16,24 @@ public class User {
     String mEmail;
     String mName;
     String mCity;
+    Double coord_latitude;
+    Double coord_longitude;
     int mAge;
     String mPhotoUrl;
     List<Sport> mSportList;
 
-    public User(String mId, String mEmail, String mName, String mCity, int mAge, String mPhotoUrl, List<Sport> sportList) {
+    public User(String mId, String mEmail, String mName, String mCity, LatLng coord, int mAge, String mPhotoUrl, List<Sport> sportList) {
         this.mId = mId;
         this.mEmail = mEmail;
         this.mName = mName;
         this.mCity = mCity;
+        if (coord != null) {
+            this.coord_latitude = coord.latitude;
+            this.coord_longitude = coord.longitude;
+        } else {
+            this.coord_latitude = null;
+            this.coord_longitude = null;
+        }
         this.mAge = mAge;
         this.mPhotoUrl = mPhotoUrl;
         this.mSportList = sportList;
@@ -45,6 +55,14 @@ public class User {
         return mCity;
     }
 
+    public Double getCoord_latitude() {
+        return coord_latitude;
+    }
+
+    public Double getCoord_longitude() {
+        return coord_longitude;
+    }
+
     public int getmAge() {
         return mAge;
     }
@@ -64,6 +82,8 @@ public class User {
                 ", mEmail='" + mEmail + '\'' +
                 ", mName='" + mName + '\'' +
                 ", mCity='" + mCity + '\'' +
+                ", coord_latitude=" + coord_latitude +
+                ", coord_longitude=" + coord_longitude +
                 ", mAge=" + mAge +
                 ", mPhotoUrl='" + mPhotoUrl + '\'' +
                 ", mSportList=" + mSportList +
@@ -84,6 +104,8 @@ public class User {
         result.put(FirebaseDBContract.User.AGE, this.mAge);
         result.put(FirebaseDBContract.User.PROFILE_PICTURE, this.mPhotoUrl);
         result.put(FirebaseDBContract.User.CITY, this.mCity);
+        result.put(FirebaseDBContract.User.COORD_LATITUDE, this.coord_latitude);
+        result.put(FirebaseDBContract.User.COORD_LONGITUDE, this.coord_longitude);
         return result;
     }
 

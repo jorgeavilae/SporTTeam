@@ -69,8 +69,9 @@ public class UtilesDataSnapshot {
         Long date = dataNode.child(FirebaseDBContract.Event.DATE).getValue(Long.class);
         Long total = dataNode.child(FirebaseDBContract.Event.TOTAL_PLAYERS).getValue(Long.class);
         Long empty = dataNode.child(FirebaseDBContract.Event.EMPTY_PLAYERS).getValue(Long.class);
-
-        return new Event(id, sport, field, name, city, new LatLng(latitude, longitude), date, owner,
+        LatLng coord = null;
+        if (latitude != null && longitude != null) coord = new LatLng(latitude, longitude);
+        return new Event(id, sport, field, name, city, coord, date, owner,
                 total.intValue(), empty.intValue(), new HashMap<String, Boolean>(),
                 new HashMap<String, SimulatedUser>());
     }
@@ -132,18 +133,21 @@ public class UtilesDataSnapshot {
     public static User dataSnapshotToUser(DataSnapshot data) {
         String datakey = FirebaseDBContract.DATA + "/";
         String id = data.getKey();
-        String email = data.child(datakey + FirebaseDBContract.User.EMAIL).getValue().toString();
-        String name = data.child(datakey + FirebaseDBContract.User.ALIAS).getValue().toString();
-        String city = data.child(datakey + FirebaseDBContract.User.CITY).getValue().toString();
-        String ageStr = data.child(datakey + FirebaseDBContract.User.AGE).getValue().toString();
-        int age = Integer.valueOf(ageStr);
+        String email = data.child(datakey + FirebaseDBContract.User.EMAIL).getValue(String.class);
+        String name = data.child(datakey + FirebaseDBContract.User.ALIAS).getValue(String.class);
+        String city = data.child(datakey + FirebaseDBContract.User.CITY).getValue(String.class);
+        Double latitude = data.child(datakey + FirebaseDBContract.Event.COORD_LATITUDE).getValue(Double.class);
+        Double longitude = data.child(datakey + FirebaseDBContract.Event.COORD_LONGITUDE).getValue(Double.class);
+        Long age = data.child(datakey + FirebaseDBContract.User.AGE).getValue(Long.class);
         String photoUrl = data.child(datakey + FirebaseDBContract.User.PROFILE_PICTURE).getValue(String.class);
 
         ArrayList<Sport> arraySports = new ArrayList<>();
         for (DataSnapshot d : data.child(FirebaseDBContract.User.SPORTS_PRACTICED).getChildren())
             arraySports.add(new Sport(d.getKey(), ((Number)d.getValue()).floatValue(), 0));
 
-        return new User(id,email,name,city,age,photoUrl,arraySports);
+        LatLng coord = null;
+        if (latitude != null && longitude != null) coord = new LatLng(latitude, longitude);
+        return new User(id, email, name, city, coord, age.intValue(), photoUrl, arraySports);
     }
     public static ContentValues dataUserToContentValues(User user) {
         ContentValues cv = new ContentValues();

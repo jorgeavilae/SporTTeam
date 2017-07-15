@@ -13,11 +13,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -25,6 +29,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,6 +57,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.usal.jorgeav.sportapp.GlideApp;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
@@ -71,11 +85,19 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         SportsListFragment.OnSportsSelected {
     private final static String TAG = NewUserActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
+    private static final String INSTANCE_NEW_USER_CITY_NAME = "INSTANCE_NEW_USER_CITY_NAME";
+    private static final String INSTANCE_NEW_USER_CITY_COORD = "INSTANCE_NEW_USER_CITY_COORD";
     private static final int RC_PERMISSIONS = 3;
-    Fragment mDisplayedFragment;
     private static final int RC_PHOTO_PICKER = 2;
+
+    Fragment mDisplayedFragment;
     Uri selectedImageUri;
     Uri croppedImageUri;
+    String newUserCitySelectedName = null;
+    LatLng newUserCitySelectedCoord = null;
+    // Static prevent double initialization with same ID
+    static GoogleApiClient mGoogleApiClient;
+    PlaceAutocompleteAdapter mAdapter;
 
     @BindView(R.id.new_user_toolbar)
     Toolbar newUserToolbar;
@@ -96,7 +118,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     @BindView(R.id.new_user_photo_button)
     Button newUserPhotoButton;
     @BindView(R.id.new_user_city)
-    EditText newUserCity;
+    AutoCompleteTextView newUserAutocompleteCity;
     @BindView(R.id.new_user_add_sport_button)
     Button newUserAddSportButton;
 
@@ -105,6 +127,21 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (mGoogleApiClient == null)
+            mGoogleApiClient = new GoogleApiClient
+                    .Builder(this)
+                    .addApi(Places.GEO_DATA_API)
+                    .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                            Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
+                        }
+                    })
+                    .build();
+        else mGoogleApiClient.connect();
+
+
         setContentView(R.layout.activity_new_user);
         ButterKnife.bind(this);
 
@@ -162,7 +199,71 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
             }
         });
 
+        setAutocompleteTextView();
+
         showContent();
+    }
+
+    private void setAutocompleteTextView() {
+        // Set up the adapter that will retrieve suggestions from
+        // the Places Geo Data API that cover Spain
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
+                /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
+                .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
+                .build();
+
+        mAdapter = new PlaceAutocompleteAdapter(this, mGoogleApiClient, null, typeFilter);
+        newUserAutocompleteCity.setAdapter(mAdapter);
+
+        newUserAutocompleteCity.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                newUserCitySelectedName = null;
+                newUserCitySelectedCoord = null;
+            }
+        });
+
+        newUserAutocompleteCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                /*
+                 Retrieve the place ID of the selected item from the Adapter.
+                 The adapter stores each Place suggestion in a AutocompletePrediction from which we
+                 read the place ID and title.
+                  */
+                AutocompletePrediction item = mAdapter.getItem(position);
+                if (item != null) {
+                    Log.i(TAG, "Autocomplete item selected: " + item.getPlaceId());
+                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, item.getPlaceId())
+                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                                @Override
+                                public void onResult(@NonNull PlaceBuffer places) {
+                                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
+                                        Place myPlace = places.get(0);
+                                        newUserCitySelectedName = myPlace.getName().toString();
+                                        newUserCitySelectedCoord = myPlace.getLatLng();
+                                        Log.i(TAG, "Place found: Name - " + myPlace.getName()
+                                                + " LatLng - " + myPlace.getLatLng());
+                                    } else {
+                                        Log.e(TAG, "Place not found");
+                                    }
+                                    places.release();
+                                }
+                            });
+                }
+            }
+        });
     }
 
     @Override
@@ -176,6 +277,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
+
             //Check emailEditText and PassEditText
             if (!TextUtils.isEmpty(newUserEmail.getText())
                     && TextUtils.isEmpty(newUserEmail.getError())
@@ -185,7 +287,8 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                     && TextUtils.isEmpty(newUserName.getError())
                     && !TextUtils.isEmpty(newUserAge.getText())
                     && croppedImageUri != null
-                    && !TextUtils.isEmpty(newUserCity.getText())
+                    && newUserCitySelectedName != null
+                    && newUserCitySelectedCoord != null
                     && sports.size() > 0) {
                 hideContent();
                 createAuthUser(newUserEmail.getText().toString(), newUserPassword.getText().toString());
@@ -382,7 +485,8 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                                 User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                                         newUserEmail.getText().toString(),
                                         newUserName.getText().toString(),
-                                        newUserCity.getText().toString(),
+                                        newUserCitySelectedName,
+                                        newUserCitySelectedCoord,
                                         Integer.parseInt(newUserAge.getText().toString()),
                                         downloadUrl.toString(),
                                         sports);
@@ -453,11 +557,21 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         super.onSaveInstanceState(outState);
         if (mDisplayedFragment != null && getSupportFragmentManager() != null)
             getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
+        if (newUserCitySelectedName != null)
+            outState.putString(INSTANCE_NEW_USER_CITY_NAME, newUserCitySelectedName);
+        if (newUserCitySelectedCoord != null)
+            outState.putParcelable(INSTANCE_NEW_USER_CITY_COORD, newUserCitySelectedCoord);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_USER_CITY_NAME))
+            newUserCitySelectedName = savedInstanceState.getString(INSTANCE_NEW_USER_CITY_NAME);
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_USER_CITY_COORD))
+            newUserCitySelectedCoord = savedInstanceState.getParcelable(INSTANCE_NEW_USER_CITY_COORD);
+
         mDisplayedFragment = null;
         if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
             try {

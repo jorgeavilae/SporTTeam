@@ -111,7 +111,8 @@ public class UtilesContentProvider {
                 String city = c.getString(SportteamContract.UserEntry.COLUMN_CITY);
                 int age = c.getInt(SportteamContract.UserEntry.COLUMN_AGE);
                 String photoUrl = c.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
-                u = new User(userId, email, name, city, age, photoUrl, null);
+                // TODO: 15/07/2017 Update with ccords
+                u = new User(userId, email, name, city, null, age, photoUrl, null);
             } else if (c.getCount() == 0)
                 Log.e(TAG, "getUserFromContentProvider: User with ID "+userId+" not found");
             else

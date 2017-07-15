@@ -170,7 +170,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/new_user_photo"
                 android:layout_marginBottom="8dp" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/new_user_city"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -181,10 +181,9 @@
                 android:layout_marginTop="8dp"
                 android:ems="10"
                 android:inputType="textPostalAddress"
-                android:text="ciudad"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView6" />
+                app:layout_constraintTop_toBottomOf="@+id/textView6"/>
 
             <Button
                 android:id="@+id/new_user_add_sport_button"
