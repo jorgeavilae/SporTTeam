@@ -16,6 +16,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.MyPlace;
+import com.usal.jorgeav.sportapp.network.HttpRequestTask;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
@@ -125,5 +127,7 @@ public class MapsActivity extends AppCompatActivity implements
     public void onMapLongClick(LatLng latLng) {
         Log.d(TAG, "onMapClick: "+latLng);
 
+        MyPlace selectedPlace = HttpRequestTask.syncWeather(this, latLng);
+        Log.d(TAG, "onMapLongClick: "+selectedPlace);
     }
 }
