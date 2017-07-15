@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -127,7 +129,23 @@ public class MapsActivity extends AppCompatActivity implements
     public void onMapLongClick(LatLng latLng) {
         Log.d(TAG, "onMapClick: "+latLng);
 
-        MyPlace selectedPlace = HttpRequestTask.syncWeather(this, latLng);
+        AsyncTask<LatLng, Void, MyPlace> mFetchPlaceInfoTask = new AsyncTask<LatLng, Void, MyPlace>(){
+            @Override
+            protected MyPlace doInBackground(LatLng... latLng) {
+                MyPlace selectedPlace = HttpRequestTask.syncWeather(getApplicationContext(), latLng[0]);
+                return selectedPlace;
+            }
+
+            @Override
+            protected void onPostExecute(MyPlace place) {
+                updateSelectedPlace(place);
+            }
+        };
+        mFetchPlaceInfoTask.execute(latLng);
+    }
+
+    private void updateSelectedPlace(MyPlace selectedPlace) {
         Log.d(TAG, "onMapLongClick: "+selectedPlace);
+        Toast.makeText(this, selectedPlace.toString(), Toast.LENGTH_LONG).show();
     }
 }

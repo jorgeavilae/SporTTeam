@@ -116,23 +116,27 @@ public class UtilesNetwork {
             }
         }
 
-
-        JSONArray jsonWeatherArray = json.getJSONArray(OWM_LIST);
-
-        JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
-
-        JSONObject cityCoord = cityJson.getJSONObject(OWM_COORD);
-        double cityLatitude = cityCoord.getDouble(OWM_LATITUDE);
-        double cityLongitude = cityCoord.getDouble(OWM_LONGITUDE);
-
         JSONObject jsonFirstResult = json.getJSONArray("results").getJSONObject(0);
-        ;
 
         String placeId = jsonFirstResult.getString("place_id");
         String address = jsonFirstResult.getString("formatted_address");
-        String shortNameLocality;
-        String longNameLocality;
-        LatLng coordinates;
+        String shortNameLocality = "";
+        String longNameLocality = "";
+        JSONArray jsonArrayAddresses = jsonFirstResult.getJSONArray("address_components");
+        for (int i = 0; i < jsonArrayAddresses.length(); i++) {
+            JSONObject addressComponent = jsonArrayAddresses.getJSONObject(i);
+            JSONArray addressTypes = addressComponent.getJSONArray("types");
+            for (int j = 0; j < addressTypes.length(); j++) {
+                if (addressTypes.getString(j).equals("locality")) {
+                    shortNameLocality = addressComponent.getString("short_name");
+                    longNameLocality = addressComponent.getString("long_name");
+                }
+            }
+        }
+
+        double lat = jsonFirstResult.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+        double lng = jsonFirstResult.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+        LatLng coordinates = new LatLng(lat, lng);
 
         return new MyPlace(placeId, address, shortNameLocality, longNameLocality, coordinates);
     }
