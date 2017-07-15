@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.utils;
 
 import android.content.ContentValues;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -62,12 +63,16 @@ public class UtilesDataSnapshot {
         String field = dataNode.child(FirebaseDBContract.Event.FIELD).getValue(String.class);
         String name = dataNode.child(FirebaseDBContract.Event.NAME).getValue(String.class);
         String city = dataNode.child(FirebaseDBContract.Event.CITY).getValue(String.class);
+        Double latitude = dataNode.child(FirebaseDBContract.Event.COORD_LATITUDE).getValue(Double.class);
+        Double longitude = dataNode.child(FirebaseDBContract.Event.COORD_LONGITUDE).getValue(Double.class);
         String owner = dataNode.child(FirebaseDBContract.Event.OWNER).getValue(String.class);
         Long date = dataNode.child(FirebaseDBContract.Event.DATE).getValue(Long.class);
         Long total = dataNode.child(FirebaseDBContract.Event.TOTAL_PLAYERS).getValue(Long.class);
         Long empty = dataNode.child(FirebaseDBContract.Event.EMPTY_PLAYERS).getValue(Long.class);
 
-        return new Event(id,sport,field,name,city,date,owner,total.intValue(),empty.intValue(),new HashMap<String, Boolean>(), new HashMap<String, SimulatedUser>());
+        return new Event(id, sport, field, name, city, new LatLng(latitude, longitude), date, owner,
+                total.intValue(), empty.intValue(), new HashMap<String, Boolean>(),
+                new HashMap<String, SimulatedUser>());
     }
     public static ContentValues eventToContentValues(Event event) {
         ContentValues cv = new ContentValues();

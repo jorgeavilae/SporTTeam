@@ -135,7 +135,8 @@ public class UtilesContentProvider {
                 String owner = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
                 int totalPl = c.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
                 int emptyPl = c.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
-                e = new Event(eventId, sport, field, name, city, date, owner, totalPl, emptyPl, null, null);
+                // TODO: 15/07/2017 Update with ccords
+                e = new Event(eventId, sport, field, name, city, null, date, owner, totalPl, emptyPl, null, null);
             } else if (c.getCount() == 0)
                 Log.e(TAG, "getEventFromContentProvider: Event with ID "+eventId+" not found");
             else
