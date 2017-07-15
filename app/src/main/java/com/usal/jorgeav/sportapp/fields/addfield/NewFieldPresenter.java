@@ -4,15 +4,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.text.TextUtils;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 import java.util.ArrayList;
 
@@ -31,11 +28,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
 
     @Override
     public void loadNearbyFields(LoaderManager loaderManager, Bundle b) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        if(TextUtils.isEmpty(myUserID)) return;
-
-        String city = Utiles.getCurrentUserCity(mNewFieldView.getActivityContext());
+        String city = UtilesPreferences.getCurrentUserCity(mNewFieldView.getActivityContext());
 
         if (city != null) {
             FirebaseSync.loadFieldsFromCity(city);
@@ -171,12 +164,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
     public Loader onCreateLoader(int id, Bundle args) {
         switch (id) {
             case SportteamLoader.LOADER_FIELDS_FROM_CITY:
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-                if(TextUtils.isEmpty(myUserID)) return null;
-
-                String city = Utiles.getCurrentUserCity(mNewFieldView.getActivityContext());
-
+                String city = UtilesPreferences.getCurrentUserCity(mNewFieldView.getActivityContext());
                 if (city != null)
                     return SportteamLoader
                             .cursorLoaderFieldsFromCity(mNewFieldView.getActivityContext(), city);

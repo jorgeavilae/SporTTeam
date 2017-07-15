@@ -45,14 +45,12 @@ public class FirebaseSync {
             if (TextUtils.isEmpty(myUserID)) return;
 
             // Load current user profile and sports
-            loadAProfile(myUserID);
-            UtilesPreferences.setCurrentUserCity(MyApplication.getAppContext());
-            UtilesPreferences.setCurrentUserCityCoords(MyApplication.getAppContext());
+            loadAProfile(myUserID, true);
 
             // Load fields from user city
-            loadFieldsFromCity(Utiles.getCurrentUserCity(MyApplication.getAppContext()));
+            loadFieldsFromCity(UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext()));
             // Load events from user city
-            loadEventsFromCity(Utiles.getCurrentUserCity(MyApplication.getAppContext()));
+            loadEventsFromCity(UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext()));
 
             // Load friends list and user data
             loadUsersFromFriends();
@@ -103,7 +101,7 @@ public class FirebaseSync {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
-                    loadAProfile(dataSnapshot.getKey());
+                    loadAProfile(dataSnapshot.getKey(), false);
                     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
                     String myUserID = "";
                     if (fUser != null) myUserID = fUser.getUid();
@@ -115,7 +113,7 @@ public class FirebaseSync {
 
             @Override
             public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
-                loadAProfile(dataSnapshot.getKey());
+                loadAProfile(dataSnapshot.getKey(), false);
                 FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
                 String myUserID = "";
                 if (fUser != null) myUserID = fUser.getUid();
@@ -166,7 +164,7 @@ public class FirebaseSync {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
-                    loadAProfile(dataSnapshot.getKey());
+                    loadAProfile(dataSnapshot.getKey(), false);
 
                     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
                     String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
@@ -220,7 +218,7 @@ public class FirebaseSync {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
-                    loadAProfile(dataSnapshot.getKey());
+                    loadAProfile(dataSnapshot.getKey(), false);
 
                     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
                     String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
@@ -416,7 +414,7 @@ public class FirebaseSync {
                     }
 
                     // Load receiver. Necessary cause it could be a sender's friend not mine.
-                    loadAProfile(invitation.getReceiver());
+                    loadAProfile(invitation.getReceiver(), false);
 
                     // Load sender. It could be the current user. It could be other user, in such
                     // case that user would be load in loadParticipants or loadOwner.
@@ -533,7 +531,7 @@ public class FirebaseSync {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
-                    loadAProfile(dataSnapshot.getKey());
+                    loadAProfile(dataSnapshot.getKey(), false);
 
                     String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
                     ContentValues cvData = UtilesDataSnapshot
@@ -750,7 +748,7 @@ public class FirebaseSync {
         Log.d(TAG, "loadMyNotifications");
     }
 
-    public static void loadAProfile(@NonNull String userID) {
+    public static void loadAProfile(@NonNull String userID, final boolean shouldUpdateCityPrefs) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
@@ -773,6 +771,11 @@ public class FirebaseSync {
                             MyApplication.getAppContext().getContentResolver()
                                     .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
                                             cvSports.toArray(new ContentValues[cvSports.size()]));
+
+                            if (shouldUpdateCityPrefs) {
+                                UtilesPreferences.setCurrentUserCity(MyApplication.getAppContext());
+                                UtilesPreferences.setCurrentUserCityCoords(MyApplication.getAppContext());
+                            }
                         }
                     }
 
@@ -887,7 +890,7 @@ public class FirebaseSync {
                                         ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                                         MyApplication.getAppContext().getContentResolver()
                                                 .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                                        loadAProfile(e.getOwner());
+                                        loadAProfile(e.getOwner(), false);
                                         loadAField(e.getField_id());
 
                                         //Notify
@@ -935,7 +938,7 @@ public class FirebaseSync {
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                            loadAProfile(e.getOwner());
+                            loadAProfile(e.getOwner(), false);
                             loadAField(e.getField_id());
 
                             // Load users participants with data
@@ -971,7 +974,7 @@ public class FirebaseSync {
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                            loadAProfile(e.getOwner());
+                            loadAProfile(e.getOwner(), false);
                             loadAField(e.getField_id());
 
                             // Load users participants with data
@@ -1030,7 +1033,7 @@ public class FirebaseSync {
                         new String[]{eventId});
 
         for (Map.Entry<String, Boolean> entry : participants.entrySet()) {
-            loadAProfile(entry.getKey());
+            loadAProfile(entry.getKey(), false);
 
             ContentValues cv = new ContentValues();
             cv.put(SportteamContract.EventsParticipationEntry.USER_ID, entry.getKey());

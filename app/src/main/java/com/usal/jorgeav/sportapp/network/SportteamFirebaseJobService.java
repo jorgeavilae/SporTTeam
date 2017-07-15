@@ -1,13 +1,9 @@
 package com.usal.jorgeav.sportapp.network;
 
-import android.text.TextUtils;
-
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 public class SportteamFirebaseJobService extends JobService {
     public static final String TAG = SportteamFirebaseJobService.class.getSimpleName();
@@ -46,10 +42,7 @@ public class SportteamFirebaseJobService extends JobService {
          *
          */
 
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
-        if (!TextUtils.isEmpty(myUid))
-            FirebaseSync.loadEventsFromCity(Utiles.getCurrentUserCity(this));
+        FirebaseSync.loadEventsFromCity(UtilesPreferences.getCurrentUserCity(this));
 
         jobFinished(jobParameters, false);
         return false;

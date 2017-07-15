@@ -49,7 +49,7 @@ public class NotificationsPresenter implements NotificationsContract.Presenter {
                             case FirebaseDBContract.NOTIFICATION_TYPE_USER:
                                 User user = UtilesContentProvider.getUserFromContentProvider(notification.getExtra_data_one());
                                 if (user == null) {
-                                    FirebaseSync.loadAProfile(notification.getExtra_data_one());
+                                    FirebaseSync.loadAProfile(notification.getExtra_data_one(), false);
                                 }
                                 result.put(data.getKey(), notification);
                                 break;
