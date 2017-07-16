@@ -78,6 +78,7 @@
             android:name=".mainactivities.MapsActivity"
             android:label="@string/title_activity_maps"
             android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"/>
 
         <provider

@@ -4,6 +4,7 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,11 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,6 +26,7 @@ import com.google.android.gms.location.places.Places;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.MyPlace;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -53,7 +55,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     @BindView(R.id.new_field_sport)
     Spinner newFieldSport;
     @BindView(R.id.new_field_address)
-    AutoCompleteTextView newFieldAutocompleteAddress;
+    TextView newFieldAddress;
     @BindView(R.id.new_field_map_button)
     Button newFieldMapButton;
     @BindView(R.id.new_field_name)
@@ -267,60 +269,45 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         mCityFields = dataList;
     }
 
-    //    @Override
-//    public void showEventSport(String sport) {
-//        if (sport != null && !TextUtils.isEmpty(sport))
-//            newEventSport.setSelection(sportsAdapter.getPosition(sport));
-//    }
-//
-//    @Override
-//    public void showEventPlace(String place) {
-//
-//    }
-//
-//    @Override
-//    public void showEventName(String name) {
-//        if (name != null && !TextUtils.isEmpty(name))
-//        newEventName.setText(name);
-//    }
-//
-//    @Override
-//    public void showEventDate(long date) {
-//        if (date > -1) {
-//            newEventDate.setText(UtilesTime.millisToDateString(date));
-//            newEventTime.setText(UtilesTime.millisToTimeString(date));
-//        }
-//    }
-//
-//    @Override
-//    public void showEventCity(String city) {
-//        if (city != null && !TextUtils.isEmpty(city)) {
-//            newEventCity.setText(city);
-//            ((EventsActivity) getActivity()).setCity(city);
-//        }
-//    }
-//
-//    @Override
-//    public void showEventTotalPlayers(int totalPlayers) {
-//        if (totalPlayers > -1)
-//            newEventTotal.setText(String.format(Locale.getDefault(), "%d", totalPlayers));
-//    }
-//
-//    @Override
-//    public void showEventEmptyPlayers(int emptyPlayers) {
-//        if (emptyPlayers > -1)
-//            newEventEmpty.setText(String.format(Locale.getDefault(), "%d", emptyPlayers));
-//    }
-//
-//    @Override
-//    public void setParticipants(HashMap<String, Boolean> map) {
-//        mParticipants = map;
-//    }
+    @Override
+    public void showFieldSport(String sport) {
+        if (sport != null && !TextUtils.isEmpty(sport))
+            newFieldSport.setSelection(sportsAdapter.getPosition(sport));
+    }
+
+    @Override
+    public void showFieldPlace(MyPlace place) {
+        newFieldAddress.setText(place.getAddress());
+    }
+
+    @Override
+    public void showFieldName(String name) {
+        if (name != null && !TextUtils.isEmpty(name))
+            newFieldName.setText(name);
+    }
+
+    @Override
+    public void showFieldOpenTime(long time) {
+        if (time > -1)
+            newFieldOpenTime.setText(UtilesTime.millisToDateString(time));
+    }
+
+    @Override
+    public void showFieldCloseTime(long time) {
+        if (time > -1)
+            newFieldCloseTime.setText(UtilesTime.millisToDateString(time));
+    }
+
+    @Override
+    public void showFieldRate(float rate) {
+        if (rate > -1)
+            newFieldRate.setRating(rate);
+    }
 
     @Override
     public void clearUI() {
         newFieldSport.setSelection(0);
-        newFieldAutocompleteAddress.setText("");
+        newFieldAddress.setText("");
         newFieldName.setText("");
         newFieldOpenTime.setText("");
         newFieldCloseTime.setText("");

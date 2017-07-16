@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.MyPlace;
 
 import java.util.ArrayList;
 
@@ -23,14 +24,12 @@ public abstract class NewFieldContract {
     }
 
     public interface View {
-//        void showEventSport(String sport);
-//        void showEventPlace(String place);
-//        void showEventName(String name);
-//        void showEventDate(long date);
-//        void showEventCity(String city);
-//        void showEventTotalPlayers(int totalPlayers);
-//        void showEventEmptyPlayers(int emptyPlayers);
-//        void setParticipants(HashMap<String, Boolean> map);
+        void showFieldSport(String sport);
+        void showFieldPlace(MyPlace place);
+        void showFieldName(String name);
+        void showFieldOpenTime(long time);
+        void showFieldCloseTime(long time);
+        void showFieldRate(float rate);
         void clearUI();
         Context getActivityContext();
         void retrieveFields(ArrayList<Field> dataList);

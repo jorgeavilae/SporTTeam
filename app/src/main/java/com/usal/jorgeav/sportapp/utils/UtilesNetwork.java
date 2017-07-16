@@ -56,6 +56,7 @@ public class UtilesNetwork {
         try {
             URL queryUrl = new URL(queryUri.toString());
             Log.v(TAG, "URL: " + queryUrl);
+            Log.d(TAG, "getUrl: latlng "+latitude+" ~ "+longitude);
             return queryUrl;
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -87,33 +88,38 @@ public class UtilesNetwork {
             throws JSONException {
 
         JSONObject json = new JSONObject(jsonStr);
+        Log.d(TAG, "getMyPlaceFromJson: "+json);
 
         /* Is there an error? */
-        if (json.has(STATUS_CODE)) {
-            String statusCode = json.getString(STATUS_CODE);
+        if (!json.has(STATUS_CODE)) return new MyPlace("UNKNOWN_ERROR");
+        String statusCode = json.getString(STATUS_CODE);
 
-            // https://developers.google.com/maps/documentation/geocoding/intro?hl=es-419#reverse-response
-            switch (statusCode) {
-                case "OK":
-                    break;
-                case "ZERO_RESULTS":
-                    /* Maybe latlng in a remote location */
-                    return null;
-                case "OVER_QUERY_LIMIT":
-                    /* Over your quota. */
-                    return null;
-                case "REQUEST_DENIED":
-                    /* API key invalid */
-                    return null;
-                case "INVALID_REQUEST":
-                    /* Missing latlng or error in result_type */
-                    return null;
-                case "UNKNOWN_ERROR":
-                    /* Probably a bad connection */
-                    return null;
-                default:
-                    return null;
-            }
+        // https://developers.google.com/maps/documentation/geocoding/intro?hl=es-419#reverse-response
+        switch (statusCode) {
+            case "OK":
+                break;
+            case "ZERO_RESULTS":
+                /* Maybe latlng in a remote location */
+                Log.e(TAG, "getMyPlaceFromJson: Maybe latlng in a remote location "+statusCode);
+                return new MyPlace("ZERO_RESULTS");
+            case "OVER_QUERY_LIMIT":
+                /* Over your quota. */
+                Log.e(TAG, "getMyPlaceFromJson: Over quota "+statusCode);
+                return new MyPlace("OVER_QUERY_LIMIT");
+            case "REQUEST_DENIED":
+                /* API key invalid */
+                Log.e(TAG, "getMyPlaceFromJson: API key invalid "+statusCode);
+                return new MyPlace("REQUEST_DENIED");
+            case "INVALID_REQUEST":
+                /* Missing latlng or error in result_type */
+                Log.e(TAG, "getMyPlaceFromJson: Missing latlng or error in result_type "+statusCode);
+                return new MyPlace("INVALID_REQUEST");
+            case "UNKNOWN_ERROR":
+                /* Probably a bad connection */
+                Log.e(TAG, "getMyPlaceFromJson: Probably a bad connection "+statusCode);
+                return new MyPlace("UNKNOWN_ERROR");
+            default:
+                return new MyPlace("UNKNOWN_ERROR");
         }
 
         JSONObject jsonFirstResult = json.getJSONArray("results").getJSONObject(0);
@@ -138,7 +144,25 @@ public class UtilesNetwork {
         double lng = jsonFirstResult.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
         LatLng coordinates = new LatLng(lat, lng);
 
-        return new MyPlace(placeId, address, shortNameLocality, longNameLocality, coordinates);
+//        "geometry" : {
+//            "location" : {
+//                "lat" : 37.4224764,
+//                        "lng" : -122.0842499
+//            },
+//            "location_type" : "ROOFTOP",
+//                    "viewport" : { // TODO: 16/07/2017 añadir viewport para centrar el mapa
+//                "northeast" : {
+//                    "lat" : 37.4238253802915,
+//                            "lng" : -122.0829009197085
+//                },
+//                "southwest" : {
+//                    "lat" : 37.4211274197085,
+//                            "lng" : -122.0855988802915
+//                }
+//            }
+//        },
+
+        return new MyPlace(statusCode, placeId, address, shortNameLocality, longNameLocality, coordinates);
     }
 
 }
