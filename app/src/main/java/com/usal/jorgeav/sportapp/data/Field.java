@@ -4,6 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Jorge Avila on 25/04/2017.
@@ -20,8 +24,9 @@ public class Field implements Parcelable {
     int mVotes;
     long mOpeningTime;
     long mClosingTime;
+    String mCreator;
 
-    public Field(String mId, String mName, String mSport, String mAddress, LatLng mCoords, String mCity, float mRating, int mVotes, long mOpeningTime, long mClosingTime) {
+    public Field(String mId, String mName, String mSport, String mAddress, LatLng mCoords, String mCity, float mRating, int mVotes, long mOpeningTime, long mClosingTime, String creator) {
         this.mId = mId;
         this.mName = mName;
         this.mSport = mSport;
@@ -32,10 +37,15 @@ public class Field implements Parcelable {
         this.mVotes = mVotes;
         this.mOpeningTime = mOpeningTime;
         this.mClosingTime = mClosingTime;
+        this.mCreator = creator;
     }
 
     public String getmId() {
         return mId;
+    }
+
+    public void setmId(String mId) {
+        this.mId = mId;
     }
 
     public String getmName() {
@@ -74,6 +84,10 @@ public class Field implements Parcelable {
         return mClosingTime;
     }
 
+    public String getmCreator() {
+        return mCreator;
+    }
+
     @Override
     public String toString() {
         return "Field{" +
@@ -87,7 +101,39 @@ public class Field implements Parcelable {
                 ", mVotes=" + mVotes +
                 ", mOpeningTime=" + mOpeningTime +
                 ", mClosingTime=" + mClosingTime +
+                ", mCreator='" + mCreator + '\'' +
                 '}';
+    }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put(FirebaseDBContract.DATA, dataToMap());
+        result.put(FirebaseDBContract.Field.NEXT_EVENTS, new HashMap<String, Long>());
+        return result;
+    }
+
+    private Map<String, Object> dataToMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put(FirebaseDBContract.Field.NAME, this.mName);
+        result.put(FirebaseDBContract.Field.ADDRESS, this.mAddress);
+        result.put(FirebaseDBContract.Field.COORD_LATITUDE, this.mCoords.latitude);
+        result.put(FirebaseDBContract.Field.COORD_LONGITUDE, this.mCoords.longitude);
+        result.put(FirebaseDBContract.Field.CITY, this.mCity);
+        result.put(FirebaseDBContract.Field.OPENING_TIME, this.mOpeningTime);
+        result.put(FirebaseDBContract.Field.CLOSING_TIME, this.mClosingTime);
+        result.put(FirebaseDBContract.Field.SPORT, sportToMap());
+        result.put(FirebaseDBContract.Field.CREATOR, this.mCreator);
+        return result;
+    }
+
+    private Object sportToMap() {
+        HashMap<String, Object> sport = new HashMap<>();
+        sport.put(FirebaseDBContract.Field.PUNCTUATION, this.mRating);
+        sport.put(FirebaseDBContract.Field.VOTES, this.mVotes);
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put(this.mSport, sport);
+        return result;
     }
 
     @Override
@@ -107,6 +153,7 @@ public class Field implements Parcelable {
         dest.writeInt(this.mVotes);
         dest.writeLong(this.mOpeningTime);
         dest.writeLong(this.mClosingTime);
+        dest.writeString(this.mCreator);
     }
 
     protected Field(Parcel in) {
@@ -120,6 +167,7 @@ public class Field implements Parcelable {
         this.mVotes = in.readInt();
         this.mOpeningTime = in.readLong();
         this.mClosingTime = in.readLong();
+        this.mCreator = in.readString();
     }
 
     public static final Creator<Field> CREATOR = new Creator<Field>() {

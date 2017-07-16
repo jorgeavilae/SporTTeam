@@ -4,14 +4,22 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
 
@@ -37,78 +45,77 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
             loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY, b, this);
         }
     }
-//
-//    @Override
-//    public void addField(String id, String sport, String field, String name, String city,
-//                         String date, String time, String total, String empty,
-//                         HashMap<String, Boolean> participants) {
-//        if (isValidSport(sport) && isValidField(field, sport) && isValidName(name)
-//                && isDateTimeCorrect(date, time) && isPlayersCorrect(total, empty)) {
-//            long dateMillis = UtilesTime.stringDateToMillis(date);
-//            long timeMillis = UtilesTime.stringTimeToMillis(time);
-//            Event event = new Event(
-//                    id, sport, field, name, city, dateMillis + timeMillis,
-//                    FirebaseAuth.getInstance().getCurrentUser().getUid(),
-//                    Integer.valueOf(total), Integer.valueOf(empty), participants, null); // TODO: 13/07/2017 simulatedParticipants se pierden
-//
-//            Log.d(TAG, "addEvent: "+event);
-//            if(TextUtils.isEmpty(event.getEvent_id()))
-//                FirebaseActions.addEvent(event);
-//            else
-//                FirebaseActions.editEvent(event);
-//            ((EventsActivity)mNewFieldView.getActivityContext()).newEventFieldSelected = null;
-//            ((AppCompatActivity)mNewFieldView.getActivityContext()).onBackPressed();
-//        } else
-//            Toast.makeText(mNewFieldView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
-//    }
-//
-//    private boolean isValidSport(String sport) {
-//        // If R.array.sport_id contains this sport
-//        String[] arraySports = mNewFieldView.getActivityContext().getResources().getStringArray(R.array.sport_id);
-//        for (String sportArr : arraySports)
-//            if (sport.equals(sportArr)) return true;
-//        Log.e(TAG, "isValidSport: not valid");
-//        return false;
-//    }
-//
-//    private boolean isValidField(String field, String sport) {
-//        // Check if the sport doesn't need a field
-//        String[] arraySports = mNewFieldView.getActivityContext().getResources().getStringArray(R.array.sport_id);
-//        if (sport.equals(arraySports[0]) || sport.equals(arraySports[1])) return /* todo isValidAddress ?? */ true;
-//
-//        // Query database for the fieldId and checks if this sport exists
-//        Cursor c = SportteamLoader.simpleQueryFieldId(mNewFieldView.getActivityContext(), field);
-//        try {
-//            while (c.moveToNext())
-//                if (c.getString(SportteamContract.FieldEntry.COLUMN_SPORT).equals(sport)) {
-//                    c.close(); return true;
-//                }
-//        } finally { c.close(); }
-//        Log.e(TAG, "isValidField: not valid");
-//        return false;
-//    }
-//
-//    private boolean isValidName(String name) {
-//        if (!TextUtils.isEmpty(name)) return true;
-//        Log.e(TAG, "isValidName: not valid");
-//        return false;
-//    }
-//
-//    private boolean isDateTimeCorrect(String date, String time) {
-//        long dateMillis = UtilesTime.stringDateToMillis(date);
-//        long timeMillis = UtilesTime.stringTimeToMillis(time);
-//        if (System.currentTimeMillis() < dateMillis+timeMillis) return true;
-//        Log.e(TAG, "isDateTimeCorrect: incorrect");
-//        return false;
-//    }
-//
-//    private boolean isPlayersCorrect(String total, String empty) {
-//        if (!TextUtils.isEmpty(total) && !TextUtils.isEmpty(empty))
-//            if (Integer.valueOf(total) >= Integer.valueOf(empty))
-//                return true;
-//        Log.e(TAG, "isPlayersCorrect: incorrect");
-//        return false;
-//    }
+
+    @Override
+    public void addField(String id, String name, String sport, String address,
+                         LatLng coords, String city, float rate, int votes,
+                         String openTime, String closeTime, String userId) {
+        if (isValidSport(sport) && isValidAddress(address, city) && isValidName(name)
+                && isValidCoords(coords) && isTimesCorrect(openTime, closeTime)
+                && isPunctuationValid(rate, votes)&& isValidCreator(userId)) {
+            long openMillis = UtilesTime.stringTimeToMillis(openTime);
+            long closeMillis = UtilesTime.stringTimeToMillis(closeTime);
+            Field field = new Field(id, name, sport, address, coords, city,
+                    rate, votes, openMillis, closeMillis, userId);
+
+            Log.d(TAG, "addField: "+field);
+            FirebaseActions.addField(field);
+            ((FieldsActivity)mNewFieldView.getActivityContext()).mPlaceSelected = null;
+            ((AppCompatActivity)mNewFieldView.getActivityContext()).onBackPressed();
+        } else
+            Toast.makeText(mNewFieldView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isValidSport(String sport) {
+        // If R.array.sport_id contains this sport
+        String[] arraySports = mNewFieldView.getActivityContext().getResources().getStringArray(R.array.sport_id);
+        for (String sportArr : arraySports)
+            if (sport.equals(sportArr)) return true;
+        Log.e(TAG, "isValidSport: not valid");
+        return false;
+    }
+
+    private boolean isValidAddress(String address, String city) {
+        if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(city)
+                && address.contains(city)) return true;
+        Log.e(TAG, "isValidField: not valid");
+        return false;
+    }
+
+    private boolean isValidName(String name) {
+        if (!TextUtils.isEmpty(name)) return true;
+        Log.e(TAG, "isValidName: not valid");
+        return false;
+    }
+
+    private boolean isValidCreator(String userId) {
+        if (!TextUtils.isEmpty(userId)) return true;
+        Log.e(TAG, "isValidName: not valid");
+        return false;
+    }
+
+    private boolean isValidCoords(LatLng coords) {
+        if (coords != null && coords.latitude != 0 && coords.longitude != 0)
+            return true;
+        Log.e(TAG, "isValidCoords: not valid");
+        return false;
+    }
+
+    private boolean isTimesCorrect(String open, String close) {
+        if (!TextUtils.isEmpty(open) && !TextUtils.isEmpty(close)) {
+            long openMillis = UtilesTime.stringTimeToMillis(open);
+            long closeMillis = UtilesTime.stringTimeToMillis(close);
+            if (openMillis <= closeMillis) return true;
+        }
+        Log.e(TAG, "isTimesCorrect: incorrect");
+        return false;
+    }
+
+    private boolean isPunctuationValid(float rate, int votes) {
+        if (rate >= 0 && rate <= 5 && votes >= 0) return true;
+        Log.e(TAG, "isPunctuationValid: incorrect");
+        return false;
+    }
 
     @Override
     public void openField(LoaderManager loaderManager, Bundle b) {
@@ -170,9 +177,12 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
             LatLng coords = null; if (lat != 0 && lng != 0) coords = new LatLng(lat, lng);
             mNewFieldView.showFieldPlace(address, city, coords);
             mNewFieldView.showFieldName(data.getString(SportteamContract.FieldEntry.COLUMN_NAME));
-            mNewFieldView.showFieldOpenTime(data.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME));
-            mNewFieldView.showFieldCloseTime(data.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME));
-            mNewFieldView.showFieldRate(data.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION));
+            long openTime = data.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
+            long closeTime = data.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
+            mNewFieldView.showFieldTimes(openTime, closeTime);
+            float rate = data.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);
+            int votes = data.getInt(SportteamContract.FieldEntry.COLUMN_VOTES);
+            mNewFieldView.showFieldRate(rate, votes);
         } else {
             mNewFieldView.clearUI();
         }

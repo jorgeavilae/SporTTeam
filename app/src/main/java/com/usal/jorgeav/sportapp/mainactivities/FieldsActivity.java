@@ -23,7 +23,7 @@ public class FieldsActivity extends BaseActivity {
     public static final int REQUEST_CODE_ADDRESS = 23;
 
     private static final String INSTANCE_PLACE_SELECTED = "INSTANCE_PLACE_SELECTED";
-    MyPlace mPlaceSelected;
+    public MyPlace mPlaceSelected;
 
     @Override
     public void startMainFragment() {
@@ -68,7 +68,14 @@ public class FieldsActivity extends BaseActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_PLACE_SELECTED))
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_PLACE_SELECTED)) {
             mPlaceSelected = savedInstanceState.getParcelable(INSTANCE_PLACE_SELECTED);
+
+            if (mPlaceSelected != null && mDisplayedFragment instanceof NewFieldContract.View)
+                ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(
+                        mPlaceSelected.getAddress(),
+                        mPlaceSelected.getShortNameLocality(),
+                        mPlaceSelected.getCoordinates());
+        }
     }
 }

@@ -28,6 +28,7 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     private ArrayList<Field> mCityFields;
     private String mCity;
     private LatLng mCoords;
+    private String mCreator = "";
+    private int mVotes = -1;
 
     ArrayAdapter<CharSequence> sportsAdapter;
     @BindView(R.id.new_field_sport)
@@ -144,20 +147,20 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID))
                 fieldId = getArguments().getString(BUNDLE_FIELD_ID);
 
-            Log.d(TAG, "onOptionsItemSelected: "+mCity);
-            Log.d(TAG, "onOptionsItemSelected: "+mCoords);
-//            mNewFieldPresenter.addField(
-//                    fieldId,
-//                    newFieldSport.getSelectedItem().toString(),
-//                    ((EventsActivity)getActivity()).newEventFieldSelected,
-//                    newFieldName.getText().toString(),
-//                    //todo cambiar ciudad ((EventsActivity)getActivity()).newEventCitySelected,
-//                    "ciudad",
-//                    .getText().toString(),
-//                    newEventTime.getText().toString(),
-//                    newEventTotal.getText().toString(),
-//                    newEventEmpty.getText().toString(),
-//                    mParticipants);
+            if (mVotes < 0) mVotes = 0;
+            if (TextUtils.isEmpty(mCreator)) mCreator = Utiles.getCurrentUserId();
+            mNewFieldPresenter.addField(
+                    fieldId,
+                    newFieldName.getText().toString(),
+                    getSportSelected(),
+                    newFieldAddress.getText().toString(),
+                    mCoords,
+                    mCity,
+                    newFieldRate.getRating(),
+                    mVotes,
+                    newFieldOpenTime.getText().toString(),
+                    newFieldCloseTime.getText().toString(),
+                    mCreator);
             return true;
         }
         return false;
@@ -263,30 +266,38 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     }
 
     @Override
-    public void showFieldOpenTime(long time) {
-        if (time > -1)
-            newFieldOpenTime.setText(UtilesTime.millisToDateString(time));
+    public void showFieldTimes(long openTime, long closeTimes) {
+        if (openTime <= closeTimes) {
+            newFieldOpenTime.setText(UtilesTime.millisToTimeString(openTime));
+            newFieldCloseTime.setText(UtilesTime.millisToTimeString(closeTimes));
+        }
     }
 
     @Override
-    public void showFieldCloseTime(long time) {
-        if (time > -1)
-            newFieldCloseTime.setText(UtilesTime.millisToDateString(time));
-    }
-
-    @Override
-    public void showFieldRate(float rate) {
-        if (rate > -1)
+    public void showFieldRate(float rate, int votes) {
+        if (rate >= 0 && rate <= 5)
             newFieldRate.setRating(rate);
+        if (votes >= 0)
+            mVotes = votes;
+    }
+
+    @Override
+    public void showFieldCreator(String creator) {
+        if (creator != null && !TextUtils.isEmpty(creator))
+            mCreator = creator;
     }
 
     @Override
     public void clearUI() {
         newFieldSport.setSelection(0);
         newFieldAddress.setText("");
+        mCity = null;
+        mCoords = null;
         newFieldName.setText("");
         newFieldOpenTime.setText("");
         newFieldCloseTime.setText("");
         newFieldRate.setRating(0f);
+        mVotes = -1;
+        mCreator = null;
     }
 }

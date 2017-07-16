@@ -101,7 +101,7 @@ public class UtilesContentProvider {
             long openTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
             long closeTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
 
-            result.add(new Field(fieldId, name, sport, address, coords, city, rating, votes, openTime, closeTime));
+            result.add(new Field(fieldId, name, sport, address, coords, city, rating, votes, openTime, closeTime, null)); //TODO cambiar creator
         }
         return result;
     }

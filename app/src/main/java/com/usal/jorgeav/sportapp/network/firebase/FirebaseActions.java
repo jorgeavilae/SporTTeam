@@ -26,6 +26,7 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
@@ -107,7 +108,7 @@ public class FirebaseActions {
         long currentTime = System.currentTimeMillis();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(eventInEventTable, event.toMap());
+        childUpdates.put(eventInEventTable, event.toMap()); //TODO se pierden eventrequest invitations, solucion poner DATA en eventInEventTable
         // Listener is attached to this reference so it doesn't need to reload
         childUpdates.put(userEventCreated, currentTime);
         childUpdates.put(fieldNextEvent, currentTime);
@@ -137,6 +138,26 @@ public class FirebaseActions {
                 }
             //The current user is the owner since is the only one who can edit this event
         }
+
+        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
+    }
+
+    // Add Event
+    public static void addField(Field field) {
+        if(TextUtils.isEmpty(field.getmId())) {
+            //Create fieldId
+            DatabaseReference fieldTable = FirebaseDatabase.getInstance()
+                    .getReference(FirebaseDBContract.TABLE_FIELDS);
+            field.setmId(fieldTable.push().getKey());
+        }
+
+        //Set Field in Field Table
+        String fieldInFieldTable = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + field.getmId();
+
+        //Set Field created in creatorId
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(fieldInFieldTable, field.toMap());
 
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }

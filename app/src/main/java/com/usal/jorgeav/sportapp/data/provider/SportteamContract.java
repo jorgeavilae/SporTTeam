@@ -169,6 +169,7 @@ public final class SportteamContract {
         public static final String VOTES = "votes";
         public static final String OPENING_TIME = "openingTime";
         public static final String CLOSING_TIME = "closingTime";
+        public static final String CREATOR = "creator";
 
         /* Column names with table prefix*/
         public static final String FIELD_ID_TABLE_PREFIX = TABLE_FIELD + "." + FIELD_ID;
@@ -182,6 +183,7 @@ public final class SportteamContract {
         public static final String VOTES_TABLE_PREFIX = TABLE_FIELD + "." + VOTES;
         public static final String OPENING_TIME_TABLE_PREFIX = TABLE_FIELD + "." + OPENING_TIME;
         public static final String CLOSING_TIME_TABLE_PREFIX = TABLE_FIELD + "." + CLOSING_TIME;
+        public static final String CREATOR_TABLE_PREFIX = TABLE_FIELD + "." + CREATOR;
 
         /* All column projection */
         public static final String[] FIELDS_COLUMNS = {
@@ -196,7 +198,8 @@ public final class SportteamContract {
                 PUNCTUATION_TABLE_PREFIX,
                 VOTES_TABLE_PREFIX,
                 OPENING_TIME_TABLE_PREFIX,
-                CLOSING_TIME_TABLE_PREFIX
+                CLOSING_TIME_TABLE_PREFIX,
+                CREATOR_TABLE_PREFIX
         };
 
         /* Column indexes */
@@ -212,6 +215,7 @@ public final class SportteamContract {
         public static final int COLUMN_VOTES = 9;
         public static final int COLUMN_OPENING_TIME = 10;
         public static final int COLUMN_CLOSING_TIME = 11;
+        public static final int COLUMN_CREATOR = 12;
 
         /* URI for one field */
         public static Uri buildFieldUriWith(long id) {

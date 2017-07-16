@@ -158,7 +158,6 @@ public class Event implements Parcelable {
         result.put(FirebaseDBContract.Event.PARTICIPANTS, this.participants);
         result.put(FirebaseDBContract.Event.SIMULATED_PARTICIPANTS, this.simulated_participants);
         return result;
-
     }
 
     @Override

@@ -99,7 +99,7 @@ public class UtilesDataSnapshot {
         String city = dataNode.child(FirebaseDBContract.Field.CITY).getValue(String.class);
 
         Double lat =  dataNode.child(FirebaseDBContract.Field.COORD_LATITUDE).getValue(Double.class);
-        Double lng =  dataNode.child(FirebaseDBContract.Field.COORD_LATITUDE).getValue(Double.class);
+        Double lng =  dataNode.child(FirebaseDBContract.Field.COORD_LONGITUDE).getValue(Double.class);
         LatLng coords = null;
         if (lat != null && lat != 0 && lng != null && lng != 0)
             coords = new LatLng(lat, lng);
@@ -113,7 +113,7 @@ public class UtilesDataSnapshot {
             Long votes = d.child(FirebaseDBContract.Field.VOTES).getValue(Long.class);
             result.add(new Field(id,name,sport,address,
                             coords,city,rating.floatValue(),
-                            votes.intValue(),openingTime,closingTime));
+                            votes.intValue(),openingTime,closingTime, null)); //TODO cambiar creator
         }
         return result;
     }
