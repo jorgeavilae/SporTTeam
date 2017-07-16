@@ -50,7 +50,10 @@ public class FieldsActivity extends BaseActivity {
         if(requestCode == REQUEST_CODE_ADDRESS && resultCode == RESULT_OK) {
             mPlaceSelected = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
             if (mDisplayedFragment instanceof NewFieldContract.View)
-                ((NewFieldContract.View)mDisplayedFragment).showFieldPlace(mPlaceSelected);
+                ((NewFieldContract.View)mDisplayedFragment).showFieldPlace(
+                        mPlaceSelected.getAddress(),
+                        mPlaceSelected.getShortNameLocality(),
+                        mPlaceSelected.getCoordinates());
         }
     }
 

@@ -162,6 +162,8 @@ public final class SportteamContract {
         public static final String NAME = "name";
         public static final String SPORT = "sport";
         public static final String ADDRESS = "address";
+        public static final String ADDRESS_LATITUDE = "addressLatitude";
+        public static final String ADDRESS_LONGITUDE = "addressLongitude";
         public static final String CITY = "city";
         public static final String PUNCTUATION = "punctuation";
         public static final String VOTES = "votes";
@@ -173,6 +175,8 @@ public final class SportteamContract {
         public static final String NAME_TABLE_PREFIX = TABLE_FIELD + "." + NAME;
         public static final String SPORT_TABLE_PREFIX = TABLE_FIELD + "." + SPORT;
         public static final String ADDRESS_TABLE_PREFIX = TABLE_FIELD + "." + ADDRESS;
+        public static final String ADDRESS_LATITUDE_TABLE_PREFIX = TABLE_FIELD + "." + ADDRESS_LATITUDE;
+        public static final String ADDRESS_LONGITUDE_TABLE_PREFIX = TABLE_FIELD + "." + ADDRESS_LONGITUDE;
         public static final String CITY_TABLE_PREFIX = TABLE_FIELD + "." + CITY;
         public static final String PUNCTUATION_TABLE_PREFIX = TABLE_FIELD + "." + PUNCTUATION;
         public static final String VOTES_TABLE_PREFIX = TABLE_FIELD + "." + VOTES;
@@ -186,6 +190,8 @@ public final class SportteamContract {
                 NAME_TABLE_PREFIX,
                 SPORT_TABLE_PREFIX,
                 ADDRESS_TABLE_PREFIX,
+                ADDRESS_LATITUDE_TABLE_PREFIX,
+                ADDRESS_LONGITUDE_TABLE_PREFIX,
                 CITY_TABLE_PREFIX,
                 PUNCTUATION_TABLE_PREFIX,
                 VOTES_TABLE_PREFIX,
@@ -199,11 +205,13 @@ public final class SportteamContract {
         public static final int COLUMN_NAME = 2;
         public static final int COLUMN_SPORT = 3;
         public static final int COLUMN_ADDRESS = 4;
-        public static final int COLUMN_CITY = 5;
-        public static final int COLUMN_PUNCTUATION = 6;
-        public static final int COLUMN_VOTES = 7;
-        public static final int COLUMN_OPENING_TIME = 8;
-        public static final int COLUMN_CLOSING_TIME = 9;
+        public static final int COLUMN_ADDRESS_LATITUDE = 5;
+        public static final int COLUMN_ADDRESS_LONGITUDE = 6;
+        public static final int COLUMN_CITY = 7;
+        public static final int COLUMN_PUNCTUATION = 8;
+        public static final int COLUMN_VOTES = 9;
+        public static final int COLUMN_OPENING_TIME = 10;
+        public static final int COLUMN_CLOSING_TIME = 11;
 
         /* URI for one field */
         public static Uri buildFieldUriWith(long id) {

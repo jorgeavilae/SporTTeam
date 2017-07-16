@@ -92,13 +92,16 @@ public class UtilesContentProvider {
             String name = cursor.getString(SportteamContract.FieldEntry.COLUMN_NAME);
             String sport = cursor.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
             String address = cursor.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
+            double lat = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
+            double lng = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
+            LatLng coords = null; if (lat != 0 && lng != 0) coords = new LatLng(lat, lng);
             String city = cursor.getString(SportteamContract.FieldEntry.COLUMN_CITY);
             float rating = cursor.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);
             int votes = cursor.getInt(SportteamContract.FieldEntry.COLUMN_VOTES);
             long openTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
             long closeTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
 
-            result.add(new Field(fieldId, name, sport, address, city, rating, votes, openTime, closeTime));
+            result.add(new Field(fieldId, name, sport, address, coords, city, rating, votes, openTime, closeTime));
         }
         return result;
     }

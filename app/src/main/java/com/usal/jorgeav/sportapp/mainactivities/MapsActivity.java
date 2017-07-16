@@ -114,7 +114,7 @@ public class MapsActivity extends AppCompatActivity implements
         mMap.setOnMapLongClickListener(this);
 
         for (Field f : mFieldsList) {
-            LatLng latLong = f.getLatLong();
+            LatLng latLong = f.getmCoords();
             if (latLong != null)
                 mMap.addMarker(new MarkerOptions().position(latLong).title(f.getmName() + " " + f.getmSport()));
         }

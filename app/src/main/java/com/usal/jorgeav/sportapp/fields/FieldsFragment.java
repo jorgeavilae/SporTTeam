@@ -64,7 +64,7 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
         fieldsNewField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = NewFieldFragment.newInstance(null);
+                Fragment fragment = NewFieldFragment.newInstance(null, null);
                 mFragmentManagementListener.initFragment(fragment, true);
             }
         });

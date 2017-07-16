@@ -14,17 +14,19 @@ public class Field implements Parcelable {
     String mName;
     String mSport;
     String mAddress;
+    LatLng mCoords;
     String mCity;
     float mRating;
     int mVotes;
     long mOpeningTime;
     long mClosingTime;
 
-    public Field(String mId, String mName, String mSport, String mAddress, String mCity, float mRating, int mVotes, long mOpeningTime, long mClosingTime) {
+    public Field(String mId, String mName, String mSport, String mAddress, LatLng mCoords, String mCity, float mRating, int mVotes, long mOpeningTime, long mClosingTime) {
         this.mId = mId;
         this.mName = mName;
         this.mSport = mSport;
         this.mAddress = mAddress;
+        this.mCoords = mCoords;
         this.mCity = mCity;
         this.mRating = mRating;
         this.mVotes = mVotes;
@@ -48,6 +50,10 @@ public class Field implements Parcelable {
         return mAddress;
     }
 
+    public LatLng getmCoords() {
+        return mCoords;
+    }
+
     public String getmCity() {
         return mCity;
     }
@@ -68,6 +74,21 @@ public class Field implements Parcelable {
         return mClosingTime;
     }
 
+    @Override
+    public String toString() {
+        return "Field{" +
+                "mId='" + mId + '\'' +
+                ", mName='" + mName + '\'' +
+                ", mSport='" + mSport + '\'' +
+                ", mAddress='" + mAddress + '\'' +
+                ", mCoords=" + mCoords +
+                ", mCity='" + mCity + '\'' +
+                ", mRating=" + mRating +
+                ", mVotes=" + mVotes +
+                ", mOpeningTime=" + mOpeningTime +
+                ", mClosingTime=" + mClosingTime +
+                '}';
+    }
 
     @Override
     public int describeContents() {
@@ -80,6 +101,7 @@ public class Field implements Parcelable {
         dest.writeString(this.mName);
         dest.writeString(this.mSport);
         dest.writeString(this.mAddress);
+        dest.writeParcelable(this.mCoords, flags);
         dest.writeString(this.mCity);
         dest.writeFloat(this.mRating);
         dest.writeInt(this.mVotes);
@@ -92,6 +114,7 @@ public class Field implements Parcelable {
         this.mName = in.readString();
         this.mSport = in.readString();
         this.mAddress = in.readString();
+        this.mCoords = in.readParcelable(LatLng.class.getClassLoader());
         this.mCity = in.readString();
         this.mRating = in.readFloat();
         this.mVotes = in.readInt();
@@ -110,23 +133,4 @@ public class Field implements Parcelable {
             return new Field[size];
         }
     };
-
-    @Override
-    public String toString() {
-        return "Field{" +
-                "mId='" + mId + '\'' +
-                ", mName='" + mName + '\'' +
-                ", mSport='" + mSport + '\'' +
-                ", mAddress='" + mAddress + '\'' +
-                ", mCity='" + mCity + '\'' +
-                ", mRating=" + mRating +
-                ", mVotes=" + mVotes +
-                ", mOpeningTime=" + mOpeningTime +
-                ", mClosingTime=" + mClosingTime +
-                '}';
-    }
-
-    public LatLng getLatLong() {
-        return null;
-    }
 }

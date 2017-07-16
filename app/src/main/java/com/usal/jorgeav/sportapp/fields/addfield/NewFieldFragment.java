@@ -23,10 +23,10 @@ import android.widget.TimePicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
-import com.usal.jorgeav.sportapp.data.MyPlace;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -43,6 +43,7 @@ import butterknife.ButterKnife;
 public class NewFieldFragment extends BaseFragment implements NewFieldContract.View  {
     public static final String TAG = NewFieldFragment.class.getSimpleName();
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
+    public static final String BUNDLE_SPORT_ID = "BUNDLE_SPORT_ID";
 
     NewFieldContract.Presenter mNewFieldPresenter;
     private static boolean sInitialize;
@@ -50,6 +51,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     // Static prevent double initialization with same ID
     private static GoogleApiClient mGoogleApiClient;
     private ArrayList<Field> mCityFields;
+    private String mCity;
+    private LatLng mCoords;
 
     ArrayAdapter<CharSequence> sportsAdapter;
     @BindView(R.id.new_field_sport)
@@ -91,11 +94,12 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         // Required empty public constructor
     }
 
-    public static NewFieldFragment newInstance(@Nullable String fieldId) {
+    public static NewFieldFragment newInstance(@Nullable String fieldId, @Nullable String sportId) {
         NewFieldFragment nff = new NewFieldFragment();
-        if (fieldId != null) {
+        if (fieldId != null && sportId != null) {
             Bundle b = new Bundle();
             b.putString(BUNDLE_FIELD_ID, fieldId);
+            b.putString(BUNDLE_SPORT_ID, sportId);
             nff.setArguments(b);
         }
         sInitialize = false;
@@ -140,6 +144,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID))
                 fieldId = getArguments().getString(BUNDLE_FIELD_ID);
 
+            Log.d(TAG, "onOptionsItemSelected: "+mCity);
+            Log.d(TAG, "onOptionsItemSelected: "+mCoords);
 //            mNewFieldPresenter.addField(
 //                    fieldId,
 //                    newFieldSport.getSelectedItem().toString(),
@@ -161,8 +167,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_new_field, container, false);
         ButterKnife.bind(this, root);
-
-        setAutocompleteTextView();
 
         myCalendar = Calendar.getInstance();
 
@@ -201,36 +205,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         return root;
     }
 
-    private void setAutocompleteTextView() {
-//        // Set up the adapter that will retrieve suggestions from
-//        // the Places Geo Data API that cover Spain
-//        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-//                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
-//                /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
-//                .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
-//                .build();
-//
-//        mAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, null, typeFilter);
-//        newEventAutocompleteCity.setAdapter(mAdapter);
-//
-//        newEventAutocompleteCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                /*
-//                 Retrieve the place ID of the selected item from the Adapter.
-//                 The adapter stores each Place suggestion in a AutocompletePrediction from which we
-//                 read the place ID and title.
-//                  */
-//                AutocompletePrediction item = mAdapter.getItem(position);
-//                if (item != null) {
-//                    CharSequence primaryText = item.getPrimaryText(null);
-//                    Log.i(TAG, "Autocomplete item selected: " + primaryText);
-//                    ((EventsActivity)getActivity()).setCity(primaryText.toString());
-//                }
-//            }
-//        });
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -243,7 +217,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         super.onStart();
         mNewFieldPresenter.loadNearbyFields(getLoaderManager(), getArguments());
         if (sInitialize) return;
-//        mNewFieldPresenter.openField(getLoaderManager(), getArguments());
+        mNewFieldPresenter.openField(getLoaderManager(), getArguments());
         sInitialize = true;
     }
 
@@ -276,8 +250,10 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     }
 
     @Override
-    public void showFieldPlace(MyPlace place) {
-        newFieldAddress.setText(place.getAddress());
+    public void showFieldPlace(String address, String city, LatLng coords) {
+        newFieldAddress.setText(address);
+        mCity = city;
+        mCoords = coords;
     }
 
     @Override

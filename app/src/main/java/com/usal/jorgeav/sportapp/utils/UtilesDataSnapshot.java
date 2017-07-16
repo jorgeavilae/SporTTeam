@@ -94,21 +94,26 @@ public class UtilesDataSnapshot {
         String id = data.getKey();
         DataSnapshot dataNode = data.child(FirebaseDBContract.DATA);
 
-        String name = dataNode.child(FirebaseDBContract.Field.NAME).getValue().toString();
-        String address = dataNode.child(FirebaseDBContract.Field.ADDRESS).getValue().toString();
-        String city = dataNode.child(FirebaseDBContract.Field.CITY).getValue().toString();
-        String openingTimeStr = dataNode.child(FirebaseDBContract.Field.OPENING_TIME).getValue().toString();
-        String closingTimeStr = dataNode.child(FirebaseDBContract.Field.CLOSING_TIME).getValue().toString();
-        long openingTime = Long.valueOf(openingTimeStr);
-        long closingTime = Long.valueOf(closingTimeStr);
+        String name = dataNode.child(FirebaseDBContract.Field.NAME).getValue(String.class);
+        String address = dataNode.child(FirebaseDBContract.Field.ADDRESS).getValue(String.class);
+        String city = dataNode.child(FirebaseDBContract.Field.CITY).getValue(String.class);
+
+        Double lat =  dataNode.child(FirebaseDBContract.Field.COORD_LATITUDE).getValue(Double.class);
+        Double lng =  dataNode.child(FirebaseDBContract.Field.COORD_LATITUDE).getValue(Double.class);
+        LatLng coords = null;
+        if (lat != null && lat != 0 && lng != null && lng != 0)
+            coords = new LatLng(lat, lng);
+
+        Long openingTime = dataNode.child(FirebaseDBContract.Field.OPENING_TIME).getValue(Long.class);
+        Long closingTime = dataNode.child(FirebaseDBContract.Field.CLOSING_TIME).getValue(Long.class);
 
         for (DataSnapshot d : data.child(FirebaseDBContract.Field.SPORTS).getChildren()) {
             String sport = d.getKey();
-            String ratingStr = d.child(FirebaseDBContract.Field.PUNCTUATION).getValue().toString();
-            String votesStr = d.child(FirebaseDBContract.Field.VOTES).getValue().toString();
-            float rating = Float.valueOf(ratingStr);
-            int votes = Integer.valueOf(votesStr);
-            result.add(new Field(id,name,sport,address,city,rating,votes,openingTime,closingTime));
+            Double rating = d.child(FirebaseDBContract.Field.PUNCTUATION).getValue(Double.class);
+            Long votes = d.child(FirebaseDBContract.Field.VOTES).getValue(Long.class);
+            result.add(new Field(id,name,sport,address,
+                            coords,city,rating.floatValue(),
+                            votes.intValue(),openingTime,closingTime));
         }
         return result;
     }

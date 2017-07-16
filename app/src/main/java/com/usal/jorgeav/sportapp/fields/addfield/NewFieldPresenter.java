@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
@@ -108,93 +110,71 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
 //        return false;
 //    }
 
-//    @Override
-//    public void openField(LoaderManager loaderManager, Bundle b) {
-//        if (b != null && b.containsKey(NewFieldFragment.BUNDLE_EVENT_ID)) {
-//            loaderManager.initLoader(SportteamLoader.LOADER_EVENT_ID, b, this);
-//            loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
-//        }
-//    }
-
-//    @Override
-//    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-//        String eventId = args.getString(DetailEventFragment.BUNDLE_EVENT_ID);
-//        switch (id) {
-//            case SportteamLoader.LOADER_EVENT_ID:
-//                return SportteamLoader
-//                        .cursorLoaderOneEvent(mNewEventView.getActivityContext(), eventId);
-//            case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
-//                return SportteamLoader
-//                        .cursorLoaderEventParticipantsNoData(mNewEventView.getActivityContext(), eventId);
-//        }
-//        return null;
-//    }
-//
-//    @Override
-//    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//        switch (loader.getId()) {
-//            case SportteamLoader.LOADER_EVENT_ID:
-//                showEventDetails(data);
-//                break;
-//            case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
-//                HashMap<String, Boolean> map = new HashMap<>();
-//                while(data.moveToNext()) {
-//                    String userId = data.getString(SportteamContract.EventsParticipationEntry.COLUMN_USER_ID);
-//                    Boolean participates = data.getInt(SportteamContract.EventsParticipationEntry.COLUMN_PARTICIPATES) == 1;
-//                    map.put(userId, participates);
-//                }
-//                mNewEventView.setParticipants(map);
-//                break;
-//        }
-//    }
-//
-//    @Override
-//    public void onLoaderReset(Loader<Cursor> loader) {
-//        switch (loader.getId()) {
-//            case SportteamLoader.LOADER_EVENT_ID:
-//                showEventDetails(null);
-//                break;
-//            case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
-//                mNewEventView.setParticipants(null);
-//                break;
-//        }
-//    }
+    @Override
+    public void openField(LoaderManager loaderManager, Bundle b) {
+        if (b != null && b.containsKey(NewFieldFragment.BUNDLE_FIELD_ID)
+                && b.containsKey(NewFieldFragment.BUNDLE_SPORT_ID)) {
+            loaderManager.initLoader(SportteamLoader.LOADER_FIELD_ID, b, this);
+        }
+    }
 
     @Override
-    public Loader onCreateLoader(int id, Bundle args) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case SportteamLoader.LOADER_FIELDS_FROM_CITY:
                 String city = UtilesPreferences.getCurrentUserCity(mNewFieldView.getActivityContext());
                 if (city != null)
                     return SportteamLoader
                             .cursorLoaderFieldsFromCity(mNewFieldView.getActivityContext(), city);
+            case SportteamLoader.LOADER_FIELD_ID:
+                String fieldId = args.getString(NewFieldFragment.BUNDLE_FIELD_ID);
+                String sportId = args.getString(NewFieldFragment.BUNDLE_SPORT_ID);
+                return SportteamLoader
+                        .cursorLoaderOneField(mNewFieldView.getActivityContext(), fieldId, sportId);
         }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
-        mNewFieldView.retrieveFields(dataList);
+        switch (loader.getId()) {
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY:
+                ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
+                mNewFieldView.retrieveFields(dataList);
+                break;
+            case SportteamLoader.LOADER_FIELD_ID:
+                showFieldDetail(data);
+                break;
+        }
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
-        mNewFieldView.retrieveFields(null);
+        switch (loader.getId()) {
+            case SportteamLoader.LOADER_EVENT_ID:
+                showFieldDetail(null);
+                break;
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY:
+                mNewFieldView.retrieveFields(null);
+                break;
+        }
     }
 
-//
-//    private void showEventDetails(Cursor data) {
-//        if (data != null && data.moveToFirst()) {
-//            mNewEventView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
-//            mNewEventView.showEventPlace(data.getString(SportteamContract.EventEntry.COLUMN_FIELD));
-//            mNewEventView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
-//            mNewEventView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));
-//            mNewEventView.showEventCity(data.getString(SportteamContract.EventEntry.COLUMN_CITY));
-//            mNewEventView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
-//            mNewEventView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
-//        } else {
-//            mNewEventView.clearUI();
-//        }
-//    }
+    private void showFieldDetail(Cursor data) {
+        if (data != null && data.moveToFirst()) {
+            mNewFieldView.showFieldSport(data.getString(SportteamContract.FieldEntry.COLUMN_SPORT));
+            String address = data.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
+            String city = data.getString(SportteamContract.FieldEntry.COLUMN_CITY);
+            double lat = data.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
+            double lng = data.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
+            LatLng coords = null; if (lat != 0 && lng != 0) coords = new LatLng(lat, lng);
+            mNewFieldView.showFieldPlace(address, city, coords);
+            mNewFieldView.showFieldName(data.getString(SportteamContract.FieldEntry.COLUMN_NAME));
+            mNewFieldView.showFieldOpenTime(data.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME));
+            mNewFieldView.showFieldCloseTime(data.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME));
+            mNewFieldView.showFieldRate(data.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION));
+        } else {
+            mNewFieldView.clearUI();
+        }
+    }
 }
