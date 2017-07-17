@@ -90,22 +90,18 @@
         <activity
             android:name=".mainactivities.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:parentActivityName=".mainactivities.BaseActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.usal.jorgeav.sportapp.mainactivities.BaseActivity" />
-        </activity>
+            android:windowSoftInputMode="stateHidden"/>
+
         <activity
             android:name=".adduser.NewUserActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:parentActivityName=".mainactivities.BaseActivity"
+            android:parentActivityName=".mainactivities.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.usal.jorgeav.sportapp.mainactivities.BaseActivity" />
+                android:value="com.usal.jorgeav.sportapp.mainactivities.LoginActivity" />
         </activity>
 
         <!-- This is the Service declaration used in conjunction with FirebaseJobDispatcher -->
