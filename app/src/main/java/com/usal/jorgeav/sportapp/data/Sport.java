@@ -52,6 +52,16 @@ public class Sport implements Parcelable {
     }
 
     @Override
+    public String toString() {
+        return "Sport{" +
+                "mName='" + mName + '\'' +
+                ", iconDrawableId=" + iconDrawableId +
+                ", punctuation=" + punctuation +
+                ", votes=" + votes +
+                '}';
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

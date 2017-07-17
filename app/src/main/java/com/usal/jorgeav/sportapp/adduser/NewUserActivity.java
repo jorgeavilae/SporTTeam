@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.adduser;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -81,7 +83,8 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class NewUserActivity extends AppCompatActivity implements ActivityContracts.FragmentManagement,
+public class NewUserActivity extends AppCompatActivity implements
+        ActivityContracts.FragmentManagement,
         SportsListFragment.OnSportsSelected {
     private final static String TAG = NewUserActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
@@ -141,26 +144,29 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                     .build();
         else mGoogleApiClient.connect();
 
-
         setContentView(R.layout.activity_new_user);
         ButterKnife.bind(this);
 
         setSupportActionBar(newUserToolbar);
-        newUserToolbar.setTitle("Add User");
-        newUserToolbar.setNavigationIcon(R.drawable.ic_action_close);
-        newUserToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Add User");
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            newUserToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBackPressed();
+                }
+            });
+        }
 
-        sports = new ArrayList<Sport>();
+        sports = new ArrayList<>();
 
-        final SportsListFragment slf = SportsListFragment.newInstance(null);
         newUserAddSportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hideSoftKeyboard();
+                SportsListFragment slf = SportsListFragment.newInstance(sports);
                 initFragment(slf, true);
             }
         });
@@ -275,10 +281,14 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
+
+        // Check if there is another fragment with onOptionsItemSelected implemented
+        /* https://stackoverflow.com/a/17767406/4235666 */
+        if (mDisplayedFragment != null) return false;
+
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
 
-            //Check emailEditText and PassEditText
             if (!TextUtils.isEmpty(newUserEmail.getText())
                     && TextUtils.isEmpty(newUserEmail.getError())
                     && !TextUtils.isEmpty(newUserPassword.getText())
@@ -292,8 +302,21 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                     && sports.size() > 0) {
                 hideContent();
                 createAuthUser(newUserEmail.getText().toString(), newUserPassword.getText().toString());
-            } else
+            } else {
                 Toast.makeText(getApplicationContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
+                // TODO: 17/07/2017 borrar
+                Log.e(TAG, "onOptionsItemSelected: newUserEmail.getText() " + !TextUtils.isEmpty(newUserEmail.getText()));
+                Log.e(TAG, "onOptionsItemSelected: newUserEmail.getError() " + TextUtils.isEmpty(newUserEmail.getError()));
+                Log.e(TAG, "onOptionsItemSelected: newUserPassword.getText() " + !TextUtils.isEmpty(newUserPassword.getText()));
+                Log.e(TAG, "onOptionsItemSelected: newUserPassword.getError() " + TextUtils.isEmpty(newUserPassword.getError()));
+                Log.e(TAG, "onOptionsItemSelected: newUserName.getText() " + !TextUtils.isEmpty(newUserName.getText()));
+                Log.e(TAG, "onOptionsItemSelected: newUserName.getError() " + TextUtils.isEmpty(newUserName.getError()));
+                Log.e(TAG, "onOptionsItemSelected: newUserAge.getText() " + !TextUtils.isEmpty(newUserAge.getText()));
+                Log.e(TAG, "onOptionsItemSelected: croppedImageUri " + croppedImageUri);
+                Log.e(TAG, "onOptionsItemSelected: newUserCitySelectedName " + newUserCitySelectedName);
+                Log.e(TAG, "onOptionsItemSelected: newUserCitySelectedCoord " + newUserCitySelectedCoord);
+                Log.e(TAG, "onOptionsItemSelected: sports " + sports);
+            }
             return true;
         }
         return false;
@@ -319,13 +342,17 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         if (resultCode == RESULT_OK) {
             if (requestCode == UCrop.REQUEST_CROP) {
                 croppedImageUri = UCrop.getOutput(data);
-                Log.d(TAG, "onActivityResult: "+croppedImageUri);
+                Log.d(TAG, "onActivityResult: " + croppedImageUri);
                 GlideApp.with(this)
                         .load(croppedImageUri)
                         .placeholder(R.drawable.profile_picture_placeholder)
                         .centerCrop()
                         .into(newUserPhoto);
 
+            } else {
+                // Cancel after pick image and before crop
+                croppedImageUri = null;
+                Log.d(TAG, "onActivityResult: null");
             }
         } else if (resultCode == UCrop.RESULT_ERROR)
             Log.e(TAG, "onActivityResult: error ", UCrop.getError(data));
@@ -333,11 +360,14 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
 
     private void startCropActivity() {
         long millis = System.currentTimeMillis();
-        croppedImageUri = getAlbumStorageDir(selectedImageUri.getLastPathSegment() + "_cropped" + millis);
+        if (selectedImageUri.getLastPathSegment().contains("."))
+            croppedImageUri = getAlbumStorageDir(selectedImageUri.getLastPathSegment().replace(".", "_cropped" + millis + "."));
+        else
+            croppedImageUri = getAlbumStorageDir(selectedImageUri.getLastPathSegment() + "_cropped" + millis);
         UCrop.of(selectedImageUri, croppedImageUri)
-                    .withAspectRatio(1, 1)
-                    .withMaxResultSize(512, 512)
-                    .start(this);
+                .withAspectRatio(1, 1)
+                .withMaxResultSize(512, 512)
+                .start(this); // Start Activity with requestCode UCrop.REQUEST_CROP
     }
 
     private Uri getAlbumStorageDir(@NonNull String path) {
@@ -357,19 +387,19 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
     }
 
     /* Checks if external storage is available for read and write */
-    private  boolean isStorageCameraPermissionGranted() {
+    private boolean isStorageCameraPermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permissions are granted");
+                Log.v(TAG, "Permissions are granted");
                 return true;
             } else {
-                Log.v(TAG,"Permissions are revoked");
+                Log.v(TAG, "Permissions are revoked");
                 ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, RC_PERMISSIONS);
                 return false;
             }
         } else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permissions are granted");
+            Log.v(TAG, "Permissions are granted");
             return true;
         }
     }
@@ -380,7 +410,7 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         if (requestCode == RC_PERMISSIONS &&
                 permissions[0].equals(WRITE_EXTERNAL_STORAGE) && permissions[1].equals(CAMERA)) {
 
-            if(grantResults[0] == PackageManager.PERMISSION_DENIED)
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED)
                 //Without WRITE_EXTERNAL_STORAGE it can't save cropped photo
                 Toast.makeText(this, "Se necesita guardar la imagen", Toast.LENGTH_SHORT).show();
             else if (grantResults[1] == PackageManager.PERMISSION_DENIED)
@@ -403,9 +433,11 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) { }
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
                 });
     }
+
     private void checkUserNameExists(String name) {
         FirebaseActions.getUserNameReferenceEqualTo(name)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -417,7 +449,8 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) { }
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
                 });
     }
 
@@ -469,31 +502,31 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
                             /* https://stackoverflow.com/a/42616488/4235666 */
                             @SuppressWarnings("VisibleForTests")
                             StorageMetadata metadata = taskSnapshot.getMetadata();
-                            if (metadata != null) {
-                                Uri downloadUrl = metadata.getDownloadUrl();
+                            if (metadata == null) return;
+                            Uri downloadUrl = metadata.getDownloadUrl();
+                            if (downloadUrl == null) return;
 
-                                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                            FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                            if (fUser == null) return;
 
-                                if (fUser != null) {
-                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                            .setDisplayName(newUserName.getText().toString())
-                                            .setPhotoUri(downloadUrl)
-                                            .build();
-                                    fUser.updateProfile(profileUpdates);
-                                }
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(newUserName.getText().toString())
+                                    .setPhotoUri(downloadUrl)
+                                    .build();
+                            fUser.updateProfile(profileUpdates);
 
-                                User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                        newUserEmail.getText().toString(),
-                                        newUserName.getText().toString(),
-                                        newUserCitySelectedName,
-                                        newUserCitySelectedCoord,
-                                        Integer.parseInt(newUserAge.getText().toString()),
-                                        downloadUrl.toString(),
-                                        sports);
-                                FirebaseActions.addUser(user);
+                            User user = new User(fUser.getUid(),
+                                    fUser.getEmail(),
+                                    fUser.getDisplayName(),
+                                    newUserCitySelectedName,
+                                    newUserCitySelectedCoord,
+                                    Integer.parseInt(newUserAge.getText().toString()),
+                                    downloadUrl.toString(),
+                                    sports);
+                            FirebaseActions.addUser(user);
 
-                                setResult(RESULT_OK); finish();
-                            }
+                            setResult(RESULT_OK);
+                            finish();
                         }
                     });
                 } else {
@@ -529,14 +562,13 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
 
     @Override
     public void setCurrentDisplayedFragment(String title, Fragment fragment) {
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setTitle(title);
+        setActionBarTitle(title);
         mDisplayedFragment = fragment;
     }
 
     @Override
     public void setActionBarTitle(String title) {
-        if (getSupportActionBar() != null)
+        if (getSupportActionBar() != null && title != null)
             getSupportActionBar().setTitle(title);
     }
 
@@ -576,7 +608,25 @@ public class NewUserActivity extends AppCompatActivity implements ActivityContra
         if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
             try {
                 mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
-            } catch (IllegalStateException e) { e.printStackTrace(); }
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        newUserToolbar.setTitle("Add User");
+    }
+
+
+    /* https://stackoverflow.com/a/1109108/4235666 */
+    public void hideSoftKeyboard() {
+        View view = getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }

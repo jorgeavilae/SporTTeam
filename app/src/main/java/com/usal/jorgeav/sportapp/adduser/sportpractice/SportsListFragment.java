@@ -1,9 +1,7 @@
 package com.usal.jorgeav.sportapp.adduser.sportpractice;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,10 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.AddSportsAdapter;
 import com.usal.jorgeav.sportapp.data.Sport;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +24,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class SportsListFragment extends Fragment {
+public class SportsListFragment extends BaseFragment {
     private final static String TAG = SportsListFragment.class.getSimpleName();
     public static final String BUNDLE_INSTANCE_SPORT_LIST = "BUNDLE_INSTANCE_SPORT_LIST";
 
-    private ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
-    private ActivityContracts.FragmentManagement mFragmentManagementListener;
-    private AddSportsAdapter mSportAdapter;
-
     @BindView(R.id.recycler_list)
     RecyclerView sportsRecyclerViewList;
+    private AddSportsAdapter mSportAdapter;
 
     public SportsListFragment() {
         // Required empty public constructor
@@ -59,9 +54,9 @@ public class SportsListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_ok, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -73,7 +68,7 @@ public class SportsListFragment extends Fragment {
                 ((OnSportsSelected) getActivity()).retrieveSportsSelected(mSportAdapter.getDataAsArrayList());
                 getActivity().onBackPressed();
             } else {
-                Log.e(TAG, "onOptionsItemSelected: Activity does not implement OnSportsSelected", new java.lang.InstantiationException());
+                Log.e(TAG, "onOptionsItemSelected: Activity does not implement OnSportsSelected");
             }
             return true;
         }
@@ -86,12 +81,10 @@ public class SportsListFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
 
-        mSportAdapter = new AddSportsAdapter(loadSports());
+        mSportAdapter = new AddSportsAdapter(null);
         sportsRecyclerViewList.setAdapter(mSportAdapter);
         sportsRecyclerViewList.setHasFixedSize(true);
         sportsRecyclerViewList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-
-        mFragmentManagementListener.showContent();
 
         return root;
     }
@@ -124,31 +117,19 @@ public class SportsListFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onStart() {
+        super.onStart();
+        hideSoftKeyboard();
         mFragmentManagementListener.setCurrentDisplayedFragment("Selecciona deportes", this);
         if (mActionBarIconManagementListener != null) mActionBarIconManagementListener.setToolbarAsUp();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ActivityContracts.FragmentManagement)
-            mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
+        mSportAdapter.replaceData(loadSports());
+        showContent();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        mFragmentManagementListener.setCurrentDisplayedFragment(null, null);
         mSportAdapter.replaceData(null);
     }
 
