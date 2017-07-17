@@ -128,9 +128,16 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
             Log.d(TAG, "onOptionsItemSelected: Delete");
-            // TODO: 10/07/2017 dialog: are you sure?
-            mPresenter.deleteEvent(getArguments());
-            ((BaseActivity)getActivity()).hideContent();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+            builder.setTitle("Borrar evento")
+                    .setMessage("Seguro que desea borrarlo?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    mPresenter.deleteEvent(getArguments());
+                    ((BaseActivity)getActivity()).hideContent();
+                }})
+                    .setNegativeButton("No", null);
+            builder.create().show();
             return true;
         }
         return false;
