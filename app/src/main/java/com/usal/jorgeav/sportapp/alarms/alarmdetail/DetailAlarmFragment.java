@@ -9,6 +9,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +27,9 @@ import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Locale;
@@ -213,7 +217,9 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
             eventsCoincidenceList.setVisibility(View.VISIBLE);
             eventsCoincidencePlaceholder.setVisibility(View.INVISIBLE);
         } else {
-            // TODO: 13/07/2017 borrar notification de esta alarma si las hubiere o hubiese
+            String myUserId = Utiles.getCurrentUserId();
+            if (TextUtils.isEmpty(myUserId))
+                FirebaseActions.deleteNotification(myUserId, mAlarmId + FirebaseDBContract.User.ALARMS);
             eventsCoincidenceList.setVisibility(View.INVISIBLE);
             eventsCoincidencePlaceholder.setVisibility(View.VISIBLE);
         }
