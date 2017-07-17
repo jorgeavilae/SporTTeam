@@ -119,7 +119,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void populateAutoComplete() {
-        getLoaderManager().initLoader(0, null, this);
+        // TODO: 17/07/2017 Por esto va tan lento la activity???
+//        getLoaderManager().initLoader(0, null, this);
     }
 
     /**
@@ -212,9 +213,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         return password.length() > 6;
     }
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -262,11 +260,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
+        while (cursor.moveToNext())
             emails.add(cursor.getString(0));
-            cursor.moveToNext();
-        }
         addEmailsToAutoComplete(emails);
     }
 

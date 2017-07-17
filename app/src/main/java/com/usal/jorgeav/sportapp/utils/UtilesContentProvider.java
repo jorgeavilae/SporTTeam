@@ -94,6 +94,7 @@ public class UtilesContentProvider {
             String address = cursor.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
             double lat = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
             double lng = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
+            Log.d(TAG, "cursorToMultipleField: "+lat+" "+lng);
             LatLng coords = null; if (lat != 0 && lng != 0) coords = new LatLng(lat, lng);
             String city = cursor.getString(SportteamContract.FieldEntry.COLUMN_CITY);
             float rating = cursor.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);

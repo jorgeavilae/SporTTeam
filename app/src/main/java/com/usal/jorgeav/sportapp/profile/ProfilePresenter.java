@@ -92,8 +92,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
             String photoUrl = data.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
             String name = data.getString(SportteamContract.UserEntry.COLUMN_NAME);
             String city = data.getString(SportteamContract.UserEntry.COLUMN_CITY);
-            String ageStr = data.getString(SportteamContract.UserEntry.COLUMN_AGE);
-            int age = Integer.valueOf(ageStr);
+            int age = data.getInt(SportteamContract.UserEntry.COLUMN_AGE);
             mUserView.showUserImage(photoUrl);
             mUserView.showUserName(name);
             mUserView.showUserCity(city);

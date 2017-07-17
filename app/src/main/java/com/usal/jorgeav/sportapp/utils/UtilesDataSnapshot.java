@@ -107,7 +107,7 @@ public class UtilesDataSnapshot {
         Long openingTime = dataNode.child(FirebaseDBContract.Field.OPENING_TIME).getValue(Long.class);
         Long closingTime = dataNode.child(FirebaseDBContract.Field.CLOSING_TIME).getValue(Long.class);
 
-        for (DataSnapshot d : data.child(FirebaseDBContract.Field.SPORTS).getChildren()) {
+        for (DataSnapshot d : dataNode.child(FirebaseDBContract.Field.SPORT).getChildren()) {
             String sport = d.getKey();
             Double rating = d.child(FirebaseDBContract.Field.PUNCTUATION).getValue(Double.class);
             Long votes = d.child(FirebaseDBContract.Field.VOTES).getValue(Long.class);
@@ -125,6 +125,10 @@ public class UtilesDataSnapshot {
             cv.put(SportteamContract.FieldEntry.NAME, f.getmName());
             cv.put(SportteamContract.FieldEntry.SPORT, f.getmSport());
             cv.put(SportteamContract.FieldEntry.ADDRESS, f.getmAddress());
+            if (f.getmCoords() != null) {
+                cv.put(SportteamContract.FieldEntry.ADDRESS_LATITUDE, f.getmCoords().latitude);
+                cv.put(SportteamContract.FieldEntry.ADDRESS_LONGITUDE, f.getmCoords().longitude);
+            }
             cv.put(SportteamContract.FieldEntry.CITY, f.getmCity());
             cv.put(SportteamContract.FieldEntry.PUNCTUATION, f.getmRating());
             cv.put(SportteamContract.FieldEntry.VOTES, f.getmVotes());
@@ -160,6 +164,11 @@ public class UtilesDataSnapshot {
         cv.put(SportteamContract.UserEntry.EMAIL, user.getmEmail());
         cv.put(SportteamContract.UserEntry.NAME, user.getmName());
         cv.put(SportteamContract.UserEntry.CITY, user.getmCity());
+        LatLng latLng = user.getmCoord();
+        if (latLng != null) {
+            cv.put(SportteamContract.UserEntry.CITY_LATITUDE, latLng.latitude);
+            cv.put(SportteamContract.UserEntry.CITY_LONGITUDE, latLng.longitude);
+        }
         cv.put(SportteamContract.UserEntry.AGE, user.getmAge());
         cv.put(SportteamContract.UserEntry.PHOTO, user.getmPhotoUrl());
         return cv;

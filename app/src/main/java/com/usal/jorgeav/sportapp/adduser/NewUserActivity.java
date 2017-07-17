@@ -503,10 +503,10 @@ public class NewUserActivity extends AppCompatActivity implements
                             @SuppressWarnings("VisibleForTests")
                             StorageMetadata metadata = taskSnapshot.getMetadata();
                             if (metadata == null) return;
-                            Uri downloadUrl = metadata.getDownloadUrl();
+                            final Uri downloadUrl = metadata.getDownloadUrl();
                             if (downloadUrl == null) return;
 
-                            FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                            final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
                             if (fUser == null) return;
 
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -517,7 +517,7 @@ public class NewUserActivity extends AppCompatActivity implements
 
                             User user = new User(fUser.getUid(),
                                     fUser.getEmail(),
-                                    fUser.getDisplayName(),
+                                    newUserName.getText().toString(),
                                     newUserCitySelectedName,
                                     newUserCitySelectedCoord,
                                     Integer.parseInt(newUserAge.getText().toString()),

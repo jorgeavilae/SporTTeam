@@ -14,6 +14,7 @@ import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
  */
 
 public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String TAG = FieldsPresenter.class.getSimpleName();
 
     FieldsContract.View mFieldsView;
 

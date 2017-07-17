@@ -16,8 +16,7 @@ public class User {
     String mEmail;
     String mName;
     String mCity;
-    Double coord_latitude;
-    Double coord_longitude;
+    LatLng mCoord;
     int mAge;
     String mPhotoUrl;
     List<Sport> mSportList;
@@ -27,13 +26,7 @@ public class User {
         this.mEmail = mEmail;
         this.mName = mName;
         this.mCity = mCity;
-        if (coord != null) {
-            this.coord_latitude = coord.latitude;
-            this.coord_longitude = coord.longitude;
-        } else {
-            this.coord_latitude = null;
-            this.coord_longitude = null;
-        }
+        this.mCoord = coord;
         this.mAge = mAge;
         this.mPhotoUrl = mPhotoUrl;
         this.mSportList = sportList;
@@ -55,12 +48,8 @@ public class User {
         return mCity;
     }
 
-    public Double getCoord_latitude() {
-        return coord_latitude;
-    }
-
-    public Double getCoord_longitude() {
-        return coord_longitude;
+    public LatLng getmCoord() {
+        return mCoord;
     }
 
     public int getmAge() {
@@ -82,8 +71,7 @@ public class User {
                 ", mEmail='" + mEmail + '\'' +
                 ", mName='" + mName + '\'' +
                 ", mCity='" + mCity + '\'' +
-                ", coord_latitude=" + coord_latitude +
-                ", coord_longitude=" + coord_longitude +
+                ", mCoord=" + mCoord +
                 ", mAge=" + mAge +
                 ", mPhotoUrl='" + mPhotoUrl + '\'' +
                 ", mSportList=" + mSportList +
@@ -104,8 +92,10 @@ public class User {
         result.put(FirebaseDBContract.User.AGE, this.mAge);
         result.put(FirebaseDBContract.User.PROFILE_PICTURE, this.mPhotoUrl);
         result.put(FirebaseDBContract.User.CITY, this.mCity);
-        result.put(FirebaseDBContract.User.COORD_LATITUDE, this.coord_latitude);
-        result.put(FirebaseDBContract.User.COORD_LONGITUDE, this.coord_longitude);
+        if (mCoord != null) {
+            result.put(FirebaseDBContract.User.COORD_LATITUDE, this.mCoord.latitude);
+            result.put(FirebaseDBContract.User.COORD_LONGITUDE, this.mCoord.longitude);
+        }
         return result;
     }
 
