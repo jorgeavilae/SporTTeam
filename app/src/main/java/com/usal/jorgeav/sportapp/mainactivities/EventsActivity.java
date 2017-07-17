@@ -107,7 +107,11 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
         if (resultCode == RESULT_OK) {
             if (requestCode == UCrop.REQUEST_CROP) {
                 if (mDisplayedFragment instanceof SimulateParticipantContract.View)
-                    ((SimulateParticipantContract.View) mDisplayedFragment).croppedResultOk(UCrop.getOutput(data));
+                    ((SimulateParticipantContract.View) mDisplayedFragment).croppedResult(UCrop.getOutput(data));
+            } else {
+                // Cancel after pick image and before crop
+                if (mDisplayedFragment instanceof SimulateParticipantContract.View)
+                    ((SimulateParticipantContract.View) mDisplayedFragment).croppedResult(null);
             }
         } else if (resultCode == UCrop.RESULT_ERROR)
             Log.e(TAG, "onActivityResult: error ", UCrop.getError(data));

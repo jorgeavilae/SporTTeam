@@ -184,14 +184,15 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
 
 
     @Override
-    public void croppedResultOk(Uri photoCroppedUri) {
+    public void croppedResult(Uri photoCroppedUri) {
         // Uri from cropped photo as result of UCrop
         photoUri = photoCroppedUri;
-        GlideApp.with(this)
-                .load(photoUri)
-                .placeholder(R.drawable.profile_picture_placeholder)
-                .centerCrop()
-                .into(simulatedUserPhoto);
+        if (photoUri != null)
+            GlideApp.with(this)
+                    .load(photoUri)
+                    .placeholder(R.drawable.profile_picture_placeholder)
+                    .centerCrop()
+                    .into(simulatedUserPhoto);
     }
 
 

@@ -15,7 +15,7 @@ public abstract class SimulateParticipantContract {
 
     public interface View {
         Context getActivityContext();
-        void croppedResultOk(Uri photoCroppedUri);
+        void croppedResult(Uri photoCroppedUri);
         void startCropActivity(Uri uri);
     }
 }

@@ -115,12 +115,14 @@ public class MapsActivity extends AppCompatActivity implements
 
         for (Field f : mFieldsList) {
             LatLng latLong = f.getmCoords();
+            Log.d(TAG, "onMapReady: "+f.getmId()+ " " + f.getmSport() + " " + latLong);
             if (latLong != null)
                 mMap.addMarker(new MarkerOptions().position(latLong).title(f.getmName() + " " + f.getmSport()));
         }
+
+        // Move Camera
         mMap.setMinZoomPreference(20); //Buildings
         mMap.setMinZoomPreference(5); //Continent
-
         String myUserId = Utiles.getCurrentUserId();
         if (myUserId != null) {
             LatLng myCityLatLong = UtilesPreferences.getCurrentUserCityCoords(this);
