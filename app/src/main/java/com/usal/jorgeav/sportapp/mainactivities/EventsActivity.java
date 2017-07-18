@@ -55,10 +55,12 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
     }
 
     @Override
-    public void retrieveFieldSelected(String fieldId, LatLng coordinates) {
+    public void retrieveFieldSelected(String fieldId, String city, LatLng coordinates) {
         newEventFieldSelected = fieldId;
         newEventFieldSelectedCoord = coordinates;
+        newEventCitySelectedName = city;
     }
+    //todo Cambiar por setAddress para eventos sin pista
     public void setCity(String city) {
         newEventCitySelectedName = city;
     }

@@ -20,6 +20,8 @@ public class AlarmsActivity extends BaseActivity implements SelectFieldFragment.
 
     private static final String INSTANCE_NEW_ALARM_FIELD = "INSTANCE_NEW_ALARM_FIELD";
     public String newAlarmFieldSelected = null;
+    private static final String INSTANCE_NEW_ALARM_CITY_NAME = "INSTANCE_NEW_ALARM_CITY_NAME";
+    public String newAlarmCityName = null;
 
     @Override
     public void startMainFragment() {
@@ -39,8 +41,9 @@ public class AlarmsActivity extends BaseActivity implements SelectFieldFragment.
     }
 
     @Override
-    public void retrieveFieldSelected(String fieldId, LatLng coord) {
+    public void retrieveFieldSelected(String fieldId, String city, LatLng coord) {
         newAlarmFieldSelected = fieldId;
+        newAlarmCityName = city;
     }
 
     @Override

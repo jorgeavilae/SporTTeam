@@ -163,7 +163,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                     ((EventsActivity)getActivity()).newEventFieldSelected,
                     ((EventsActivity)getActivity()).newEventFieldSelectedCoord,
                     newEventName.getText().toString(),
-                    ((EventsActivity)getActivity()).newEventCitySelectedName,
+                    ((EventsActivity)getActivity()).newEventCitySelectedName, //// TODO: 18/07/2017 traersela del field
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
@@ -318,9 +318,14 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     }
 
     @Override
-    public void showEventField(String fieldId, LatLng coordinates) {
+    public void showEventField(String fieldId, String city, LatLng coordinates) {
         if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof SelectFieldFragment.OnFieldSelected)
-            ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(fieldId, coordinates);
+            ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(fieldId, city, coordinates);
+
+        if (city != null && !TextUtils.isEmpty(city)) {
+            newEventAutocompleteCity.setText(city);
+            ((EventsActivity) getActivity()).setCity(city);
+        }
     }
 
     @Override
@@ -334,14 +339,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         if (date > -1) {
             newEventDate.setText(UtilesTime.millisToDateString(date));
             newEventTime.setText(UtilesTime.millisToTimeString(date));
-        }
-    }
-
-    @Override
-    public void showEventCity(String city) {
-        if (city != null && !TextUtils.isEmpty(city)) {
-            newEventAutocompleteCity.setText(city);
-            ((EventsActivity) getActivity()).setCity(city);
         }
     }
 
@@ -365,7 +362,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public void clearUI() {
         newEventSport.setSelection(0);
-        ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected("", null);
+        ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected("", "", null);
         newEventName.setText("");
         newEventDate.setText("");
         newEventTime.setText("");

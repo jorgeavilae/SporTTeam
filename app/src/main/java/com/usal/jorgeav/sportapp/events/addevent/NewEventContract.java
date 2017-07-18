@@ -23,10 +23,9 @@ public abstract class NewEventContract {
 
     public interface View {
         void showEventSport(String sport);
-        void showEventField(String fieldId, LatLng coordinates);
+        void showEventField(String fieldId, String city, LatLng coordinates);
         void showEventName(String name);
         void showEventDate(long date);
-        void showEventCity(String city);
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);
         void setParticipants(HashMap<String, Boolean> map);

@@ -99,15 +99,16 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
             int position = getAdapterPosition();
             mDataset.moveToPosition(position);
             String fieldId = mDataset.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
+            String city = mDataset.getString(SportteamContract.FieldEntry.COLUMN_CITY);
             String sportId = mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
             double latitude = mDataset.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
             double longitude = mDataset.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
             LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
-            mClickListener.onFieldClick(fieldId, sportId, coord);
+            mClickListener.onFieldClick(fieldId, city, sportId, coord);
         }
     }
 
     public interface OnFieldItemClickListener {
-        void onFieldClick(String fieldId, String sportId, LatLng coordinates);
+        void onFieldClick(String fieldId, String city, String sportId, LatLng coordinates);
     }
 }

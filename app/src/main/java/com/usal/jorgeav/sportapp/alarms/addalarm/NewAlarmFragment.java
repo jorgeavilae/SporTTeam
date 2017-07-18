@@ -111,7 +111,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                     alarmId,
                     newAlarmSport.getSelectedItem().toString(),
                     ((AlarmsActivity)getActivity()).newAlarmFieldSelected,
-                    newAlarmCity.getText().toString(),
+                    ((AlarmsActivity)getActivity()).newAlarmCityName,
                     newAlarmDateFrom.getText().toString(),
                     newAlarmDateTo.getText().toString(),
                     newAlarmTotalFrom.getText().toString(),
@@ -262,14 +262,11 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     }
 
     @Override
-    public void showAlarmField(String fieldId) {
+    public void showAlarmField(String fieldId, String city) {
         if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof SelectFieldFragment.OnFieldSelected)
             //Coordinates aren't needed in alarms
-            ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(fieldId, null);
-    }
+            ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(fieldId, city, null);
 
-    @Override
-    public void showAlarmCity(String city) {
         if (city != null && !TextUtils.isEmpty(city))
             newAlarmCity.setText(city);
     }
@@ -306,7 +303,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void clearUI() {
         newAlarmSport.setSelection(0);
-        ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected("", null);
+        ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected("", "", null);
         newAlarmCity.setText("");
         newAlarmDateFrom.setText("");
         newAlarmDateTo.setEnabled(false);

@@ -196,8 +196,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
         Alarm a = UtilesContentProvider.cursorToSingleAlarm(data);
         if (a != null) {
             mNewAlarmView.showAlarmSport(a.getmSport());
-            mNewAlarmView.showAlarmField(a.getmField());
-            mNewAlarmView.showAlarmCity(a.getmCity());
+            mNewAlarmView.showAlarmField(a.getmField(), a.getmCity());
             mNewAlarmView.showAlarmDate(a.getmDateFrom(), a.getmDateTo());
             mNewAlarmView.showAlarmTotalPlayers(a.getmTotalPlayersFrom(), a.getmTotalPlayersTo());
             mNewAlarmView.showAlarmEmptyPlayers(a.getmEmptyPlayersFrom(), a.getmEmptyPlayersTo());

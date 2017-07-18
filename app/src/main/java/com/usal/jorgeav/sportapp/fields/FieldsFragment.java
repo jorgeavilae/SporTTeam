@@ -106,7 +106,7 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
     }
 
     @Override
-    public void onFieldClick(String fieldId, String sportId, LatLng coord) {
+    public void onFieldClick(String fieldId, String city, String sportId, LatLng coordinates) {
         Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
         mFragmentManagementListener.initFragment(newFragment, true);
     }

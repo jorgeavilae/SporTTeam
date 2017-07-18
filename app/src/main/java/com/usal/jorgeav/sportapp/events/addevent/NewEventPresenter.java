@@ -175,13 +175,13 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         if (data != null && data.moveToFirst()) {
             mNewEventView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             String fieldId = data.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+            String city = data.getString(SportteamContract.EventEntry.COLUMN_CITY);
             double latitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
             double longitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
             LatLng coordinates = null; if (latitude != 0 && longitude != 0) coordinates = new LatLng(latitude, longitude);
-            mNewEventView.showEventField(fieldId, coordinates);
+            mNewEventView.showEventField(fieldId, city, coordinates);
             mNewEventView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mNewEventView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));
-            mNewEventView.showEventCity(data.getString(SportteamContract.EventEntry.COLUMN_CITY));
             mNewEventView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
             mNewEventView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
         } else {

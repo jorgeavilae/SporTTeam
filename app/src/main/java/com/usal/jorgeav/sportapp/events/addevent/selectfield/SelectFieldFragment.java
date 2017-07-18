@@ -112,14 +112,14 @@ public class SelectFieldFragment extends BaseFragment implements SelectFieldCont
     }
 
     @Override
-    public void onFieldClick(String fieldId, String sportId, LatLng coord) {
+    public void onFieldClick(String fieldId, String city, String sportId, LatLng coord) {
         if (getActivity() instanceof OnFieldSelected)
-            ((OnFieldSelected) getActivity()).retrieveFieldSelected(fieldId, coord);
+            ((OnFieldSelected) getActivity()).retrieveFieldSelected(fieldId, city, coord);
         Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
         mFragmentManagementListener.initFragment(newFragment, true);
     }
 
     public interface OnFieldSelected {
-        void retrieveFieldSelected(String fieldId, LatLng coordinates);
+        void retrieveFieldSelected(String fieldId, String city, LatLng coordinates);
     }
 }
