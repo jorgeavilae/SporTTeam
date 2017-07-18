@@ -199,6 +199,34 @@ public class UtilesContentProvider {
         return e;
     }
 
+    public static Field getFieldtFromContentProvider(@NonNull String fieldId, @NonNull String sportId) {
+        Field f = null;
+        Cursor c = SportteamLoader.simpleQueryFieldId(MyApplication.getAppContext(), fieldId, sportId);
+        if (c != null) {
+            if (c.getCount() == 1 && c.moveToFirst()) {
+                String name = c.getString(SportteamContract.FieldEntry.COLUMN_NAME);
+                String address = c.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
+                double latitude = c.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
+                double longitude = c.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
+                LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+                String city = c.getString(SportteamContract.FieldEntry.COLUMN_CITY);
+                float rating = c.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);
+                int votes = c.getInt(SportteamContract.FieldEntry.COLUMN_VOTES);
+                long opening = c.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
+                long closing = c.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
+                String creator = c.getString(SportteamContract.FieldEntry.COLUMN_CREATOR);
+
+                f = new Field(fieldId, name, sportId, address, coord, city, rating, votes, opening, closing, creator);
+                } else if (c.getCount() == 0)
+                Log.e(TAG, "getFieldtFromContentProvider: Field with ID "+fieldId+" and sportId "+sportId+" not found");
+            else
+                Log.e(TAG, "getFieldtFromContentProvider: More than one field with ID "+fieldId+" and sportId "+sportId+" ("+c.getCount()+")");
+            c.close();
+        } else
+            Log.e(TAG, "getFieldtFromContentProvider: Error with field "+fieldId+" and sportId "+sportId);
+        return f;
+    }
+
     public static Alarm getAlarmFromContentProvider(@NonNull String alarmId) {
         Alarm a = null;
         Cursor c = SportteamLoader.simpleQueryAlarmId(MyApplication.getAppContext(), alarmId);

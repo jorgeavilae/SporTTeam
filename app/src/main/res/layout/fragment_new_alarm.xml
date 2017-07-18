@@ -213,6 +213,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/guideline2"
         app:layout_constraintRight_toRightOf="parent" />
 
+    <!--todo tratar como address si el deporte no necesita pistas-->
     <EditText
         android:id="@+id/new_alarm_city"
         android:layout_width="0dp"

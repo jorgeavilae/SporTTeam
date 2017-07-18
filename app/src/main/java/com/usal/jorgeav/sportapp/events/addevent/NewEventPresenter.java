@@ -12,12 +12,14 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.HashMap;
@@ -40,7 +42,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                          String date, String time, String total, String empty,
                          HashMap<String, Boolean> participants) {
         String myUid = Utiles.getCurrentUserId();
-        if (isValidSport(sport) && isValidField(city, field, sport, coord) && isValidName(name)
+        if (isValidSport(sport) && isValidField(field, sport, city, coord) && isValidName(name)
                 && isValidOwner(myUid) && isDateTimeCorrect(date, time) && isPlayersCorrect(total, empty)) {
             long dateMillis = UtilesTime.stringDateToMillis(date);
             long timeMillis = UtilesTime.stringTimeToMillis(time);
@@ -54,7 +56,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             else
                 FirebaseActions.editEvent(event);
             ((EventsActivity)mNewEventView.getActivityContext()).newEventFieldSelected = null;
-            ((EventsActivity)mNewEventView.getActivityContext()).newEventCitySelectedName = null;
+            ((EventsActivity)mNewEventView.getActivityContext()).newEventCityName = null;
             ((EventsActivity)mNewEventView.getActivityContext()).newEventFieldSelectedCoord = null;
             ((AppCompatActivity)mNewEventView.getActivityContext()).onBackPressed();
         } else
@@ -70,25 +72,23 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isValidField(String city, String field, String sport, LatLng coordinates) {
+    private boolean isValidField(String fieldId, String sportId, String city, LatLng coordinates) {
         // Check if the sport doesn't need a field
         String[] arraySports = mNewEventView.getActivityContext().getResources().getStringArray(R.array.sport_id);
-        if (sport.equals(arraySports[0]) || sport.equals(arraySports[1])) return true;
+        if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) return true;
 
         // Query database for the fieldId and checks if this sport exists
-        // TODO: 18/07/2017 utiles.getfieldfromCP ,, check sport, city and coord
-        Cursor c = SportteamLoader.simpleQueryFieldId(mNewEventView.getActivityContext(), field);
-        if (c != null)
-            try {
-                if (c.getCount() > 0)
-                    while (c.moveToFirst())
-                        if (c.getString(SportteamContract.FieldEntry.COLUMN_SPORT).equals(sport)
-                                && c.getString(SportteamContract.FieldEntry.COLUMN_CITY).equals(city)) {
-                            c.close(); return true;
-                        }
-            } finally { c.close(); }
-        Log.e(TAG, "isValidField: not valid");
-        return false;
+        Field field = UtilesContentProvider.getFieldtFromContentProvider(fieldId, sportId);
+        boolean b =  field.getmSport().equals(sportId) &&
+                field.getmCity().equals(city) &&
+                field.getmCoords().latitude == coordinates.latitude &&
+                field.getmCoords().longitude == coordinates.longitude;
+
+        if (b) return true;
+        else {
+            Log.e(TAG, "isValidField: not valid");
+            return false;
+        }
     }
 
     private boolean isValidName(String name) {

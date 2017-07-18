@@ -33,9 +33,8 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
     public String newEventFieldSelected = null;
     private static final String INSTANCE_NEW_EVENT_FIELD_COORD = "INSTANCE_NEW_EVENT_FIELD_COORD";
     public LatLng newEventFieldSelectedCoord = null;
-
     private static final String INSTANCE_NEW_EVENT_CITY_NAME = "INSTANCE_NEW_EVENT_CITY_NAME";
-    public String newEventCitySelectedName = null;
+    public String newEventCityName = null;
 
     @Override
     public void startMainFragment() {
@@ -58,11 +57,11 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
     public void retrieveFieldSelected(String fieldId, String city, LatLng coordinates) {
         newEventFieldSelected = fieldId;
         newEventFieldSelectedCoord = coordinates;
-        newEventCitySelectedName = city;
+        newEventCityName = city;
     }
     //todo Cambiar por setAddress para eventos sin pista
     public void setCity(String city) {
-        newEventCitySelectedName = city;
+        newEventCityName = city;
     }
 
     @Override
@@ -72,8 +71,8 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
             outState.putString(INSTANCE_NEW_EVENT_FIELD, newEventFieldSelected);
         if (newEventFieldSelectedCoord != null)
             outState.putParcelable(INSTANCE_NEW_EVENT_FIELD_COORD, newEventFieldSelectedCoord);
-        if (newEventCitySelectedName != null)
-            outState.putString(INSTANCE_NEW_EVENT_CITY_NAME, newEventCitySelectedName);
+        if (newEventCityName != null)
+            outState.putString(INSTANCE_NEW_EVENT_CITY_NAME, newEventCityName);
     }
 
     @Override
@@ -84,7 +83,7 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_EVENT_FIELD_COORD))
             newEventFieldSelectedCoord = savedInstanceState.getParcelable(INSTANCE_NEW_EVENT_FIELD_COORD);
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_EVENT_CITY_NAME))
-            newEventCitySelectedName = savedInstanceState.getString(INSTANCE_NEW_EVENT_CITY_NAME);
+            newEventCityName = savedInstanceState.getString(INSTANCE_NEW_EVENT_CITY_NAME);
     }
 
     @Override

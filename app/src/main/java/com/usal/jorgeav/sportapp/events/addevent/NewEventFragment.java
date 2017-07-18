@@ -163,7 +163,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                     ((EventsActivity)getActivity()).newEventFieldSelected,
                     ((EventsActivity)getActivity()).newEventFieldSelectedCoord,
                     newEventName.getText().toString(),
-                    ((EventsActivity)getActivity()).newEventCitySelectedName, //// TODO: 18/07/2017 traersela del field
+                    ((EventsActivity)getActivity()).newEventCityName,
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
