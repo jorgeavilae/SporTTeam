@@ -45,7 +45,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             long dateMillis = UtilesTime.stringDateToMillis(date);
             long timeMillis = UtilesTime.stringTimeToMillis(time);
             Event event = new Event(
-                    id, sport, field, name, city, coord, dateMillis + timeMillis, myUid,
+                    id, sport, field, coord, name, city, dateMillis + timeMillis, myUid,
                     Integer.valueOf(total), Integer.valueOf(empty), participants, null); // TODO: 13/07/2017 simulatedParticipants se pierden on edits
 
             Log.d(TAG, "addEvent: "+event);
@@ -175,7 +175,9 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         if (data != null && data.moveToFirst()) {
             mNewEventView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             String fieldId = data.getString(SportteamContract.EventEntry.COLUMN_FIELD);
-            LatLng coordinates = null; // TODO: 15/07/2017 completar LatLng
+            double latitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
+            double longitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
+            LatLng coordinates = null; if (latitude != 0 && longitude != 0) coordinates = new LatLng(latitude, longitude);
             mNewEventView.showEventField(fieldId, coordinates);
             mNewEventView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mNewEventView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));

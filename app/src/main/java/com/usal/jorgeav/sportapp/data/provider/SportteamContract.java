@@ -311,6 +311,8 @@ public final class SportteamContract {
         public static final String EVENT_ID = "eventId";
         public static final String SPORT = "sport";
         public static final String FIELD = "field";
+        public static final String FIELD_LATITUDE = "fieldLatitude";
+        public static final String FIELD_LONGITUDE = "fieldLongitude";
         public static final String NAME = "name";
         public static final String CITY = "city";
         public static final String DATE = "date";
@@ -322,6 +324,8 @@ public final class SportteamContract {
         public static final String EVENT_ID_TABLE_PREFIX = TABLE_EVENT + "." + EVENT_ID;
         public static final String SPORT_TABLE_PREFIX = TABLE_EVENT + "." + SPORT;
         public static final String FIELD_TABLE_PREFIX = TABLE_EVENT + "." + FIELD;
+        public static final String FIELD_LATITUDE_TABLE_PREFIX = TABLE_EVENT + "." + FIELD_LATITUDE;
+        public static final String FIELD_LONGITUDE_TABLE_PREFIX = TABLE_EVENT + "." + FIELD_LONGITUDE;
         public static final String NAME_TABLE_PREFIX = TABLE_EVENT + "." + NAME;
         public static final String CITY_TABLE_PREFIX = TABLE_EVENT + "." + CITY;
         public static final String DATE_TABLE_PREFIX = TABLE_EVENT + "." + DATE;
@@ -335,6 +339,8 @@ public final class SportteamContract {
                 EVENT_ID_TABLE_PREFIX,
                 SPORT_TABLE_PREFIX,
                 FIELD_TABLE_PREFIX,
+                FIELD_LATITUDE_TABLE_PREFIX,
+                FIELD_LONGITUDE_TABLE_PREFIX,
                 NAME_TABLE_PREFIX,
                 CITY_TABLE_PREFIX,
                 DATE_TABLE_PREFIX,
@@ -348,12 +354,14 @@ public final class SportteamContract {
         public static final int COLUMN_EVENT_ID = 1;
         public static final int COLUMN_SPORT = 2;
         public static final int COLUMN_FIELD = 3;
-        public static final int COLUMN_NAME = 4;
-        public static final int COLUMN_CITY = 5;
-        public static final int COLUMN_DATE = 6;
-        public static final int COLUMN_OWNER = 7;
-        public static final int COLUMN_TOTAL_PLAYERS = 8;
-        public static final int COLUMN_EMPTY_PLAYERS = 9;
+        public static final int COLUMN_FIELD_LATITUDE = 4;
+        public static final int COLUMN_FIELD_LONGITUDE = 5;
+        public static final int COLUMN_NAME = 6;
+        public static final int COLUMN_CITY = 7;
+        public static final int COLUMN_DATE = 8;
+        public static final int COLUMN_OWNER = 9;
+        public static final int COLUMN_TOTAL_PLAYERS = 10;
+        public static final int COLUMN_EMPTY_PLAYERS = 11;
 
         /* URI for one event */
         public static Uri buildEventUriWith(long id) {

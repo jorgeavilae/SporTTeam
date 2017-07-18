@@ -12,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.MyApplication;
@@ -135,8 +136,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         if (data != null && data.moveToFirst()) {
             mView.showEventId(data.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
             mView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
-            mView.showEventPlace(data.getString(SportteamContract.EventEntry.COLUMN_FIELD),
-                                 data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
+            String fieldId = data.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+            double latitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
+            double longitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
+            LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+            String sportId = data.getString(SportteamContract.EventEntry.COLUMN_SPORT);
+            mView.showEventField(fieldId, coord, sportId);
             mView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mView.showEventDate(UtilesTime.millisToDateTimeString(data.getLong(SportteamContract.EventEntry.COLUMN_DATE)));
             ownerUid = data.getString(SportteamContract.EventEntry.COLUMN_OWNER);

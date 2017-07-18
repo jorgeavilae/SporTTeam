@@ -32,7 +32,7 @@ public class Event implements Parcelable {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
-    public Event(String mId, String mSport, String mField, String mName, String mCity, LatLng coord,
+    public Event(String mId, String mSport, String mField, LatLng coord, String mName, String mCity,
                  Long mDate, String mOwner, int mTotalPlayers, int mEmptyPlayers,
                  HashMap<String, Boolean> participants, HashMap<String, SimulatedUser> simulated_participants) {
         this.event_id = mId;

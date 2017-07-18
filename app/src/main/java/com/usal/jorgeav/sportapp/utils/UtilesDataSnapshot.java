@@ -61,18 +61,19 @@ public class UtilesDataSnapshot {
 
         String sport = dataNode.child(FirebaseDBContract.Event.SPORT).getValue(String.class);
         String field = dataNode.child(FirebaseDBContract.Event.FIELD).getValue(String.class);
-        String name = dataNode.child(FirebaseDBContract.Event.NAME).getValue(String.class);
-        String city = dataNode.child(FirebaseDBContract.Event.CITY).getValue(String.class);
         Double latitude = dataNode.child(FirebaseDBContract.Event.COORD_LATITUDE).getValue(Double.class);
         Double longitude = dataNode.child(FirebaseDBContract.Event.COORD_LONGITUDE).getValue(Double.class);
+        LatLng coord = null; if (latitude != null && longitude != null) coord = new LatLng(latitude, longitude);
+        String name = dataNode.child(FirebaseDBContract.Event.NAME).getValue(String.class);
+        String city = dataNode.child(FirebaseDBContract.Event.CITY).getValue(String.class);
         String owner = dataNode.child(FirebaseDBContract.Event.OWNER).getValue(String.class);
         Long date = dataNode.child(FirebaseDBContract.Event.DATE).getValue(Long.class);
         Long total = dataNode.child(FirebaseDBContract.Event.TOTAL_PLAYERS).getValue(Long.class);
+        int totalValue = 0; if (total != null) totalValue = total.intValue();
         Long empty = dataNode.child(FirebaseDBContract.Event.EMPTY_PLAYERS).getValue(Long.class);
-        LatLng coord = null;
-        if (latitude != null && longitude != null) coord = new LatLng(latitude, longitude);
-        return new Event(id, sport, field, name, city, coord, date, owner,
-                total.intValue(), empty.intValue(), new HashMap<String, Boolean>(),
+        int emptyValue = 0; if (empty != null) emptyValue = empty.intValue();
+        return new Event(id, sport, field, coord, name, city, date, owner,
+                totalValue, emptyValue, new HashMap<String, Boolean>(),
                 new HashMap<String, SimulatedUser>());
     }
     public static ContentValues eventToContentValues(Event event) {

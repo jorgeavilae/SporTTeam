@@ -178,14 +178,17 @@ public class UtilesContentProvider {
             if (c.getCount() == 1 && c.moveToFirst()) {
                 String sport = c.getString(SportteamContract.EventEntry.COLUMN_SPORT);
                 String field = c.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+                double latitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
+                double longitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
+                LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
                 String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
                 String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
                 Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
                 String owner = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
                 int totalPl = c.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
                 int emptyPl = c.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
-                // TODO: 15/07/2017 Update with ccords
-                e = new Event(eventId, sport, field, name, city, null, date, owner, totalPl, emptyPl, null, null);
+
+                e = new Event(eventId, sport, field, coord, name, city, date, owner, totalPl, emptyPl, null, null);
             } else if (c.getCount() == 0)
                 Log.e(TAG, "getEventFromContentProvider: Event with ID "+eventId+" not found");
             else

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.data.Invitation;
 
@@ -17,7 +18,7 @@ public abstract class DetailEventContract {
     public interface View {
         void showEventId(String id);
         void showEventSport(String sport);
-        void showEventPlace(String place, String sport);
+        void showEventField(String fieldId, LatLng coord, String sport);
         void showEventName(String name);
         void showEventDate(String date);
         void showEventOwner(String city);

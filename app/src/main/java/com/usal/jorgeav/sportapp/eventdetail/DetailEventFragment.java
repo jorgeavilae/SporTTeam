@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.BaseFragment;
@@ -417,13 +418,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     }
 
     @Override
-    public void showEventPlace(final String place, final String sport) {
+    public void showEventField(final String fieldId, LatLng coord, final String sport) {
         ((BaseActivity)getActivity()).showContent();
-        this.buttonEventPlace.setText(place);
+        this.buttonEventPlace.setText(fieldId);
         buttonEventPlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment newFragment = DetailFieldFragment.newInstance(place, sport);
+                Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sport);
                 mFragmentManagementListener.initFragment(newFragment, true);
             }
         });
