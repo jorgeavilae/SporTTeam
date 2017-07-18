@@ -79,12 +79,11 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
 
         // Query database for the fieldId and checks if this sport exists
         Field field = UtilesContentProvider.getFieldtFromContentProvider(fieldId, sportId);
-        boolean b =  field.getmSport().equals(sportId) &&
-                field.getmCity().equals(city) &&
-                field.getmCoords().latitude == coordinates.latitude &&
-                field.getmCoords().longitude == coordinates.longitude;
 
-        if (b) return true;
+        if (field != null && field.getmCity().equals(city)
+                && field.getmCoords().latitude == coordinates.latitude
+                && field.getmCoords().longitude == coordinates.longitude)
+            return true;
         else {
             Log.e(TAG, "isValidField: not valid");
             return false;

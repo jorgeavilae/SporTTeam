@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Alarm;
-import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
@@ -113,25 +113,21 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isValidField(String field, String sport) {
-        if (!TextUtils.isEmpty(field)) {
+    private boolean isValidField(String fieldId, String sportId) {
+        if (!TextUtils.isEmpty(fieldId)) {
             // Check if the sport doesn't need a field
             String[] arraySports = mNewAlarmView.getActivityContext().getResources().getStringArray(R.array.sport_id);
-            if (sport.equals(arraySports[0]) || sport.equals(arraySports[1]))
+            if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1]))
                 return /* todo isValidAddress ?? */ true;
 
-            // Query database for the fieldId and checks if this sport exists for that field
-            Cursor c = SportteamLoader.simpleQueryFieldId(mNewAlarmView.getActivityContext(), field);
-            try {
-                while (c.moveToNext())
-                    if (c.getString(SportteamContract.FieldEntry.COLUMN_SPORT).equals(sport)) {
-                        c.close();
-                        return true;
-                    }
-            } finally {
-                c.close();
+            // Query database for the fieldId and checks if this sport exists
+            Field field = UtilesContentProvider.getFieldtFromContentProvider(fieldId, sportId);
+
+            if (field != null) return true;
+            else {
+                Log.e(TAG, "isValidField: not valid");
+                return false;
             }
-            return false;
         }
         return true; //Could be null
     }
