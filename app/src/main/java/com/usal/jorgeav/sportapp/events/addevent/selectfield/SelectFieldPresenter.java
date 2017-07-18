@@ -34,9 +34,10 @@ public class SelectFieldPresenter implements SelectFieldContract.Presenter, Load
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case SportteamLoader.LOADER_FIELDS_WITH_SPORT:
+                String city = UtilesPreferences.getCurrentUserCity(mSelectFieldsView.getActivityContext());
                 String sportId = args.getString(SelectFieldFragment.BUNDLE_SPORT_ID);
                 return SportteamLoader
-                        .cursorLoaderFieldsWithSport(mSelectFieldsView.getActivityContext(), sportId);
+                        .cursorLoaderFieldsFromCityWithSport(mSelectFieldsView.getActivityContext(), city, sportId);
         }
         return null;
     }

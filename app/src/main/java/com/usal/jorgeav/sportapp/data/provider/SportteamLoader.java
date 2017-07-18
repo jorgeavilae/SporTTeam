@@ -245,14 +245,14 @@ public final class SportteamLoader {
                 SportteamContract.FieldEntry.COLUMN_PUNCTUATION + " DESC");
     }
     public static final int LOADER_FIELDS_WITH_SPORT = 6200;
-    public static CursorLoader cursorLoaderFieldsWithSport(Context context, String sportId) {
+    public static CursorLoader cursorLoaderFieldsFromCityWithSport(Context context, String city, String sportId) {
         // Return field data from fields with sportId
         return new CursorLoader(
                 context,
                 SportteamContract.FieldEntry.CONTENT_FIELD_URI,
                 SportteamContract.FieldEntry.FIELDS_COLUMNS,
-                SportteamContract.FieldEntry.SPORT + " = ?",
-                new String[]{sportId},
+                SportteamContract.FieldEntry.CITY + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? ",
+                new String[]{city, sportId},
                 SportteamContract.FieldEntry.NAME + " ASC");
     }
     public static final int LOADER_FIELD_ID = 6001;
