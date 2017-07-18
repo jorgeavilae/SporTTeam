@@ -513,6 +513,7 @@ public class NewUserActivity extends AppCompatActivity implements
                                     sports);
                             FirebaseActions.addUser(user);
 
+                            // Return to LoginActivity
                             setResult(RESULT_OK);
                             finish();
                         }

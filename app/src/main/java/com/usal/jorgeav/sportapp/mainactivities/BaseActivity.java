@@ -97,7 +97,7 @@ public class BaseActivity extends AppCompatActivity
                     // User is signed in
                     Log.d(TAG, "userID: "+fuser.getUid());
                     setUserInfoInNavigationDrawer(mNavigationView, fuser);
-                    // TODO: 05/07/2017 what if I init all listener: now would init once per app instance
+                    // Initialization is cases when user is already logged.
                     SportteamSyncUtils.initialize(BaseActivity.this);
                     if(mDisplayedFragment == null)
                         startMainFragment();

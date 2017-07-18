@@ -37,6 +37,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.NewUserActivity;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
+import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +111,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         switch (resultCode) {
             case RESULT_OK:
                 Log.d(TAG, "onActivityResult: RESULT_OK");
-                loadMyProfile();
+                deleteContentProvider();
+                // The user is logged and his data is in Firebase. Retrieve that data and
+                // populate Content Provider. Later finishLoadMyProfile() will be invoked
+                SportteamSyncUtils.initialize(LoginActivity.this);
                 break;
             case RESULT_CANCELED:
                 Log.d(TAG, "onActivityResult: RESULT_CANCELED");
@@ -177,15 +181,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 Toast.makeText(LoginActivity.this, R.string.error_incorrect_password,
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                loadMyProfile();
+                                deleteContentProvider();
+                                // The user is logged and his data is in Firebase. Retrieve that data and
+                                // populate Content Provider. Later finishLoadMyProfile() will be invoked
+                                SportteamSyncUtils.initialize(LoginActivity.this);
                             }
                         }
                     });
         }
     }
 
-    public void loadMyProfile() {
-        deleteContentProvider();
+    public void finishLoadMyProfile() {
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

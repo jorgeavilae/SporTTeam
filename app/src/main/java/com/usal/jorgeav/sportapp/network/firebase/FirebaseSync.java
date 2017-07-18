@@ -23,6 +23,7 @@ import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.mainactivities.LoginActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesDataSnapshot;
@@ -38,8 +39,10 @@ public class FirebaseSync {
     public static final String TAG = FirebaseSync.class.getSimpleName();
 
     private static HashMap<DatabaseReference, ChildEventListener> listenerMap = new HashMap<>();
+    private static LoginActivity mLoginActivity;
 
-    public static void syncFirebaseDatabase() {
+    public static void syncFirebaseDatabase(LoginActivity loginActivity) {
+        mLoginActivity = loginActivity;
         if (FirebaseAuth.getInstance().getCurrentUser() != null && listenerMap.isEmpty()) {
             String myUserID = Utiles.getCurrentUserId();
             if (TextUtils.isEmpty(myUserID)) return;
@@ -775,6 +778,12 @@ public class FirebaseSync {
                             if (shouldUpdateCityPrefs) {
                                 UtilesPreferences.setCurrentUserCity(MyApplication.getAppContext());
                                 UtilesPreferences.setCurrentUserCityCoords(MyApplication.getAppContext());
+
+                                // Updates in prefs came from new login in so if the mLoginActivity
+                                // isn't null, ends that Activity and start BaseActivity with the
+                                // User data in ContentProvider.
+                                if (mLoginActivity != null)
+                                    mLoginActivity.finishLoadMyProfile();
                             }
                         }
                     }

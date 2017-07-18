@@ -11,6 +11,7 @@ import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
+import com.usal.jorgeav.sportapp.mainactivities.LoginActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 import java.util.concurrent.TimeUnit;
@@ -43,7 +44,9 @@ public class SportteamSyncUtils {
      */
     synchronized public static void initialize(@NonNull final Context context) {
 
-        FirebaseSync.syncFirebaseDatabase();
+        LoginActivity loginActivity = null;
+        if (context instanceof LoginActivity) loginActivity = (LoginActivity) context;
+        FirebaseSync.syncFirebaseDatabase(loginActivity);
 
         /*
          * Only perform schedule once per app lifetime. If schedule has already been
