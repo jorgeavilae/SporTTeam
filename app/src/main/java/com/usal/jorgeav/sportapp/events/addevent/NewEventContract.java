@@ -16,17 +16,17 @@ public abstract class NewEventContract {
 
     public interface Presenter {
         void openEvent(LoaderManager loaderManager, Bundle b);
-        void addEvent(String id, String sport, String field, String name, String city, LatLng coord,
+        void addEvent(String id, String sport, String field, LatLng coord, String name, String city,
                       String date, String time, String total, String empty,
                       HashMap<String, Boolean> participants);
     }
 
     public interface View {
         void showEventSport(String sport);
-        void showEventPlace(String place);
+        void showEventField(String fieldId, LatLng coordinates);
         void showEventName(String name);
         void showEventDate(long date);
-        void showEventCity(String city, LatLng coordinates);
+        void showEventCity(String city);
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);
         void setParticipants(HashMap<String, Boolean> map);

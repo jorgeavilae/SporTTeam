@@ -304,18 +304,6 @@ public class NewUserActivity extends AppCompatActivity implements
                 createAuthUser(newUserEmail.getText().toString(), newUserPassword.getText().toString());
             } else {
                 Toast.makeText(getApplicationContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
-                // TODO: 17/07/2017 borrar
-                Log.e(TAG, "onOptionsItemSelected: newUserEmail.getText() " + !TextUtils.isEmpty(newUserEmail.getText()));
-                Log.e(TAG, "onOptionsItemSelected: newUserEmail.getError() " + TextUtils.isEmpty(newUserEmail.getError()));
-                Log.e(TAG, "onOptionsItemSelected: newUserPassword.getText() " + !TextUtils.isEmpty(newUserPassword.getText()));
-                Log.e(TAG, "onOptionsItemSelected: newUserPassword.getError() " + TextUtils.isEmpty(newUserPassword.getError()));
-                Log.e(TAG, "onOptionsItemSelected: newUserName.getText() " + !TextUtils.isEmpty(newUserName.getText()));
-                Log.e(TAG, "onOptionsItemSelected: newUserName.getError() " + TextUtils.isEmpty(newUserName.getError()));
-                Log.e(TAG, "onOptionsItemSelected: newUserAge.getText() " + !TextUtils.isEmpty(newUserAge.getText()));
-                Log.e(TAG, "onOptionsItemSelected: croppedImageUri " + croppedImageUri);
-                Log.e(TAG, "onOptionsItemSelected: newUserCitySelectedName " + newUserCitySelectedName);
-                Log.e(TAG, "onOptionsItemSelected: newUserCitySelectedCoord " + newUserCitySelectedCoord);
-                Log.e(TAG, "onOptionsItemSelected: sports " + sports);
             }
             return true;
         }

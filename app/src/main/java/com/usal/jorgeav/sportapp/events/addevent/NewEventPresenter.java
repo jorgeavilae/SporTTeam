@@ -36,18 +36,17 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
     }
 
     @Override
-    public void addEvent(String id, String sport, String field, String name, String city, LatLng coord,
+    public void addEvent(String id, String sport, String field, LatLng coord, String name, String city,
                          String date, String time, String total, String empty,
                          HashMap<String, Boolean> participants) {
         String myUid = Utiles.getCurrentUserId();
-        if (isValidSport(sport) && isValidCity(city, coord) && isValidField(city, field, sport)
-                && isValidName(name)  && isValidOwner(myUid) && isDateTimeCorrect(date, time)
-                && isPlayersCorrect(total, empty)) {
+        if (isValidSport(sport) && isValidField(city, field, sport, coord) && isValidName(name)
+                && isValidOwner(myUid) && isDateTimeCorrect(date, time) && isPlayersCorrect(total, empty)) {
             long dateMillis = UtilesTime.stringDateToMillis(date);
             long timeMillis = UtilesTime.stringTimeToMillis(time);
             Event event = new Event(
                     id, sport, field, name, city, coord, dateMillis + timeMillis, myUid,
-                    Integer.valueOf(total), Integer.valueOf(empty), participants, null); // TODO: 13/07/2017 simulatedParticipants se pierden
+                    Integer.valueOf(total), Integer.valueOf(empty), participants, null); // TODO: 13/07/2017 simulatedParticipants se pierden on edits
 
             Log.d(TAG, "addEvent: "+event);
             if(TextUtils.isEmpty(event.getEvent_id()))
@@ -56,7 +55,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 FirebaseActions.editEvent(event);
             ((EventsActivity)mNewEventView.getActivityContext()).newEventFieldSelected = null;
             ((EventsActivity)mNewEventView.getActivityContext()).newEventCitySelectedName = null;
-            ((EventsActivity)mNewEventView.getActivityContext()).newEventCitySelectedCoord = null;
+            ((EventsActivity)mNewEventView.getActivityContext()).newEventFieldSelectedCoord = null;
             ((AppCompatActivity)mNewEventView.getActivityContext()).onBackPressed();
         } else
             Toast.makeText(mNewEventView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
@@ -71,17 +70,13 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isValidCity(String city, LatLng coord) {
-         /* todo isValidAddress ?? */
-         return true;
-    }
-
-    private boolean isValidField(String city, String field, String sport) {
+    private boolean isValidField(String city, String field, String sport, LatLng coordinates) {
         // Check if the sport doesn't need a field
         String[] arraySports = mNewEventView.getActivityContext().getResources().getStringArray(R.array.sport_id);
         if (sport.equals(arraySports[0]) || sport.equals(arraySports[1])) return true;
 
         // Query database for the fieldId and checks if this sport exists
+        // TODO: 18/07/2017 utiles.getfieldfromCP ,, check sport, city and coord
         Cursor c = SportteamLoader.simpleQueryFieldId(mNewEventView.getActivityContext(), field);
         if (c != null)
             try {
@@ -179,12 +174,12 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
     private void showEventDetails(Cursor data) {
         if (data != null && data.moveToFirst()) {
             mNewEventView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
-            mNewEventView.showEventPlace(data.getString(SportteamContract.EventEntry.COLUMN_FIELD));
+            String fieldId = data.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+            LatLng coordinates = null; // TODO: 15/07/2017 completar LatLng
+            mNewEventView.showEventField(fieldId, coordinates);
             mNewEventView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mNewEventView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));
-            String city = data.getString(SportteamContract.EventEntry.COLUMN_CITY);
-            LatLng coordinates = null; // TODO: 15/07/2017 completar LatLng
-            mNewEventView.showEventCity(city, coordinates);
+            mNewEventView.showEventCity(data.getString(SportteamContract.EventEntry.COLUMN_CITY));
             mNewEventView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
             mNewEventView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
         } else {

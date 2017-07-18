@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.FieldsAdapter;
@@ -111,15 +112,14 @@ public class SelectFieldFragment extends BaseFragment implements SelectFieldCont
     }
 
     @Override
-    public void onFieldClick(String fieldId, String sportId) {
-        // TODO: 15/07/2017 traerse tambien las coordenadas no solo el fieldId
+    public void onFieldClick(String fieldId, String sportId, LatLng coord) {
         if (getActivity() instanceof OnFieldSelected)
-            ((OnFieldSelected) getActivity()).retrieveFieldSelected(fieldId);
+            ((OnFieldSelected) getActivity()).retrieveFieldSelected(fieldId, coord);
         Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
         mFragmentManagementListener.initFragment(newFragment, true);
     }
 
     public interface OnFieldSelected {
-        void retrieveFieldSelected(String fieldId);
+        void retrieveFieldSelected(String fieldId, LatLng coordinates);
     }
 }

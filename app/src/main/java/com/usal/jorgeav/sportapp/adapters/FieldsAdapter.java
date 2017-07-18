@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
@@ -99,11 +100,14 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
             mDataset.moveToPosition(position);
             String fieldId = mDataset.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
             String sportId = mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
-            mClickListener.onFieldClick(fieldId, sportId);
+            double latitude = mDataset.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
+            double longitude = mDataset.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
+            LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+            mClickListener.onFieldClick(fieldId, sportId, coord);
         }
     }
 
     public interface OnFieldItemClickListener {
-        void onFieldClick(String fieldId, String sportId);
+        void onFieldClick(String fieldId, String sportId, LatLng coordinates);
     }
 }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.FieldsAdapter;
@@ -105,7 +106,7 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
     }
 
     @Override
-    public void onFieldClick(String fieldId, String sportId) {
+    public void onFieldClick(String fieldId, String sportId, LatLng coord) {
         Fragment newFragment = DetailFieldFragment.newInstance(fieldId, sportId);
         mFragmentManagementListener.initFragment(newFragment, true);
     }

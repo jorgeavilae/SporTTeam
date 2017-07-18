@@ -161,10 +161,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                     eventId,
                     newEventSport.getSelectedItem().toString(),
                     ((EventsActivity)getActivity()).newEventFieldSelected,
+                    ((EventsActivity)getActivity()).newEventFieldSelectedCoord,
                     newEventName.getText().toString(),
                     ((EventsActivity)getActivity()).newEventCitySelectedName,
-                    /*todo estas coordenads hay que cambiarlas por las del Field, no las de la ciudad */
-                    ((EventsActivity)getActivity()).newEventCitySelectedCoord,
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
@@ -245,7 +244,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
             @Override
             public void afterTextChanged(Editable editable) {
-                ((EventsActivity)getActivity()).setCity(null, null);
+                ((EventsActivity)getActivity()).setCity(null);
             }
         });
 
@@ -267,9 +266,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                                     if (places.getStatus().isSuccess() && places.getCount() > 0) {
                                         Place myPlace = places.get(0);
                                         ((EventsActivity)getActivity())
-                                                .setCity(myPlace.getName().toString(), myPlace.getLatLng());
-                                        Log.i(TAG, "Place found: Name - " + myPlace.getName()
-                                                + " LatLng - " + myPlace.getLatLng());
+                                                .setCity(myPlace.getName().toString());
+                                        Log.i(TAG, "Place found: Name - " + myPlace.getName());
                                     } else {
                                         Log.e(TAG, "Place not found");
                                     }
@@ -320,9 +318,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     }
 
     @Override
-    public void showEventPlace(String place) {
-        if (place != null && !TextUtils.isEmpty(place) && getActivity() instanceof SelectFieldFragment.OnFieldSelected)
-            ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(place);
+    public void showEventField(String fieldId, LatLng coordinates) {
+        if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof SelectFieldFragment.OnFieldSelected)
+            ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(fieldId, coordinates);
     }
 
     @Override
@@ -340,10 +338,10 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     }
 
     @Override
-    public void showEventCity(String city, LatLng coordinates) {
+    public void showEventCity(String city) {
         if (city != null && !TextUtils.isEmpty(city)) {
             newEventAutocompleteCity.setText(city);
-            ((EventsActivity) getActivity()).setCity(city, coordinates);
+            ((EventsActivity) getActivity()).setCity(city);
         }
     }
 
@@ -367,12 +365,12 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public void clearUI() {
         newEventSport.setSelection(0);
-        ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected("");
+        ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected("", null);
         newEventName.setText("");
         newEventDate.setText("");
         newEventTime.setText("");
         newEventAutocompleteCity.getText().clear();
-        ((EventsActivity) getActivity()).setCity(null, null);
+        ((EventsActivity) getActivity()).setCity(null);
         newEventTotal.setText("");
         newEventEmpty.setText("");
     }
