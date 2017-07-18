@@ -20,8 +20,6 @@ public class AlarmsActivity extends BaseActivity implements SelectFieldFragment.
 
     private static final String INSTANCE_NEW_ALARM_FIELD = "INSTANCE_NEW_ALARM_FIELD";
     public String newAlarmFieldSelected = null;
-    private static final String INSTANCE_NEW_ALARM_FIELD_COORD = "INSTANCE_NEW_ALARM_FIELD_COORD";
-    public LatLng newAlarmFieldSelectedCoord = null;
 
     @Override
     public void startMainFragment() {
@@ -43,7 +41,6 @@ public class AlarmsActivity extends BaseActivity implements SelectFieldFragment.
     @Override
     public void retrieveFieldSelected(String fieldId, LatLng coord) {
         newAlarmFieldSelected = fieldId;
-        newAlarmFieldSelectedCoord = coord;
     }
 
     @Override
@@ -51,8 +48,6 @@ public class AlarmsActivity extends BaseActivity implements SelectFieldFragment.
         super.onSaveInstanceState(outState);
         if (newAlarmFieldSelected != null)
             outState.putString(INSTANCE_NEW_ALARM_FIELD, newAlarmFieldSelected);
-        if (newAlarmFieldSelectedCoord != null)
-            outState.putParcelable(INSTANCE_NEW_ALARM_FIELD_COORD, newAlarmFieldSelectedCoord);
     }
 
     @Override
@@ -60,7 +55,5 @@ public class AlarmsActivity extends BaseActivity implements SelectFieldFragment.
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_ALARM_FIELD))
             newAlarmFieldSelected = savedInstanceState.getString(INSTANCE_NEW_ALARM_FIELD);
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_ALARM_FIELD_COORD))
-            newAlarmFieldSelectedCoord = savedInstanceState.getParcelable(INSTANCE_NEW_ALARM_FIELD_COORD);
     }
 }

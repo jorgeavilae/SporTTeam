@@ -20,7 +20,7 @@ public abstract class NewAlarmContract {
 
     public interface View {
         void showAlarmSport(String sport);
-        void showAlarmPlace(String place);
+        void showAlarmField(String fieldId);
         void showAlarmCity(String city);
         void showAlarmDate(Long dateFrom, Long dateTo);
         void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo);
