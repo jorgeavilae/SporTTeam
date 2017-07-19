@@ -1116,7 +1116,7 @@ public class FirebaseSync {
 
                                 // Check if I am participant or owner
                                 if (!TextUtils.isEmpty(myUserId) && !myUserId.equals(e.getOwner())
-                                        && !e.getParticipants().containsKey(myUserId)) {
+                                        && e.getParticipants() != null && !e.getParticipants().containsKey(myUserId)) {
                                     ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                                     MyApplication.getAppContext().getContentResolver()
                                             .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
