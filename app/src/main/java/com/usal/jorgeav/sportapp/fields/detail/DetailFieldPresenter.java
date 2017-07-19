@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
@@ -17,6 +18,7 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
  */
 
 public class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String TAG = DetailFieldPresenter.class.getSimpleName();
     private DetailFieldContract.View mView;
 
     public DetailFieldPresenter(@NonNull DetailFieldContract.View view) {
@@ -65,7 +67,13 @@ public class DetailFieldPresenter implements DetailFieldContract.Presenter, Load
         if(data != null && data.moveToFirst()) {
             mView.showFieldId(data.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID));
             mView.showFieldName(data.getString(SportteamContract.FieldEntry.COLUMN_NAME));
-            mView.showFieldAddress(data.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS));
+
+            double latitude = data.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
+            double longitude = data.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
+            LatLng coordinates = null; if (latitude != 0 && longitude != 0) coordinates = new LatLng(latitude, longitude);
+            mView.showFieldAddress(data.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS), coordinates);
+
+
             mView.showFieldRating(data.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION));
             mView.showFieldSport(data.getString(SportteamContract.FieldEntry.COLUMN_SPORT));
             mView.showFieldOpeningTime(UtilesTime.millisToTimeString(data.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME)));

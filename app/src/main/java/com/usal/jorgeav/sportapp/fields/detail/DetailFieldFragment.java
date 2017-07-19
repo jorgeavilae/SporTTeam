@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
@@ -135,7 +136,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     }
 
     @Override
-    public void showFieldAddress(String address) {
+    public void showFieldAddress(String address, LatLng coordinates) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewFieldAddress.setText(address);
     }
