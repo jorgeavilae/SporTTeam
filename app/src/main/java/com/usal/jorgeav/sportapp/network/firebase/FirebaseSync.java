@@ -1117,11 +1117,19 @@ public class FirebaseSync {
                                 // Check if I am participant or owner
                                 if (!TextUtils.isEmpty(myUserId) && !myUserId.equals(e.getOwner())
                                         && !e.getParticipants().containsKey(myUserId)) {
-                                    // TODO: 13/07/2017 deberia cargar el perfil del owner y de los participants?
                                     ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
                                     MyApplication.getAppContext().getContentResolver()
                                             .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                                    loadAProfile(e.getOwner(), false);
                                     loadAField(e.getField_id());
+
+                                    // Load users participants with data
+                                    if (e.getParticipants() != null)
+                                        loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+
+                                    // Load simulated users participants with data
+                                    if (e.getSimulated_participants() != null)
+                                        loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
                                 }
                             }
                             FirebaseActions.checkAlarmsForNotifications();
