@@ -1,16 +1,19 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantContract;
+import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
 import com.yalantis.ucrop.UCrop;
@@ -19,6 +22,9 @@ import java.io.File;
 
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
+
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * Created by Jorge Avila on 26/06/2017.
@@ -115,5 +121,24 @@ public class EventsActivity extends BaseActivity implements SelectFieldFragment.
             }
         } else if (resultCode == UCrop.RESULT_ERROR)
             Log.e(TAG, "onActivityResult: error ", UCrop.getError(data));
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == SimulateParticipantFragment.RC_PERMISSIONS &&
+                permissions[0].equals(WRITE_EXTERNAL_STORAGE) && permissions[1].equals(CAMERA)) {
+
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED)
+                //Without WRITE_EXTERNAL_STORAGE it can't save cropped photo
+                Toast.makeText(this, "Se necesita guardar la imagen", Toast.LENGTH_SHORT).show();
+            else if (grantResults[1] == PackageManager.PERMISSION_DENIED)
+                //The user can't take pictures
+                EasyImage.openGallery(this, SimulateParticipantFragment.RC_PHOTO_PICKER);
+            else if (grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                //The user can take pictures or pick an image
+                EasyImage.openChooserWithGallery(this, "Elegir foto de...", SimulateParticipantFragment.RC_PHOTO_PICKER);
+        }
     }
 }

@@ -41,8 +41,8 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class SimulateParticipantFragment extends BaseFragment implements SimulateParticipantContract.View {
     public static final String TAG = SimulateParticipantFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
-    private static final int RC_PERMISSIONS = 3;
-    private static final int RC_PHOTO_PICKER = 2;
+    public static final int RC_PERMISSIONS = 3;
+    public static final int RC_PHOTO_PICKER = 2;
 
 
     SimulateParticipantContract.Presenter mPresenter;
