@@ -1109,13 +1109,20 @@ public class FirebaseSync {
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                Event e = UtilesDataSnapshot.dataSnapshotToEvent(data);
-                                // TODO: 13/07/2017 comprobar que no soy owner ni participant antes de continuar
-                                // TODO: 13/07/2017 deberia cargar el perfil del owner y de los participants?
-                                ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
-                                MyApplication.getAppContext().getContentResolver()
-                                        .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                                loadAField(e.getField_id());
+                                Event e = data.child(FirebaseDBContract.DATA).getValue(Event.class);
+                                if (e == null) return;
+                                e.setEvent_id(data.getKey());
+                                String myUserId = Utiles.getCurrentUserId();
+
+                                // Check if I am participant or owner
+                                if (!TextUtils.isEmpty(myUserId) && !myUserId.equals(e.getOwner())
+                                        && !e.getParticipants().containsKey(myUserId)) {
+                                    // TODO: 13/07/2017 deberia cargar el perfil del owner y de los participants?
+                                    ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
+                                    MyApplication.getAppContext().getContentResolver()
+                                            .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                                    loadAField(e.getField_id());
+                                }
                             }
                             FirebaseActions.checkAlarmsForNotifications();
                         }
