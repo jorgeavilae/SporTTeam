@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
@@ -40,7 +41,8 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
     @Override
     public void addEvent(String id, String sport, String field, LatLng coord, String name, String city,
                          String date, String time, String total, String empty,
-                         HashMap<String, Boolean> participants) {
+                         HashMap<String, Boolean> participants,
+                         HashMap<String, SimulatedUser> simulatedParticipants) {
         String myUid = Utiles.getCurrentUserId();
         if (isValidSport(sport) && isValidField(field, sport, city, coord) && isValidName(name)
                 && isValidOwner(myUid) && isDateTimeCorrect(date, time) && isPlayersCorrect(total, empty)) {
@@ -48,7 +50,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             long timeMillis = UtilesTime.stringTimeToMillis(time);
             Event event = new Event(
                     id, sport, field, coord, name, city, dateMillis + timeMillis, myUid,
-                    Integer.valueOf(total), Integer.valueOf(empty), participants, null); // TODO: 13/07/2017 simulatedParticipants se pierden on edits
+                    Integer.valueOf(total), Integer.valueOf(empty), participants, simulatedParticipants);
 
             Log.d(TAG, "addEvent: "+event);
             if(TextUtils.isEmpty(event.getEvent_id()))
@@ -78,7 +80,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) return true;
 
         // Query database for the fieldId and checks if this sport exists
-        Field field = UtilesContentProvider.getFieldtFromContentProvider(fieldId, sportId);
+        Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId, sportId);
 
         if (field != null && field.getmCity().equals(city)
                 && field.getmCoords().latitude == coordinates.latitude
@@ -122,6 +124,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
     public void openEvent(LoaderManager loaderManager, Bundle b) {
         if (b != null && b.containsKey(NewEventFragment.BUNDLE_EVENT_ID)) {
             loaderManager.initLoader(SportteamLoader.LOADER_EVENT_ID, b, this);
+            loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID, b, this);
             loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
         }
     }
@@ -136,6 +139,9 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
                 return SportteamLoader
                         .cursorLoaderEventParticipantsNoData(mNewEventView.getActivityContext(), eventId);
+            case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
+                return SportteamLoader
+                        .cursorLoaderEventSimulatedParticipants(mNewEventView.getActivityContext(), eventId);
         }
         return null;
     }
@@ -155,6 +161,21 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 }
                 mNewEventView.setParticipants(map);
                 break;
+            case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
+                HashMap<String, SimulatedUser> simulatedUserHashMap = new HashMap<>();
+                while(data.moveToNext()) {
+                    String key = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_SIMULATED_USER_ID);
+
+                    String alias = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_ALIAS);
+                    String profile_picture = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_PROFILE_PICTURE);
+                    Long age = data.getLong(SportteamContract.SimulatedParticipantEntry.COLUMN_AGE);
+                    String owner = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_OWNER);
+                    SimulatedUser simulatedUser = new SimulatedUser(alias, profile_picture, age, owner);
+
+                    simulatedUserHashMap.put(key, simulatedUser);
+                }
+                mNewEventView.setSimulatedParticipants(simulatedUserHashMap);
+                break;
         }
     }
 
@@ -166,6 +187,9 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 break;
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
                 mNewEventView.setParticipants(null);
+                break;
+            case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
+                mNewEventView.setSimulatedParticipants(null);
                 break;
         }
     }

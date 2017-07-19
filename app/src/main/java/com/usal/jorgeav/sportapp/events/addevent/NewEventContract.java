@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.usal.jorgeav.sportapp.data.SimulatedUser;
 
 import java.util.HashMap;
 
@@ -18,7 +19,8 @@ public abstract class NewEventContract {
         void openEvent(LoaderManager loaderManager, Bundle b);
         void addEvent(String id, String sport, String field, LatLng coord, String name, String city,
                       String date, String time, String total, String empty,
-                      HashMap<String, Boolean> participants);
+                      HashMap<String, Boolean> participants,
+                      HashMap<String, SimulatedUser> simulatedParticipants);
     }
 
     public interface View {
@@ -28,7 +30,8 @@ public abstract class NewEventContract {
         void showEventDate(long date);
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);
-        void setParticipants(HashMap<String, Boolean> map);
+        void setParticipants(HashMap<String, Boolean> participants);
+        void setSimulatedParticipants(HashMap<String, SimulatedUser> simulatedParticipants);
         void clearUI();
         Context getActivityContext();
 

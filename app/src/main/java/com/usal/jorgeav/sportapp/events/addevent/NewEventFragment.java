@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
+import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
@@ -81,6 +82,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @BindView(R.id.new_event_empty)
     EditText newEventEmpty;
     HashMap<String, Boolean> mParticipants;
+    HashMap<String, SimulatedUser> mSimulatedParticipants;
 
     Calendar myCalendar;
     DatePickerDialog datePickerDialog;
@@ -157,6 +159,18 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
                 eventId = getArguments().getString(BUNDLE_EVENT_ID);
 
+            Log.d(TAG, "onOptionsItemSelected: "+eventId);
+            Log.d(TAG, "onOptionsItemSelected: "+newEventSport.getSelectedItem().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+((EventsActivity)getActivity()).newEventFieldSelected);
+            Log.d(TAG, "onOptionsItemSelected: "+((EventsActivity)getActivity()).newEventFieldSelectedCoord);
+            Log.d(TAG, "onOptionsItemSelected: "+newEventName.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+((EventsActivity)getActivity()).newEventCityName);
+            Log.d(TAG, "onOptionsItemSelected: "+ newEventDate.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+ newEventTime.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+ newEventTotal.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+newEventEmpty.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+mParticipants);
+            Log.d(TAG, "onOptionsItemSelected: "+mSimulatedParticipants);
             mNewEventPresenter.addEvent(
                     eventId,
                     newEventSport.getSelectedItem().toString(),
@@ -168,7 +182,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
                     newEventEmpty.getText().toString(),
-                    mParticipants);
+                    mParticipants, mSimulatedParticipants);
             return true;
         }
         return false;
@@ -231,23 +245,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         mAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, null, typeFilter);
         newEventAutocompleteCity.setAdapter(mAdapter);
 
-        newEventAutocompleteCity.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                ((EventsActivity)getActivity()).setCity(null);
-            }
-        });
-
         newEventAutocompleteCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -298,6 +295,24 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public void onResume() {
         super.onResume();
         mFragmentManagementListener.showContent();
+
+        /* https://stackoverflow.com/a/13723367/4235666 */
+        newEventAutocompleteCity.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                ((EventsActivity)getActivity()).setCity(null);
+            }
+        });
     }
 
     @Override
@@ -319,6 +334,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     @Override
     public void showEventField(String fieldId, String city, LatLng coordinates) {
+        Log.d(TAG, "showEventField: "+fieldId);
+        Log.d(TAG, "showEventField: "+city);
+        Log.d(TAG, "showEventField: "+ coordinates);
         if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof SelectFieldFragment.OnFieldSelected)
             ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(fieldId, city, coordinates);
 
@@ -358,6 +376,10 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public void setParticipants(HashMap<String, Boolean> map) {
         mParticipants = map;
     }
+    @Override
+    public void setSimulatedParticipants(HashMap<String, SimulatedUser> map) {
+        mSimulatedParticipants = map;
+    }
 
     @Override
     public void clearUI() {
@@ -367,7 +389,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         newEventDate.setText("");
         newEventTime.setText("");
         newEventAutocompleteCity.getText().clear();
-        ((EventsActivity) getActivity()).setCity(null);
+        ((EventsActivity) getActivity()).setCity("");
         newEventTotal.setText("");
         newEventEmpty.setText("");
     }

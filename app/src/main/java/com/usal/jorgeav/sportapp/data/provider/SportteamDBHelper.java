@@ -19,7 +19,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
      * If you change the database schema, you must increment the database version or the onUpgrade
      * method will not be called.
      */
-    private static final int DATABASE_VERSION = 21;
+    private static final int DATABASE_VERSION = 22;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -45,7 +45,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.EventEntry.SPORT              + " TEXT NOT NULL,"             +
                 SportteamContract.EventEntry.FIELD              + " TEXT,"                      +
                 SportteamContract.EventEntry.FIELD_LATITUDE     + " REAL,"                      +
-                SportteamContract.EventEntry.FIELD_LONGITUDE    + " REAl,"                      +
+                SportteamContract.EventEntry.FIELD_LONGITUDE    + " REAL,"                      +
                 SportteamContract.EventEntry.NAME               + " TEXT,"                      +
                 SportteamContract.EventEntry.CITY               + " TEXT,"                      +
                 SportteamContract.EventEntry.DATE               + " INTEGER,"                   +

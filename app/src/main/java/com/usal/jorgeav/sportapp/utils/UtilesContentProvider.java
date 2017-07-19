@@ -199,7 +199,7 @@ public class UtilesContentProvider {
         return e;
     }
 
-    public static Field getFieldtFromContentProvider(@NonNull String fieldId, @NonNull String sportId) {
+    public static Field getFieldFromContentProvider(@NonNull String fieldId, @NonNull String sportId) {
         Field f = null;
         Cursor c = SportteamLoader.simpleQueryFieldId(MyApplication.getAppContext(), fieldId, sportId);
         if (c != null) {
@@ -218,12 +218,12 @@ public class UtilesContentProvider {
 
                 f = new Field(fieldId, name, sportId, address, coord, city, rating, votes, opening, closing, creator);
                 } else if (c.getCount() == 0)
-                Log.e(TAG, "getFieldtFromContentProvider: Field with ID "+fieldId+" and sportId "+sportId+" not found");
+                Log.e(TAG, "getFieldFromContentProvider: Field with ID "+fieldId+" and sportId "+sportId+" not found");
             else
-                Log.e(TAG, "getFieldtFromContentProvider: More than one field with ID "+fieldId+" and sportId "+sportId+" ("+c.getCount()+")");
+                Log.e(TAG, "getFieldFromContentProvider: More than one field with ID "+fieldId+" and sportId "+sportId+" ("+c.getCount()+")");
             c.close();
         } else
-            Log.e(TAG, "getFieldtFromContentProvider: Error with field "+fieldId+" and sportId "+sportId);
+            Log.e(TAG, "getFieldFromContentProvider: Error with field "+fieldId+" and sportId "+sportId);
         return f;
     }
 

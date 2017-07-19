@@ -81,6 +81,8 @@ public class UtilesDataSnapshot {
         cv.put(SportteamContract.EventEntry.EVENT_ID, event.getEvent_id());
         cv.put(SportteamContract.EventEntry.SPORT, event.getSport_id());
         cv.put(SportteamContract.EventEntry.FIELD, event.getField_id());
+        cv.put(SportteamContract.EventEntry.FIELD_LATITUDE, event.getCoord_latitude());
+        cv.put(SportteamContract.EventEntry.FIELD_LONGITUDE, event.getCoord_longitude());
         cv.put(SportteamContract.EventEntry.NAME, event.getName());
         cv.put(SportteamContract.EventEntry.CITY, event.getCity());
         cv.put(SportteamContract.EventEntry.DATE, event.getDate());

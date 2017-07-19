@@ -121,7 +121,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
                 return /* todo isValidAddress ?? */ true;
 
             // Query database for the fieldId and checks if this sport exists
-            Field field = UtilesContentProvider.getFieldtFromContentProvider(fieldId, sportId);
+            Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId, sportId);
 
             if (field != null) return true;
             else {
