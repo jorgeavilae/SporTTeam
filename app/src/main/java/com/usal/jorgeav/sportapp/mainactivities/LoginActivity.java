@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -26,9 +25,11 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -47,7 +48,7 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     private static final String TAG = LoginActivity.class.getSimpleName();
-    private Toolbar mToolbar;
+
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -60,6 +61,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setSupportActionBar(null);
+
+        ImageView logo = (ImageView) findViewById(R.id.login_logo_name);
+        Glide.with(this)
+                .load(R.drawable.logo_name)
+                .animate(android.R.anim.fade_in)
+                .into(logo);
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -106,7 +114,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult: ");
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode) {
             case RESULT_OK:
@@ -124,7 +131,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void populateAutoComplete() {
         // TODO: 17/07/2017 Por esto va tan lento la activity???
-//        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(0, null, LoginActivity.this);
     }
 
     /**
@@ -254,13 +261,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(
-                this,
+        //TODO CRear table para usuarios que metireon sus emails ya
+        return new CursorLoader(this,
                 SportteamContract.UserEntry.CONTENT_USER_URI,
                 new String[]{SportteamContract.UserEntry.EMAIL},
-                null,
-                null,
-                null);
+                null, null, null);
     }
 
     @Override

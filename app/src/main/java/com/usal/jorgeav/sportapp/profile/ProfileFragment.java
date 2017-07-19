@@ -21,9 +21,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.BaseFragment;
-import com.usal.jorgeav.sportapp.GlideApp;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
@@ -259,7 +259,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void showUserImage(String image) {
         userImage.setVisibility(View.VISIBLE);
-        GlideApp.with(this.getActivity())
+        Glide.with(this.getActivity())
                 .load(image)
                 .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)

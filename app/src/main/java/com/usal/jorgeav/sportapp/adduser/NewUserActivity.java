@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -57,7 +58,6 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.usal.jorgeav.sportapp.GlideApp;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
@@ -331,7 +331,7 @@ public class NewUserActivity extends AppCompatActivity implements
             if (requestCode == UCrop.REQUEST_CROP) {
                 croppedImageUri = UCrop.getOutput(data);
                 Log.d(TAG, "onActivityResult: " + croppedImageUri);
-                GlideApp.with(this)
+                Glide.with(this)
                         .load(croppedImageUri)
                         .placeholder(R.drawable.profile_picture_placeholder)
                         .centerCrop()

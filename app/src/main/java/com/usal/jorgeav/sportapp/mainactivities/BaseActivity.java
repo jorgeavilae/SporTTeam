@@ -27,9 +27,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.usal.jorgeav.sportapp.GlideApp;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
@@ -124,7 +124,7 @@ public class BaseActivity extends AppCompatActivity
 
         title.setText(fuser.getDisplayName());
         subtitle.setText(fuser.getEmail());
-        GlideApp.with(this)
+        Glide.with(this)
                 .load(fuser.getPhotoUrl())
                 .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)

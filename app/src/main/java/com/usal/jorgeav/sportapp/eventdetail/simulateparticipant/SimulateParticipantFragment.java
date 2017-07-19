@@ -19,8 +19,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
-import com.usal.jorgeav.sportapp.GlideApp;
 import com.usal.jorgeav.sportapp.R;
 import com.yalantis.ucrop.UCrop;
 
@@ -188,7 +188,7 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
         // Uri from cropped photo as result of UCrop
         photoUri = photoCroppedUri;
         if (photoUri != null)
-            GlideApp.with(this)
+            Glide.with(this)
                     .load(photoUri)
                     .placeholder(R.drawable.profile_picture_placeholder)
                     .centerCrop()
