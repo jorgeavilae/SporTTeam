@@ -130,7 +130,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void populateAutoComplete() {
-        // TODO: 17/07/2017 Por esto va tan lento la activity???
         getLoaderManager().initLoader(0, null, LoginActivity.this);
     }
 

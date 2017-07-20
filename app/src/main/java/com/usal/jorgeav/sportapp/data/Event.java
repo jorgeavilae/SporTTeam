@@ -135,15 +135,8 @@ public class Event implements Parcelable {
             this.simulated_participants.remove(key);
     }
 
+    // Need to be under DATA in Event's tree
     public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put(FirebaseDBContract.DATA, dataToMap());
-        result.put(FirebaseDBContract.Event.INVITATIONS, new HashMap<String, Long>());
-        result.put(FirebaseDBContract.Event.USER_REQUESTS, new HashMap<String, Long>());
-        return result;
-    }
-
-    private Map<String, Object> dataToMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put(FirebaseDBContract.Event.SPORT, this.sport_id);
         result.put(FirebaseDBContract.Event.FIELD, this.field_id);

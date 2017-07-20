@@ -73,7 +73,8 @@ public class FirebaseActions {
         event.setEvent_id(eventTable.push().getKey());
 
         //Set Event in Event Table
-        String eventInEventTable = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + event.getEvent_id();
+        String eventInEventTable = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + event.getEvent_id()
+                + "/" + FirebaseDBContract.DATA;
 
         //Set Event created in ownerId
         String userEventCreated = "/" + FirebaseDBContract.TABLE_USERS + "/" + event.getOwner() + "/"
@@ -95,7 +96,8 @@ public class FirebaseActions {
     }
     public static void editEvent(Event event) {
         //Set Event in Event Table
-        String eventInEventTable = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + event.getEvent_id();
+        String eventInEventTable = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + event.getEvent_id()
+                + "/" + FirebaseDBContract.DATA;
 
         //Set Event created in ownerId
         String userEventCreated = "/" + FirebaseDBContract.TABLE_USERS + "/" + event.getOwner() + "/"
@@ -108,7 +110,7 @@ public class FirebaseActions {
         long currentTime = System.currentTimeMillis();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(eventInEventTable, event.toMap()); //TODO se pierden eventrequest invitations, solucion poner DATA en eventInEventTable
+        childUpdates.put(eventInEventTable, event.toMap());
         // Listener is attached to this reference so it doesn't need to reload
         childUpdates.put(userEventCreated, currentTime);
         childUpdates.put(fieldNextEvent, currentTime);
@@ -423,6 +425,8 @@ public class FirebaseActions {
                     if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
                 }
 
+                // Set ID to null to not store ID under data in Event's tree in Firebase.
+                e.setEvent_id(null);
                 mutableData.setValue(e);
 
                 //Add Assistant Event to my User
@@ -537,11 +541,11 @@ public class FirebaseActions {
         //Delete Assistant User to that Event (uid can be another user, not the current one)
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
-                .child(eventId).child(FirebaseDBContract.DATA);
+                .child(eventId);
         eventRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                Event e = mutableData.getValue(Event.class);
+                Event e = mutableData.child(FirebaseDBContract.DATA).getValue(Event.class);
                 if (e == null) return Transaction.success(mutableData);
                 e.setEvent_id(eventId);
 
@@ -550,14 +554,23 @@ public class FirebaseActions {
                 // The event isn't complete because this quit
                 if (e.getEmpty_players() == 1) eventCompleteNotifications(false, e);
 
-                mutableData.setValue(e);
+                // Set ID to null to not store ID under data in Event's tree in Firebase.
+                e.setEvent_id(null);
+                mutableData.child(FirebaseDBContract.DATA).setValue(e);
 
                 //Delete Assistant Event to User
                 FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
                         .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).removeValue();
 
-                // TODO: 13/07/2017 borrar invitaciones al eventos enviadas por uid
-                // deleteInvitationToThisEvent(myUid, eventId, otherUid)
+                // Delete invitations sent by User UID
+                for (MutableData mutableInvitation : mutableData.child(FirebaseDBContract.Event.INVITATIONS).getChildren()) {
+                    Invitation invitation = mutableInvitation.getValue(Invitation.class);
+                    if (invitation != null) {
+                        if (invitation.getSender().equals(uid)) {
+                            deleteInvitationToThisEvent(invitation.getSender(), invitation.getEvent(), invitation.getReceiver());
+                        }
+                    }
+                }
 
                 return Transaction.success(mutableData);
             }
@@ -1092,6 +1105,8 @@ public class FirebaseActions {
                     if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
                 } // TODO: 13/07/2017 else: avisar al usuario de que no puede entrar nadie mas
 
+                // Set ID to null to not store ID under data in Event's tree in Firebase.
+                e.setEvent_id(null);
                 mutableData.setValue(e);
                 return Transaction.success(mutableData);
             }
@@ -1124,6 +1139,8 @@ public class FirebaseActions {
                 // The event isn't complete because this quit
                 if (e.getEmpty_players() == 1) eventCompleteNotifications(false, e);
 
+                // Set ID to null to not store ID under data in Event's tree in Firebase.
+                e.setEvent_id(null);
                 mutableData.setValue(e);
 
                 return Transaction.success(mutableData);

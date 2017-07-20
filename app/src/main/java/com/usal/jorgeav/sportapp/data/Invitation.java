@@ -50,4 +50,14 @@ public class Invitation {
         result.put(FirebaseDBContract.Invitation.DATE, this.date);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Invitation{" +
+                "sender='" + sender + '\'' +
+                ", receiver='" + receiver + '\'' +
+                ", event='" + event + '\'' +
+                ", date=" + date +
+                '}';
+    }
 }
