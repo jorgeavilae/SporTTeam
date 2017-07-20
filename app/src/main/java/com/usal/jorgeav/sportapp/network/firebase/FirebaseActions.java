@@ -32,6 +32,7 @@ import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
@@ -593,7 +594,8 @@ public class FirebaseActions {
                 + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + uid;
 
         //Set Event Request Received in ownerId
-        // TODO: 09/07/2017 Do I really need this?
+        // Do I really need this? The event requests are listed in NotificationsActivity
+        // and Events with one of these are marked in EventsActivity.
 
         //Set User Request MyNotification in ownerId
         String notificationId = uid + FirebaseDBContract.User.EVENTS_REQUESTS + eventId;
@@ -630,7 +632,8 @@ public class FirebaseActions {
                 + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + myUid;
 
         // Delete Event Request Received in ownerId
-        // TODO: 09/07/2017 Do I really need this?
+        // Do I really need this? The event requests are listed in NotificationsActivity
+        // and Events with one of these are marked in EventsActivity.
 
         // Delete User Request MyNotification in ownerId
         String notificationId = myUid + FirebaseDBContract.User.EVENTS_REQUESTS + eventId;
@@ -1005,7 +1008,7 @@ public class FirebaseActions {
                 .removeValue();
     }
 
-    public static void checkAlarmsForNotifications() {
+    static void checkAlarmsForNotifications() {
         List<Alarm> alarms = UtilesContentProvider.getAllAlarmsFromContentProvider(MyApplication.getAppContext());
         if (alarms == null || alarms.size() < 1) return;
 
@@ -1078,12 +1081,7 @@ public class FirebaseActions {
         }).addOnSuccessListener(listener);
     }
 
-    public static void addSimulatedParticipant(final String eventId, final String name, final Uri photoUriInFirebase, final int age) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        if(TextUtils.isEmpty(myUserID)) return;
-        final String finalMyUserID = myUserID;
-
+    public static void addSimulatedParticipant(final BaseFragment fragment, final String eventId, final SimulatedUser su) {
         //Add Assistant User to that Event
         final DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -1099,11 +1097,16 @@ public class FirebaseActions {
                         .child(FirebaseDBContract.Event.PARTICIPANTS).push().getKey();
                 if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
-                    String photo = photoUriInFirebase!=null?photoUriInFirebase.toString():null;
-                    SimulatedUser su = new SimulatedUser(name, photo, (long)age, finalMyUserID);
                     e.addToSimulatedParticipants(simulatedParticipantKey, su);
                     if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
-                } // TODO: 13/07/2017 else: avisar al usuario de que no puede entrar nadie mas
+                    if (fragment != null)
+                        if (fragment instanceof SimulateParticipantFragment)
+                            ((SimulateParticipantFragment) fragment).showResult(null);
+                } else
+                    if (fragment != null)
+                        if (fragment instanceof SimulateParticipantFragment)
+                            ((SimulateParticipantFragment) fragment).showResult(
+                                    "There isn't empty slots for Simulated User");
 
                 // Set ID to null to not store ID under data in Event's tree in Firebase.
                 e.setEvent_id(null);

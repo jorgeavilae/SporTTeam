@@ -5,8 +5,9 @@ import android.text.TextUtils;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.UploadTask;
-import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
+import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 /**
  * Created by Jorge Avila on 12/07/2017.
@@ -17,13 +18,13 @@ public class SimulateParticipantPresenter implements SimulateParticipantContract
     SimulateParticipantContract.View mView;
     String mEventId;
     String mName;
-    int mAge;
+    Long mAge;
 
     public SimulateParticipantPresenter(SimulateParticipantContract.View view){
         this.mView = view;
         mEventId = "";
         mName = "";
-        mAge = -1;
+        mAge = -1L;
     }
 
     @Override
@@ -32,13 +33,17 @@ public class SimulateParticipantPresenter implements SimulateParticipantContract
                 && !TextUtils.isEmpty(age)) { //Validate arguments
             mEventId = eventId;
             mName = name;
-            mAge = Integer.parseInt(age);
+            mAge = Long.parseLong(age);
             if (photo != null)
                 storePhotoOnFirebase(photo);
-            else
-                FirebaseActions.addSimulatedParticipant(mEventId, mName, null, mAge);
+            else {
+                String myUserID = Utiles.getCurrentUserId();
+                if(TextUtils.isEmpty(myUserID)) return;
+                SimulatedUser su = new SimulatedUser(mName, null, mAge, myUserID);
+                FirebaseActions.addSimulatedParticipant(mView.getThis(), mEventId, su);
+            }
         }
-        ((BaseActivity)mView.getActivityContext()).onBackPressed();
+        mView.hideContent();
     }
 
     private void storePhotoOnFirebase(Uri photo) {
@@ -47,7 +52,12 @@ public class SimulateParticipantPresenter implements SimulateParticipantContract
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // Handle successful uploads on complete
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                FirebaseActions.addSimulatedParticipant(mEventId, mName, downloadUrl, mAge);
+
+                String myUserID = Utiles.getCurrentUserId();
+                if(TextUtils.isEmpty(myUserID)) return;
+                String photo = downloadUrl!=null?downloadUrl.toString():null;
+                SimulatedUser su = new SimulatedUser(mName, photo, mAge, myUserID);
+                FirebaseActions.addSimulatedParticipant(mView.getThis(), mEventId, su);
             }
         });
     }

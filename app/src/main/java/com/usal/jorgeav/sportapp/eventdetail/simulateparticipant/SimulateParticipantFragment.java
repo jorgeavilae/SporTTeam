@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
@@ -195,5 +196,18 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
                     .into(simulatedUserPhoto);
     }
 
-
+    @Override
+    public void showResult(final String msg) {
+        if (msg != null)
+            /* https://stackoverflow.com/a/3875204/4235666
+             * https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)
+             */
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+                    getActivity().onBackPressed();
+                }
+            });
+    }
 }

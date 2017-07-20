@@ -45,6 +45,11 @@ public abstract class BaseFragment extends Fragment {
             mFragmentManagementListener.showContent();
     }
 
+    public void hideContent() {
+        if (mFragmentManagementListener != null)
+            mFragmentManagementListener.hideContent();
+    }
+
     public void resetBackStack() {
         getActivity().getSupportFragmentManager().popBackStack(
                 getActivity().getSupportFragmentManager().getBackStackEntryAt(0).getId(),

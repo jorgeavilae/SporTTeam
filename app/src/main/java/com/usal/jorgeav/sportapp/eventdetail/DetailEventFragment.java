@@ -226,6 +226,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                     buttonSendInvitation.setEnabled(false);
                     buttonSimulateParticipant.setEnabled(false);
                 }
+                buttonSendRequest.setVisibility(View.INVISIBLE);
                 break;
             case DetailEventPresenter.RELATION_TYPE_NONE:
                 if (mMenu != null) mMenu.clear();
@@ -378,7 +379,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 buttonSendInvitation.setVisibility(View.INVISIBLE);
                 buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
                 break;
-            case DetailEventPresenter.RELATION_TYPE_ERROR:
+            default: case DetailEventPresenter.RELATION_TYPE_ERROR:
                 if (mMenu != null) mMenu.clear();
                 buttonSendRequest.setVisibility(View.VISIBLE);
                 buttonSendRequest.setText("Error");
@@ -464,11 +465,12 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @Override
     public void showEventEmptyPlayers(int emptyPlayers) {
         if(emptyPlayers > -1) {
-            if (mRelation == DetailEventPresenter.RELATION_TYPE_NONE && emptyPlayers == 0)
-                buttonSendRequest.setEnabled(false);
             ((BaseActivity) getActivity()).showContent();
             this.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));
+
+            //Change UI if emptyPlayer is 0 or not.
             isFull = emptyPlayers <= 0;
+            uiSetupForEventRelation(mRelation);
         }
     }
 
