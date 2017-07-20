@@ -22,11 +22,6 @@ import com.usal.jorgeav.sportapp.mainactivities.FriendsActivity;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/**
- * Created by Jorge Avila on 06/07/2017.
- */
-
-// TODO: 11/07/2017 Updates mesages in notifications with Users/Event/Alarm data
 public class UtilesNotification {
     public static final String TAG = UtilesNotification.class.getSimpleName();
 
@@ -101,7 +96,7 @@ public class UtilesNotification {
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
                     .setContentTitle(fNotification.getTitle())
-                    .setContentText(fNotification.getMessage()) // TODO: 09/07/2017  cambiar msg
+                    .setContentText(fNotification.getMessage())
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setContentIntent(contentEventIntent(context, event.getEvent_id()))
@@ -135,7 +130,7 @@ public class UtilesNotification {
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
                     .setContentTitle(fNotification.getTitle())
-                    .setContentText(fNotification.getMessage()) //// TODO: 09/07/2017  cambiar msg
+                    .setContentText(fNotification.getMessage())
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setContentIntent(contentAlarmIntent(context, alarm.getmId()))

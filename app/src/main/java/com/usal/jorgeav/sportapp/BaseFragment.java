@@ -56,7 +56,6 @@ public abstract class BaseFragment extends Fragment {
                 FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
-    //Todo invoke when necesary
     /* https://stackoverflow.com/a/1109108/4235666 */
     public void hideSoftKeyboard() {
         View view = getActivity().getCurrentFocus();

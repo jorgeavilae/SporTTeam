@@ -15,7 +15,6 @@ public class MyNotification {
     private String extra_data_two;
     private Long data_type;
     private Long date;
-    // TODO: 06/07/2017 necesita mas parametros, hay que ponerlos tambien en FirebaseActions.java
 
     @SuppressWarnings("unused")
     public MyNotification() {

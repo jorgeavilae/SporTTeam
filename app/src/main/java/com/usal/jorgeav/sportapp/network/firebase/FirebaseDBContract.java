@@ -79,7 +79,6 @@ public final class FirebaseDBContract {
         public static final String EXTRA_DATA_TWO = "extra_data_two";
         public static final String DATA_TYPE = "data_type";
         public static final String DATE = "date";
-        // TODO: 06/07/2017 quiza necesite mas parametros, por ejemplo para ver si se tiene que mandar otra vez o para un mensaje o para ver que evento la produjo
     }
 
     public static final class Alarm {
