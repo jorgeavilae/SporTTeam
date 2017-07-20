@@ -35,15 +35,9 @@ public class UtilesTime {
         }
     }
 
-    public static long stringTimeToMillis(String time) {//throws ParseException {
-        int quoteInd = time.indexOf(":");
-        int hor = Integer.valueOf(time.substring(0, quoteInd));
-        int min = Integer.valueOf(time.substring(++quoteInd, time.length()));
-        return (((hor * 60) + min) * 60 * 1000);
-
-        // TODO: 16/07/2017 Cambiar este metodo por lo q esta comentado
-//        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-//        return sdf.parse(time).getTime();
+    public static long stringTimeToMillis(String time) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return sdf.parse(time).getTime();
     }
 
     public static String millisToDateTimeString(long millis) {

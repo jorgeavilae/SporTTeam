@@ -21,6 +21,7 @@ import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 /**
@@ -50,11 +51,17 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
     public void addField(String id, String name, String sport, String address,
                          LatLng coords, String city, float rate, int votes,
                          String openTime, String closeTime, String userId) {
+        long openMillis = 0;
+        long closeMillis = 0;
+        try {
+            openMillis = UtilesTime.stringTimeToMillis(openTime);
+            closeMillis = UtilesTime.stringTimeToMillis(closeTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         if (isValidSport(sport) && isValidAddress(address, city) && isValidName(name)
-                && isValidCoords(coords) && isTimesCorrect(openTime, closeTime)
+                && isValidCoords(coords) && isTimesCorrect(openMillis, closeMillis)
                 && isPunctuationValid(rate, votes)&& isValidCreator(userId)) {
-            long openMillis = UtilesTime.stringTimeToMillis(openTime);
-            long closeMillis = UtilesTime.stringTimeToMillis(closeTime);
             Field field = new Field(id, name, sport, address, coords, city,
                     rate, votes, openMillis, closeMillis, userId);
 
@@ -101,12 +108,8 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isTimesCorrect(String open, String close) {
-        if (!TextUtils.isEmpty(open) && !TextUtils.isEmpty(close)) {
-            long openMillis = UtilesTime.stringTimeToMillis(open);
-            long closeMillis = UtilesTime.stringTimeToMillis(close);
-            if (openMillis <= closeMillis) return true;
-        }
+    private boolean isTimesCorrect(long open, long close) {
+        if (open <= close) return true;
         Log.e(TAG, "isTimesCorrect: incorrect");
         return false;
     }

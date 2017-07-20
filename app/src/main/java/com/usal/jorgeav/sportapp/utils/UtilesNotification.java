@@ -194,20 +194,4 @@ public class UtilesNotification {
                 startActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
-
-    // TODO: 11/07/2017 delete or use
-    private static NotificationCompat.Action drinkWaterAction(Context context) {
-//        Intent incrementWaterCountIntent = new Intent(context, WaterReminderIntentService.class);
-//        incrementWaterCountIntent.setAction(ReminderTasks.ACTION_INCREMENT_WATER_COUNT);
-//        PendingIntent incrementWaterPendingIntent = PendingIntent.getService(
-//                context,
-//                ACTION_DRINK_PENDING_INTENT_ID,
-//                incrementWaterCountIntent,
-//                PendingIntent.FLAG_CANCEL_CURRENT);
-//        NotificationCompat.Action drinkWaterAction = new NotificationCompat.Action(R.drawable.ic_local_drink_black_24px,
-//                "I did it!",
-//                incrementWaterPendingIntent);
-//        return drinkWaterAction;
-        return null;
-    }
 }

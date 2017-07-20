@@ -23,6 +23,7 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
+import java.text.ParseException;
 import java.util.HashMap;
 
 /**
@@ -44,10 +45,17 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                          HashMap<String, Boolean> participants,
                          HashMap<String, SimulatedUser> simulatedParticipants) {
         String myUid = Utiles.getCurrentUserId();
+        long dateMillis = UtilesTime.stringDateToMillis(date);
+        long timeMillis;
+        try { timeMillis = UtilesTime.stringTimeToMillis(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(mNewEventView.getActivityContext(), "Error: formato de hora", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (isValidSport(sport) && isValidField(field, sport, city, coord) && isValidName(name)
-                && isValidOwner(myUid) && isDateTimeCorrect(date, time) && isPlayersCorrect(total, empty)) {
-            long dateMillis = UtilesTime.stringDateToMillis(date);
-            long timeMillis = UtilesTime.stringTimeToMillis(time);
+                && isValidOwner(myUid) && isDateTimeCorrect(dateMillis, timeMillis) && isPlayersCorrect(total, empty)) {
             Event event = new Event(
                     id, sport, field, coord, name, city, dateMillis + timeMillis, myUid,
                     Integer.valueOf(total), Integer.valueOf(empty), participants, simulatedParticipants);
@@ -104,10 +112,8 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isDateTimeCorrect(String date, String time) {
-        long dateMillis = UtilesTime.stringDateToMillis(date);
-        long timeMillis = UtilesTime.stringTimeToMillis(time);
-        if (System.currentTimeMillis() < dateMillis+timeMillis) return true;
+    private boolean isDateTimeCorrect(long date, long time) {
+        if (System.currentTimeMillis() < date + time) return true;
         Log.e(TAG, "isDateTimeCorrect: incorrect");
         return false;
     }
