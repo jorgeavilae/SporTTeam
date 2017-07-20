@@ -103,7 +103,6 @@ public final class FirebaseDBContract {
         public static final String OPENING_TIME = "opening_time";
         public static final String CLOSING_TIME = "closing_time";
         public static final String SPORT = "sport";
-        public static final String SPORTS = "sports";//TODO borrar y solucionar errores
         public static final String PUNCTUATION = "punctuation";
         public static final String VOTES = "votes";
         public static final String NEXT_EVENTS = "next_events";

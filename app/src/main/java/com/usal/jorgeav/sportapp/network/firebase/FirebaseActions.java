@@ -851,7 +851,8 @@ public class FirebaseActions {
         DatabaseReference fieldSportRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_FIELDS)
                 .child(fieldId)
-                .child(FirebaseDBContract.Field.SPORTS)
+                .child(FirebaseDBContract.DATA)
+                .child(FirebaseDBContract.Field.SPORT)
                 .child(sportId);
         fieldSportRef.runTransaction(new Transaction.Handler() {
             @Override
