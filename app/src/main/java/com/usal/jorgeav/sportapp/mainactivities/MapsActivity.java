@@ -16,6 +16,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.R;
@@ -147,7 +148,8 @@ public class MapsActivity extends AppCompatActivity implements
        new AsyncTask<LatLng, Void, MyPlace>(){
             @Override
             protected MyPlace doInBackground(LatLng... latLng) {
-                return HttpRequestTask.syncWeather(getApplicationContext(), latLng[0]);
+                String apiKey = getResources().getString(R.string.google_maps_key);
+                return HttpRequestTask.placeInLatLngLocation(apiKey, latLng[0]);
             }
 
             @Override
@@ -158,7 +160,6 @@ public class MapsActivity extends AppCompatActivity implements
     }
 
     private void updateSelectedPlace(MyPlace selectedPlace) {
-        Log.d(TAG, "updateSelectedPlace: "+selectedPlace);
         mPlaceSelected = selectedPlace;
         if (mPlaceSelected.isSucceed()) {
 
@@ -168,6 +169,10 @@ public class MapsActivity extends AppCompatActivity implements
             mMarkerSelectedPlace = mMap.addMarker(new MarkerOptions()
                     .position(selectedPlace.getCoordinates())
                     .title(selectedPlace.getAddress()));
+            LatLngBounds llb = new LatLngBounds(mPlaceSelected.getViewPortSouthwest(),
+                    mPlaceSelected.getViewPortNortheast());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
+
         } else {
             switch (mPlaceSelected.getStatus()) {
                 case "OK":

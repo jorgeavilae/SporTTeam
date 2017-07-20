@@ -1,11 +1,9 @@
 package com.usal.jorgeav.sportapp.utils;
 
-import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.MyPlace;
 
 import org.json.JSONArray;
@@ -44,8 +42,7 @@ public class UtilesNetwork {
     // Status field from Json response
     private static final String STATUS_CODE = "status";
 
-    public static URL getUrl(Context context,Double latitude, Double longitude) {
-        String apiKey = context.getResources().getString(R.string.google_maps_key);
+    public static URL getUrl(String apiKey, Double latitude, Double longitude) {
         Uri queryUri = Uri.parse(BASE_URL).buildUpon()
                 .appendPath(RESPONSE_TYPE)
                 .appendQueryParameter(LATLNG_PARAM, latitude+","+longitude)
@@ -56,7 +53,6 @@ public class UtilesNetwork {
         try {
             URL queryUrl = new URL(queryUri.toString());
             Log.v(TAG, "URL: " + queryUrl);
-            Log.d(TAG, "getUrl: latlng "+latitude+" ~ "+longitude);
             return queryUrl;
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -84,11 +80,10 @@ public class UtilesNetwork {
         }
     }
 
-    public static MyPlace getMyPlaceFromJson(Context context, String jsonStr)
+    public static MyPlace getMyPlaceFromJson(String jsonStr)
             throws JSONException {
 
         JSONObject json = new JSONObject(jsonStr);
-        Log.d(TAG, "getMyPlaceFromJson: "+json);
 
         /* Is there an error? */
         if (!json.has(STATUS_CODE)) return new MyPlace("UNKNOWN_ERROR");
@@ -144,25 +139,38 @@ public class UtilesNetwork {
         double lng = jsonFirstResult.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
         LatLng coordinates = new LatLng(lat, lng);
 
+        double viewPortNortheastLat = jsonFirstResult.getJSONObject("geometry").getJSONObject("viewport")
+                .getJSONObject("northeast").getDouble("lat");
+        double viewPortNortheastLng = jsonFirstResult.getJSONObject("geometry").getJSONObject("viewport")
+                .getJSONObject("northeast").getDouble("lng");
+        LatLng viewPortNortheast = new LatLng(viewPortNortheastLat, viewPortNortheastLng);
+
+        double viewPortSouthwestLat = jsonFirstResult.getJSONObject("geometry").getJSONObject("viewport")
+                .getJSONObject("southwest").getDouble("lat");
+        double viewPortSouthwestLng = jsonFirstResult.getJSONObject("geometry").getJSONObject("viewport")
+                .getJSONObject("southwest").getDouble("lng");
+        LatLng viewPortSouthwest = new LatLng(viewPortSouthwestLat, viewPortSouthwestLng);
+
 //        "geometry" : {
 //            "location" : {
 //                "lat" : 37.4224764,
-//                        "lng" : -122.0842499
+//                "lng" : -122.0842499
 //            },
 //            "location_type" : "ROOFTOP",
-//                    "viewport" : { // TODO: 16/07/2017 añadir viewport para centrar el mapa
+//            "viewport" : {
 //                "northeast" : {
 //                    "lat" : 37.4238253802915,
-//                            "lng" : -122.0829009197085
+//                    "lng" : -122.0829009197085
 //                },
 //                "southwest" : {
 //                    "lat" : 37.4211274197085,
-//                            "lng" : -122.0855988802915
+//                    "lng" : -122.0855988802915
 //                }
 //            }
 //        },
 
-        return new MyPlace(statusCode, placeId, address, shortNameLocality, longNameLocality, coordinates);
+        return new MyPlace(statusCode, placeId, address, shortNameLocality,
+                longNameLocality, coordinates, viewPortNortheast, viewPortSouthwest);
     }
 
 }

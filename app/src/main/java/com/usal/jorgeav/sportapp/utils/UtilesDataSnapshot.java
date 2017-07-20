@@ -110,13 +110,15 @@ public class UtilesDataSnapshot {
         Long openingTime = dataNode.child(FirebaseDBContract.Field.OPENING_TIME).getValue(Long.class);
         Long closingTime = dataNode.child(FirebaseDBContract.Field.CLOSING_TIME).getValue(Long.class);
 
+        String creator = dataNode.child(FirebaseDBContract.Field.CREATOR).getValue(String.class);
+
         for (DataSnapshot d : dataNode.child(FirebaseDBContract.Field.SPORT).getChildren()) {
             String sport = d.getKey();
             Double rating = d.child(FirebaseDBContract.Field.PUNCTUATION).getValue(Double.class);
             Long votes = d.child(FirebaseDBContract.Field.VOTES).getValue(Long.class);
             result.add(new Field(id,name,sport,address,
                             coords,city,rating.floatValue(),
-                            votes.intValue(),openingTime,closingTime, null)); //TODO cambiar creator
+                            votes.intValue(),openingTime,closingTime, creator));
         }
         return result;
     }
@@ -228,22 +230,17 @@ public class UtilesDataSnapshot {
         return cv;
     }
 
-    public static ContentValues dataSnapshotEventsParticipationToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheParticipant) {
-        String userId, eventId;
-        if(iAmTheParticipant) { //todo always true?
-            eventId = dataSnapshot.getKey();
-            userId = key;
-        } else {
-            eventId = key;
-            userId = dataSnapshot.getKey();
-        }
+    public static ContentValues dataSnapshotEventsParticipationToContentValues(DataSnapshot dataSnapshot, String myUserID) {
+        String eventId = dataSnapshot.getKey();
+
+        //Cast boolean Firebase value to int ContentProvider value (true:1 false:0)
         int participation = 0;
         Boolean participationBoolean = dataSnapshot.getValue(Boolean.class);
         if (participationBoolean != null)
             participation = participationBoolean ? 1 : 0;
 
         ContentValues cv = new ContentValues();
-        cv.put(SportteamContract.EventsParticipationEntry.USER_ID, userId);
+        cv.put(SportteamContract.EventsParticipationEntry.USER_ID, myUserID);
         cv.put(SportteamContract.EventsParticipationEntry.EVENT_ID, eventId);
         cv.put(SportteamContract.EventsParticipationEntry.PARTICIPATES, participation);
         return cv;

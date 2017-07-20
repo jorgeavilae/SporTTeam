@@ -354,10 +354,10 @@ public class FirebaseSync {
                     if (participation != null && participation)
                         loadUsersFromInvitationsSent(dataSnapshot.getKey());
 
-                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+                    String myUserID = Utiles.getCurrentUserId();
+                    if (TextUtils.isEmpty(myUserID)) return;
                     ContentValues cvData = UtilesDataSnapshot
-                            .dataSnapshotEventsParticipationToContentValues(dataSnapshot, myUserID, true);
+                            .dataSnapshotEventsParticipationToContentValues(dataSnapshot, myUserID);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
                 }
