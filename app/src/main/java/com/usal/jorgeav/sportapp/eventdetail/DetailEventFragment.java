@@ -38,6 +38,7 @@ import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.Locale;
 
@@ -530,29 +531,30 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void onUserClick(final String uid) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+        String myUid = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUid)) return;
 
-        if (myUid.equals(mOwnerId) && !uid.equals(mOwnerId)) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-            builder.setMessage("Quieres expulsarlo del evento?")
-                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            mPresenter.quitEvent(uid, mEventId);
-                        }
-                    })
-                    .setNegativeButton("No", null)
-                    .setNeutralButton("See details", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            Fragment newFragment = ProfileFragment.newInstance(uid);
-                            mFragmentManagementListener.initFragment(newFragment, true);
-                        }
-                    });
-            builder.create().show();
-        } else {
-            Fragment newFragment = ProfileFragment.newInstance(uid);
-            mFragmentManagementListener.initFragment(newFragment, true);
+        if (!myUid.equals(uid)) {
+            if (myUid.equals(mOwnerId)) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                builder.setMessage("Quieres expulsarlo del evento?")
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mPresenter.quitEvent(uid, mEventId);
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Fragment newFragment = ProfileFragment.newInstance(uid);
+                                mFragmentManagementListener.initFragment(newFragment, true);
+                            }
+                        });
+                builder.create().show();
+            } else {
+                Fragment newFragment = ProfileFragment.newInstance(uid);
+                mFragmentManagementListener.initFragment(newFragment, true);
+            }
         }
     }
 
