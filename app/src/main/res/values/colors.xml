@@ -3,7 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorSportteam_logo">#1d9dd9</color>1d9dd9
+    <!--Change according to number: hue_of_colorSportteam_logo-->
+    <color name="colorSportteam_logo">#1d9dd9</color>
 
     <color name="ucrop_color_toolbar" tools:override="true">#3F51B5</color>
     <color name="ucrop_color_statusbar" tools:override="true">#303F9F</color>

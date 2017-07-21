@@ -24,6 +24,7 @@ public class FieldsActivity extends BaseActivity {
 
     private static final String INSTANCE_PLACE_SELECTED = "INSTANCE_PLACE_SELECTED";
     public MyPlace mPlaceSelected;
+    // TODO: 21/07/2017 cambiar como EventsActivity para recibir fields
 
     @Override
     public void startMainFragment() {

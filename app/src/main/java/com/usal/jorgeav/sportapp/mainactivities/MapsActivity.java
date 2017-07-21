@@ -15,11 +15,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.MapMarkerInfoAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
 import com.usal.jorgeav.sportapp.network.HttpRequestTask;
@@ -33,12 +35,15 @@ public class MapsActivity extends AppCompatActivity implements
         GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
     public static final String TAG = MapsActivity.class.getSimpleName();
     public static final String PLACE_SELECTED_EXTRA = "PLACE_SELECTED_EXTRA";
+    public static final String FIELD_SELECTED_EXTRA = "FIELD_SELECTED_EXTRA";
 
     private GoogleMap mMap;
     ArrayList<Field> mFieldsList;
+    ArrayList<Marker> mMarkersList;
     Toolbar mToolbar;
     MyPlace mPlaceSelected;
     Marker mMarkerSelectedPlace;
+    Field mFieldSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +76,13 @@ public class MapsActivity extends AppCompatActivity implements
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
-            //TODO o pasar Field
-            if (mPlaceSelected.isSucceed()) {
+            //Field first in case MyPlace isn't succeeded
+            if (mFieldSelected != null) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(FIELD_SELECTED_EXTRA, mFieldSelected);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            } else if (mPlaceSelected != null && mPlaceSelected.isSucceed()) {
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(PLACE_SELECTED_EXTRA, mPlaceSelected);
                 setResult(RESULT_OK, resultIntent);
@@ -85,19 +95,9 @@ public class MapsActivity extends AppCompatActivity implements
         return false;
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
     public void startMapFragment() {
+        mMarkersList = new ArrayList<>();
         mFieldsList = getIntent().getParcelableArrayListExtra(FieldsActivity.INTENT_EXTRA_FIELD_LIST);
-        Log.d(TAG, "startMapFragment: "+mFieldsList);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -114,17 +114,28 @@ public class MapsActivity extends AppCompatActivity implements
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMarkerClickListener(this);
+        mMap.setInfoWindowAdapter(new MapMarkerInfoAdapter(getLayoutInflater(), mFieldsList));
 
-        for (Field f : mFieldsList) {
+        //Populate map with Fields
+        for (int i = 0; i < mFieldsList.size(); i++) {
+            Field f = mFieldsList.get(i);
             LatLng latLong = f.getmCoords();
-            Log.d(TAG, "onMapReady: "+f.getmId()+ " " + f.getmSport() + " " + latLong);
             if (latLong != null) {
-                mMap.addMarker(new MarkerOptions().position(latLong).title(f.getmName() + " " + f.getmSport()));
-                mMap.addMarker(new MarkerOptions().position(latLong).title(f.getmName() + " " + f.getmSport()+"11"));
+                float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
+                Marker m = mMap.addMarker(new MarkerOptions()
+                        .position(latLong)
+                        .title(f.getmName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+                m.setTag(i);
+                mMarkersList.add(m);
             }
         }
 
         // Move Camera
+        centerCameraOnInit();
+    }
+
+    private void centerCameraOnInit() {
         mMap.setMinZoomPreference(20); //Buildings
         mMap.setMinZoomPreference(5); //Continent
         String myUserId = Utiles.getCurrentUserId();
@@ -135,7 +146,7 @@ public class MapsActivity extends AppCompatActivity implements
                 myCityLatLong = new LatLng(UtilesPreferences.CACERES_LATITUDE, UtilesPreferences.CACERES_LONGITUDE);
 
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
-            mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
         }
     }
 
@@ -143,7 +154,8 @@ public class MapsActivity extends AppCompatActivity implements
     public void onMapLongClick(LatLng latLng) {
         Log.d(TAG, "onMapClick: "+latLng);
 
-       new AsyncTask<LatLng, Void, MyPlace>(){
+        //TODO if latlng esta cerca de un field de mFieldList: onMarkerCLick(mMarkerList.get(fieldPosition))
+        new AsyncTask<LatLng, Void, MyPlace>(){
             @Override
             protected MyPlace doInBackground(LatLng... latLng) {
                 String apiKey = getResources().getString(R.string.google_maps_key);
@@ -158,19 +170,29 @@ public class MapsActivity extends AppCompatActivity implements
     }
 
     private void updateSelectedPlace(MyPlace selectedPlace) {
-        mPlaceSelected = selectedPlace;
-        if (mPlaceSelected.isSucceed()) {
+        if (selectedPlace.isSucceed()) {
+            int position = Utiles.searchCoordinatesInFieldList(mFieldsList, selectedPlace.getCoordinates());
+            if (position > -1) {
+                // mPlaceSelected is already a Field todo should move this to before asynctask.execute, finding near Latlng
+                onMarkerClick(mMarkersList.get(position));
+            } else {
+                //MyPlace selected: invalid Field selected
+                mFieldSelected = null;
 
-            if (mMarkerSelectedPlace != null) mMarkerSelectedPlace.remove();
+                mPlaceSelected = selectedPlace;
 
-            mMarkerSelectedPlace = null;
-            mMarkerSelectedPlace = mMap.addMarker(new MarkerOptions()
-                    .position(selectedPlace.getCoordinates())
-                    .title(selectedPlace.getAddress()));
-            LatLngBounds llb = new LatLngBounds(mPlaceSelected.getViewPortSouthwest(),
-                    mPlaceSelected.getViewPortNortheast());
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
+                if (mMarkerSelectedPlace != null) mMarkerSelectedPlace.remove();
+                mMarkerSelectedPlace = null;
 
+                float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
+                mMarkerSelectedPlace = mMap.addMarker(new MarkerOptions()
+                        .position(mPlaceSelected.getCoordinates())
+                        .title(mPlaceSelected.getAddress())
+                        .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+                LatLngBounds llb = new LatLngBounds(mPlaceSelected.getViewPortSouthwest(),
+                        mPlaceSelected.getViewPortNortheast());
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
+            }
         } else {
             switch (mPlaceSelected.getStatus()) {
                 case "OK":
@@ -204,8 +226,25 @@ public class MapsActivity extends AppCompatActivity implements
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 10f));
-        // TODO: 21/07/2017 convertir en Field
+        Integer position = (Integer) marker.getTag();
+        if (position != null) {
+            //Field selected: invalid MyPlace selected
+            if (mMarkerSelectedPlace != null) mMarkerSelectedPlace.remove();
+            mMarkerSelectedPlace = null;
+            mPlaceSelected = null;
+
+            mFieldSelected = mFieldsList.get(position);
+
+            // Move camera
+            LatLng southwest = new LatLng(mFieldSelected.getmCoords().latitude-0.00135, mFieldSelected.getmCoords().longitude-0.00135);
+            LatLng northeast = new LatLng(mFieldSelected.getmCoords().latitude+0.00135, mFieldSelected.getmCoords().longitude+0.00135);
+            LatLngBounds llb = new LatLngBounds(southwest, northeast);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
+            marker.showInfoWindow();
+
+            Log.d(TAG, "onMarkerClick: " + mFieldSelected);
+            return true;
+        }
         return false;
     }
 }

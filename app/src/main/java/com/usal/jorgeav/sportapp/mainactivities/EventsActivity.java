@@ -42,6 +42,8 @@ public class EventsActivity extends BaseActivity {
     public static final int REQUEST_CODE_ADDRESS = 23;
     private static final String INSTANCE_PLACE_SELECTED = "INSTANCE_PLACE_SELECTED";
     public MyPlace mPlaceSelected;
+    private static final String INSTANCE_FIELD_SELECTED = "INSTANCE_FIELD_SELECTED";
+    public Field mFieldSelected;
 
     @Override
     public void startMainFragment() {
@@ -71,6 +73,8 @@ public class EventsActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
         if (mPlaceSelected != null)
             outState.putParcelable(INSTANCE_PLACE_SELECTED, mPlaceSelected);
+        if (mFieldSelected != null)
+            outState.putParcelable(INSTANCE_FIELD_SELECTED, mFieldSelected);
     }
 
     @Override
@@ -79,11 +83,20 @@ public class EventsActivity extends BaseActivity {
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_PLACE_SELECTED)) {
             mPlaceSelected = savedInstanceState.getParcelable(INSTANCE_PLACE_SELECTED);
 
-            if (mPlaceSelected != null && mDisplayedFragment instanceof NewFieldContract.View)
-                ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(
-                        mPlaceSelected.getAddress(), //TODO sustituir por fieldId
+            if (mPlaceSelected != null && mDisplayedFragment instanceof NewEventContract.View)
+                ((NewEventContract.View) mDisplayedFragment).showEventField(
+                        mPlaceSelected.getAddress(), //TODO cambiar args?
                         mPlaceSelected.getShortNameLocality(),
                         mPlaceSelected.getCoordinates());
+        }
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_SELECTED)) {
+            mFieldSelected = savedInstanceState.getParcelable(INSTANCE_FIELD_SELECTED);
+
+            if (mFieldSelected != null && mDisplayedFragment instanceof NewEventContract.View)
+                ((NewEventContract.View) mDisplayedFragment).showEventField(
+                        mFieldSelected.getmId(),
+                        mFieldSelected.getmCity(),
+                        mFieldSelected.getmCoords());
         }
     }
 
@@ -93,12 +106,24 @@ public class EventsActivity extends BaseActivity {
 
         if(requestCode == REQUEST_CODE_ADDRESS) {
             if (resultCode == RESULT_OK) {
-                mPlaceSelected = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
-                if (mDisplayedFragment instanceof NewFieldContract.View)
-                    ((NewEventContract.View) mDisplayedFragment).showEventField(
-                            mPlaceSelected.getAddress(), //TODO sustituir por fieldId
-                            mPlaceSelected.getShortNameLocality(),
-                            mPlaceSelected.getCoordinates());
+                // Expect a Field where play a new Event,
+                // or an address (MyPlace) to meet for non-field sports
+                if (data.hasExtra(MapsActivity.FIELD_SELECTED_EXTRA)) {
+                    mFieldSelected = data.getParcelableExtra(MapsActivity.FIELD_SELECTED_EXTRA);
+                    if (mDisplayedFragment instanceof NewEventContract.View)
+                        ((NewEventContract.View) mDisplayedFragment).showEventField(
+                                mFieldSelected.getmId(),
+                                mFieldSelected.getmCity(),
+                                mFieldSelected.getmCoords());
+
+                } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
+                    mPlaceSelected = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
+                    if (mDisplayedFragment instanceof NewFieldContract.View)
+                        ((NewEventContract.View) mDisplayedFragment).showEventField(
+                                mPlaceSelected.getAddress(), //TODO cambiar args?
+                                mPlaceSelected.getShortNameLocality(),
+                                mPlaceSelected.getCoordinates());
+                }
             } else {
                 Toast.makeText(this, "You should select a place", Toast.LENGTH_SHORT).show();
             }

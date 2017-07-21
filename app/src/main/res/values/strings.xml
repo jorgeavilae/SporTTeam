@@ -58,6 +58,7 @@
     <string name="notification_msg_event_edit">The event has been changed</string>
     <string name="notification_msg_event_delete">The %1$s event in %2$s on %3$s has been cancelled</string>
     <string name="notification_msg_alarm_event">Some event coincidence in your area</string>
+
     <string name="title_activity_maps">Map</string>
 
 

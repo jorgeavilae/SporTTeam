@@ -1,9 +1,16 @@
 package com.usal.jorgeav.sportapp.utils;
 
+import android.content.res.Resources;
+import android.util.TypedValue;
+
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.usal.jorgeav.sportapp.data.Field;
+
+import java.util.List;
 
 /**
  * Created by Jorge Avila on 17/05/2017.
@@ -25,4 +32,17 @@ public class Utiles {
         return myUserID;
     }
 
+    public static float getFloatFromResources(Resources resources, int resourceID) {
+        TypedValue outValue = new TypedValue();
+        resources.getValue(resourceID, outValue, true);
+        return outValue.getFloat();
+    }
+
+    public static int searchCoordinatesInFieldList(List<Field> fieldsList, LatLng coordinates) {
+        for (int i = 0; i < fieldsList.size(); i++) {
+            Field f = fieldsList.get(i);
+            if (f.getmCoords().equals(coordinates)) return i;
+        }
+        return -1;
+    }
 }
