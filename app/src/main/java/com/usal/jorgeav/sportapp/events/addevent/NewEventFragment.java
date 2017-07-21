@@ -5,7 +5,6 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,10 +28,8 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
-import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -58,7 +55,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     // Static prevent double initialization with same ID
     private static GoogleApiClient mGoogleApiClient;
-    private PlaceAutocompleteAdapter mAdapter;
+    public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
+    ArrayList<Field> mFieldList;
+    public static final String INSTANCE_ADDRESS_TEXT_VIEW_ID = "INSTANCE_ADDRESS_TEXT_VIEW_ID";
 
     ArrayAdapter<CharSequence> sportsAdapter;
     @BindView(R.id.new_event_sport)
@@ -158,6 +157,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
                 eventId = getArguments().getString(BUNDLE_EVENT_ID);
 
+            //TOdo choose between mFieldSelected and mPlaceSelected
             mNewEventPresenter.addEvent(
                     eventId,
                     newEventSport.getSelectedItem().toString(),
@@ -190,8 +190,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         newEventFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = SelectFieldFragment.newInstance(getSportSelected());
-                mFragmentManagementListener.initFragment(fragment, true);
+                ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
             }
         });
 
@@ -218,6 +217,12 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
         hideContent();
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
+            mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_ADDRESS_TEXT_VIEW_ID))
+            newEventAddress.setText(savedInstanceState.getString(INSTANCE_ADDRESS_TEXT_VIEW_ID));
+
         return root;
     }
 
@@ -231,14 +236,14 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public void onStart() {
         super.onStart();
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
-            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
-        else
-            showContent();
+        if (!sInitialize) {
+            mNewEventPresenter.openEvent(getLoaderManager(), getArguments());
 
-        if (sInitialize) return;
-        mNewEventPresenter.openEvent(getLoaderManager(), getArguments());
-        sInitialize = true;
+            if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+                setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
+            else showContent();
+            sInitialize = true;
+        } else showContent();
     }
 
     private void setSportLayout(String sportId) {
@@ -277,6 +282,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     @Override
     public void showEventField(String fieldId, String address, String city, LatLng coordinates) {
+        //TODO mostrar datos mejor
         if (city != null && !TextUtils.isEmpty(city)) {
             newEventAddress.setText(city);
         }
@@ -319,11 +325,14 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     @Override
     public void retrieveFields(ArrayList<Field> fieldList) {
+        mFieldList = fieldList;
         showContent();
-        if (fieldList != null) {
-            ((EventsActivity) getActivity()).startMapActivityForResult(fieldList);
-        } else {
-            Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
+        if (mFieldList != null) {
+            if (mFieldList.size() == 0) {
+                Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
+                //TODO mostrar dialog "quieres crear un field nuevo?" y abrir addFieldFragment como se abren las notificationes
+            } else
+                ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
         }
     }
 
@@ -338,4 +347,15 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         newEventTotal.setText("");
         newEventEmpty.setText("");
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mFieldList != null)
+            outState.putParcelableArrayList(INSTANCE_FIELD_LIST_ID, mFieldList);
+        if (!TextUtils.isEmpty(newEventAddress.getText().toString()))
+            outState.putString(INSTANCE_ADDRESS_TEXT_VIEW_ID, newEventAddress.getText().toString());
+    }
+
+
 }
