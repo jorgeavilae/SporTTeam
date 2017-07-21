@@ -16,14 +16,15 @@ import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -65,9 +66,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 FirebaseActions.addEvent(event);
             else
                 FirebaseActions.editEvent(event);
-            ((EventsActivity)mNewEventView.getActivityContext()).newEventFieldSelected = null;
-            ((EventsActivity)mNewEventView.getActivityContext()).newEventCityName = null;
-            ((EventsActivity)mNewEventView.getActivityContext()).newEventFieldSelectedCoord = null;
+            ((EventsActivity)mNewEventView.getActivityContext()).mPlaceSelected = null;
             ((AppCompatActivity)mNewEventView.getActivityContext()).onBackPressed();
         } else
             Toast.makeText(mNewEventView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
@@ -136,18 +135,32 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
     }
 
     @Override
+    public void loadFields(LoaderManager loaderManager, Bundle b) {
+        if (b != null && b.containsKey(NewEventFragment.BUNDLE_SPORT_SELECTED_ID))
+            loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_WITH_SPORT, b, this);
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String eventId = args.getString(DetailEventFragment.BUNDLE_EVENT_ID);
+        String eventId, city, sportId;
         switch (id) {
             case SportteamLoader.LOADER_EVENT_ID:
+                eventId = args.getString(NewEventFragment.BUNDLE_EVENT_ID);
                 return SportteamLoader
                         .cursorLoaderOneEvent(mNewEventView.getActivityContext(), eventId);
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
+                eventId = args.getString(NewEventFragment.BUNDLE_EVENT_ID);
                 return SportteamLoader
                         .cursorLoaderEventParticipantsNoData(mNewEventView.getActivityContext(), eventId);
             case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
+                eventId = args.getString(NewEventFragment.BUNDLE_EVENT_ID);
                 return SportteamLoader
                         .cursorLoaderEventSimulatedParticipants(mNewEventView.getActivityContext(), eventId);
+            case SportteamLoader.LOADER_FIELDS_WITH_SPORT:
+                city = UtilesPreferences.getCurrentUserCity(mNewEventView.getActivityContext());
+                sportId = args.getString(NewEventFragment.BUNDLE_SPORT_SELECTED_ID);
+                return SportteamLoader
+                        .cursorLoaderFieldsFromCityWithSport(mNewEventView.getActivityContext(), city, sportId);
         }
         return null;
     }
@@ -181,6 +194,10 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                     simulatedUserHashMap.put(key, simulatedUser);
                 }
                 mNewEventView.setSimulatedParticipants(simulatedUserHashMap);
+                break;
+            case SportteamLoader.LOADER_FIELDS_WITH_SPORT:
+                ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
+                mNewEventView.retrieveFields(dataList);
                 break;
         }
     }

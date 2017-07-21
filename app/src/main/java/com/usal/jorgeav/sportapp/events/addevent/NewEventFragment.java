@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,33 +14,29 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -75,8 +69,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     TextView newEventAddress;
     @BindView(R.id.new_event_name)
     EditText newEventName;
-    @BindView(R.id.new_event_autocomplete_city)
-    AutoCompleteTextView newEventAutocompleteCity;
+//    @BindView(R.id.new_event_autocomplete_city)
+//    AutoCompleteTextView newEventAutocompleteCity;
     @BindView(R.id.new_event_date)
     EditText newEventDate;
     @BindView(R.id.new_event_time)
@@ -167,10 +161,10 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             mNewEventPresenter.addEvent(
                     eventId,
                     newEventSport.getSelectedItem().toString(),
-                    ((EventsActivity)getActivity()).newEventFieldSelected,
-                    ((EventsActivity)getActivity()).newEventFieldSelectedCoord,
+                    ((EventsActivity)getActivity()).mPlaceSelected.getAddress(),//TOdo sustituir por fieldID
+                    ((EventsActivity)getActivity()).mPlaceSelected.getCoordinates(),
                     newEventName.getText().toString(),
-                    ((EventsActivity)getActivity()).newEventCityName,
+                    ((EventsActivity)getActivity()).mPlaceSelected.getShortNameLocality(),
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
@@ -185,11 +179,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_new_event, container, false);
         ButterKnife.bind(this, root);
-
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
-            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
-
-        setAutocompleteTextView();
 
         myCalendar = Calendar.getInstance();
 
@@ -226,62 +215,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             }
         });
 
+        hideContent();
+
         return root;
-    }
-
-    private void setSportLayout(String sportId) {
-        // Check if the sport doesn't need a field
-        String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id);
-        if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
-            //TODO mostrar automcomplete para direcciones
-            //TODO ocultar seleccionar pista en el mapa
-        } else {
-            //TODO mostrar seleccionar pista en el mapa
-            //TODO ocultar autocompletar direcciones
-        }
-    }
-
-    private void setAutocompleteTextView() {
-        // Set up the adapter that will retrieve suggestions from
-        // the Places Geo Data API that cover Spain
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
-                /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
-                .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
-                .build();
-
-        mAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, null, typeFilter);
-        newEventAutocompleteCity.setAdapter(mAdapter);
-
-        newEventAutocompleteCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                /*
-                 Retrieve the place ID of the selected item from the Adapter.
-                 The adapter stores each Place suggestion in a AutocompletePrediction from which we
-                 read the place ID and title.
-                  */
-                AutocompletePrediction item = mAdapter.getItem(position);
-                if (item != null) {
-                    Log.i(TAG, "Autocomplete item selected: " + item.getPlaceId());
-                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, item.getPlaceId())
-                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                                @Override
-                                public void onResult(@NonNull PlaceBuffer places) {
-                                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                                        Place myPlace = places.get(0);
-                                        ((EventsActivity)getActivity())
-                                                .setCity(myPlace.getName().toString());
-                                        Log.i(TAG, "Place found: Name - " + myPlace.getName());
-                                    } else {
-                                        Log.e(TAG, "Place not found");
-                                    }
-                                    places.release();
-                                }
-                            });
-                }
-            }
-        });
     }
 
     @Override
@@ -298,32 +234,27 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         mNewEventPresenter.openEvent(getLoaderManager(), getArguments());
         sInitialize = true;
 
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
-            showEventSport(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID)) {
+            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
+        } else {
+            showContent();
+        }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mFragmentManagementListener.showContent();
+    private void setSportLayout(String sportId) {
+        Log.d(TAG, "setSportLayout: "+sportId);
 
-        /* https://stackoverflow.com/a/13723367/4235666 */
-        newEventAutocompleteCity.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        //Set sport in Spinner
+        showEventSport(sportId);
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                ((EventsActivity)getActivity()).setCity(null);
-            }
-        });
+        // Check if the sport doesn't need a field
+        String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id);
+        if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
+            ((EventsActivity)getActivity()).startMapActivityForResult(null);
+        } else {
+            // Sport needs a Field so load from ContentProvider and start MapActivity in retrieveFields()
+            mNewEventPresenter.loadFields(getLoaderManager(), getArguments());
+        }
     }
 
     @Override
@@ -345,15 +276,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     @Override
     public void showEventField(String fieldId, String city, LatLng coordinates) {
-        Log.d(TAG, "showEventField: "+fieldId);
-        Log.d(TAG, "showEventField: "+city);
-        Log.d(TAG, "showEventField: "+ coordinates);
-        if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof SelectFieldFragment.OnFieldSelected)
-            ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(fieldId, city, coordinates);
-
         if (city != null && !TextUtils.isEmpty(city)) {
-            newEventAutocompleteCity.setText(city);
-            ((EventsActivity) getActivity()).setCity(city);
+            newEventAddress.setText(city);
         }
     }
 
@@ -393,14 +317,23 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     }
 
     @Override
+    public void retrieveFields(ArrayList<Field> fieldList) {
+        showContent();
+        if (fieldList != null) {
+            ((EventsActivity) getActivity()).startMapActivityForResult(fieldList);
+        } else {
+            Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
     public void clearUI() {
         newEventSport.setSelection(0);
-        ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected("", "", null);
+        ((EventsActivity)getActivity()).mPlaceSelected = null;
         newEventName.setText("");
         newEventDate.setText("");
         newEventTime.setText("");
-        newEventAutocompleteCity.getText().clear();
-        ((EventsActivity) getActivity()).setCity("");
+        newEventAddress.setText("");
         newEventTotal.setText("");
         newEventEmpty.setText("");
     }

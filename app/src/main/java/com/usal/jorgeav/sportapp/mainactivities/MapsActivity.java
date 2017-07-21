@@ -29,7 +29,8 @@ import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import java.util.ArrayList;
 
 public class MapsActivity extends AppCompatActivity implements
-        OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
+        OnMapReadyCallback,
+        GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
     public static final String TAG = MapsActivity.class.getSimpleName();
     public static final String PLACE_SELECTED_EXTRA = "PLACE_SELECTED_EXTRA";
 
@@ -70,7 +71,7 @@ public class MapsActivity extends AppCompatActivity implements
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
-
+            //TODO o pasar Field
             if (mPlaceSelected.isSucceed()) {
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(PLACE_SELECTED_EXTRA, mPlaceSelected);
@@ -111,14 +112,16 @@ public class MapsActivity extends AppCompatActivity implements
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
+        mMap.setOnMarkerClickListener(this);
 
         for (Field f : mFieldsList) {
             LatLng latLong = f.getmCoords();
             Log.d(TAG, "onMapReady: "+f.getmId()+ " " + f.getmSport() + " " + latLong);
-            if (latLong != null)
+            if (latLong != null) {
                 mMap.addMarker(new MarkerOptions().position(latLong).title(f.getmName() + " " + f.getmSport()));
+                mMap.addMarker(new MarkerOptions().position(latLong).title(f.getmName() + " " + f.getmSport()+"11"));
+            }
         }
 
         // Move Camera
@@ -134,11 +137,6 @@ public class MapsActivity extends AppCompatActivity implements
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
             mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
         }
-    }
-
-    @Override
-    public void onMapClick(LatLng latLng) {
-        Log.d(TAG, "onMapClick: "+latLng);
     }
 
     @Override
@@ -202,5 +200,12 @@ public class MapsActivity extends AppCompatActivity implements
                     break;
             }
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 10f));
+        // TODO: 21/07/2017 convertir en Field
+        return false;
     }
 }

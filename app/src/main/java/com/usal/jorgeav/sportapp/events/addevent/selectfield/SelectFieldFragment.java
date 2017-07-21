@@ -120,6 +120,7 @@ public class SelectFieldFragment extends BaseFragment implements SelectFieldCont
     }
 
     public interface OnFieldSelected {
+        // TODO: 21/07/2017 cambiar city por adress
         void retrieveFieldSelected(String fieldId, String city, LatLng coordinates);
     }
 }

@@ -199,7 +199,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         newFieldMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onCreateView: onClick: "+mCityFields);
                 if (mCityFields != null)
                     ((FieldsActivity)getActivity()).startMapActivityForResult(mCityFields);
             }

@@ -1,7 +1,6 @@
 package com.usal.jorgeav.sportapp.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,6 @@ public class SelectSportsAdapter  extends RecyclerView.Adapter<SelectSportsAdapt
 
     @Override
     public SelectSportsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder: ");
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.sport_select_item_list, parent, false);
         return new SelectSportsAdapter.ViewHolder(view);
@@ -61,13 +59,6 @@ public class SelectSportsAdapter  extends RecyclerView.Adapter<SelectSportsAdapt
 
     public void setDataset(List<Sport> mDataset) {
         this.mDataset = mDataset;
-    }
-
-    public String getItemNameAtPosition(int position) {
-        Sport s = mDataset.get(position);
-        if (s != null)
-            return s.getmName();
-        return null;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

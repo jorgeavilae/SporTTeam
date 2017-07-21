@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -17,6 +19,7 @@ public abstract class NewEventContract {
 
     public interface Presenter {
         void openEvent(LoaderManager loaderManager, Bundle b);
+        void loadFields(LoaderManager loaderManager, Bundle b);
         void addEvent(String id, String sport, String field, LatLng coord, String name, String city,
                       String date, String time, String total, String empty,
                       HashMap<String, Boolean> participants,
@@ -32,6 +35,7 @@ public abstract class NewEventContract {
         void showEventEmptyPlayers(int emptyPlayers);
         void setParticipants(HashMap<String, Boolean> participants);
         void setSimulatedParticipants(HashMap<String, SimulatedUser> simulatedParticipants);
+        void retrieveFields(ArrayList<Field> fieldList);
         void clearUI();
         Context getActivityContext();
 
