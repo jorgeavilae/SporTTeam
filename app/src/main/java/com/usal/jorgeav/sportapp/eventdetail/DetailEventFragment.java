@@ -125,7 +125,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit) {
             Log.d(TAG, "onOptionsItemSelected: Edit");
-            Fragment fragment = NewEventFragment.newInstance(mEventId);
+            Fragment fragment = NewEventFragment.newInstance(mEventId, null);
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {

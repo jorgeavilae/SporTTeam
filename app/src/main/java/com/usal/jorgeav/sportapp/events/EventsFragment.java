@@ -17,7 +17,7 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
-import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
+import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
 import com.usal.jorgeav.sportapp.events.eventrequest.EventRequestsFragment;
 import com.usal.jorgeav.sportapp.events.searchevent.SearchEventsFragment;
 
@@ -79,7 +79,9 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         eventsCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = NewEventFragment.newInstance(null);
+//                Fragment fragment = NewEventFragment.newInstance(null);
+//                mFragmentManagementListener.initFragment(fragment, true);
+                Fragment fragment = SelectSportFragment.newInstance();
                 mFragmentManagementListener.initFragment(fragment, true);
             }
         });

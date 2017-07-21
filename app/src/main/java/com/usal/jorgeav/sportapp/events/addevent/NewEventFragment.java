@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -56,6 +57,7 @@ import butterknife.ButterKnife;
 public class NewEventFragment extends BaseFragment implements NewEventContract.View  {
     public static final String TAG = NewEventFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
+    public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
 
     NewEventContract.Presenter mNewEventPresenter;
     private static boolean sInitialize;
@@ -69,6 +71,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     Spinner newEventSport;
     @BindView(R.id.new_event_field)
     Button newEventFieldButton;
+    @BindView(R.id.new_event_address)
+    TextView newEventAddress;
     @BindView(R.id.new_event_name)
     EditText newEventName;
     @BindView(R.id.new_event_autocomplete_city)
@@ -109,13 +113,14 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         // Required empty public constructor
     }
 
-    public static NewEventFragment newInstance(@Nullable String eventId) {
+    public static NewEventFragment newInstance(@Nullable String eventId, @Nullable String sportId) {
         NewEventFragment nef = new NewEventFragment();
-        if (eventId != null) {
-            Bundle b = new Bundle();
+        Bundle b = new Bundle();
+        if (eventId != null)
             b.putString(BUNDLE_EVENT_ID, eventId);
-            nef.setArguments(b);
-        }
+        if (sportId != null)
+            b.putString(BUNDLE_SPORT_SELECTED_ID, sportId);
+        nef.setArguments(b);
         sInitialize = false;
         return nef;
     }
@@ -159,18 +164,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
                 eventId = getArguments().getString(BUNDLE_EVENT_ID);
 
-            Log.d(TAG, "onOptionsItemSelected: "+eventId);
-            Log.d(TAG, "onOptionsItemSelected: "+newEventSport.getSelectedItem().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+((EventsActivity)getActivity()).newEventFieldSelected);
-            Log.d(TAG, "onOptionsItemSelected: "+((EventsActivity)getActivity()).newEventFieldSelectedCoord);
-            Log.d(TAG, "onOptionsItemSelected: "+newEventName.getText().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+((EventsActivity)getActivity()).newEventCityName);
-            Log.d(TAG, "onOptionsItemSelected: "+ newEventDate.getText().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+ newEventTime.getText().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+ newEventTotal.getText().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+newEventEmpty.getText().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+mParticipants);
-            Log.d(TAG, "onOptionsItemSelected: "+mSimulatedParticipants);
             mNewEventPresenter.addEvent(
                     eventId,
                     newEventSport.getSelectedItem().toString(),
@@ -192,6 +185,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_new_event, container, false);
         ButterKnife.bind(this, root);
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
 
         setAutocompleteTextView();
 
@@ -231,6 +227,18 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         });
 
         return root;
+    }
+
+    private void setSportLayout(String sportId) {
+        // Check if the sport doesn't need a field
+        String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id);
+        if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
+            //TODO mostrar automcomplete para direcciones
+            //TODO ocultar seleccionar pista en el mapa
+        } else {
+            //TODO mostrar seleccionar pista en el mapa
+            //TODO ocultar autocompletar direcciones
+        }
     }
 
     private void setAutocompleteTextView() {
@@ -289,6 +297,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         if (sInitialize) return;
         mNewEventPresenter.openEvent(getLoaderManager(), getArguments());
         sInitialize = true;
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+            showEventSport(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
     }
 
     @Override
