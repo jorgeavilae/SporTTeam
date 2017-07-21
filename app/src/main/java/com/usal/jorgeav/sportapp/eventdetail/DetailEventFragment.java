@@ -52,6 +52,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private String mEventId = "";
+    private String mSportId = "";
     private String mOwnerId = "";
     private boolean isFull = false;
     @DetailEventPresenter.EventRelationType int mRelation;
@@ -125,7 +126,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit) {
             Log.d(TAG, "onOptionsItemSelected: Edit");
-            Fragment fragment = NewEventFragment.newInstance(mEventId, null);
+            Fragment fragment = NewEventFragment.newInstance(mEventId, mSportId);
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
@@ -175,7 +176,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         mRelation = relation;
         switch (relation) {
             case DetailEventPresenter.RELATION_TYPE_OWNER:
-                if (mMenu != null) getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
+                if (mMenu != null) {
+                    mMenu.clear();
+                    getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
+                }
                 buttonUserRequests.setVisibility(View.VISIBLE);
                 buttonUserRequests.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -416,7 +420,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public void showEventSport(String sport) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewEventSport.setText(sport);
-
+        mSportId = sport;
     }
 
     @Override

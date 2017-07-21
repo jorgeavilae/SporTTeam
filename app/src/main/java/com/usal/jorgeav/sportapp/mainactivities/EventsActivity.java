@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
@@ -17,7 +18,6 @@ import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulatePartici
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventContract;
-import com.usal.jorgeav.sportapp.fields.addfield.NewFieldContract;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -40,10 +40,14 @@ public class EventsActivity extends BaseActivity {
 
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final int REQUEST_CODE_ADDRESS = 23;
-    private static final String INSTANCE_PLACE_SELECTED = "INSTANCE_PLACE_SELECTED";
-    public MyPlace mPlaceSelected;
-    private static final String INSTANCE_FIELD_SELECTED = "INSTANCE_FIELD_SELECTED";
-    public Field mFieldSelected;
+    private static final String INSTANCE_FIELD_ID_SELECTED = "INSTANCE_FIELD_ID_SELECTED";
+    public String mFieldId;
+    private static final String INSTANCE_ADDRESS_SELECTED = "INSTANCE_ADDRESS_SELECTED";
+    public String mAddress;
+    private static final String INSTANCE_CITY_SELECTED = "INSTANCE_CITY_SELECTED";
+    public String mCity;
+    private static final String INSTANCE_COORD_SELECTED = "INSTANCE_COORD_SELECTED";
+    public LatLng mCoord;
 
     @Override
     public void startMainFragment() {
@@ -71,35 +75,28 @@ public class EventsActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mPlaceSelected != null)
-            outState.putParcelable(INSTANCE_PLACE_SELECTED, mPlaceSelected);
-        if (mFieldSelected != null)
-            outState.putParcelable(INSTANCE_FIELD_SELECTED, mFieldSelected);
+        if (mFieldId != null)
+            outState.putString(INSTANCE_FIELD_ID_SELECTED, mFieldId);
+        if (mAddress != null)
+            outState.putString(INSTANCE_ADDRESS_SELECTED, mAddress);
+        if (mCity != null)
+            outState.putString(INSTANCE_CITY_SELECTED, mCity);
+        if (mCoord != null)
+            outState.putParcelable(INSTANCE_COORD_SELECTED, mCoord);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_PLACE_SELECTED)) {
-            mPlaceSelected = savedInstanceState.getParcelable(INSTANCE_PLACE_SELECTED);
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_ID_SELECTED))
+            mFieldId = savedInstanceState.getString(INSTANCE_FIELD_ID_SELECTED);
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_ADDRESS_SELECTED))
+            mAddress = savedInstanceState.getString(INSTANCE_ADDRESS_SELECTED);
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_CITY_SELECTED))
+            mCity = savedInstanceState.getString(INSTANCE_CITY_SELECTED);
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_COORD_SELECTED))
+            mCoord = savedInstanceState.getParcelable(INSTANCE_COORD_SELECTED);
 
-            if (mPlaceSelected != null && mDisplayedFragment instanceof NewEventContract.View)
-                ((NewEventContract.View) mDisplayedFragment).showEventField(
-                        null,
-                        mPlaceSelected.getAddress(),
-                        mPlaceSelected.getShortNameLocality(),
-                        mPlaceSelected.getCoordinates());
-        }
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_SELECTED)) {
-            mFieldSelected = savedInstanceState.getParcelable(INSTANCE_FIELD_SELECTED);
-
-            if (mFieldSelected != null && mDisplayedFragment instanceof NewEventContract.View)
-                ((NewEventContract.View) mDisplayedFragment).showEventField(
-                        mFieldSelected.getmId(),
-                        mFieldSelected.getmAddress(),
-                        mFieldSelected.getmCity(),
-                        mFieldSelected.getmCoords());
-        }
     }
 
     @Override
@@ -111,23 +108,20 @@ public class EventsActivity extends BaseActivity {
                 // Expect a Field where play a new Event,
                 // or an address (MyPlace) to meet for non-field sports
                 if (data.hasExtra(MapsActivity.FIELD_SELECTED_EXTRA)) {
-                    mFieldSelected = data.getParcelableExtra(MapsActivity.FIELD_SELECTED_EXTRA);
-                    if (mDisplayedFragment instanceof NewEventContract.View)
-                        ((NewEventContract.View) mDisplayedFragment).showEventField(
-                                mFieldSelected.getmId(),
-                                mFieldSelected.getmAddress(),
-                                mFieldSelected.getmCity(),
-                                mFieldSelected.getmCoords());
-
+                    Field field = data.getParcelableExtra(MapsActivity.FIELD_SELECTED_EXTRA);
+                    mFieldId = field.getmId();
+                    mAddress = field.getmAddress();
+                    mCity = field.getmCity();
+                    mCoord = field.getmCoords();
                 } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
-                    mPlaceSelected = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
-                    if (mDisplayedFragment instanceof NewFieldContract.View)
-                        ((NewEventContract.View) mDisplayedFragment).showEventField(
-                                null,
-                                mPlaceSelected.getAddress(),
-                                mPlaceSelected.getShortNameLocality(),
-                                mPlaceSelected.getCoordinates());
+                    MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
+                    mFieldId = null;
+                    mAddress = myPlace.getAddress();
+                    mCity = myPlace.getShortNameLocality();
+                    mCoord = myPlace.getCoordinates();
                 }
+                if (mDisplayedFragment instanceof NewEventContract.View)
+                    ((NewEventContract.View) mDisplayedFragment).showEventField(mFieldId, mAddress, mCity, mCoord);
             } else {
                 Toast.makeText(this, "You should select a place", Toast.LENGTH_SHORT).show();
             }

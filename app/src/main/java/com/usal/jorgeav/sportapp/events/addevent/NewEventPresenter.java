@@ -66,7 +66,11 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 FirebaseActions.addEvent(event);
             else
                 FirebaseActions.editEvent(event);
-            ((EventsActivity)mNewEventView.getActivityContext()).mPlaceSelected = null;
+
+            ((EventsActivity)mNewEventView.getActivityContext()).mFieldId = null;
+            ((EventsActivity)mNewEventView.getActivityContext()).mAddress = null;
+            ((EventsActivity)mNewEventView.getActivityContext()).mCity = null;
+            ((EventsActivity)mNewEventView.getActivityContext()).mCoord = null;
             ((AppCompatActivity)mNewEventView.getActivityContext()).onBackPressed();
         } else
             Toast.makeText(mNewEventView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
@@ -229,6 +233,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             double longitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
             LatLng coordinates = null; if (latitude != 0 && longitude != 0) coordinates = new LatLng(latitude, longitude);
             mNewEventView.showEventField(fieldId, address, city, coordinates);
+            mNewEventView.setPlaceFieldInActivity(fieldId, address, city, coordinates);
             mNewEventView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mNewEventView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));
             mNewEventView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));

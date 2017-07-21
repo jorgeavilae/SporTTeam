@@ -157,15 +157,14 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
                 eventId = getArguments().getString(BUNDLE_EVENT_ID);
 
-            //TOdo choose between mFieldSelected and mPlaceSelected
             mNewEventPresenter.addEvent(
                     eventId,
                     newEventSport.getSelectedItem().toString(),
-                    ((EventsActivity)getActivity()).mFieldSelected.getmId(),
-                    ((EventsActivity)getActivity()).mFieldSelected.getmAddress(),
-                    ((EventsActivity)getActivity()).mFieldSelected.getmCoords(),
+                    ((EventsActivity)getActivity()).mFieldId,
+                    ((EventsActivity)getActivity()).mAddress,
+                    ((EventsActivity)getActivity()).mCoord,
                     newEventName.getText().toString(),
-                    ((EventsActivity)getActivity()).mFieldSelected.getmCity(),
+                    ((EventsActivity)getActivity()).mCity,
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
@@ -247,8 +246,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     }
 
     private void setSportLayout(String sportId) {
-        Log.d(TAG, "setSportLayout: "+sportId);
-
         //Set sport in Spinner
         showEventSport(sportId);
 
@@ -284,8 +281,16 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public void showEventField(String fieldId, String address, String city, LatLng coordinates) {
         //TODO mostrar datos mejor
         if (city != null && !TextUtils.isEmpty(city)) {
-            newEventAddress.setText(city);
+            newEventAddress.setText(address);
         }
+    }
+
+    @Override
+    public void setPlaceFieldInActivity(String fieldId, String address, String city, LatLng coordinates) {
+        ((EventsActivity)getActivity()).mFieldId = fieldId;
+        ((EventsActivity)getActivity()).mAddress = address;
+        ((EventsActivity)getActivity()).mCity = city;
+        ((EventsActivity)getActivity()).mCoord = coordinates;
     }
 
     @Override
@@ -339,7 +344,10 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public void clearUI() {
         newEventSport.setSelection(0);
-        ((EventsActivity)getActivity()).mPlaceSelected = null;
+        ((EventsActivity)getActivity()).mFieldId = null;
+        ((EventsActivity)getActivity()).mAddress = null;
+        ((EventsActivity)getActivity()).mCity = null;
+        ((EventsActivity)getActivity()).mCoord = null;
         newEventName.setText("");
         newEventDate.setText("");
         newEventTime.setText("");

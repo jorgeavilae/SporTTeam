@@ -29,6 +29,7 @@ public abstract class NewEventContract {
     public interface View {
         void showEventSport(String sport);
         void showEventField(String fieldId, String address, String city, LatLng coordinates);
+        void setPlaceFieldInActivity(String fieldId, String address, String city, LatLng coordinates);
         void showEventName(String name);
         void showEventDate(long date);
         void showEventTotalPlayers(int totalPlayers);
