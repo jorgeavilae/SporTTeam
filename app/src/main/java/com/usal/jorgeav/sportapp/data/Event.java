@@ -73,6 +73,10 @@ public class Event implements Parcelable {
         return field_id;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
     public String getCity() {
         return city;
     }

@@ -36,6 +36,7 @@ public class UtilesTime {
     }
 
     public static long stringTimeToMillis(String time) throws ParseException {
+        //TODO esto no esta bien (edit event)
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
         return sdf.parse(time).getTime();
     }
