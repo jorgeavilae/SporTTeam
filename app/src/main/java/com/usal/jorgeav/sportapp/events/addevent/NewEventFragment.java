@@ -253,7 +253,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id);
         if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
             showContent();
-            ((EventsActivity)getActivity()).startMapActivityForResult(null);
+            if (!getArguments().containsKey(BUNDLE_EVENT_ID))
+                ((EventsActivity)getActivity()).startMapActivityForResult(null);
         } else {
             // Sport needs a Field so load from ContentProvider and start MapActivity in retrieveFields()
             mNewEventPresenter.loadFields(getLoaderManager(), getArguments());
@@ -337,7 +338,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                 Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
                 //TODO mostrar dialog "quieres crear un field nuevo?" y abrir addFieldFragment como se abren las notificationes
             } else
-                ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
+                if (!getArguments().containsKey(BUNDLE_EVENT_ID))
+                    ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
         }
     }
 
