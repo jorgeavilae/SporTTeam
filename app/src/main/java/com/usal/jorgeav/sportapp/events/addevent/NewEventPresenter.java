@@ -41,7 +41,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
     }
 
     @Override
-    public void addEvent(String id, String sport, String field, LatLng coord, String name, String city,
+    public void addEvent(String id, String sport, String field, String address, LatLng coord, String name, String city,
                          String date, String time, String total, String empty,
                          HashMap<String, Boolean> participants,
                          HashMap<String, SimulatedUser> simulatedParticipants) {
@@ -55,10 +55,10 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             return;
         }
 
-        if (isValidSport(sport) && isValidField(field, sport, city, coord) && isValidName(name)
+        if (isValidSport(sport) && isValidField(field, address, sport, city, coord) && isValidName(name)
                 && isValidOwner(myUid) && isDateTimeCorrect(dateMillis, timeMillis) && isPlayersCorrect(total, empty)) {
             Event event = new Event(
-                    id, sport, field, coord, name, city, dateMillis + timeMillis, myUid,
+                    id, sport, field, address, coord, name, city, dateMillis + timeMillis, myUid,
                     Integer.valueOf(total), Integer.valueOf(empty), participants, simulatedParticipants);
 
             Log.d(TAG, "addEvent: "+event);
@@ -81,7 +81,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isValidField(String fieldId, String sportId, String city, LatLng coordinates) {
+    private boolean isValidField(String fieldId, String address, String sportId, String city, LatLng coordinates) {
         // Check if the sport doesn't need a field
         String[] arraySports = mNewEventView.getActivityContext().getResources().getStringArray(R.array.sport_id);
         if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) return true;
@@ -89,7 +89,9 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         // Query database for the fieldId and checks if this sport exists
         Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId, sportId);
 
-        if (field != null && field.getmCity().equals(city)
+        if (field != null
+                && field.getmAddress().equals(address)
+                && field.getmCity().equals(city)
                 && field.getmCoords().latitude == coordinates.latitude
                 && field.getmCoords().longitude == coordinates.longitude)
             return true;
@@ -221,11 +223,12 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         if (data != null && data.moveToFirst()) {
             mNewEventView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             String fieldId = data.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+            String address = data.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
             String city = data.getString(SportteamContract.EventEntry.COLUMN_CITY);
             double latitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
             double longitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
             LatLng coordinates = null; if (latitude != 0 && longitude != 0) coordinates = new LatLng(latitude, longitude);
-            mNewEventView.showEventField(fieldId, city, coordinates);
+            mNewEventView.showEventField(fieldId, address, city, coordinates);
             mNewEventView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mNewEventView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));
             mNewEventView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));

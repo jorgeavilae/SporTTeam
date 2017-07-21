@@ -39,6 +39,7 @@ public final class FirebaseDBContract {
     public static final class Event {
         public static final String SPORT = "sport_id";
         public static final String FIELD = "field_id";
+        public static final String ADDRESS = "address";
         public static final String CITY = "city";
         public static final String COORD_LATITUDE = "coord_latitude";
         public static final String COORD_LONGITUDE = "coord_longitude";

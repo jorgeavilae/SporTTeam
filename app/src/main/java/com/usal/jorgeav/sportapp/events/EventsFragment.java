@@ -79,8 +79,6 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         eventsCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Fragment fragment = NewEventFragment.newInstance(null);
-//                mFragmentManagementListener.initFragment(fragment, true);
                 Fragment fragment = SelectSportFragment.newInstance();
                 mFragmentManagementListener.initFragment(fragment, true);
             }

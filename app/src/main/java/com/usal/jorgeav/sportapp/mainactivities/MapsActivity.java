@@ -98,6 +98,7 @@ public class MapsActivity extends AppCompatActivity implements
     public void startMapFragment() {
         mMarkersList = new ArrayList<>();
         mFieldsList = getIntent().getParcelableArrayListExtra(FieldsActivity.INTENT_EXTRA_FIELD_LIST);
+        if (mFieldsList == null) mFieldsList = new ArrayList<>();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

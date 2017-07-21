@@ -20,7 +20,7 @@ public abstract class NewEventContract {
     public interface Presenter {
         void openEvent(LoaderManager loaderManager, Bundle b);
         void loadFields(LoaderManager loaderManager, Bundle b);
-        void addEvent(String id, String sport, String field, LatLng coord, String name, String city,
+        void addEvent(String id, String sport, String field, String address, LatLng coord, String name, String city,
                       String date, String time, String total, String empty,
                       HashMap<String, Boolean> participants,
                       HashMap<String, SimulatedUser> simulatedParticipants);
@@ -28,7 +28,7 @@ public abstract class NewEventContract {
 
     public interface View {
         void showEventSport(String sport);
-        void showEventField(String fieldId, String city, LatLng coordinates);
+        void showEventField(String fieldId, String address, String city, LatLng coordinates);
         void showEventName(String name);
         void showEventDate(long date);
         void showEventTotalPlayers(int totalPlayers);

@@ -18,6 +18,7 @@ public class Event implements Parcelable {
     String sport_id;
     String field_id;
     String name;
+    String address;
     String city;
     Double coord_latitude;
     Double coord_longitude;
@@ -32,12 +33,13 @@ public class Event implements Parcelable {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
-    public Event(String mId, String mSport, String mField, LatLng coord, String mName, String mCity,
+    public Event(String mId, String mSport, String mField, String address, LatLng coord, String mName, String mCity,
                  Long mDate, String mOwner, int mTotalPlayers, int mEmptyPlayers,
                  HashMap<String, Boolean> participants, HashMap<String, SimulatedUser> simulated_participants) {
         this.event_id = mId;
         this.sport_id = mSport;
         this.field_id = mField;
+        this.address = address;
         this.name = mName;
         this.city = mCity;
         if (coord != null) {
@@ -140,6 +142,7 @@ public class Event implements Parcelable {
         HashMap<String, Object> result = new HashMap<>();
         result.put(FirebaseDBContract.Event.SPORT, this.sport_id);
         result.put(FirebaseDBContract.Event.FIELD, this.field_id);
+        result.put(FirebaseDBContract.Event.ADDRESS, this.address);
         result.put(FirebaseDBContract.Event.CITY, this.city);
         result.put(FirebaseDBContract.Event.COORD_LATITUDE, this.coord_latitude);
         result.put(FirebaseDBContract.Event.COORD_LONGITUDE, this.coord_longitude);
@@ -160,6 +163,7 @@ public class Event implements Parcelable {
                 ", sport_id='" + sport_id + '\'' +
                 ", field_id='" + field_id + '\'' +
                 ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
                 ", city='" + city + '\'' +
                 ", coord_latitude=" + coord_latitude +
                 ", coord_longitude=" + coord_longitude +
@@ -188,6 +192,7 @@ public class Event implements Parcelable {
         if (field_id != null ? !field_id.equals(event.field_id) : event.field_id != null)
             return false;
         if (name != null ? !name.equals(event.name) : event.name != null) return false;
+        if (address != null ? !address.equals(event.address) : event.address != null) return false;
         if (city != null ? !city.equals(event.city) : event.city != null) return false;
         if (coord_latitude != null ? !coord_latitude.equals(event.coord_latitude) : event.coord_latitude != null)
             return false;
@@ -207,6 +212,7 @@ public class Event implements Parcelable {
         result = 31 * result + (sport_id != null ? sport_id.hashCode() : 0);
         result = 31 * result + (field_id != null ? field_id.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (city != null ? city.hashCode() : 0);
         result = 31 * result + (coord_latitude != null ? coord_latitude.hashCode() : 0);
         result = 31 * result + (coord_longitude != null ? coord_longitude.hashCode() : 0);
@@ -219,6 +225,7 @@ public class Event implements Parcelable {
         return result;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -230,6 +237,7 @@ public class Event implements Parcelable {
         dest.writeString(this.sport_id);
         dest.writeString(this.field_id);
         dest.writeString(this.name);
+        dest.writeString(this.address);
         dest.writeString(this.city);
         dest.writeValue(this.coord_latitude);
         dest.writeValue(this.coord_longitude);
@@ -237,6 +245,8 @@ public class Event implements Parcelable {
         dest.writeString(this.owner);
         dest.writeInt(this.total_players);
         dest.writeInt(this.empty_players);
+        dest.writeSerializable(this.participants);
+        dest.writeSerializable(this.simulated_participants);
     }
 
     protected Event(Parcel in) {
@@ -244,6 +254,7 @@ public class Event implements Parcelable {
         this.sport_id = in.readString();
         this.field_id = in.readString();
         this.name = in.readString();
+        this.address = in.readString();
         this.city = in.readString();
         this.coord_latitude = (Double) in.readValue(Double.class.getClassLoader());
         this.coord_longitude = (Double) in.readValue(Double.class.getClassLoader());
@@ -251,6 +262,8 @@ public class Event implements Parcelable {
         this.owner = in.readString();
         this.total_players = in.readInt();
         this.empty_players = in.readInt();
+        this.participants = (HashMap<String, Boolean>) in.readSerializable();
+        this.simulated_participants = (HashMap<String, SimulatedUser>) in.readSerializable();
     }
 
     public static final Creator<Event> CREATOR = new Creator<Event>() {
@@ -265,5 +278,3 @@ public class Event implements Parcelable {
         }
     };
 }
-
-

@@ -85,7 +85,8 @@ public class EventsActivity extends BaseActivity {
 
             if (mPlaceSelected != null && mDisplayedFragment instanceof NewEventContract.View)
                 ((NewEventContract.View) mDisplayedFragment).showEventField(
-                        mPlaceSelected.getAddress(), //TODO cambiar args?
+                        null,
+                        mPlaceSelected.getAddress(),
                         mPlaceSelected.getShortNameLocality(),
                         mPlaceSelected.getCoordinates());
         }
@@ -95,6 +96,7 @@ public class EventsActivity extends BaseActivity {
             if (mFieldSelected != null && mDisplayedFragment instanceof NewEventContract.View)
                 ((NewEventContract.View) mDisplayedFragment).showEventField(
                         mFieldSelected.getmId(),
+                        mFieldSelected.getmAddress(),
                         mFieldSelected.getmCity(),
                         mFieldSelected.getmCoords());
         }
@@ -113,6 +115,7 @@ public class EventsActivity extends BaseActivity {
                     if (mDisplayedFragment instanceof NewEventContract.View)
                         ((NewEventContract.View) mDisplayedFragment).showEventField(
                                 mFieldSelected.getmId(),
+                                mFieldSelected.getmAddress(),
                                 mFieldSelected.getmCity(),
                                 mFieldSelected.getmCoords());
 
@@ -120,7 +123,8 @@ public class EventsActivity extends BaseActivity {
                     mPlaceSelected = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
                     if (mDisplayedFragment instanceof NewFieldContract.View)
                         ((NewEventContract.View) mDisplayedFragment).showEventField(
-                                mPlaceSelected.getAddress(), //TODO cambiar args?
+                                null,
+                                mPlaceSelected.getAddress(),
                                 mPlaceSelected.getShortNameLocality(),
                                 mPlaceSelected.getCoordinates());
                 }

@@ -420,7 +420,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     }
 
     @Override
-    public void showEventField(final String fieldId, LatLng coord, final String sport) {
+    public void showEventField(final String fieldId, String address, LatLng coord, final String sport) {
         ((BaseActivity)getActivity()).showContent();
         this.buttonEventPlace.setText(fieldId);
         buttonEventPlace.setOnClickListener(new View.OnClickListener() {

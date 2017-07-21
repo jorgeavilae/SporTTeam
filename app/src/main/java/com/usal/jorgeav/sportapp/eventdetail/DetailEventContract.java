@@ -18,7 +18,7 @@ public abstract class DetailEventContract {
     public interface View {
         void showEventId(String id);
         void showEventSport(String sport);
-        void showEventField(String fieldId, LatLng coord, String sport);
+        void showEventField(String fieldId, String address, LatLng coord, String sport);
         void showEventName(String name);
         void showEventDate(String date);
         void showEventOwner(String city);

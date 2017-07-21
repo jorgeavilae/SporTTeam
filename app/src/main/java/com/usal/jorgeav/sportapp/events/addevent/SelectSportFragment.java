@@ -93,7 +93,6 @@ public class SelectSportFragment extends BaseFragment implements SelectSportsAda
     @Override
     public void onPause() {
         super.onPause();
-        mFragmentManagementListener.setCurrentDisplayedFragment(null, null);
         mSportAdapter.replaceData(null);
     }
 

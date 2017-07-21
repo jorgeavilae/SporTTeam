@@ -161,10 +161,11 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             mNewEventPresenter.addEvent(
                     eventId,
                     newEventSport.getSelectedItem().toString(),
-                    ((EventsActivity)getActivity()).mPlaceSelected.getAddress(),//TOdo sustituir por fieldID
-                    ((EventsActivity)getActivity()).mPlaceSelected.getCoordinates(),
+                    ((EventsActivity)getActivity()).mFieldSelected.getmId(),
+                    ((EventsActivity)getActivity()).mFieldSelected.getmAddress(),
+                    ((EventsActivity)getActivity()).mFieldSelected.getmCoords(),
                     newEventName.getText().toString(),
-                    ((EventsActivity)getActivity()).mPlaceSelected.getShortNameLocality(),
+                    ((EventsActivity)getActivity()).mFieldSelected.getmCity(),
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
@@ -230,15 +231,14 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public void onStart() {
         super.onStart();
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
+        else
+            showContent();
+
         if (sInitialize) return;
         mNewEventPresenter.openEvent(getLoaderManager(), getArguments());
         sInitialize = true;
-
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID)) {
-            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
-        } else {
-            showContent();
-        }
     }
 
     private void setSportLayout(String sportId) {
@@ -250,6 +250,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         // Check if the sport doesn't need a field
         String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id);
         if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
+            showContent();
             ((EventsActivity)getActivity()).startMapActivityForResult(null);
         } else {
             // Sport needs a Field so load from ContentProvider and start MapActivity in retrieveFields()
@@ -275,7 +276,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     }
 
     @Override
-    public void showEventField(String fieldId, String city, LatLng coordinates) {
+    public void showEventField(String fieldId, String address, String city, LatLng coordinates) {
         if (city != null && !TextUtils.isEmpty(city)) {
             newEventAddress.setText(city);
         }
