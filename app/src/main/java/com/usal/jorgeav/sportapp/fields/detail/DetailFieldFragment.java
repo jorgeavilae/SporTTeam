@@ -75,6 +75,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_field, menu);
+        inflater.inflate(R.menu.menu_edit_delete, menu);
     }
 
     @Override
@@ -96,8 +97,9 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
                     .setNegativeButton("Cancelar", null);
             builder.create().show();
             return true;
-        }
-        return false;
+        } else
+            return true;
+//        return false;
     }
 
     @Override

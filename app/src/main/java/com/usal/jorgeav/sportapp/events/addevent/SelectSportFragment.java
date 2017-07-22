@@ -2,9 +2,9 @@ package com.usal.jorgeav.sportapp.events.addevent;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,13 +26,12 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 20/07/2017.
  */
 
-public class SelectSportFragment extends BaseFragment implements SelectSportsAdapter.OnSelectSportClickListener {
+public class SelectSportFragment extends BaseFragment {
     private final static String TAG = SelectSportFragment.class.getSimpleName();
 
     @BindView(R.id.recycler_list)
     RecyclerView sportsRecyclerViewList;
     private SelectSportsAdapter mSportAdapter;
-    int mSportSelectedPosition;
 
     public SelectSportFragment() {
         // Required empty public constructor
@@ -61,7 +60,11 @@ public class SelectSportFragment extends BaseFragment implements SelectSportsAda
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
 
-        mSportAdapter = new SelectSportsAdapter(null, this);
+        if (!(getActivity() instanceof SelectSportsAdapter.OnSelectSportClickListener)) {
+            Log.e(TAG, "onCreateView: getActivity() should implement SelectSportsAdapter.OnSelectSportClickListener");
+            getActivity().onBackPressed();
+        }
+        mSportAdapter = new SelectSportsAdapter(null, ((SelectSportsAdapter.OnSelectSportClickListener)getActivity()));
         sportsRecyclerViewList.setAdapter(mSportAdapter);
         sportsRecyclerViewList.setHasFixedSize(true);
         sportsRecyclerViewList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -94,11 +97,5 @@ public class SelectSportFragment extends BaseFragment implements SelectSportsAda
     public void onPause() {
         super.onPause();
         mSportAdapter.replaceData(null);
-    }
-
-    @Override
-    public void onSportClick(Sport sport) {
-        Fragment fragment = NewEventFragment.newInstance(null, sport.getmName());
-        mFragmentManagementListener.initFragment(fragment, true);
     }
 }

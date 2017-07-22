@@ -5,19 +5,23 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.SelectSportsAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
+import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantContract;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventContract;
+import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -33,13 +37,14 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  * Created by Jorge Avila on 26/06/2017.
  */
 
-public class EventsActivity extends BaseActivity {
+public class EventsActivity extends BaseActivity implements SelectSportsAdapter.OnSelectSportClickListener {
     private final static String TAG = EventsActivity.class.getSimpleName();
 
     public static final String EVENTID_PENDING_INTENT_EXTRA = "EVENTID_PENDING_INTENT_EXTRA";
 
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final int REQUEST_CODE_ADDRESS = 23;
+
     private static final String INSTANCE_FIELD_ID_SELECTED = "INSTANCE_FIELD_ID_SELECTED";
     public String mFieldId;
     private static final String INSTANCE_ADDRESS_SELECTED = "INSTANCE_ADDRESS_SELECTED";
@@ -59,6 +64,12 @@ public class EventsActivity extends BaseActivity {
             initFragment(DetailEventFragment.newInstance(eventId), true);
         }
         mNavigationView.setCheckedItem(R.id.nav_events);
+    }
+
+    @Override
+    public void onSportClick(Sport sport) {
+        Fragment fragment = NewEventFragment.newInstance(null, sport.getmName());
+        initFragment(fragment, true);
     }
 
     @Override
@@ -96,7 +107,6 @@ public class EventsActivity extends BaseActivity {
             mCity = savedInstanceState.getString(INSTANCE_CITY_SELECTED);
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_COORD_SELECTED))
             mCoord = savedInstanceState.getParcelable(INSTANCE_COORD_SELECTED);
-
     }
 
     @Override

@@ -52,8 +52,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     // Static prevent double initialization with same ID
     private static GoogleApiClient mGoogleApiClient;
     private ArrayList<Field> mCityFields;
-    private String mCity;
-    private LatLng mCoords;
     private String mCreator = "";
     private int mVotes = -1;
 
@@ -148,14 +146,14 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
                 fieldId = getArguments().getString(BUNDLE_FIELD_ID);
 
             if (mVotes < 0) mVotes = 0;
-            if (TextUtils.isEmpty(mCreator)) mCreator = Utiles.getCurrentUserId();
+            if (mCreator == null || TextUtils.isEmpty(mCreator)) mCreator = Utiles.getCurrentUserId();
             mNewFieldPresenter.addField(
                     fieldId,
                     newFieldName.getText().toString(),
                     getSportSelected(),
-                    newFieldAddress.getText().toString(),
-                    mCoords,
-                    mCity,
+                    ((FieldsActivity)getActivity()).mAddress,
+                    ((FieldsActivity)getActivity()).mCoord,
+                    ((FieldsActivity)getActivity()).mCity,
                     newFieldRate.getRating(),
                     mVotes,
                     newFieldOpenTime.getText().toString(),
@@ -254,8 +252,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     @Override
     public void showFieldPlace(String address, String city, LatLng coords) {
         newFieldAddress.setText(address);
-        mCity = city;
-        mCoords = coords;
     }
 
     @Override
@@ -290,8 +286,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     public void clearUI() {
         newFieldSport.setSelection(0);
         newFieldAddress.setText("");
-        mCity = null;
-        mCoords = null;
         newFieldName.setText("");
         newFieldOpenTime.setText("");
         newFieldCloseTime.setText("");

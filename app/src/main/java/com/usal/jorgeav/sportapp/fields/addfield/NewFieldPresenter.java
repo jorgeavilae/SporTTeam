@@ -38,16 +38,6 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
     }
 
     @Override
-    public void loadNearbyFields(LoaderManager loaderManager, Bundle b) {
-        String city = UtilesPreferences.getCurrentUserCity(mNewFieldView.getActivityContext());
-
-        if (city != null) {
-            FirebaseSync.loadFieldsFromCity(city);
-            loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY, b, this);
-        }
-    }
-
-    @Override
     public void addField(String id, String name, String sport, String address,
                          LatLng coords, String city, float rate, int votes,
                          String openTime, String closeTime, String userId) {
@@ -67,7 +57,10 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
 
             Log.d(TAG, "addField: "+field);
             FirebaseActions.addField(field);
-            ((FieldsActivity)mNewFieldView.getActivityContext()).mPlaceSelected = null;
+            ((FieldsActivity)mNewFieldView.getActivityContext()).mFieldId = null;
+            ((FieldsActivity)mNewFieldView.getActivityContext()).mAddress = null;
+            ((FieldsActivity)mNewFieldView.getActivityContext()).mCity = null;
+            ((FieldsActivity)mNewFieldView.getActivityContext()).mCoord = null;
             ((AppCompatActivity)mNewFieldView.getActivityContext()).onBackPressed();
         } else
             Toast.makeText(mNewFieldView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
@@ -129,6 +122,16 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
     }
 
     @Override
+    public void loadNearbyFields(LoaderManager loaderManager, Bundle b) {
+        String city = UtilesPreferences.getCurrentUserCity(mNewFieldView.getActivityContext());
+
+        if (city != null) {
+            FirebaseSync.loadFieldsFromCity(city);
+            loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY, b, this);
+        }
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case SportteamLoader.LOADER_FIELDS_FROM_CITY:
@@ -186,6 +189,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
             float rate = data.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);
             int votes = data.getInt(SportteamContract.FieldEntry.COLUMN_VOTES);
             mNewFieldView.showFieldRate(rate, votes);
+            mNewFieldView.showFieldCreator(data.getString(SportteamContract.FieldEntry.COLUMN_CREATOR));
         } else {
             mNewFieldView.clearUI();
         }
