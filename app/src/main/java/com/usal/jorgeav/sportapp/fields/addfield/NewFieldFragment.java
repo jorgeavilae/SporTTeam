@@ -51,7 +51,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
 
     // Static prevent double initialization with same ID
     private static GoogleApiClient mGoogleApiClient;
-    private ArrayList<Field> mCityFields;
     private String mCreator = "";
     private int mVotes = -1;
 
@@ -97,12 +96,12 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
 
     public static NewFieldFragment newInstance(@Nullable String fieldId, @Nullable String sportId) {
         NewFieldFragment nff = new NewFieldFragment();
-        if (fieldId != null && sportId != null) {
-            Bundle b = new Bundle();
+        Bundle b = new Bundle();
+        if (fieldId != null)
             b.putString(BUNDLE_FIELD_ID, fieldId);
+        if (sportId != null)
             b.putString(BUNDLE_SPORT_ID, sportId);
-            nff.setArguments(b);
-        }
+        nff.setArguments(b);
         sInitialize = false;
         return nff;
     }
@@ -193,14 +192,11 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             }
         });
 
-        mCityFields = null;
-        newFieldMapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mCityFields != null)
-                    ((FieldsActivity)getActivity()).startMapActivityForResult(mCityFields);
-            }
-        });
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_ID))
+            showFieldSport(getArguments().getString(BUNDLE_SPORT_ID));
+        showFieldPlace(((FieldsActivity)getActivity()).mAddress,
+                ((FieldsActivity)getActivity()).mCity,
+                ((FieldsActivity)getActivity()).mCoord);
 
         return root;
     }
@@ -240,7 +236,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
 
     @Override
     public void retrieveFields(ArrayList<Field> dataList) {
-        mCityFields = dataList;
+
     }
 
     @Override

@@ -1,17 +1,29 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.SelectSportsAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
+import com.usal.jorgeav.sportapp.data.Sport;
+import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldContract;
+import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
 
 import java.util.ArrayList;
 
@@ -19,7 +31,7 @@ import java.util.ArrayList;
  * Created by Jorge Avila on 26/06/2017.
  */
 
-public class FieldsActivity extends BaseActivity {
+public class FieldsActivity extends BaseActivity implements SelectSportsAdapter.OnSelectSportClickListener{
     public static final String TAG = FieldsActivity.class.getSimpleName();
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final int REQUEST_CODE_ADDRESS = 23;
@@ -39,6 +51,12 @@ public class FieldsActivity extends BaseActivity {
 
         initFragment(FieldsFragment.newInstance(), false);
         mNavigationView.setCheckedItem(R.id.nav_fields);
+    }
+
+    @Override
+    public void onSportClick(Sport sport) {
+        Fragment fragment = NewFieldFragment.newInstance(null, sport.getmName());
+        initFragment(fragment, true);
     }
 
     @Override
@@ -65,20 +83,52 @@ public class FieldsActivity extends BaseActivity {
                     mAddress = field.getmAddress();
                     mCity = field.getmCity();
                     mCoord = field.getmCoords();
+                    
+                    //Start dialog to add sport to this Field
+                    startDialogToAddSport();
                 } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
                     MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
                     mFieldId = null;
                     mAddress = myPlace.getAddress();
                     mCity = myPlace.getShortNameLocality();
                     mCoord = myPlace.getCoordinates();
+
+                    //Start new Field
+                    Fragment fragment = SelectSportFragment.newInstance();
+                    initFragment(fragment, true);
                 }
                 if (mDisplayedFragment instanceof NewFieldContract.View)
                     ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
             } else {
                 Toast.makeText(this, "You should select a place", Toast.LENGTH_SHORT).show();
             }
-            return;
         }
+    }
+
+    private void startDialogToAddSport() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        View view = getLayoutInflater().inflate(R.layout.add_sport_dialog, null);
+
+        ArrayAdapter sportsAdapter = ArrayAdapter.createFromResource(this, R.array.sport_id, android.R.layout.simple_spinner_item);
+        sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final Spinner sportSpinner = (Spinner) view.findViewById(R.id.add_sport_dialog_sport);
+        sportSpinner.setAdapter(sportsAdapter);
+
+        final RatingBar ratingBar = (RatingBar) view.findViewById(R.id.add_sport_dialog_rate);
+        dialog.setPositiveButton("Añadir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //TODO completar
+                Log.d(TAG, "onClick: añadir deporte "+sportSpinner.getSelectedItem().toString());
+                Log.d(TAG, "onClick: añadir puntuacion "+ratingBar.getRating());
+            }
+        });
+        dialog.setNegativeButton("Cancelar", null);
+
+        dialog.setTitle("Add Sport to this Field");
+        dialog.setView(view);
+        dialog.show();
     }
 
 

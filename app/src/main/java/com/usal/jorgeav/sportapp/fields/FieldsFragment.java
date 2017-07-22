@@ -17,8 +17,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.FieldsAdapter;
-import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
+import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,6 +32,7 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
 
     FieldsContract.Presenter mFieldsPresenter;
     FieldsAdapter mFieldsRecyclerAdapter;
+    ArrayList<Field> mFieldsList;
 
     @BindView(R.id.fields_new_field)
     Button fieldsNewField;
@@ -65,8 +70,8 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
         fieldsNewField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = NewFieldFragment.newInstance(null, null);
-                mFragmentManagementListener.initFragment(fragment, true);
+                if (mFieldsList != null)
+                    ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList);
             }
         });
         return root;
@@ -93,6 +98,7 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
 
     @Override
     public void showFields(Cursor cursor) {
+        mFieldsList = UtilesContentProvider.cursorToMultipleField(cursor);
         mFieldsRecyclerAdapter.replaceData(cursor);
         if (cursor != null && cursor.getCount() > 0) {
             fieldsRecyclerList.setVisibility(View.VISIBLE);
