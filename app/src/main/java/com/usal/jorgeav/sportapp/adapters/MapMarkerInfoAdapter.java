@@ -12,7 +12,6 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Jorge Avila on 21/07/2017.
@@ -46,25 +45,19 @@ public class MapMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
     private void populate(View view, Field field) {
         TextView textViewFieldId = (TextView) view.findViewById(R.id.fields_item_id);
-        textViewFieldId.setText(field.getmId());
+        textViewFieldId.setText(field.getId());
 
         TextView textViewFieldName = (TextView) view.findViewById(R.id.fields_item_name);
-        textViewFieldName.setText(field.getmName());
+        textViewFieldName.setText(field.getName());
 
         TextView textViewFieldAddress = (TextView) view.findViewById(R.id.fields_item_address);
-        textViewFieldAddress.setText(field.getmAddress());
-
-        TextView textViewFieldRating = (TextView) view.findViewById(R.id.fields_item_rating);
-        textViewFieldRating.setText(String.format(Locale.getDefault(), "%2.2f", field.getmRating()));
-
-        TextView textViewFieldSport = (TextView) view.findViewById(R.id.fields_item_sport);
-        textViewFieldSport.setText(field.getmSport());
+        textViewFieldAddress.setText(field.getAddress());
 
         TextView textViewFieldOpening = (TextView) view.findViewById(R.id.fields_item_opening);
-        textViewFieldOpening.setText(UtilesTime.millisToTimeString(field.getmOpeningTime()));
+        textViewFieldOpening.setText(UtilesTime.millisToTimeString(field.getOpening_time()));
 
         TextView textViewFieldClosing = (TextView) view.findViewById(R.id.fields_item_closing);
-        textViewFieldClosing.setText(UtilesTime.millisToTimeString(field.getmClosingTime()));
+        textViewFieldClosing.setText(UtilesTime.millisToTimeString(field.getClosing_time()));
 
     }
 }

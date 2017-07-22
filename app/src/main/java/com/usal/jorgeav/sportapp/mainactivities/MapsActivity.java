@@ -120,12 +120,12 @@ public class MapsActivity extends AppCompatActivity implements
         //Populate map with Fields
         for (int i = 0; i < mFieldsList.size(); i++) {
             Field f = mFieldsList.get(i);
-            LatLng latLong = f.getmCoords();
+            LatLng latLong = new LatLng(f.getCoord_latitude(), f.getCoord_longitude());
             if (latLong != null) {
                 float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
                 Marker m = mMap.addMarker(new MarkerOptions()
                         .position(latLong)
-                        .title(f.getmName())
+                        .title(f.getName())
                         .icon(BitmapDescriptorFactory.defaultMarker(hue)));
                 m.setTag(i);
                 mMarkersList.add(m);
@@ -237,8 +237,8 @@ public class MapsActivity extends AppCompatActivity implements
             mFieldSelected = mFieldsList.get(position);
 
             // Move camera
-            LatLng southwest = new LatLng(mFieldSelected.getmCoords().latitude-0.00135, mFieldSelected.getmCoords().longitude-0.00135);
-            LatLng northeast = new LatLng(mFieldSelected.getmCoords().latitude+0.00135, mFieldSelected.getmCoords().longitude+0.00135);
+            LatLng southwest = new LatLng(mFieldSelected.getCoord_latitude()-0.00135, mFieldSelected.getCoord_longitude()-0.00135);
+            LatLng northeast = new LatLng(mFieldSelected.getCoord_latitude()+0.00135, mFieldSelected.getCoord_longitude()+0.00135);
             LatLngBounds llb = new LatLngBounds(southwest, northeast);
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
             marker.showInfoWindow();

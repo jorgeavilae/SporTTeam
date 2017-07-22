@@ -24,8 +24,8 @@ public class Event implements Parcelable {
     Double coord_longitude;
     Long date;
     String owner;
-    int total_players;
-    int empty_players;
+    Long total_players;
+    Long empty_players;
     HashMap<String, Boolean> participants;
     HashMap<String, SimulatedUser> simulated_participants;
 
@@ -34,7 +34,7 @@ public class Event implements Parcelable {
     }
 
     public Event(String mId, String mSport, String mField, String address, LatLng coord, String mName, String mCity,
-                 Long mDate, String mOwner, int mTotalPlayers, int mEmptyPlayers,
+                 Long mDate, String mOwner, Long mTotalPlayers, Long mEmptyPlayers,
                  HashMap<String, Boolean> participants, HashMap<String, SimulatedUser> simulated_participants) {
         this.event_id = mId;
         this.sport_id = mSport;
@@ -101,15 +101,15 @@ public class Event implements Parcelable {
         return owner;
     }
 
-    public int getTotal_players() {
+    public Long getTotal_players() {
         return total_players;
     }
 
-    public int getEmpty_players() {
+    public Long getEmpty_players() {
         return empty_players;
     }
 
-    public void setEmpty_players(int empty_players) {
+    public void setEmpty_players(Long empty_players) {
         this.empty_players = empty_players;
     }
 
@@ -222,8 +222,8 @@ public class Event implements Parcelable {
         result = 31 * result + (coord_longitude != null ? coord_longitude.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
         result = 31 * result + (owner != null ? owner.hashCode() : 0);
-        result = 31 * result + total_players;
-        result = 31 * result + empty_players;
+        result = 31 * result + (total_players != null ? total_players.hashCode() : 0);
+        result = 31 * result + (empty_players != null ? empty_players.hashCode() : 0);
         result = 31 * result + (participants != null ? participants.hashCode() : 0);
         result = 31 * result + (simulated_participants != null ? simulated_participants.hashCode() : 0);
         return result;
@@ -247,8 +247,8 @@ public class Event implements Parcelable {
         dest.writeValue(this.coord_longitude);
         dest.writeValue(this.date);
         dest.writeString(this.owner);
-        dest.writeInt(this.total_players);
-        dest.writeInt(this.empty_players);
+        dest.writeValue(this.total_players);
+        dest.writeValue(this.empty_players);
         dest.writeSerializable(this.participants);
         dest.writeSerializable(this.simulated_participants);
     }
@@ -264,8 +264,8 @@ public class Event implements Parcelable {
         this.coord_longitude = (Double) in.readValue(Double.class.getClassLoader());
         this.date = (Long) in.readValue(Long.class.getClassLoader());
         this.owner = in.readString();
-        this.total_players = in.readInt();
-        this.empty_players = in.readInt();
+        this.total_players = (Long) in.readValue(Long.class.getClassLoader());
+        this.empty_players = (Long) in.readValue(Long.class.getClassLoader());
         this.participants = (HashMap<String, Boolean>) in.readSerializable();
         this.simulated_participants = (HashMap<String, SimulatedUser>) in.readSerializable();
     }

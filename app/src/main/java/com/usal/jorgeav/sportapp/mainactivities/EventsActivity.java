@@ -119,10 +119,10 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
                 // or an address (MyPlace) to meet for non-field sports
                 if (data.hasExtra(MapsActivity.FIELD_SELECTED_EXTRA)) {
                     Field field = data.getParcelableExtra(MapsActivity.FIELD_SELECTED_EXTRA);
-                    mFieldId = field.getmId();
-                    mAddress = field.getmAddress();
-                    mCity = field.getmCity();
-                    mCoord = field.getmCoords();
+                    mFieldId = field.getId();
+                    mAddress = field.getAddress();
+                    mCity = field.getCity();
+                    mCoord = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
                 } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
                     MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
                     mFieldId = null;

@@ -1,7 +1,5 @@
 package com.usal.jorgeav.sportapp.data;
 
-import android.text.TextUtils;
-
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
 import java.util.HashMap;
@@ -12,144 +10,139 @@ import java.util.Map;
  */
 
 public class Alarm {
-    String mId;
-    String mSport;
-    String mField;
-    String mCity;
-    Long mDateFrom;
-    Long mDateTo;
-    Long mTotalPlayersFrom;
-    Long mTotalPlayersTo;
-    Long mEmptyPlayersFrom;
-    Long mEmptyPlayersTo;
+    String id;
+    String sport_id;
+    String field_id;
+    String city;
+    Long date_from;
+    Long date_to;
+    Long total_players_from;
+    Long total_players_to;
+    Long empty_players_from;
+    Long empty_players_to;
 
     public Alarm(){}
 
-    public Alarm(String mId, String mSport, String mField, String mCity,
-                 Long mDateFrom, Long mDateTo,
-                 Long mTotalPlayersFrom, Long mTotalPlayersTo,
-                 Long mEmptyPlayersFrom, Long mEmptyPlayersTo) {
-        this.mId = mId;
-        this.mSport = mSport;
-        this.mField = mField;
-        this.mCity = mCity;
-        this.mDateFrom = mDateFrom;
-        this.mDateTo = mDateTo;
-        this.mTotalPlayersFrom = mTotalPlayersFrom;
-        this.mTotalPlayersTo = mTotalPlayersTo;
-        this.mEmptyPlayersFrom = mEmptyPlayersFrom;
-        this.mEmptyPlayersTo = mEmptyPlayersTo;
+    public Alarm(String id, String sport_id, String field_id, String city, Long date_from, Long date_to, Long total_players_from, Long total_players_to, Long empty_players_from, Long empty_players_to) {
+        this.id = id;
+        this.sport_id = sport_id;
+        this.field_id = field_id;
+        this.city = city;
+        this.date_from = date_from;
+        this.date_to = date_to;
+        this.total_players_from = total_players_from;
+        this.total_players_to = total_players_to;
+        this.empty_players_from = empty_players_from;
+        this.empty_players_to = empty_players_to;
     }
 
-    public String getmId() {
-        return mId;
+    public String getId() {
+        return id;
     }
 
-    public void setmId(String mId) {
-        this.mId = mId;
+    public String getSport_id() {
+        return sport_id;
     }
 
-    public void setmSport(String mSport) {
-        this.mSport = mSport;
+    public String getField_id() {
+        return field_id;
     }
 
-    public void setmField(String mField) {
-        if (!TextUtils.isEmpty(mField)) this.mField = mField;
-        else this.mField = null;
+    public String getCity() {
+        return city;
     }
 
-    public void setmCity(String mCity) {
-        this.mCity = mCity;
+    public Long getDate_from() {
+        return date_from;
     }
 
-    public void setmDateFrom(Long mDateFrom) {
-        this.mDateFrom = mDateFrom;
+    public Long getDate_to() {
+        return date_to;
     }
 
-    public void setmDateTo(Long mDateTo) {
-        if (mDateTo > 0) this.mDateTo = mDateTo;
-        else this.mDateTo = null;
+    public Long getTotal_players_from() {
+        return total_players_from;
     }
 
-    public void setmTotalPlayersFrom(Long mTotalPlayersFrom) {
-        this.mTotalPlayersFrom = mTotalPlayersFrom;
+    public Long getTotal_players_to() {
+        return total_players_to;
     }
 
-    public void setmTotalPlayersTo(Long mTotalPlayersTo) {
-        this.mTotalPlayersTo = mTotalPlayersTo;
+    public Long getEmpty_players_from() {
+        return empty_players_from;
     }
 
-    public void setmEmptyPlayersFrom(Long mEmptyPlayersFrom) {
-        this.mEmptyPlayersFrom = mEmptyPlayersFrom;
+    public Long getEmpty_players_to() {
+        return empty_players_to;
     }
 
-    public void setmEmptyPlayersTo(Long mEmptyPlayersTo) {
-        this.mEmptyPlayersTo = mEmptyPlayersTo;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getmSport() {
-        return mSport;
+    public void setSport_id(String sport_id) {
+        this.sport_id = sport_id;
     }
 
-    public String getmField() {
-        return mField;
+    public void setField_id(String field_id) {
+        this.field_id = field_id;
     }
 
-    public String getmCity() {
-        return mCity;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    public Long getmDateFrom() {
-        return mDateFrom;
+    public void setDate_from(Long date_from) {
+        this.date_from = date_from;
     }
 
-    public Long getmDateTo() {
-        return mDateTo;
+    public void setDate_to(Long date_to) {
+        this.date_to = date_to;
     }
 
-    public Long getmTotalPlayersFrom() {
-        return mTotalPlayersFrom;
+    public void setTotal_players_from(Long total_players_from) {
+        this.total_players_from = total_players_from;
     }
 
-    public Long getmTotalPlayersTo() {
-        return mTotalPlayersTo;
+    public void setTotal_players_to(Long total_players_to) {
+        this.total_players_to = total_players_to;
     }
 
-    public Long getmEmptyPlayersFrom() {
-        return mEmptyPlayersFrom;
+    public void setEmpty_players_from(Long empty_players_from) {
+        this.empty_players_from = empty_players_from;
     }
 
-    public Long getmEmptyPlayersTo() {
-        return mEmptyPlayersTo;
+    public void setEmpty_players_to(Long empty_players_to) {
+        this.empty_players_to = empty_players_to;
     }
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put(FirebaseDBContract.Alarm.SPORT, this.mSport);
-        result.put(FirebaseDBContract.Alarm.FIELD, this.mField);
-        result.put(FirebaseDBContract.Alarm.CITY, this.mCity);
-        result.put(FirebaseDBContract.Alarm.DATE_FROM, this.mDateFrom);
-        result.put(FirebaseDBContract.Alarm.DATE_TO, this.mDateTo);
-        result.put(FirebaseDBContract.Alarm.TOTAL_PLAYERS_FROM, this.mTotalPlayersFrom);
-        result.put(FirebaseDBContract.Alarm.TOTAL_PLAYERS_TO, this.mTotalPlayersTo);
-        result.put(FirebaseDBContract.Alarm.EMPTY_PLAYERS_FROM, this.mEmptyPlayersFrom);
-        result.put(FirebaseDBContract.Alarm.EMPTY_PLAYERS_TO, this.mEmptyPlayersTo);
+        result.put(FirebaseDBContract.Alarm.SPORT, this.sport_id);
+        result.put(FirebaseDBContract.Alarm.FIELD, this.field_id);
+        result.put(FirebaseDBContract.Alarm.CITY, this.city);
+        result.put(FirebaseDBContract.Alarm.DATE_FROM, this.date_from);
+        result.put(FirebaseDBContract.Alarm.DATE_TO, this.date_to);
+        result.put(FirebaseDBContract.Alarm.TOTAL_PLAYERS_FROM, this.total_players_from);
+        result.put(FirebaseDBContract.Alarm.TOTAL_PLAYERS_TO, this.total_players_to);
+        result.put(FirebaseDBContract.Alarm.EMPTY_PLAYERS_FROM, this.empty_players_from);
+        result.put(FirebaseDBContract.Alarm.EMPTY_PLAYERS_TO, this.empty_players_to);
         return result;
     }
 
     @Override
     public String toString() {
         return "Alarm{" +
-                "mId='" + mId + '\'' +
-                ", mSport='" + mSport + '\'' +
-                ", mField='" + mField + '\'' +
-                ", mCity='" + mCity + '\'' +
-                ", mDateFrom=" + mDateFrom +
-                ", mDateTo=" + mDateTo +
-                ", mTotalPlayersFrom=" + mTotalPlayersFrom +
-                ", mTotalPlayersTo=" + mTotalPlayersTo +
-                ", mEmptyPlayersFrom=" + mEmptyPlayersFrom +
-                ", mEmptyPlayersTo=" + mEmptyPlayersTo +
+                "id='" + id + '\'' +
+                ", sport_id='" + sport_id + '\'' +
+                ", field_id='" + field_id + '\'' +
+                ", city='" + city + '\'' +
+                ", date_from=" + date_from +
+                ", date_to=" + date_to +
+                ", total_players_from=" + total_players_from +
+                ", total_players_to=" + total_players_to +
+                ", empty_players_from=" + empty_players_from +
+                ", empty_players_to=" + empty_players_to +
                 '}';
     }
 }

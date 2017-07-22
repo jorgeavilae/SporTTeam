@@ -59,7 +59,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 && isValidOwner(myUid) && isDateTimeCorrect(dateMillis, timeMillis) && isPlayersCorrect(total, empty)) {
             Event event = new Event(
                     id, sport, field, address, coord, name, city, dateMillis + timeMillis, myUid,
-                    Integer.valueOf(total), Integer.valueOf(empty), participants, simulatedParticipants);
+                    Long.valueOf(total), Long.valueOf(empty), participants, simulatedParticipants);
 
             Log.d(TAG, "addEvent: "+event);
             if(TextUtils.isEmpty(event.getEvent_id()))
@@ -94,10 +94,10 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId, sportId);
 
         if (field != null
-                && field.getmAddress().equals(address)
-                && field.getmCity().equals(city)
-                && field.getmCoords().latitude == coordinates.latitude
-                && field.getmCoords().longitude == coordinates.longitude)
+                && field.getAddress().equals(address)
+                && field.getCity().equals(city)
+                && field.getCoord_latitude() == coordinates.latitude
+                && field.getCoord_longitude() == coordinates.longitude)
             return true;
         else {
             Log.e(TAG, "isValidField: not valid");

@@ -30,7 +30,6 @@ import com.usal.jorgeav.sportapp.utils.UtilesDataSnapshot;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -645,12 +644,18 @@ public class FirebaseSync {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
-                    Alarm a = UtilesDataSnapshot.dataSnapshotToAlarm(dataSnapshot);
+                    Alarm a = dataSnapshot.getValue(Alarm.class);
+                    if (a == null) {
+                        Log.e(TAG, "loadAlarmsFromMyAlarms: onChildAddedExecutor: Error parsing alarm");
+                        return;
+                    }
+                    a.setId(dataSnapshot.getKey());
+
                     ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
-                    if (a.getmField() != null)
-                        loadAField(a.getmField());
+                    if (a.getField_id() != null)
+                        loadAField(a.getField_id());
                 }
 
             }
@@ -760,7 +765,12 @@ public class FirebaseSync {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            User anUser = UtilesDataSnapshot.dataSnapshotToUser(dataSnapshot);
+                            User anUser = dataSnapshot.child(FirebaseDBContract.DATA).getValue(User.class);
+                            if (anUser == null) {
+                                Log.e(TAG, "loadAProfile: onDataChangeExecutor: Error parsing user");
+                                return;
+                            }
+                            anUser.setUid(dataSnapshot.getKey());
 
                             ContentValues cvData = UtilesDataSnapshot.dataUserToContentValues(anUser);
                             MyApplication.getAppContext().getContentResolver()
@@ -770,7 +780,7 @@ public class FirebaseSync {
                             MyApplication.getAppContext().getContentResolver()
                                     .delete(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
                                             SportteamContract.UserSportEntry.USER_ID + " = ? ",
-                                            new String[]{anUser.getmId()});
+                                            new String[]{anUser.getUid()});
                             MyApplication.getAppContext().getContentResolver()
                                     .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
                                             cvSports.toArray(new ContentValues[cvSports.size()]));
@@ -804,7 +814,12 @@ public class FirebaseSync {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            User anUser = UtilesDataSnapshot.dataSnapshotToUser(dataSnapshot);
+                            User anUser = dataSnapshot.child(FirebaseDBContract.DATA).getValue(User.class);
+                            if (anUser == null) {
+                                Log.e(TAG, "loadAProfileAndNotify: onDataChangeExecutor: Error parsing user");
+                                return;
+                            }
+                            anUser.setUid(dataSnapshot.getKey());
 
                             ContentValues cvData = UtilesDataSnapshot.dataUserToContentValues(anUser);
                             MyApplication.getAppContext().getContentResolver()
@@ -814,7 +829,7 @@ public class FirebaseSync {
                             MyApplication.getAppContext().getContentResolver()
                                     .delete(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
                                             SportteamContract.UserSportEntry.USER_ID + " = ? ",
-                                            new String[]{anUser.getmId()});
+                                            new String[]{anUser.getUid()});
                             MyApplication.getAppContext().getContentResolver()
                                     .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
                                             cvSports.toArray(new ContentValues[cvSports.size()]));
@@ -847,12 +862,18 @@ public class FirebaseSync {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            Alarm a = UtilesDataSnapshot.dataSnapshotToAlarm(dataSnapshot);
+                            Alarm a = dataSnapshot.getValue(Alarm.class);
+                            if (a == null) {
+                                Log.e(TAG, "loadAnAlarm: onChildAddedExecutor: Error parsing alarm");
+                                return;
+                            }
+                            a.setId(dataSnapshot.getKey());
+
                             ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
-                            if (a.getmField() != null)
-                                loadAField(a.getmField());
+                            if (a.getField_id() != null)
+                                loadAField(a.getField_id());
                         }
                     }
 
@@ -875,12 +896,18 @@ public class FirebaseSync {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            final Alarm a = UtilesDataSnapshot.dataSnapshotToAlarm(dataSnapshot);
+                            final Alarm a = dataSnapshot.getValue(Alarm.class);
+                            if (a == null) {
+                                Log.e(TAG, "loadAnAlarmAndNotify: onChildAddedExecutor: Error parsing alarm");
+                                return;
+                            }
+                            a.setId(dataSnapshot.getKey());
+
                             ContentValues cv = UtilesDataSnapshot.alarmToContentValues(a);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
-                            if (a.getmField() != null)
-                                loadAField(a.getmField());
+                            if (a.getField_id() != null)
+                                loadAField(a.getField_id());
 
 
                             String eventId = notification.getExtra_data_two();
@@ -893,7 +920,10 @@ public class FirebaseSync {
                                 protected void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists()) {
                                         Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
-                                        if (e == null) return;
+                                        if (e == null) {
+                                            Log.e(TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Error parsing Event");
+                                            return;
+                                        }
                                         e.setEvent_id(dataSnapshot.getKey());
 
                                         ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
@@ -941,7 +971,10 @@ public class FirebaseSync {
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
-                            if (e == null) return;
+                            if (e == null) {
+                                Log.e(TAG, "loadAnEvent: onDataChangeExecutor: Error parsing Event");
+                                return;
+                            }
                             e.setEvent_id(dataSnapshot.getKey());
 
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
@@ -977,7 +1010,10 @@ public class FirebaseSync {
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
-                            if (e == null) return;
+                            if (e == null) {
+                                Log.e(TAG, "loadAnEventAndNotify: onDataChangeExecutor: Error parsing Event");
+                                return;
+                            }
                             e.setEvent_id(dataSnapshot.getKey());
 
                             ContentValues cv = UtilesDataSnapshot.eventToContentValues(e);
@@ -1019,13 +1055,19 @@ public class FirebaseSync {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            ArrayList<ContentValues> cvArray = new ArrayList<>();
-                            List<Field> fields = UtilesDataSnapshot.dataSnapshotToFieldList(dataSnapshot);
-                            cvArray.addAll(UtilesDataSnapshot.fieldsListToContentValues(fields));
+                            Field field = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Field.class);
+                            if (field == null) {
+                                Log.e(TAG, "loadAField: onDataChangeExecutor: Error parsing Field");
+                                return;
+                            }
+                            field.setId(dataSnapshot.getKey());
+
+                            ContentValues cv = UtilesDataSnapshot.fieldToContentValues(field);
 
                             MyApplication.getAppContext().getContentResolver()
-                                    .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                                            cvArray.toArray(new ContentValues[cvArray.size()]));
+                                    .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cv);
+
+                            //TODO insert sports field
                         }
                     }
 
@@ -1081,14 +1123,21 @@ public class FirebaseSync {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            ArrayList<ContentValues> cvArray = new ArrayList<>();
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                List<Field> fields = UtilesDataSnapshot.dataSnapshotToFieldList(data);
-                                cvArray.addAll(UtilesDataSnapshot.fieldsListToContentValues(fields));
+                                Field field = data.child(FirebaseDBContract.DATA).getValue(Field.class);
+                                if (field == null) {
+                                    Log.e(TAG, "loadAField: onDataChangeExecutor: Error parsing Field");
+                                    return;
+                                }
+                                field.setId(data.getKey());
+
+                                ContentValues cv = UtilesDataSnapshot.fieldToContentValues(field);
+
+                                MyApplication.getAppContext().getContentResolver()
+                                        .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cv);
+
+                                //TODO insert sports field
                             }
-                            MyApplication.getAppContext().getContentResolver()
-                                    .bulkInsert(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                                            cvArray.toArray(new ContentValues[cvArray.size()]));
                         }
                     }
 
@@ -1110,7 +1159,10 @@ public class FirebaseSync {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 Event e = data.child(FirebaseDBContract.DATA).getValue(Event.class);
-                                if (e == null) return;
+                                if (e == null) {
+                                    Log.e(TAG, "loadEventsFromCity: onDataChangeExecutor: Error parsing Event");
+                                    return;
+                                }
                                 e.setEvent_id(data.getKey());
                                 String myUserId = Utiles.getCurrentUserId();
 
@@ -1153,7 +1205,12 @@ public class FirebaseSync {
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                User anUser = UtilesDataSnapshot.dataSnapshotToUser(data);
+                                User anUser = data.child(FirebaseDBContract.DATA).getValue(User.class);
+                                if (anUser == null) {
+                                    Log.e(TAG, "loadUsersFromCity: onDataChangeExecutor: Error parsing user");
+                                    return;
+                                }
+                                anUser.setUid(data.getKey());
 
                                 ContentValues cvData = UtilesDataSnapshot.dataUserToContentValues(anUser);
                                 MyApplication.getAppContext().getContentResolver()
@@ -1187,7 +1244,13 @@ public class FirebaseSync {
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                User anUser = UtilesDataSnapshot.dataSnapshotToUser(data);
+                                User anUser = data.child(FirebaseDBContract.DATA).getValue(User.class);
+                                if (anUser == null) {
+                                    Log.e(TAG, "loadUsersWithName: onDataChangeExecutor: Error parsing user");
+                                    return;
+                                }
+                                anUser.setUid(data.getKey());
+
                                 ContentValues cvData = UtilesDataSnapshot.dataUserToContentValues(anUser);
                                 MyApplication.getAppContext().getContentResolver()
                                         .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);

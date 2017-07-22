@@ -41,7 +41,8 @@ public class Utiles {
     public static int searchCoordinatesInFieldList(List<Field> fieldsList, LatLng coordinates) {
         for (int i = 0; i < fieldsList.size(); i++) {
             Field f = fieldsList.get(i);
-            if (f.getmCoords().equals(coordinates)) return i;
+            if (f.getCoord_latitude() == coordinates.latitude
+                    && f.getCoord_longitude() == coordinates.longitude) return i;
         }
         return -1;
     }

@@ -73,7 +73,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -503,14 +505,11 @@ public class NewUserActivity extends AppCompatActivity implements
                                     .build();
                             fUser.updateProfile(profileUpdates);
 
-                            User user = new User(fUser.getUid(),
-                                    fUser.getEmail(),
-                                    newUserName.getText().toString(),
-                                    newUserCitySelectedName,
-                                    newUserCitySelectedCoord,
-                                    Integer.parseInt(newUserAge.getText().toString()),
-                                    downloadUrl.toString(),
-                                    sports);
+                            User user = new User(fUser.getUid(), fUser.getEmail(),
+                                    newUserName.getText().toString(), newUserCitySelectedName,
+                                    newUserCitySelectedCoord.latitude, newUserCitySelectedCoord.longitude,
+                                    Long.parseLong(newUserAge.getText().toString()), downloadUrl.toString(),
+                                    sportsArrayToHashMap(sports));
                             FirebaseActions.addUser(user);
 
                             // Return to LoginActivity
@@ -526,6 +525,13 @@ public class NewUserActivity extends AppCompatActivity implements
         };
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(this, onCompleteListener);
+    }
+
+    private Map<String,Double> sportsArrayToHashMap(List<Sport> sports) {
+        HashMap<String, Double> result = new HashMap<>();
+        for (Sport s : sports)
+            result.put(s.getmName(), (double) s.getPunctuation());
+        return result;
     }
 
     @Override

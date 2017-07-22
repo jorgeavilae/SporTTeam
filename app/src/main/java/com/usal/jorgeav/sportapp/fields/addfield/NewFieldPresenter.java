@@ -37,6 +37,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
         this.mNewFieldView = view;
     }
 
+    //TODO cambiar sport por una lista de sports
     @Override
     public void addField(String id, String name, String sport, String address,
                          LatLng coords, String city, float rate, int votes,
@@ -52,8 +53,8 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
         if (isValidSport(sport) && isValidAddress(address, city) && isValidName(name)
                 && isValidCoords(coords) && isTimesCorrect(openMillis, closeMillis)
                 && isPunctuationValid(rate, votes)&& isValidCreator(userId)) {
-            Field field = new Field(id, name, sport, address, coords, city,
-                    rate, votes, openMillis, closeMillis, userId);
+            Field field = new Field(id, name, address, coords.latitude, coords.longitude, city,
+                    openMillis, closeMillis, userId, null); //TODO cambiar este null
 
             Log.d(TAG, "addField: "+field);
             FirebaseActions.addField(field);

@@ -59,7 +59,7 @@ public class FirebaseActions {
     }
     public static void addUser(User user){
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
-                .child(user.getmId()).setValue(user.toMap());
+                .child(user.getUid()).setValue(user.toMap());
     }
     public static void updateSports(String myUid, HashMap<String, Float> sportsMap) {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
@@ -147,15 +147,15 @@ public class FirebaseActions {
 
     // Add Event
     public static void addField(Field field) {
-        if(TextUtils.isEmpty(field.getmId())) {
+        if(TextUtils.isEmpty(field.getId())) {
             //Create fieldId
             DatabaseReference fieldTable = FirebaseDatabase.getInstance()
                     .getReference(FirebaseDBContract.TABLE_FIELDS);
-            field.setmId(fieldTable.push().getKey());
+            field.setId(fieldTable.push().getKey());
         }
 
         //Set Field in Field Table
-        String fieldInFieldTable = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + field.getmId();
+        String fieldInFieldTable = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + field.getId();
 
         //Set Field created in creatorId
 
@@ -172,11 +172,11 @@ public class FirebaseActions {
                 .child(myUserId)
                 .child(FirebaseDBContract.User.ALARMS);
 
-        if (TextUtils.isEmpty(alarm.getmId()))
-            alarm.setmId(myUserAlarmsRef.push().getKey());
+        if (TextUtils.isEmpty(alarm.getId()))
+            alarm.setId(myUserAlarmsRef.push().getKey());
 
         // Listener is attached to this reference so it doesn't need to reload
-        myUserAlarmsRef.child(alarm.getmId()).setValue(alarm.toMap());
+        myUserAlarmsRef.child(alarm.getId()).setValue(alarm.toMap());
     }
 
     // It couldn't check if children exists, but if it set a value on non-existent child
@@ -1023,7 +1023,7 @@ public class FirebaseActions {
             if (eventId != null) {
                 FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                         .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
-                        .child(a.getmId() + FirebaseDBContract.User.ALARMS)
+                        .child(a.getId() + FirebaseDBContract.User.ALARMS)
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1041,12 +1041,12 @@ public class FirebaseActions {
                                     Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_ALARM_EVENT;
                                     MyNotification n = new MyNotification(
                                             notificationType, false, notificationTitle,
-                                            notificationMessage, a.getmId(), eventId,
+                                            notificationMessage, a.getId(), eventId,
                                             type, currentTime);
 
                                     FirebaseDatabase.getInstance().getReference().child(FirebaseDBContract.TABLE_USERS)
                                             .child(finalMyUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
-                                            .child(a.getmId() + FirebaseDBContract.User.ALARMS)
+                                            .child(a.getId() + FirebaseDBContract.User.ALARMS)
                                             .setValue(n.toMap());
                                 }
                             }

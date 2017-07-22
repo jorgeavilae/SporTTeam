@@ -65,7 +65,7 @@ public class UtilesNotification {
                     .setContentText(fNotification.getMessage())
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
                     .setDefaults(Notification.DEFAULT_ALL)
-                    .setContentIntent(contentProfileIntent(context, user.getmId()))
+                    .setContentIntent(contentProfileIntent(context, user.getUid()))
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setAutoCancel(true);
 
@@ -133,7 +133,7 @@ public class UtilesNotification {
                     .setContentText(fNotification.getMessage())
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
                     .setDefaults(Notification.DEFAULT_VIBRATE)
-                    .setContentIntent(contentAlarmIntent(context, alarm.getmId()))
+                    .setContentIntent(contentAlarmIntent(context, alarm.getId()))
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setAutoCancel(true);
 

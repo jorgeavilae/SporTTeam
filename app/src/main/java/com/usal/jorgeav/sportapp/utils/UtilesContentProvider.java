@@ -90,20 +90,16 @@ public class UtilesContentProvider {
         while (cursor.moveToNext()) {
             String fieldId = cursor.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
             String name = cursor.getString(SportteamContract.FieldEntry.COLUMN_NAME);
-            String sport = cursor.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
             String address = cursor.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
-            double lat = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
-            double lng = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
-            Log.d(TAG, "cursorToMultipleField: "+lat+" "+lng);
-            LatLng coords = null; if (lat != 0 && lng != 0) coords = new LatLng(lat, lng);
+            Double lat = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
+            Double lng = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
             String city = cursor.getString(SportteamContract.FieldEntry.COLUMN_CITY);
-            float rating = cursor.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);
-            int votes = cursor.getInt(SportteamContract.FieldEntry.COLUMN_VOTES);
-            long openTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
-            long closeTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
+            Long openTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
+            Long closeTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
             String creator = cursor.getString(SportteamContract.FieldEntry.COLUMN_CREATOR);
 
-            result.add(new Field(fieldId, name, sport, address, coords, city, rating, votes, openTime, closeTime, creator));
+            result.add(new Field(fieldId, name, address, lat, lng, city,
+                    openTime, closeTime, creator, null)); //TODO cambiar este null
         }
         return result;
     }
@@ -116,16 +112,12 @@ public class UtilesContentProvider {
                 String email = c.getString(SportteamContract.UserEntry.COLUMN_EMAIL);
                 String name = c.getString(SportteamContract.UserEntry.COLUMN_NAME);
                 String city = c.getString(SportteamContract.UserEntry.COLUMN_CITY);
-                double latitude = c.getDouble(SportteamContract.UserEntry.COLUMN_CITY_LATITUDE);
-                double longitude = c.getDouble(SportteamContract.UserEntry.COLUMN_CITY_LONGITUDE);
-                Log.d(TAG, "getUserFromContentProvider: "+latitude);
-                Log.d(TAG, "getUserFromContentProvider: "+longitude);
-                int age = c.getInt(SportteamContract.UserEntry.COLUMN_AGE);
+                Double latitude = c.getDouble(SportteamContract.UserEntry.COLUMN_CITY_LATITUDE);
+                Double longitude = c.getDouble(SportteamContract.UserEntry.COLUMN_CITY_LONGITUDE);
+                Long age = c.getLong(SportteamContract.UserEntry.COLUMN_AGE);
                 String photoUrl = c.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
 
-                LatLng coord = null;
-                if (latitude > 0 && longitude > 0) coord = new LatLng(latitude, longitude);
-                u = new User(userId, email, name, city, coord, age, photoUrl, null);
+                u = new User(userId, email, name, city, latitude, longitude, age, photoUrl, null);
             } else if (c.getCount() == 0)
                 Log.e(TAG, "getUserFromContentProvider: User with ID "+userId+" not found");
             else
@@ -135,6 +127,7 @@ public class UtilesContentProvider {
             Log.e(TAG, "getUserFromContentProvider: Error with user "+userId);
         return u;
     }
+
     static String getCurrentUserCityFromContentProvider() {
         String currentUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(currentUserID)) return null;
@@ -152,6 +145,7 @@ public class UtilesContentProvider {
         }
         return result;
     }
+
     static LatLng getCurrentUserCityCoordsFromContentProvider() {
         String currentUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(currentUserID)) return null;
@@ -187,8 +181,8 @@ public class UtilesContentProvider {
                 String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
                 Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
                 String owner = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
-                int totalPl = c.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
-                int emptyPl = c.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
+                Long totalPl = c.getLong(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
+                Long emptyPl = c.getLong(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
 
                 e = new Event(eventId, sport, field, address, coord, name, city, date, owner, totalPl, emptyPl, null, null);
             } else if (c.getCount() == 0)
@@ -208,24 +202,22 @@ public class UtilesContentProvider {
             if (c.getCount() == 1 && c.moveToFirst()) {
                 String name = c.getString(SportteamContract.FieldEntry.COLUMN_NAME);
                 String address = c.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
-                double latitude = c.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
-                double longitude = c.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
-                LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+                Double lat = c.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
+                Double lng = c.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
                 String city = c.getString(SportteamContract.FieldEntry.COLUMN_CITY);
-                float rating = c.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);
-                int votes = c.getInt(SportteamContract.FieldEntry.COLUMN_VOTES);
-                long opening = c.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
-                long closing = c.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
+                Long openTime = c.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
+                Long closeTime = c.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
                 String creator = c.getString(SportteamContract.FieldEntry.COLUMN_CREATOR);
 
-                f = new Field(fieldId, name, sportId, address, coord, city, rating, votes, opening, closing, creator);
+                f = new Field(fieldId, name, address, lat, lng, city,
+                        openTime, closeTime, creator, null); //TODO cambiar este null
                 } else if (c.getCount() == 0)
-                Log.e(TAG, "getFieldFromContentProvider: Field with ID "+fieldId+" and sportId "+sportId+" not found");
+                Log.e(TAG, "getFieldFromContentProvider: Field with ID "+fieldId+" not found");
             else
-                Log.e(TAG, "getFieldFromContentProvider: More than one field with ID "+fieldId+" and sportId "+sportId+" ("+c.getCount()+")");
+                Log.e(TAG, "getFieldFromContentProvider: More than one field with ID "+fieldId+" ("+c.getCount()+")");
             c.close();
         } else
-            Log.e(TAG, "getFieldFromContentProvider: Error with field "+fieldId+" and sportId "+sportId);
+            Log.e(TAG, "getFieldFromContentProvider: Error with field "+fieldId);
         return f;
     }
 

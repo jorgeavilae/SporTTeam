@@ -78,11 +78,12 @@ public class FieldsActivity extends BaseActivity implements SelectSportsAdapter.
                 // Expect a Field where add a new Sport,
                 // or an address (MyPlace) add a new Field
                 if (data.hasExtra(MapsActivity.FIELD_SELECTED_EXTRA)) {
+                    //TODO retrieve aqui tambien los deportes de este field
                     Field field = data.getParcelableExtra(MapsActivity.FIELD_SELECTED_EXTRA);
-                    mFieldId = field.getmId();
-                    mAddress = field.getmAddress();
-                    mCity = field.getmCity();
-                    mCoord = field.getmCoords();
+                    mFieldId = field.getId();
+                    mAddress = field.getAddress();
+                    mCity = field.getCity();
+                    mCoord = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
                     
                     //Start dialog to add sport to this Field
                     startDialogToAddSport();

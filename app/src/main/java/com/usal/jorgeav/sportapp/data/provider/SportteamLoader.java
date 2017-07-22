@@ -296,38 +296,38 @@ public final class SportteamLoader {
 
         if (alarm != null) {
             String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
-            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCitySportEventsWithoutRelationWithMeArguments(myUserId, alarm.getmCity(), alarm.getmSport())));
+            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCitySportEventsWithoutRelationWithMeArguments(myUserId, alarm.getCity(), alarm.getSport_id())));
 
             // field could be null
-            if (alarm.getmField() != null) {
+            if (alarm.getField_id() != null) {
                 selection += "AND " + SportteamContract.EventEntry.FIELD_TABLE_PREFIX + " = ? ";
-                selectionArgs.add(alarm.getmField());
+                selectionArgs.add(alarm.getField_id());
             }
 
             // dateFrom must be at least today and dateTo should be greater than dateFrom or null
             selection += "AND " + SportteamContract.EventEntry.DATE_TABLE_PREFIX + " >= ? ";
-            selectionArgs.add(alarm.getmDateFrom().toString());
-            if (alarm.getmDateTo() != null) {
+            selectionArgs.add(alarm.getDate_from().toString());
+            if (alarm.getDate_to() != null) {
                 selection += "AND " + SportteamContract.EventEntry.DATE_TABLE_PREFIX + " <= ? ";
-                selectionArgs.add(alarm.getmDateTo().toString());
+                selectionArgs.add(alarm.getDate_to().toString());
             }
 
             // totalFrom could be null and totalTo should be greater than totalFrom or null
-            if (alarm.getmTotalPlayersFrom() != null) {
+            if (alarm.getTotal_players_from() != null) {
                 selection += "AND " + SportteamContract.EventEntry.TOTAL_PLAYERS_TABLE_PREFIX + " >= ? ";
-                selectionArgs.add(alarm.getmTotalPlayersFrom().toString());
+                selectionArgs.add(alarm.getTotal_players_from().toString());
             }
-            if (alarm.getmTotalPlayersTo() != null) {
+            if (alarm.getTotal_players_to() != null) {
                 selection += "AND " + SportteamContract.EventEntry.TOTAL_PLAYERS_TABLE_PREFIX + " <= ? ";
-                selectionArgs.add(alarm.getmTotalPlayersTo().toString());
+                selectionArgs.add(alarm.getTotal_players_to().toString());
             }
 
             // emptyFrom must be at least 1 and emptyTo should be greater than emptyFrom or null
             selection += "AND " + SportteamContract.EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " >= ? ";
-            selectionArgs.add(alarm.getmEmptyPlayersFrom().toString());
-            if (alarm.getmEmptyPlayersTo() != null) {
+            selectionArgs.add(alarm.getEmpty_players_from().toString());
+            if (alarm.getEmpty_players_to() != null) {
                 selection += "AND " + SportteamContract.EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " <= ? ";
-                selectionArgs.add(alarm.getmEmptyPlayersTo().toString());
+                selectionArgs.add(alarm.getEmpty_players_to().toString());
             }
 
             return new CursorLoader(
@@ -366,38 +366,38 @@ public final class SportteamLoader {
     public static Cursor cursorAlarmCoincidence(ContentResolver contentResolver, Alarm alarm, String myUserId) {
         if (alarm != null) {
             String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
-            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCitySportEventsWithoutRelationWithMeArguments(myUserId, alarm.getmCity(), alarm.getmSport())));
+            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCitySportEventsWithoutRelationWithMeArguments(myUserId, alarm.getCity(), alarm.getSport_id())));
 
             // field could be null
-            if (alarm.getmField() != null) {
+            if (alarm.getField_id() != null) {
                 selection += "AND " + SportteamContract.EventEntry.FIELD_TABLE_PREFIX + " = ? ";
-                selectionArgs.add(alarm.getmField());
+                selectionArgs.add(alarm.getField_id());
             }
 
             // dateFrom must be at least today and dateTo should be greater than dateFrom or null
             selection += "AND " + SportteamContract.EventEntry.DATE_TABLE_PREFIX + " >= ? ";
-            selectionArgs.add(alarm.getmDateFrom().toString());
-            if (alarm.getmDateTo() != null) {
+            selectionArgs.add(alarm.getDate_from().toString());
+            if (alarm.getDate_to() != null) {
                 selection += "AND " + SportteamContract.EventEntry.DATE_TABLE_PREFIX + " <= ? ";
-                selectionArgs.add(alarm.getmDateTo().toString());
+                selectionArgs.add(alarm.getDate_to().toString());
             }
 
             // totalFrom could be null and totalTo should be greater than totalFrom or null
-            if (alarm.getmTotalPlayersFrom() != null) {
+            if (alarm.getTotal_players_from() != null) {
                 selection += "AND " + SportteamContract.EventEntry.TOTAL_PLAYERS_TABLE_PREFIX + " >= ? ";
-                selectionArgs.add(alarm.getmTotalPlayersFrom().toString());
+                selectionArgs.add(alarm.getTotal_players_from().toString());
             }
-            if (alarm.getmTotalPlayersTo() != null) {
+            if (alarm.getTotal_players_to() != null) {
                 selection += "AND " + SportteamContract.EventEntry.TOTAL_PLAYERS_TABLE_PREFIX + " <= ? ";
-                selectionArgs.add(alarm.getmTotalPlayersTo().toString());
+                selectionArgs.add(alarm.getTotal_players_to().toString());
             }
 
             // emptyFrom must be at least 1 and emptyTo should be greater than emptyFrom or null
             selection += "AND " + SportteamContract.EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " >= ? ";
-            selectionArgs.add(alarm.getmEmptyPlayersFrom().toString());
-            if (alarm.getmEmptyPlayersTo() != null) {
+            selectionArgs.add(alarm.getEmpty_players_from().toString());
+            if (alarm.getEmpty_players_to() != null) {
                 selection += "AND " + SportteamContract.EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " <= ? ";
-                selectionArgs.add(alarm.getmEmptyPlayersTo().toString());
+                selectionArgs.add(alarm.getEmpty_players_to().toString());
             }
 
             return contentResolver.query(

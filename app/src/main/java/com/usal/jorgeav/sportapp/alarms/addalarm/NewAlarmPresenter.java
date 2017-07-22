@@ -38,18 +38,18 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
     public void addAlarm(String alarmId, String sport, String field, String city, String dateFrom, String dateTo,
                          String totalFrom, String totalTo, String emptyFrom, String emptyTo) {
         Alarm a = new Alarm();
-        a.setmId(alarmId);
+        a.setId(alarmId);
 
         // An alarm is valid if sport and city are necessarily set
         if (isValidSport(sport))
-            a.setmSport(sport);
+            a.setSport_id(sport);
         else {
             Toast.makeText(mNewAlarmView.getActivityContext(), "Error en el deporte", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!TextUtils.isEmpty(city))
-            a.setmCity(city);
+            a.setCity(city);
         else {
             Toast.makeText(mNewAlarmView.getActivityContext(), "Error en la ciudad", Toast.LENGTH_SHORT).show();
             return;
@@ -57,7 +57,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
 
         // field could be null
         if (isValidField(field, sport))
-            a.setmField(field);
+            a.setField_id(field);
         else {
             Toast.makeText(mNewAlarmView.getActivityContext(), "Error en el campo", Toast.LENGTH_SHORT).show();
             return;
@@ -65,8 +65,8 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
 
         // dateFrom must be at least today and dateTo should be greater than dateFrom or null
         if (isDateCorrect(dateFrom, dateTo)) {
-            a.setmDateFrom(UtilesTime.stringDateToMillis(dateFrom));
-            a.setmDateTo(UtilesTime.stringDateToMillis(dateTo));
+            a.setDate_from(UtilesTime.stringDateToMillis(dateFrom));
+            a.setDate_to(UtilesTime.stringDateToMillis(dateTo));
         } else {
             Toast.makeText(mNewAlarmView.getActivityContext(), "Error en las fechas", Toast.LENGTH_SHORT).show();
             return;
@@ -74,8 +74,8 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
 
         // totalFrom could be null and totalTo should be greater than totalFrom or null
         if (isTotalPlayersCorrect(totalFrom, totalTo)) {
-            if (!TextUtils.isEmpty(totalFrom)) a.setmTotalPlayersFrom(Long.valueOf(totalFrom)); else a.setmTotalPlayersFrom(null);
-            if (!TextUtils.isEmpty(totalTo)) a.setmTotalPlayersTo(Long.valueOf(totalTo)); else a.setmTotalPlayersTo(null);
+            if (!TextUtils.isEmpty(totalFrom)) a.setTotal_players_from(Long.valueOf(totalFrom)); else a.setTotal_players_from(null);
+            if (!TextUtils.isEmpty(totalTo)) a.setTotal_players_to(Long.valueOf(totalTo)); else a.setTotal_players_to(null);
         } else {
             Toast.makeText(mNewAlarmView.getActivityContext(), "Error en los puestos totales", Toast.LENGTH_SHORT).show();
             return;
@@ -83,15 +83,15 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
 
         // emptyFrom must be at least 1 and emptyTo should be greater than emptyFrom or null
         if (isEmptyPlayersCorrect(emptyFrom, emptyTo)) {
-            a.setmEmptyPlayersFrom(Long.valueOf(emptyFrom));
-            if (!TextUtils.isEmpty(emptyTo)) a.setmEmptyPlayersTo(Long.valueOf(emptyTo)); else a.setmEmptyPlayersTo(null);
+            a.setEmpty_players_from(Long.valueOf(emptyFrom));
+            if (!TextUtils.isEmpty(emptyTo)) a.setEmpty_players_to(Long.valueOf(emptyTo)); else a.setEmpty_players_to(null);
         } else {
             Toast.makeText(mNewAlarmView.getActivityContext(), "Error en los puestos restantes", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        long totalPlayersFrom = (a.getmTotalPlayersFrom()!=null ? a.getmTotalPlayersFrom():-1);
-        long emptyPlayersTo = (a.getmEmptyPlayersTo()!=null ? a.getmEmptyPlayersTo():-1);
+        long totalPlayersFrom = (a.getTotal_players_from()!=null ? a.getTotal_players_from():-1);
+        long emptyPlayersTo = (a.getEmpty_players_to()!=null ? a.getEmpty_players_to():-1);
         if (totalPlayersFrom < emptyPlayersTo) {
             Toast.makeText(mNewAlarmView.getActivityContext(), "Error en los puestos totales/restantes", Toast.LENGTH_SHORT).show();
             return;
@@ -191,11 +191,11 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
     private void showAlarmDetails(Cursor data) {
         Alarm a = UtilesContentProvider.cursorToSingleAlarm(data);
         if (a != null) {
-            mNewAlarmView.showAlarmSport(a.getmSport());
-            mNewAlarmView.showAlarmField(a.getmField(), a.getmCity());
-            mNewAlarmView.showAlarmDate(a.getmDateFrom(), a.getmDateTo());
-            mNewAlarmView.showAlarmTotalPlayers(a.getmTotalPlayersFrom(), a.getmTotalPlayersTo());
-            mNewAlarmView.showAlarmEmptyPlayers(a.getmEmptyPlayersFrom(), a.getmEmptyPlayersTo());
+            mNewAlarmView.showAlarmSport(a.getSport_id());
+            mNewAlarmView.showAlarmField(a.getField_id(), a.getCity());
+            mNewAlarmView.showAlarmDate(a.getDate_from(), a.getDate_to());
+            mNewAlarmView.showAlarmTotalPlayers(a.getTotal_players_from(), a.getTotal_players_to());
+            mNewAlarmView.showAlarmEmptyPlayers(a.getEmpty_players_from(), a.getEmpty_players_to());
         } else {
             mNewAlarmView.clearUI();
         }
