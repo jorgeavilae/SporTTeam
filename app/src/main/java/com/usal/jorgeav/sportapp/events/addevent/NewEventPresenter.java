@@ -91,13 +91,14 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) return true;
 
         // Query database for the fieldId and checks if this sport exists
-        Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId, sportId);
+        Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId);
 
         if (field != null
                 && field.getAddress().equals(address)
                 && field.getCity().equals(city)
                 && field.getCoord_latitude() == coordinates.latitude
-                && field.getCoord_longitude() == coordinates.longitude)
+                && field.getCoord_longitude() == coordinates.longitude
+                && field.containsSportCourt(sportId))
             return true;
         else {
             Log.e(TAG, "isValidField: not valid");
@@ -143,7 +144,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
     @Override
     public void loadFields(LoaderManager loaderManager, Bundle b) {
         if (b != null && b.containsKey(NewEventFragment.BUNDLE_SPORT_SELECTED_ID))
-            loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_WITH_SPORT, b, this);
+            loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT, b, this);
     }
 
     @Override
@@ -162,7 +163,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 eventId = args.getString(NewEventFragment.BUNDLE_EVENT_ID);
                 return SportteamLoader
                         .cursorLoaderEventSimulatedParticipants(mNewEventView.getActivityContext(), eventId);
-            case SportteamLoader.LOADER_FIELDS_WITH_SPORT:
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
                 city = UtilesPreferences.getCurrentUserCity(mNewEventView.getActivityContext());
                 sportId = args.getString(NewEventFragment.BUNDLE_SPORT_SELECTED_ID);
                 return SportteamLoader
@@ -201,7 +202,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 }
                 mNewEventView.setSimulatedParticipants(simulatedUserHashMap);
                 break;
-            case SportteamLoader.LOADER_FIELDS_WITH_SPORT:
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
                 ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
                 mNewEventView.retrieveFields(dataList);
                 break;

@@ -242,28 +242,40 @@ public final class SportteamLoader {
                 SportteamContract.FieldEntry.FIELDS_COLUMNS,
                 SportteamContract.FieldEntry.CITY + " = ? ",
                 new String[]{city},
-                SportteamContract.FieldEntry.COLUMN_PUNCTUATION + " DESC");
+                SportteamContract.FieldEntry.COLUMN_NAME + " DESC");
     }
-    public static final int LOADER_FIELDS_WITH_SPORT = 6200;
+    public static final int LOADER_FIELDS_FROM_CITY_WITH_SPORT = 6200;
     public static CursorLoader cursorLoaderFieldsFromCityWithSport(Context context, String city, String sportId) {
         // Return field data from fields with sportId
         return new CursorLoader(
                 context,
-                SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                SportteamContract.FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI,
                 SportteamContract.FieldEntry.FIELDS_COLUMNS,
-                SportteamContract.FieldEntry.CITY + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? ",
+                SportteamContract.FieldEntry.CITY_TABLE_PREFIX + " = ? AND "
+                        + SportteamContract.FieldSportEntry.SPORT_TABLE_PREFIX +" = ? ",
                 new String[]{city, sportId},
                 SportteamContract.FieldEntry.NAME + " ASC");
     }
-    public static final int LOADER_FIELD_ID = 6001;
-    public static CursorLoader cursorLoaderOneField(Context context, String fieldId, String sportId) {
+    public static final int LOADER_FIELD_ID = 6010;
+    public static final int LOADER_FIELD_SPORTS_ID = 6011;
+    public static CursorLoader cursorLoaderOneField(Context context, String fieldId) {
         // Return field data
         return new CursorLoader(
                 context,
                 SportteamContract.FieldEntry.CONTENT_FIELD_URI,
                 SportteamContract.FieldEntry.FIELDS_COLUMNS,
-                SportteamContract.FieldEntry.FIELD_ID + " = ? AND " + SportteamContract.FieldEntry.SPORT +" = ? ",
-                new String[]{fieldId, sportId},
+                SportteamContract.FieldEntry.FIELD_ID + " = ? ",
+                new String[]{fieldId},
+                null);
+    }
+    public static CursorLoader cursorLoaderFieldSports(Context context, String fieldId) {
+        // Return field data
+        return new CursorLoader(
+                context,
+                SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                SportteamContract.FieldSportEntry.FIELD_SPORT_COLUMNS,
+                SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+                new String[]{fieldId},
                 null);
     }
 
@@ -451,13 +463,20 @@ public final class SportteamLoader {
                 null);
     }
 
-    public static Cursor simpleQueryFieldId(Context context, String fieldId, String sportId) {
+    public static Cursor simpleQueryFieldId(Context context, String fieldId) {
         return context.getContentResolver().query(
-                SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                SportteamContract.FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI,
                 SportteamContract.FieldEntry.FIELDS_COLUMNS,
-                SportteamContract.FieldEntry.FIELD_ID + " = ? AND "
-                + SportteamContract.FieldEntry.SPORT + " = ? ",
-                new String[]{fieldId, sportId},
+                SportteamContract.FieldEntry.FIELD_ID + " = ? ",
+                new String[]{fieldId},
+                null);
+    }
+    public static Cursor simpleQuerySportsOfFieldId(Context context, String fieldId) {
+        return context.getContentResolver().query(
+                SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                SportteamContract.FieldSportEntry.FIELD_SPORT_COLUMNS,
+                SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+                new String[]{fieldId},
                 null);
     }
 

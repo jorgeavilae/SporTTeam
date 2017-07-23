@@ -36,6 +36,8 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVE
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENT_INVITATIONS_WITH_USER;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENT_SIMULATED_PARTICIPANT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FIELDS;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FIELDS_WITH_FIELD_SPORT;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FIELD_SPORT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS_REQUESTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_FRIENDS_REQUESTS_WITH_USER;
@@ -53,6 +55,7 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EV
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENT_INVITATIONS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENT_SIMULATED_PARTICIPANT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_FIELD;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_FIELD_SPORTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_FRIENDS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_FRIENDS_REQUESTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_USER;
@@ -65,6 +68,8 @@ public class SportteamProvider extends ContentProvider {
     public static final int CODE_USERS = 100;
     public static final int CODE_USER_SPORT = 110;
     public static final int CODE_FIELDS = 200;
+    public static final int CODE_FIELD_SPORT = 210;
+    public static final int CODE_FIELD_WITH_FIELD_SPORT = 211;
     public static final int CODE_EVENTS = 300;
     public static final int CODE_SIMULATED_PARTICIPANTS = 310;
     public static final int CODE_ALARMS = 400;
@@ -102,6 +107,10 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, PATH_USER_SPORT, CODE_USER_SPORT);
         // This URI is content://com.usal.jorgeav.sportapp/fields/
         matcher.addURI(authority, PATH_FIELDS, CODE_FIELDS);
+        // This URI is content://com.usal.jorgeav.sportapp/fieldSport/
+        matcher.addURI(authority, PATH_FIELD_SPORT, CODE_FIELD_SPORT);
+        // This URI is content://com.usal.jorgeav.sportapp/fields_fieldSport/
+        matcher.addURI(authority, PATH_FIELDS_WITH_FIELD_SPORT, CODE_FIELD_WITH_FIELD_SPORT);
         // This URI is content://com.usal.jorgeav.sportapp/events/
         matcher.addURI(authority, PATH_EVENTS, CODE_EVENTS);
         // This URI is content://com.usal.jorgeav.sportapp/eventSimulatedParticipant/
@@ -175,6 +184,14 @@ public class SportteamProvider extends ContentProvider {
                 rowsInserted = bulkInsert(uri, values, db, TABLE_FIELD);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
+                    getContext().getContentResolver().notifyChange(FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI, null);
+                }
+                return rowsInserted;
+            case CODE_FIELD_SPORT:
+                rowsInserted = bulkInsert(uri, values, db, TABLE_FIELD_SPORTS);
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    getContext().getContentResolver().notifyChange(FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI, null);
                 }
                 return rowsInserted;
             case CODE_USER_SPORT:
@@ -252,6 +269,10 @@ public class SportteamProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case CODE_USER_SPORT:
                 count = db.delete(TABLE_USER_SPORTS, selection, selectionArgs);
+                break;
+            case CODE_FIELD_SPORT:
+                count = db.delete(TABLE_FIELD_SPORTS, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI, null);
                 break;
             case CODE_EVENTS:
                 count = db.delete(TABLE_EVENT, selection, selectionArgs);
@@ -333,6 +354,7 @@ public class SportteamProvider extends ContentProvider {
             case CODE_FIELDS:
                 _id = db.insert(TABLE_FIELD, null, values);
                 if ( _id > 0 ) returnUri = FieldEntry.buildFieldUriWith(_id);
+                getContext().getContentResolver().notifyChange(FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI, null);
                 break;
             case CODE_ALARMS:
                 _id = db.insert(TABLE_ALARM, null, values);
@@ -433,6 +455,26 @@ public class SportteamProvider extends ContentProvider {
             case CODE_USER_SPORT:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         TABLE_USER_SPORTS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_FIELD_SPORT:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        TABLE_FIELD_SPORTS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case CODE_FIELD_WITH_FIELD_SPORT:
+                builder.setTables(FieldEntry.TABLES_FIELD_JOIN_FIELD_SPORT);
+                cursor = builder.query(mOpenHelper.getReadableDatabase(),
                         projection,
                         selection,
                         selectionArgs,
@@ -650,7 +692,7 @@ public class SportteamProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        /* TODO Deberia haber updates?
+        /* TODO Deberia haber updates? comentar todo menos exception y comprobar si se produce
          * Los cambios en la DDBB se hacen contra Firebase que los trae y los INSERTA
          * En DBHelper esta puesto ON CONFLICT REPLACE
          */
@@ -669,6 +711,7 @@ public class SportteamProvider extends ContentProvider {
                 break;
             case CODE_FIELDS:
                 count = db.update(TABLE_FIELD, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI, null);
                 break;
             case CODE_FRIEND_REQUEST:
                 count = db.update(TABLE_FRIENDS_REQUESTS, values, selection, selectionArgs);

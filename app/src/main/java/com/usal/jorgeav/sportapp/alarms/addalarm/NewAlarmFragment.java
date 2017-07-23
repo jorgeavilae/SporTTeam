@@ -138,6 +138,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         newAlarmFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //TODO ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
                 Fragment fragment = SelectFieldFragment.newInstance(getSportSelected());
                 mFragmentManagementListener.initFragment(fragment, true);
             }

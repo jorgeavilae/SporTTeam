@@ -159,14 +159,14 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     }
 
     @Override
-    public void showAlarmPlace(final String place, final String sport) {
-        if (place != null && sport != null) {
+    public void showAlarmPlace(final String place) {
+        if (place != null) {
             ((BaseActivity) getActivity()).showContent();
             this.buttonAlarmPlace.setText(place);
             buttonAlarmPlace.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                Fragment newFragment = DetailFieldFragment.newInstance(place, sport);
+                Fragment newFragment = DetailFieldFragment.newInstance(place);
                 mFragmentManagementListener.initFragment(newFragment, true);
                 }
             });

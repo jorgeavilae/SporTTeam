@@ -14,8 +14,6 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
-import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -44,14 +42,11 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
     @Override
     public void onBindViewHolder(FieldsAdapter.ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
-            float rate = mDataset.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);
             long opening = mDataset.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
             long closing = mDataset.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
             holder.textViewFieldId.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID));
             holder.textViewFieldName.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_NAME));
             holder.textViewFieldAddress.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS));
-            holder.textViewFieldRating.setText(String.format(Locale.getDefault(), "%2.2f", rate));
-            holder.textViewFieldSport.setText(mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT));
             holder.textViewFieldOpening.setText(UtilesTime.millisToTimeString(opening));
             holder.textViewFieldClosing.setText(UtilesTime.millisToTimeString(closing));
         }
@@ -79,10 +74,6 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
         TextView textViewFieldName;
         @BindView(R.id.fields_item_address)
         TextView textViewFieldAddress;
-        @BindView(R.id.fields_item_rating)
-        TextView textViewFieldRating;
-        @BindView(R.id.fields_item_sport)
-        TextView textViewFieldSport;
         @BindView(R.id.fields_item_opening)
         TextView textViewFieldOpening;
         @BindView(R.id.fields_item_closing)
@@ -100,15 +91,14 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
             mDataset.moveToPosition(position);
             String fieldId = mDataset.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
             String city = mDataset.getString(SportteamContract.FieldEntry.COLUMN_CITY);
-            String sportId = mDataset.getString(SportteamContract.FieldEntry.COLUMN_SPORT);
             double latitude = mDataset.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
             double longitude = mDataset.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
             LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
-            mClickListener.onFieldClick(fieldId, city, sportId, coord);
+            mClickListener.onFieldClick(fieldId, city, coord);
         }
     }
 
     public interface OnFieldItemClickListener {
-        void onFieldClick(String fieldId, String city, String sportId, LatLng coordinates);
+        void onFieldClick(String fieldId, String city, LatLng coordinates);
     }
 }

@@ -9,7 +9,6 @@ import java.util.HashMap;
  */
 
 public class SportCourt {
-    String name;
     String sport_id;
     Double punctuation;
     Long votes;
@@ -17,15 +16,10 @@ public class SportCourt {
     public SportCourt() {
     }
 
-    public SportCourt(String name, String sport_id, Double punctuation, Long votes) {
-        this.name = name;
+    public SportCourt(String sport_id, Double punctuation, Long votes) {
         this.sport_id = sport_id;
         this.punctuation = punctuation;
         this.votes = votes;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getSport_id() {
@@ -43,8 +37,7 @@ public class SportCourt {
     @Override
     public String toString() {
         return "SportCourt{" +
-                "name='" + name + '\'' +
-                ", sport_id='" + sport_id + '\'' +
+                "sport_id='" + sport_id + '\'' +
                 ", punctuation=" + punctuation +
                 ", votes=" + votes +
                 '}';
@@ -52,7 +45,6 @@ public class SportCourt {
 
     public Object toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put(FirebaseDBContract.SportCourt.NAME, this.name);
         result.put(FirebaseDBContract.SportCourt.SPORT_ID, this.sport_id);
         result.put(FirebaseDBContract.SportCourt.PUNCTUATION, this.punctuation);
         result.put(FirebaseDBContract.SportCourt.VOTES, this.votes);

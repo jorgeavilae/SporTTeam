@@ -40,28 +40,6 @@
         app:layout_constraintTop_toBottomOf="@+id/fields_item_name" />
 
     <TextView
-        android:id="@+id/fields_item_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        app:layout_constraintLeft_toRightOf="@+id/fields_item_address"
-        tools:text="3.5"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/fields_item_name" />
-
-    <TextView
-        android:id="@+id/fields_item_sport"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        tools:text="Sport"
-        app:layout_constraintLeft_toRightOf="@+id/fields_item_rating"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/fields_item_name" />
-
-    <TextView
         android:id="@+id/fields_item_opening"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -12,11 +12,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RatingBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -27,12 +24,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,7 +43,6 @@ import butterknife.ButterKnife;
 public class NewFieldFragment extends BaseFragment implements NewFieldContract.View  {
     public static final String TAG = NewFieldFragment.class.getSimpleName();
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
-    public static final String BUNDLE_SPORT_ID = "BUNDLE_SPORT_ID";
 
     NewFieldContract.Presenter mNewFieldPresenter;
     private static boolean sInitialize;
@@ -52,11 +50,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     // Static prevent double initialization with same ID
     private static GoogleApiClient mGoogleApiClient;
     private String mCreator = "";
-    private int mVotes = -1;
 
-    ArrayAdapter<CharSequence> sportsAdapter;
-    @BindView(R.id.new_field_sport)
-    Spinner newFieldSport;
     @BindView(R.id.new_field_address)
     TextView newFieldAddress;
     @BindView(R.id.new_field_map_button)
@@ -67,8 +61,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     EditText newFieldOpenTime;
     @BindView(R.id.new_field_close_time)
     EditText newFieldCloseTime;
-    @BindView(R.id.new_field_rate)
-    RatingBar newFieldRate;
+    List<SportCourt> mSports;
 
     Calendar myCalendar;
     TimePickerDialog openTimePickerDialog;
@@ -94,13 +87,11 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         // Required empty public constructor
     }
 
-    public static NewFieldFragment newInstance(@Nullable String fieldId, @Nullable String sportId) {
+    public static NewFieldFragment newInstance(@Nullable String fieldId) {
         NewFieldFragment nff = new NewFieldFragment();
         Bundle b = new Bundle();
         if (fieldId != null)
             b.putString(BUNDLE_FIELD_ID, fieldId);
-        if (sportId != null)
-            b.putString(BUNDLE_SPORT_ID, sportId);
         nff.setArguments(b);
         sInitialize = false;
         return nff;
@@ -144,20 +135,16 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID))
                 fieldId = getArguments().getString(BUNDLE_FIELD_ID);
 
-            if (mVotes < 0) mVotes = 0;
             if (mCreator == null || TextUtils.isEmpty(mCreator)) mCreator = Utiles.getCurrentUserId();
             mNewFieldPresenter.addField(
                     fieldId,
                     newFieldName.getText().toString(),
-                    getSportSelected(),
                     ((FieldsActivity)getActivity()).mAddress,
                     ((FieldsActivity)getActivity()).mCoord,
                     ((FieldsActivity)getActivity()).mCity,
-                    newFieldRate.getRating(),
-                    mVotes,
                     newFieldOpenTime.getText().toString(),
                     newFieldCloseTime.getText().toString(),
-                    mCreator);
+                    mCreator, mSports);
             return true;
         }
         return false;
@@ -169,10 +156,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         ButterKnife.bind(this, root);
 
         myCalendar = Calendar.getInstance();
-
-        sportsAdapter = ArrayAdapter.createFromResource(getActivityContext(), R.array.sport_id, android.R.layout.simple_spinner_item);
-        sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        newFieldSport.setAdapter(sportsAdapter);
 
         newFieldOpenTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,8 +175,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             }
         });
 
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_ID))
-            showFieldSport(getArguments().getString(BUNDLE_SPORT_ID));
         showFieldPlace(((FieldsActivity)getActivity()).mAddress,
                 ((FieldsActivity)getActivity()).mCity,
                 ((FieldsActivity)getActivity()).mCoord);
@@ -230,30 +211,20 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         if (closeTimePickerDialog != null && closeTimePickerDialog.isShowing()) closeTimePickerDialog.dismiss();
     }
 
-    private String getSportSelected() {
-        return newFieldSport.getSelectedItem().toString();
-    }
-
     @Override
     public void retrieveFields(ArrayList<Field> dataList) {
 
     }
 
     @Override
-    public void showFieldSport(String sport) {
-        if (sport != null && !TextUtils.isEmpty(sport))
-            newFieldSport.setSelection(sportsAdapter.getPosition(sport));
+    public void showFieldName(String name) {
+        if (name != null && !TextUtils.isEmpty(name))
+            newFieldName.setText(name);
     }
 
     @Override
     public void showFieldPlace(String address, String city, LatLng coords) {
         newFieldAddress.setText(address);
-    }
-
-    @Override
-    public void showFieldName(String name) {
-        if (name != null && !TextUtils.isEmpty(name))
-            newFieldName.setText(name);
     }
 
     @Override
@@ -265,28 +236,23 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     }
 
     @Override
-    public void showFieldRate(float rate, int votes) {
-        if (rate >= 0 && rate <= 5)
-            newFieldRate.setRating(rate);
-        if (votes >= 0)
-            mVotes = votes;
-    }
-
-    @Override
     public void showFieldCreator(String creator) {
         if (creator != null && !TextUtils.isEmpty(creator))
             mCreator = creator;
     }
 
     @Override
+    public void setSportCourts(List<SportCourt> sports) {
+        mSports = sports;
+    }
+
+    @Override
     public void clearUI() {
-        newFieldSport.setSelection(0);
-        newFieldAddress.setText("");
         newFieldName.setText("");
+        newFieldAddress.setText("");
         newFieldOpenTime.setText("");
         newFieldCloseTime.setText("");
-        newFieldRate.setRating(0f);
-        mVotes = -1;
+        mSports = null;
         mCreator = null;
     }
 }

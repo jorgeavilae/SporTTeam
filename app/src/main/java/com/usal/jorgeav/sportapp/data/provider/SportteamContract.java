@@ -4,11 +4,7 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-/**
- * Created by Jorge Avila on 17/05/2017.
- */
-
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class SportteamContract {
 
     /*
@@ -147,6 +143,8 @@ public final class SportteamContract {
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_FIELDS = "fields";
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_FIELDS_WITH_FIELD_SPORT = "fields_fieldSport";
     /* Used internally as the name of our field table. */
     public static final String TABLE_FIELD = "field";
     /* Inner class that defines the table contents of the field table */
@@ -156,17 +154,18 @@ public final class SportteamContract {
         public static final Uri CONTENT_FIELD_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_FIELDS)
                 .build();
+        /* The base CONTENT_URI used to query the field table with fieldSport table from the content provider */
+        public static final Uri CONTENT_FIELDS_WITH_FIELD_SPORT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_FIELDS_WITH_FIELD_SPORT)
+                .build();
 
         /* Column names */
         public static final String FIELD_ID = "fieldId";
         public static final String NAME = "name";
-        public static final String SPORT = "sport";
         public static final String ADDRESS = "address";
         public static final String ADDRESS_LATITUDE = "addressLatitude";
         public static final String ADDRESS_LONGITUDE = "addressLongitude";
         public static final String CITY = "city";
-        public static final String PUNCTUATION = "punctuation";
-        public static final String VOTES = "votes";
         public static final String OPENING_TIME = "openingTime";
         public static final String CLOSING_TIME = "closingTime";
         public static final String CREATOR = "creator";
@@ -174,13 +173,10 @@ public final class SportteamContract {
         /* Column names with table prefix*/
         public static final String FIELD_ID_TABLE_PREFIX = TABLE_FIELD + "." + FIELD_ID;
         public static final String NAME_TABLE_PREFIX = TABLE_FIELD + "." + NAME;
-        public static final String SPORT_TABLE_PREFIX = TABLE_FIELD + "." + SPORT;
         public static final String ADDRESS_TABLE_PREFIX = TABLE_FIELD + "." + ADDRESS;
         public static final String ADDRESS_LATITUDE_TABLE_PREFIX = TABLE_FIELD + "." + ADDRESS_LATITUDE;
         public static final String ADDRESS_LONGITUDE_TABLE_PREFIX = TABLE_FIELD + "." + ADDRESS_LONGITUDE;
         public static final String CITY_TABLE_PREFIX = TABLE_FIELD + "." + CITY;
-        public static final String PUNCTUATION_TABLE_PREFIX = TABLE_FIELD + "." + PUNCTUATION;
-        public static final String VOTES_TABLE_PREFIX = TABLE_FIELD + "." + VOTES;
         public static final String OPENING_TIME_TABLE_PREFIX = TABLE_FIELD + "." + OPENING_TIME;
         public static final String CLOSING_TIME_TABLE_PREFIX = TABLE_FIELD + "." + CLOSING_TIME;
         public static final String CREATOR_TABLE_PREFIX = TABLE_FIELD + "." + CREATOR;
@@ -190,13 +186,10 @@ public final class SportteamContract {
                 TABLE_FIELD + "." + FieldEntry._ID,
                 FIELD_ID_TABLE_PREFIX,
                 NAME_TABLE_PREFIX,
-                SPORT_TABLE_PREFIX,
                 ADDRESS_TABLE_PREFIX,
                 ADDRESS_LATITUDE_TABLE_PREFIX,
                 ADDRESS_LONGITUDE_TABLE_PREFIX,
                 CITY_TABLE_PREFIX,
-                PUNCTUATION_TABLE_PREFIX,
-                VOTES_TABLE_PREFIX,
                 OPENING_TIME_TABLE_PREFIX,
                 CLOSING_TIME_TABLE_PREFIX,
                 CREATOR_TABLE_PREFIX
@@ -206,20 +199,70 @@ public final class SportteamContract {
         public static final int COLUMN_ID = 0;
         public static final int COLUMN_FIELD_ID = 1;
         public static final int COLUMN_NAME = 2;
-        public static final int COLUMN_SPORT = 3;
-        public static final int COLUMN_ADDRESS = 4;
-        public static final int COLUMN_ADDRESS_LATITUDE = 5;
-        public static final int COLUMN_ADDRESS_LONGITUDE = 6;
-        public static final int COLUMN_CITY = 7;
-        public static final int COLUMN_PUNCTUATION = 8;
-        public static final int COLUMN_VOTES = 9;
-        public static final int COLUMN_OPENING_TIME = 10;
-        public static final int COLUMN_CLOSING_TIME = 11;
-        public static final int COLUMN_CREATOR = 12;
+        public static final int COLUMN_ADDRESS = 3;
+        public static final int COLUMN_ADDRESS_LATITUDE = 4;
+        public static final int COLUMN_ADDRESS_LONGITUDE = 5;
+        public static final int COLUMN_CITY = 6;
+        public static final int COLUMN_OPENING_TIME = 7;
+        public static final int COLUMN_CLOSING_TIME = 8;
+        public static final int COLUMN_CREATOR = 9;
+
+        /* Join for CONTENT_FIELDS_WITH_FIELD_SPORT_URI */
+        public static final String TABLES_FIELD_JOIN_FIELD_SPORT =
+                TABLE_FIELD + " INNER JOIN " + TABLE_FIELD_SPORTS + " ON "
+                        + FieldEntry.FIELD_ID_TABLE_PREFIX + " = " + FieldSportEntry.FIELD_ID_TABLE_PREFIX;
 
         /* URI for one field */
         public static Uri buildFieldUriWith(long id) {
             return ContentUris.withAppendedId(CONTENT_FIELD_URI, id);
+        }
+    }
+
+
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_FIELD_SPORT = "fieldSport";
+    /* Used internally as the name of our field sports table. */
+    public static final String TABLE_FIELD_SPORTS = "fieldSport";
+    /* Inner class that defines the table contents of the field sport table
+     * This table store a row for every sport court in a Field in the field table */
+    public static final class FieldSportEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the fieldSport table from the content provider */
+        public static final Uri CONTENT_FIELD_SPORT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_FIELD_SPORT)
+                .build();
+
+        /* Column names */
+        public static final String FIELD_ID = "fieldId";
+        public static final String SPORT = "sport";
+        public static final String PUNCTUATION = "punctuation";
+        public static final String VOTES = "votes";
+
+        /* Column names with table prefix*/
+        public static final String FIELD_ID_TABLE_PREFIX = TABLE_FIELD_SPORTS + "." + FIELD_ID;
+        public static final String SPORT_TABLE_PREFIX = TABLE_FIELD_SPORTS + "." + SPORT;
+        public static final String PUNCTUATION_TABLE_PREFIX = TABLE_FIELD_SPORTS + "." + PUNCTUATION;
+        public static final String VOTES_TABLE_PREFIX = TABLE_FIELD_SPORTS + "." + VOTES;
+
+        /* All column projection */
+        public static final String[] FIELD_SPORT_COLUMNS = {
+                TABLE_USER_SPORTS + "." + UserSportEntry._ID,
+                FIELD_ID_TABLE_PREFIX,
+                SPORT_TABLE_PREFIX,
+                PUNCTUATION_TABLE_PREFIX,
+                VOTES_TABLE_PREFIX
+        };
+
+        /* Column indexes */
+        public static final int COLUMN_ID = 0;
+        public static final int COLUMN_FIELD_ID = 1;
+        public static final int COLUMN_SPORT = 2;
+        public static final int COLUMN_PUNCTUATION = 3;
+        public static final int COLUMN_VOTES = 4;
+
+        /* URI for one fieldSport */
+        public static Uri buildFieldSportUriWith(long id) {
+            return ContentUris.withAppendedId(CONTENT_FIELD_SPORT_URI, id);
         }
     }
 

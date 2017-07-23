@@ -129,7 +129,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 }
             });
             userEditSportListButton.setVisibility(View.VISIBLE);
-            final ProfileFragment profileFragment = this;
             userEditSportListButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

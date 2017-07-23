@@ -86,6 +86,13 @@ public class Field implements Parcelable {
         return sport;
     }
 
+    public boolean containsSportCourt(String sportId) {
+        for (SportCourt sc : this.sport)
+            if (sc.getSport_id().equals(sportId))
+                return true;
+        return false;
+    }
+
     @Override
     public String toString() {
         return "Field{" +
@@ -125,7 +132,7 @@ public class Field implements Parcelable {
     private Object sportToMap() {
         HashMap<String, Object> result = new HashMap<>();
         for (SportCourt sc : this.sport)
-            result.put(sc.getName(), sc.toMap());
+            result.put(sc.getSport_id(), sc.toMap());
         return result;
     }
 

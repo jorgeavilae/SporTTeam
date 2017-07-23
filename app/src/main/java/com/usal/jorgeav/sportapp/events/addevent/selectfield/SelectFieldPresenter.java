@@ -27,13 +27,13 @@ public class SelectFieldPresenter implements SelectFieldContract.Presenter, Load
     public void loadFieldsWithSport(LoaderManager loaderManager, Bundle b) {
         String city = UtilesPreferences.getCurrentUserCity(mSelectFieldsView.getActivityContext());
         FirebaseSync.loadFieldsFromCity(city);
-        loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_WITH_SPORT, b, this);
+        loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT, b, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case SportteamLoader.LOADER_FIELDS_WITH_SPORT:
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
                 String city = UtilesPreferences.getCurrentUserCity(mSelectFieldsView.getActivityContext());
                 String sportId = args.getString(SelectFieldFragment.BUNDLE_SPORT_ID);
                 return SportteamLoader

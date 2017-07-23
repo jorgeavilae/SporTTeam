@@ -10,8 +10,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
@@ -23,6 +23,7 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jorge Avila on 06/06/2017.
@@ -39,9 +40,8 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
 
     //TODO cambiar sport por una lista de sports
     @Override
-    public void addField(String id, String name, String sport, String address,
-                         LatLng coords, String city, float rate, int votes,
-                         String openTime, String closeTime, String userId) {
+    public void addField(String id, String name, String address, LatLng coords, String city,
+                         String openTime, String closeTime, String userId, List<SportCourt> sports) {
         long openMillis = 0;
         long closeMillis = 0;
         try {
@@ -50,11 +50,10 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (isValidSport(sport) && isValidAddress(address, city) && isValidName(name)
-                && isValidCoords(coords) && isTimesCorrect(openMillis, closeMillis)
-                && isPunctuationValid(rate, votes)&& isValidCreator(userId)) {
+        if (isValidAddress(address, city) && isValidName(name) && isValidCoords(coords)
+                && isTimesCorrect(openMillis, closeMillis) && isValidCreator(userId)) {
             Field field = new Field(id, name, address, coords.latitude, coords.longitude, city,
-                    openMillis, closeMillis, userId, null); //TODO cambiar este null
+                    openMillis, closeMillis, userId, sports);
 
             Log.d(TAG, "addField: "+field);
             FirebaseActions.addField(field);
@@ -65,15 +64,6 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
             ((AppCompatActivity)mNewFieldView.getActivityContext()).onBackPressed();
         } else
             Toast.makeText(mNewFieldView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
-    }
-
-    private boolean isValidSport(String sport) {
-        // If R.array.sport_id contains this sport
-        String[] arraySports = mNewFieldView.getActivityContext().getResources().getStringArray(R.array.sport_id);
-        for (String sportArr : arraySports)
-            if (sport.equals(sportArr)) return true;
-        Log.e(TAG, "isValidSport: not valid");
-        return false;
     }
 
     private boolean isValidAddress(String address, String city) {
@@ -108,17 +98,11 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isPunctuationValid(float rate, int votes) {
-        if (rate >= 0 && rate <= 5 && votes >= 0) return true;
-        Log.e(TAG, "isPunctuationValid: incorrect");
-        return false;
-    }
-
     @Override
     public void openField(LoaderManager loaderManager, Bundle b) {
-        if (b != null && b.containsKey(NewFieldFragment.BUNDLE_FIELD_ID)
-                && b.containsKey(NewFieldFragment.BUNDLE_SPORT_ID)) {
+        if (b != null && b.containsKey(NewFieldFragment.BUNDLE_FIELD_ID)) {
             loaderManager.initLoader(SportteamLoader.LOADER_FIELD_ID, b, this);
+            loaderManager.initLoader(SportteamLoader.LOADER_FIELD_SPORTS_ID, b, this);
         }
     }
 
@@ -141,10 +125,13 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
                     return SportteamLoader
                             .cursorLoaderFieldsFromCity(mNewFieldView.getActivityContext(), city);
             case SportteamLoader.LOADER_FIELD_ID:
-                String fieldId = args.getString(NewFieldFragment.BUNDLE_FIELD_ID);
-                String sportId = args.getString(NewFieldFragment.BUNDLE_SPORT_ID);
                 return SportteamLoader
-                        .cursorLoaderOneField(mNewFieldView.getActivityContext(), fieldId, sportId);
+                        .cursorLoaderOneField(mNewFieldView.getActivityContext(),
+                                args.getString(NewFieldFragment.BUNDLE_FIELD_ID));
+            case SportteamLoader.LOADER_FIELD_SPORTS_ID:
+                return SportteamLoader
+                        .cursorLoaderFieldSports(mNewFieldView.getActivityContext(),
+                                args.getString(NewFieldFragment.BUNDLE_FIELD_ID));
         }
         return null;
     }
@@ -159,37 +146,49 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
             case SportteamLoader.LOADER_FIELD_ID:
                 showFieldDetail(data);
                 break;
+            case SportteamLoader.LOADER_FIELD_SPORTS_ID:
+                ArrayList<SportCourt> sports = new ArrayList<>();
+                while(data.moveToNext()) {
+                    String sportId = data.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
+                    Double punctuation = data.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
+                    Long votes = data.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);
+                    sports.add(new SportCourt(sportId, punctuation, votes));
+                }
+                mNewFieldView.setSportCourts(sports);
+                break;
         }
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
         switch (loader.getId()) {
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY:
+                mNewFieldView.retrieveFields(null);
+                break;
             case SportteamLoader.LOADER_EVENT_ID:
                 showFieldDetail(null);
                 break;
-            case SportteamLoader.LOADER_FIELDS_FROM_CITY:
-                mNewFieldView.retrieveFields(null);
+            case SportteamLoader.LOADER_FIELD_SPORTS_ID:
+                mNewFieldView.setSportCourts(null);
                 break;
         }
     }
 
     private void showFieldDetail(Cursor data) {
         if (data != null && data.moveToFirst()) {
-            mNewFieldView.showFieldSport(data.getString(SportteamContract.FieldEntry.COLUMN_SPORT));
             String address = data.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
             String city = data.getString(SportteamContract.FieldEntry.COLUMN_CITY);
             double lat = data.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
             double lng = data.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
             LatLng coords = null; if (lat != 0 && lng != 0) coords = new LatLng(lat, lng);
             mNewFieldView.showFieldPlace(address, city, coords);
+
             mNewFieldView.showFieldName(data.getString(SportteamContract.FieldEntry.COLUMN_NAME));
+
             long openTime = data.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
             long closeTime = data.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
             mNewFieldView.showFieldTimes(openTime, closeTime);
-            float rate = data.getFloat(SportteamContract.FieldEntry.COLUMN_PUNCTUATION);
-            int votes = data.getInt(SportteamContract.FieldEntry.COLUMN_VOTES);
-            mNewFieldView.showFieldRate(rate, votes);
+
             mNewFieldView.showFieldCreator(data.getString(SportteamContract.FieldEntry.COLUMN_CREATOR));
         } else {
             mNewFieldView.clearUI();

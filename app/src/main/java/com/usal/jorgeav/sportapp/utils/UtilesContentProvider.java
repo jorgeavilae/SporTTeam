@@ -11,6 +11,7 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
@@ -195,30 +196,50 @@ public class UtilesContentProvider {
         return e;
     }
 
-    public static Field getFieldFromContentProvider(@NonNull String fieldId, @NonNull String sportId) {
+    public static Field getFieldFromContentProvider(@NonNull String fieldId) {
         Field f = null;
-        Cursor c = SportteamLoader.simpleQueryFieldId(MyApplication.getAppContext(), fieldId, sportId);
-        if (c != null) {
-            if (c.getCount() == 1 && c.moveToFirst()) {
-                String name = c.getString(SportteamContract.FieldEntry.COLUMN_NAME);
-                String address = c.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
-                Double lat = c.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
-                Double lng = c.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
-                String city = c.getString(SportteamContract.FieldEntry.COLUMN_CITY);
-                Long openTime = c.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
-                Long closeTime = c.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
-                String creator = c.getString(SportteamContract.FieldEntry.COLUMN_CREATOR);
+        Cursor cursorField = SportteamLoader.simpleQueryFieldId(MyApplication.getAppContext(), fieldId);
+        if (cursorField != null) {
+            if (cursorField.getCount() == 1 && cursorField.moveToFirst()) {
+                String name = cursorField.getString(SportteamContract.FieldEntry.COLUMN_NAME);
+                String address = cursorField.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
+                Double lat = cursorField.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
+                Double lng = cursorField.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
+                String city = cursorField.getString(SportteamContract.FieldEntry.COLUMN_CITY);
+                Long openTime = cursorField.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
+                Long closeTime = cursorField.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
+                String creator = cursorField.getString(SportteamContract.FieldEntry.COLUMN_CREATOR);
+                ArrayList<SportCourt> sports = getFieldSportFromContentProvider(fieldId);
 
                 f = new Field(fieldId, name, address, lat, lng, city,
-                        openTime, closeTime, creator, null); //TODO cambiar este null
-                } else if (c.getCount() == 0)
+                        openTime, closeTime, creator, sports);
+                } else if (cursorField.getCount() == 0)
                 Log.e(TAG, "getFieldFromContentProvider: Field with ID "+fieldId+" not found");
             else
-                Log.e(TAG, "getFieldFromContentProvider: More than one field with ID "+fieldId+" ("+c.getCount()+")");
-            c.close();
+                Log.e(TAG, "getFieldFromContentProvider: More than one field with ID "+fieldId+" ("+cursorField.getCount()+")");
+            cursorField.close();
         } else
             Log.e(TAG, "getFieldFromContentProvider: Error with field "+fieldId);
         return f;
+    }
+    public static ArrayList<SportCourt> getFieldSportFromContentProvider(@NonNull String fieldId) {
+        ArrayList<SportCourt> result = new ArrayList<>();
+        Cursor cursorFieldSport = SportteamLoader.simpleQuerySportsOfFieldId(MyApplication.getAppContext(), fieldId);
+        if (cursorFieldSport != null) {
+            if (cursorFieldSport.getCount() > 0) {
+                while (cursorFieldSport.moveToNext()) {
+                    String sportId = cursorFieldSport.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
+                    Double punctuation = cursorFieldSport.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
+                    Long votes = cursorFieldSport.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);
+
+                    result.add(new SportCourt(sportId, punctuation, votes));
+                }
+            } else
+                Log.e(TAG, "getFieldSportFromContentProvider: Field with ID "+fieldId+" not found");
+            cursorFieldSport.close();
+        } else
+            Log.e(TAG, "getFieldSportFromContentProvider: Error with field "+fieldId);
+        return result;
     }
 
     public static Alarm getAlarmFromContentProvider(@NonNull String alarmId) {

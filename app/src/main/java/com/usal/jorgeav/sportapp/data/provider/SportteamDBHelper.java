@@ -19,7 +19,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
      * If you change the database schema, you must increment the database version or the onUpgrade
      * method will not be called.
      */
-    private static final int DATABASE_VERSION = 23;
+    private static final int DATABASE_VERSION = 24;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -73,18 +73,14 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.FieldEntry._ID                + " INTEGER PRIMARY KEY,"   +
                 SportteamContract.FieldEntry.FIELD_ID           + " TEXT NOT NULL,"         +
                 SportteamContract.FieldEntry.NAME               + " TEXT NOT NULL,"         +
-                SportteamContract.FieldEntry.SPORT              + " TEXT NOT NULL,"         +
                 SportteamContract.FieldEntry.ADDRESS            + " TEXT,"                  +
                 SportteamContract.FieldEntry.ADDRESS_LATITUDE   + " REAL,"                  +
                 SportteamContract.FieldEntry.ADDRESS_LONGITUDE  + " REAL,"                  +
                 SportteamContract.FieldEntry.CITY               + " TEXT,"                  +
-                SportteamContract.FieldEntry.PUNCTUATION        + " REAL,"                  +
-                SportteamContract.FieldEntry.VOTES              + " INTEGER,"               +
                 SportteamContract.FieldEntry.OPENING_TIME       + " INTEGER,"               +
                 SportteamContract.FieldEntry.CLOSING_TIME       + " INTEGER,"               +
                 SportteamContract.FieldEntry.CREATOR            + " TEXT,"                  +
-                " UNIQUE (" + SportteamContract.FieldEntry.FIELD_ID + ", "
-                            + SportteamContract.FieldEntry.SPORT    + ") ON CONFLICT REPLACE);";
+                " UNIQUE (" + SportteamContract.FieldEntry.FIELD_ID + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_USER_SPORT_TABLE = "CREATE TABLE " + SportteamContract.TABLE_USER_SPORTS + " (" +
                 SportteamContract.UserSportEntry._ID            + " INTEGER PRIMARY KEY,"       +
@@ -93,6 +89,15 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.UserSportEntry.LEVEL          + " REAL NOT NULL,"             +
                 " UNIQUE (" + SportteamContract.UserSportEntry.USER_ID + ", "
                             + SportteamContract.UserSportEntry.SPORT    + ") ON CONFLICT REPLACE);";
+
+        final String SQL_CREATE_FIELD_SPORT_TABLE = "CREATE TABLE " + SportteamContract.TABLE_FIELD_SPORTS + " (" +
+                SportteamContract.FieldSportEntry._ID            + " INTEGER PRIMARY KEY,"       +
+                SportteamContract.FieldSportEntry.FIELD_ID       + " TEXT NOT NULL,"             +
+                SportteamContract.FieldSportEntry.SPORT          + " TEXT NOT NULL,"             +
+                SportteamContract.FieldSportEntry.PUNCTUATION    + " REAL NOT NULL,"             +
+                SportteamContract.FieldSportEntry.VOTES          + " INTEGER NOT NULL,"          +
+                " UNIQUE (" + SportteamContract.FieldSportEntry.FIELD_ID + ", "
+                            + SportteamContract.FieldSportEntry.SPORT    + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_SIMULATED_PARTICIPANT_TABLE = "CREATE TABLE " + SportteamContract.TABLE_EVENT_SIMULATED_PARTICIPANT + " (" +
                 SportteamContract.SimulatedParticipantEntry._ID                 + " INTEGER PRIMARY KEY,"   +
@@ -151,6 +156,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_ALARM_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FIELD_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_USER_SPORT_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_FIELD_SPORT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_SIMULATED_PARTICIPANT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FRIEND_REQUESTS_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FRIENDS_TABLE);
@@ -166,6 +172,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_ALARM);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_FIELD);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_USER_SPORTS);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_FIELD_SPORTS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_EVENT_SIMULATED_PARTICIPANT);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_FRIENDS_REQUESTS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_FRIENDS);

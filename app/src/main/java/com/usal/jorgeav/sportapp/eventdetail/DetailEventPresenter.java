@@ -141,8 +141,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             double latitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
             double longitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
             LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
-            String sportId = data.getString(SportteamContract.EventEntry.COLUMN_SPORT);
-            mView.showEventField(fieldId, address, coord, sportId);
+            mView.showEventField(fieldId, address, coord);
             mView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mView.showEventDate(UtilesTime.millisToDateTimeString(data.getLong(SportteamContract.EventEntry.COLUMN_DATE)));
             ownerUid = data.getString(SportteamContract.EventEntry.COLUMN_OWNER);

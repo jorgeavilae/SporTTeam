@@ -16,11 +16,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.SelectSportsAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
-import com.usal.jorgeav.sportapp.data.Sport;
-import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldContract;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
@@ -31,7 +28,7 @@ import java.util.ArrayList;
  * Created by Jorge Avila on 26/06/2017.
  */
 
-public class FieldsActivity extends BaseActivity implements SelectSportsAdapter.OnSelectSportClickListener{
+public class FieldsActivity extends BaseActivity {
     public static final String TAG = FieldsActivity.class.getSimpleName();
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final int REQUEST_CODE_ADDRESS = 23;
@@ -51,12 +48,6 @@ public class FieldsActivity extends BaseActivity implements SelectSportsAdapter.
 
         initFragment(FieldsFragment.newInstance(), false);
         mNavigationView.setCheckedItem(R.id.nav_fields);
-    }
-
-    @Override
-    public void onSportClick(Sport sport) {
-        Fragment fragment = NewFieldFragment.newInstance(null, sport.getmName());
-        initFragment(fragment, true);
     }
 
     @Override
@@ -95,7 +86,7 @@ public class FieldsActivity extends BaseActivity implements SelectSportsAdapter.
                     mCoord = myPlace.getCoordinates();
 
                     //Start new Field
-                    Fragment fragment = SelectSportFragment.newInstance();
+                    Fragment fragment = NewFieldFragment.newInstance(null);
                     initFragment(fragment, true);
                 }
                 if (mDisplayedFragment instanceof NewFieldContract.View)
