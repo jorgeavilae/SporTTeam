@@ -168,7 +168,7 @@ public class NewUserActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 hideSoftKeyboard();
-                SportsListFragment slf = SportsListFragment.newInstance(sports);
+                SportsListFragment slf = SportsListFragment.newInstance("", sports);
                 initFragment(slf, true);
             }
         });
@@ -342,7 +342,7 @@ public class NewUserActivity extends AppCompatActivity implements
             } else {
                 // Cancel after pick image and before crop
                 croppedImageUri = null;
-                Log.d(TAG, "onActivityResult: null");
+                Log.d(TAG, "onActivityResult: Cancel after pick image and before crop");
             }
         } else if (resultCode == UCrop.RESULT_ERROR)
             Log.e(TAG, "onActivityResult: error ", UCrop.getError(data));
@@ -530,12 +530,12 @@ public class NewUserActivity extends AppCompatActivity implements
     private Map<String,Double> sportsArrayToHashMap(List<Sport> sports) {
         HashMap<String, Double> result = new HashMap<>();
         for (Sport s : sports)
-            result.put(s.getmName(), (double) s.getPunctuation());
+            result.put(s.getName(), (double) s.getPunctuation());
         return result;
     }
 
     @Override
-    public void retrieveSportsSelected(List<Sport> sportsSelected) {
+    public void retrieveSportsSelected(String id, List<Sport> sportsSelected) {
         this.sports.clear();
         this.sports.addAll(sportsSelected);
     }

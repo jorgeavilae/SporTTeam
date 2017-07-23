@@ -93,19 +93,19 @@ public class User {
     public Object toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put(FirebaseDBContract.DATA, dataToMap());
-        result.put(FirebaseDBContract.User.SPORTS_PRACTICED, this.sports_practiced);
         return result;
     }
 
     private Map<String, Object> dataToMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put(FirebaseDBContract.User.ALIAS, this.age);
+        result.put(FirebaseDBContract.User.ALIAS, this.alias);
         result.put(FirebaseDBContract.User.EMAIL, this.email);
         result.put(FirebaseDBContract.User.AGE, this.age);
         result.put(FirebaseDBContract.User.PROFILE_PICTURE, this.profile_picture);
         result.put(FirebaseDBContract.User.CITY, this.city);
         result.put(FirebaseDBContract.User.COORD_LATITUDE, this.coord_latitude);
         result.put(FirebaseDBContract.User.COORD_LONGITUDE, this.coord_longitude);
+        result.put(FirebaseDBContract.User.SPORTS_PRACTICED, this.sports_practiced);
         return result;
     }
 }

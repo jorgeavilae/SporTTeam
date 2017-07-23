@@ -465,7 +465,7 @@ public final class SportteamLoader {
 
     public static Cursor simpleQueryFieldId(Context context, String fieldId) {
         return context.getContentResolver().query(
-                SportteamContract.FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI,
+                SportteamContract.FieldEntry.CONTENT_FIELD_URI,
                 SportteamContract.FieldEntry.FIELDS_COLUMNS,
                 SportteamContract.FieldEntry.FIELD_ID + " = ? ",
                 new String[]{fieldId},

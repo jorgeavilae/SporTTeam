@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.adduser.sportpractice;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import butterknife.ButterKnife;
 public class SportsListFragment extends BaseFragment {
     private final static String TAG = SportsListFragment.class.getSimpleName();
     public static final String BUNDLE_INSTANCE_SPORT_LIST = "BUNDLE_INSTANCE_SPORT_LIST";
+    public static final String BUNDLE_INSTANCE_OBJECT_ID = "BUNDLE_INSTANCE_OBJECT_ID";
 
     @BindView(R.id.recycler_list)
     RecyclerView sportsRecyclerViewList;
@@ -36,13 +38,13 @@ public class SportsListFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    public static SportsListFragment newInstance(ArrayList<Sport> sportsList) {
+    public static SportsListFragment newInstance(@NonNull String id, ArrayList<Sport> sportsList) {
         SportsListFragment fragment = new SportsListFragment();
-        if (sportsList != null) {
-            Bundle args = new Bundle();
+        Bundle args = new Bundle();
+        if (sportsList != null)
             args.putParcelableArrayList(BUNDLE_INSTANCE_SPORT_LIST, sportsList);
-            fragment.setArguments(args);
-        }
+        args.putString(BUNDLE_INSTANCE_OBJECT_ID, id);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -65,7 +67,9 @@ public class SportsListFragment extends BaseFragment {
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
             if (getActivity() instanceof OnSportsSelected) {
-                ((OnSportsSelected) getActivity()).retrieveSportsSelected(mSportAdapter.getDataAsArrayList());
+                String id = getArguments().getString(BUNDLE_INSTANCE_OBJECT_ID);
+                Log.d(TAG, "onOptionsItemSelected: "+id);
+                ((OnSportsSelected) getActivity()).retrieveSportsSelected(id, mSportAdapter.getDataAsArrayList());
                 getActivity().onBackPressed();
             } else {
                 Log.e(TAG, "onOptionsItemSelected: Activity does not implement OnSportsSelected");
@@ -94,7 +98,7 @@ public class SportsListFragment extends BaseFragment {
 
         String[] sportsNameArray = getResources().getStringArray(R.array.sport_id);
         for (String aSportsNameArray : sportsNameArray) {
-            result.add(new Sport(aSportsNameArray, 0f, 0));
+            result.add(new Sport(aSportsNameArray, aSportsNameArray, 0f, 1));
         }
 
         if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_SPORT_LIST)) {
@@ -113,7 +117,7 @@ public class SportsListFragment extends BaseFragment {
     }
 
     private boolean isTheSameSport(Sport a, Sport b) {
-        return a.getmName().equals(b.getmName());
+        return a.getName().equals(b.getName());
     }
 
     @Override
@@ -134,6 +138,6 @@ public class SportsListFragment extends BaseFragment {
     }
 
     public interface OnSportsSelected {
-        void retrieveSportsSelected(List<Sport> sportsSelected);
+        void retrieveSportsSelected(String id, List<Sport> sportsSelected);
     }
 }

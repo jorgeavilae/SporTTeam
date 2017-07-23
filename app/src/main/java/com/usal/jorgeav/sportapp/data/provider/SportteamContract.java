@@ -246,7 +246,7 @@ public final class SportteamContract {
 
         /* All column projection */
         public static final String[] FIELD_SPORT_COLUMNS = {
-                TABLE_USER_SPORTS + "." + UserSportEntry._ID,
+                TABLE_FIELD_SPORTS + "." + FieldSportEntry._ID,
                 FIELD_ID_TABLE_PREFIX,
                 SPORT_TABLE_PREFIX,
                 PUNCTUATION_TABLE_PREFIX,

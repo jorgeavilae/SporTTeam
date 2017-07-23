@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 
@@ -39,6 +40,7 @@ public abstract class NewEventContract {
         void retrieveFields(ArrayList<Field> fieldList);
         void clearUI();
         Context getActivityContext();
+        BaseFragment getThis();
 
     }
 }

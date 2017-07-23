@@ -1,14 +1,18 @@
 package com.usal.jorgeav.sportapp.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Created by Jorge Avila on 22/07/2017.
  */
 
-public class SportCourt {
+public class SportCourt implements Parcelable, Serializable {
     String sport_id;
     Double punctuation;
     Long votes;
@@ -51,4 +55,33 @@ public class SportCourt {
         return result;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.sport_id);
+        dest.writeValue(this.punctuation);
+        dest.writeValue(this.votes);
+    }
+
+    protected SportCourt(Parcel in) {
+        this.sport_id = in.readString();
+        this.punctuation = (Double) in.readValue(Double.class.getClassLoader());
+        this.votes = (Long) in.readValue(Long.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<SportCourt> CREATOR = new Parcelable.Creator<SportCourt>() {
+        @Override
+        public SportCourt createFromParcel(Parcel source) {
+            return new SportCourt(source);
+        }
+
+        @Override
+        public SportCourt[] newArray(int size) {
+            return new SportCourt[size];
+        }
+    };
 }

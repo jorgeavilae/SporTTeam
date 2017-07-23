@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -71,7 +70,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             ((EventsActivity)mNewEventView.getActivityContext()).mAddress = null;
             ((EventsActivity)mNewEventView.getActivityContext()).mCity = null;
             ((EventsActivity)mNewEventView.getActivityContext()).mCoord = null;
-            ((AppCompatActivity)mNewEventView.getActivityContext()).onBackPressed();
+            mNewEventView.getThis().resetBackStack();
         } else
             Toast.makeText(mNewEventView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
     }

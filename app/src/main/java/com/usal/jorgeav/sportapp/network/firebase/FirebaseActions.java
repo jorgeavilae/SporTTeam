@@ -30,7 +30,6 @@ import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
-import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -63,7 +62,8 @@ public class FirebaseActions {
     }
     public static void updateSports(String myUid, HashMap<String, Float> sportsMap) {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
-            .child(myUid).child(FirebaseDBContract.User.SPORTS_PRACTICED).setValue(sportsMap);
+                .child(myUid).child(FirebaseDBContract.DATA)
+                .child(FirebaseDBContract.User.SPORTS_PRACTICED).setValue(sportsMap);
     }
 
     // Add Event
@@ -158,11 +158,15 @@ public class FirebaseActions {
         String fieldInFieldTable = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + field.getId();
 
         //Set Field created in creatorId
-
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(fieldInFieldTable, field.toMap());
 
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
+    }
+    public static void updateFieldSports(String fieldId, Map<String, Object> sportsMap) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS)
+                .child(fieldId).child(FirebaseDBContract.DATA)
+                .child(FirebaseDBContract.Field.SPORT).setValue(sportsMap);
     }
 
     // Add Alarm
@@ -848,34 +852,35 @@ public class FirebaseActions {
 
     public static void voteField(String fieldId, String sportId, final float vote) {
         //Add vote to count and recalculate average rating
-        DatabaseReference fieldSportRef = FirebaseDatabase.getInstance()
-                .getReference(FirebaseDBContract.TABLE_FIELDS)
-                .child(fieldId)
-                .child(FirebaseDBContract.DATA)
-                .child(FirebaseDBContract.Field.SPORT)
-                .child(sportId);
-        fieldSportRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Sport s = mutableData.getValue(Sport.class);
-                if (s == null) return Transaction.success(mutableData);
-
-                float newRating = (s.getPunctuation()*s.getVotes() + vote) / (s.getVotes()+1);
-                s.setVotes(s.getVotes() + 1);
-                s.setPunctuation((float) (Math.round(newRating * 2) / 2.0));
-
-                mutableData.setValue(s);
-
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b,
-                                   DataSnapshot dataSnapshot) {
-                // Transaction completed
-                Log.d(TAG, "postTransaction:onComplete:" + databaseError);
-            }
-        });
+        Log.e(TAG, "voteField: NOt implemented");
+//        DatabaseReference fieldSportRef = FirebaseDatabase.getInstance()
+//                .getReference(FirebaseDBContract.TABLE_FIELDS)
+//                .child(fieldId)
+//                .child(FirebaseDBContract.DATA)
+//                .child(FirebaseDBContract.Field.SPORT)
+//                .child(sportId);
+//        fieldSportRef.runTransaction(new Transaction.Handler() {
+//            @Override
+//            public Transaction.Result doTransaction(MutableData mutableData) {
+//                Sport s = mutableData.getValue(Sport.class); //TODO que es esto??
+//                if (s == null) return Transaction.success(mutableData);
+//
+//                float newRating = (s.getPunctuation()*s.getVotes() + vote) / (s.getVotes()+1);
+//                s.setVotes(s.getVotes() + 1);
+//                s.setPunctuation((float) (Math.round(newRating * 2) / 2.0));
+//
+//                mutableData.setValue(s);
+//
+//                return Transaction.success(mutableData);
+//            }
+//
+//            @Override
+//            public void onComplete(DatabaseError databaseError, boolean b,
+//                                   DataSnapshot dataSnapshot) {
+//                // Transaction completed
+//                Log.d(TAG, "postTransaction:onComplete:" + databaseError);
+//            }
+//        });
     }
 
     public static void deleteAlarm(BaseFragment baseFragment, String userId, String alarmId) {

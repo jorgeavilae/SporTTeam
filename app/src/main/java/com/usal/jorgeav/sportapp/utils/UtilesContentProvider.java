@@ -56,52 +56,55 @@ public class UtilesContentProvider {
 
     public static ArrayList<Alarm> cursorToMultipleAlarm(Cursor cursor) {
         ArrayList<Alarm> result = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            String alarmId = cursor.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID);
-            String sport = cursor.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
-            String field = cursor.getString(SportteamContract.AlarmEntry.COLUMN_FIELD);
-            String city = cursor.getString(SportteamContract.AlarmEntry.COLUMN_CITY);
-            Long dateFrom = null;
-            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_DATE_FROM))
-                dateFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_FROM);
-            Long dateTo = null;
-            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_DATE_TO))
-                dateTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_TO);
-            Long totalPlFrom = null;
-            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM))
-                totalPlFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM);
-            Long totalPlTo = null;
-            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO))
-                totalPlTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO);
-            Long emptyPlFrom = null;
-            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM))
-                emptyPlFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM);
-            Long emptyPlTo = null;
-            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO))
-                emptyPlTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO);
+        if (cursor != null)
+            while (cursor.moveToNext()) {
+                String alarmId = cursor.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID);
+                String sport = cursor.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
+                String field = cursor.getString(SportteamContract.AlarmEntry.COLUMN_FIELD);
+                String city = cursor.getString(SportteamContract.AlarmEntry.COLUMN_CITY);
+                Long dateFrom = null;
+                if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_DATE_FROM))
+                    dateFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_FROM);
+                Long dateTo = null;
+                if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_DATE_TO))
+                    dateTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_TO);
+                Long totalPlFrom = null;
+                if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM))
+                    totalPlFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM);
+                Long totalPlTo = null;
+                if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO))
+                    totalPlTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO);
+                Long emptyPlFrom = null;
+                if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM))
+                    emptyPlFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM);
+                Long emptyPlTo = null;
+                if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO))
+                    emptyPlTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO);
 
-            result.add(new Alarm(alarmId, sport, field, city, dateFrom,
-                    dateTo, totalPlFrom, totalPlTo, emptyPlFrom, emptyPlTo));
-        }
+                result.add(new Alarm(alarmId, sport, field, city, dateFrom,
+                        dateTo, totalPlFrom, totalPlTo, emptyPlFrom, emptyPlTo));
+            }
         return result;
     }
 
     public static ArrayList<Field> cursorToMultipleField(Cursor cursor) {
         ArrayList<Field> result = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            String fieldId = cursor.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
-            String name = cursor.getString(SportteamContract.FieldEntry.COLUMN_NAME);
-            String address = cursor.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
-            Double lat = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
-            Double lng = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
-            String city = cursor.getString(SportteamContract.FieldEntry.COLUMN_CITY);
-            Long openTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
-            Long closeTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
-            String creator = cursor.getString(SportteamContract.FieldEntry.COLUMN_CREATOR);
+        if (cursor != null)
+            while (cursor.moveToNext()) {
+                String fieldId = cursor.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
+                String name = cursor.getString(SportteamContract.FieldEntry.COLUMN_NAME);
+                String address = cursor.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
+                Double lat = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
+                Double lng = cursor.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
+                String city = cursor.getString(SportteamContract.FieldEntry.COLUMN_CITY);
+                Long openTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
+                Long closeTime = cursor.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
+                String creator = cursor.getString(SportteamContract.FieldEntry.COLUMN_CREATOR);
+                ArrayList<SportCourt> sports = getFieldSportFromContentProvider(fieldId);
 
-            result.add(new Field(fieldId, name, address, lat, lng, city,
-                    openTime, closeTime, creator, null)); //TODO cambiar este null
-        }
+                result.add(new Field(fieldId, name, address, lat, lng, city,
+                        openTime, closeTime, creator, sports));
+            }
         return result;
     }
 

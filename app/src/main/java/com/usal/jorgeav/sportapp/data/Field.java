@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,7 @@ public class Field implements Parcelable {
     Long opening_time;
     Long closing_time;
     String creator;
-    List<SportCourt> sport;
+    HashMap<String, SportCourt> sport;
 
     public Field() {
     }
@@ -39,7 +38,10 @@ public class Field implements Parcelable {
         this.opening_time = opening_time;
         this.closing_time = closing_time;
         this.creator = creator;
-        this.sport = sport;
+        this.sport = new HashMap<>();
+        if (sport != null)
+            for (SportCourt sc : sport)
+                this.sport.put(sc.getSport_id(), sc);
     }
 
     public void setId(String id) {
@@ -82,15 +84,12 @@ public class Field implements Parcelable {
         return creator;
     }
 
-    public List<SportCourt> getSport() {
+    public HashMap<String, SportCourt> getSport() {
         return sport;
     }
 
     public boolean containsSportCourt(String sportId) {
-        for (SportCourt sc : this.sport)
-            if (sc.getSport_id().equals(sportId))
-                return true;
-        return false;
+        return this.sport.containsKey(sportId);
     }
 
     @Override
@@ -124,17 +123,11 @@ public class Field implements Parcelable {
         result.put(FirebaseDBContract.Field.CITY, this.city);
         result.put(FirebaseDBContract.Field.OPENING_TIME, this.opening_time);
         result.put(FirebaseDBContract.Field.CLOSING_TIME, this.closing_time);
-        result.put(FirebaseDBContract.Field.SPORT, sportToMap());
+        result.put(FirebaseDBContract.Field.SPORT, this.sport);
         result.put(FirebaseDBContract.Field.CREATOR, this.creator);
         return result;
     }
 
-    private Object sportToMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        for (SportCourt sc : this.sport)
-            result.put(sc.getSport_id(), sc.toMap());
-        return result;
-    }
 
     @Override
     public int describeContents() {
@@ -152,7 +145,7 @@ public class Field implements Parcelable {
         dest.writeValue(this.opening_time);
         dest.writeValue(this.closing_time);
         dest.writeString(this.creator);
-        dest.writeList(this.sport);
+        dest.writeSerializable(this.sport);
     }
 
     protected Field(Parcel in) {
@@ -165,8 +158,7 @@ public class Field implements Parcelable {
         this.opening_time = (Long) in.readValue(Long.class.getClassLoader());
         this.closing_time = (Long) in.readValue(Long.class.getClassLoader());
         this.creator = in.readString();
-        this.sport = new ArrayList<SportCourt>();
-        in.readList(this.sport, SportCourt.class.getClassLoader());
+        this.sport = (HashMap<String, SportCourt>) in.readSerializable();
     }
 
     public static final Creator<Field> CREATOR = new Creator<Field>() {

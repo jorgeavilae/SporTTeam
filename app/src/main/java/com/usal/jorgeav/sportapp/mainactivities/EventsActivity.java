@@ -68,7 +68,7 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
 
     @Override
     public void onSportClick(Sport sport) {
-        Fragment fragment = NewEventFragment.newInstance(null, sport.getmName());
+        Fragment fragment = NewEventFragment.newInstance(null, sport.getName());
         initFragment(fragment, true);
     }
 
@@ -123,12 +123,14 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
                     mAddress = field.getAddress();
                     mCity = field.getCity();
                     mCoord = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
+                    Log.d(TAG, "onActivityResult: "+field);
                 } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
                     MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
                     mFieldId = null;
                     mAddress = myPlace.getAddress();
                     mCity = myPlace.getShortNameLocality();
                     mCoord = myPlace.getCoordinates();
+                    Log.d(TAG, "onActivityResult: "+myPlace);
                 }
                 if (mDisplayedFragment instanceof NewEventContract.View)
                     ((NewEventContract.View) mDisplayedFragment).showEventField(mFieldId, mAddress, mCity, mCoord);

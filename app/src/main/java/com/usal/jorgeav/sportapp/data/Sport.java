@@ -10,25 +10,27 @@ import com.usal.jorgeav.sportapp.MyApplication;
  */
 
 public class Sport implements Parcelable {
-    String mName;
+    String name;
+    String sportID;
     int iconDrawableId;
     float punctuation;
     int votes;
 
-    public Sport() {
-        // Default constructor required for calls to DataSnapshot.getValue(Event.class)
-    }
-
-    public Sport(String mName, float punctuation, int votes) {
-        this.mName = mName;
+    public Sport(String name, String sportID, float punctuation, int votes) {
+        this.name = name;
+        this.sportID = sportID;
         this.iconDrawableId = MyApplication.getAppContext().getResources()
-                .getIdentifier(mName , "drawable", MyApplication.getAppContext().getPackageName());
+                .getIdentifier(name , "drawable", MyApplication.getAppContext().getPackageName());
         this.punctuation = punctuation;
         this.votes = votes;
     }
 
-    public String getmName() {
-        return mName;
+    public String getName() {
+        return name;
+    }
+
+    public String getSportID() {
+        return sportID;
     }
 
     public int getIconDrawableId() {
@@ -54,7 +56,8 @@ public class Sport implements Parcelable {
     @Override
     public String toString() {
         return "Sport{" +
-                "mName='" + mName + '\'' +
+                "name='" + name + '\'' +
+                ", sportID='" + sportID + '\'' +
                 ", iconDrawableId=" + iconDrawableId +
                 ", punctuation=" + punctuation +
                 ", votes=" + votes +
@@ -68,18 +71,22 @@ public class Sport implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.mName);
+        dest.writeString(this.name);
+        dest.writeString(this.sportID);
+        dest.writeInt(this.iconDrawableId);
         dest.writeFloat(this.punctuation);
         dest.writeInt(this.votes);
     }
 
     protected Sport(Parcel in) {
-        this.mName = in.readString();
+        this.name = in.readString();
+        this.sportID = in.readString();
+        this.iconDrawableId = in.readInt();
         this.punctuation = in.readFloat();
         this.votes = in.readInt();
     }
 
-    public static final Parcelable.Creator<Sport> CREATOR = new Parcelable.Creator<Sport>() {
+    public static final Creator<Sport> CREATOR = new Creator<Sport>() {
         @Override
         public Sport createFromParcel(Parcel source) {
             return new Sport(source);

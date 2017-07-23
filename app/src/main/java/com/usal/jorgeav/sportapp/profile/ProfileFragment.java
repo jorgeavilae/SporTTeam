@@ -132,7 +132,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             userEditSportListButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Fragment fragment = SportsListFragment.newInstance(sportsAdapter.getDataAsArrayList());
+                    Fragment fragment = SportsListFragment.newInstance(mUserUid, sportsAdapter.getDataAsArrayList());
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });

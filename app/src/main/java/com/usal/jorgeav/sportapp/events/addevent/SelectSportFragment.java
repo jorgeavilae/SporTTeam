@@ -77,7 +77,7 @@ public class SelectSportFragment extends BaseFragment {
 
         String[] sportsNameArray = getResources().getStringArray(R.array.sport_id);
         for (String aSportsNameArray : sportsNameArray) {
-            result.add(new Sport(aSportsNameArray, 0f, 0));
+            result.add(new Sport(aSportsNameArray, aSportsNameArray, 0f, 0));
         }
 
         return result;

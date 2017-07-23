@@ -7,6 +7,7 @@ import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
+import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
@@ -61,6 +62,19 @@ public class UtilesDataSnapshot { // TODO: 22/07/2017 cambiar por UtilesContentV
         cv.put(SportteamContract.FieldEntry.CREATOR, field.getCreator());
         return cv;
     }
+    public static ArrayList<ContentValues> fieldSportToContentValues(Field field) {
+        ArrayList<ContentValues> cvArray = new ArrayList<>();
+        if (field.getSport() != null)
+            for (Map.Entry<String, SportCourt> entry : field.getSport().entrySet()) {
+                ContentValues cv = new ContentValues();
+                cv.put(SportteamContract.FieldSportEntry.FIELD_ID, field.getId());
+                cv.put(SportteamContract.FieldSportEntry.SPORT, entry.getValue().getSport_id());
+                cv.put(SportteamContract.FieldSportEntry.PUNCTUATION, entry.getValue().getPunctuation());
+                cv.put(SportteamContract.FieldSportEntry.VOTES, entry.getValue().getVotes());
+                cvArray.add(cv);
+            }
+        return cvArray;
+    }
 
     public static ContentValues dataUserToContentValues(User user) {
         ContentValues cv = new ContentValues();
@@ -76,13 +90,14 @@ public class UtilesDataSnapshot { // TODO: 22/07/2017 cambiar por UtilesContentV
     }
     public static ArrayList<ContentValues> sportUserToContentValues(User user) {
         ArrayList<ContentValues> cvArray = new ArrayList<>();
-        for (Map.Entry<String, Double> entry : user.getSports_practiced().entrySet()) {
-            ContentValues cv = new ContentValues();
-            cv.put(SportteamContract.UserSportEntry.USER_ID, user.getUid());
-            cv.put(SportteamContract.UserSportEntry.SPORT, entry.getKey());
-            cv.put(SportteamContract.UserSportEntry.LEVEL, entry.getValue());
-            cvArray.add(cv);
-        }
+        if (user.getSports_practiced() != null)
+            for (Map.Entry<String, Double> entry : user.getSports_practiced().entrySet()) {
+                ContentValues cv = new ContentValues();
+                cv.put(SportteamContract.UserSportEntry.USER_ID, user.getUid());
+                cv.put(SportteamContract.UserSportEntry.SPORT, entry.getKey());
+                cv.put(SportteamContract.UserSportEntry.LEVEL, entry.getValue());
+                cvArray.add(cv);
+            }
         return cvArray;
     }
 

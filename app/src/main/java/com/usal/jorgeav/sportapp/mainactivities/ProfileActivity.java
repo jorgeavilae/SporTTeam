@@ -37,13 +37,11 @@ public class ProfileActivity extends BaseActivity implements SportsListFragment.
     }
 
     @Override
-    public void retrieveSportsSelected(List<Sport> sportsSelected) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+    public void retrieveSportsSelected(String myUserID, List<Sport> sportsSelected) {
         HashMap<String, Float> sportsMap = new HashMap<>();
         if (sportsSelected != null)
             for (Sport sport : sportsSelected)
-                sportsMap.put(sport.getmName(), sport.getPunctuation());
+                sportsMap.put(sport.getName(), sport.getPunctuation());
         FirebaseActions.updateSports(myUserID, sportsMap);
     }
 }

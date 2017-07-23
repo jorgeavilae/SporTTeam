@@ -16,19 +16,25 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
+import com.usal.jorgeav.sportapp.data.Sport;
+import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.fields.FieldsFragment;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldContract;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Jorge Avila on 26/06/2017.
  */
 
-public class FieldsActivity extends BaseActivity {
+public class FieldsActivity extends BaseActivity implements SportsListFragment.OnSportsSelected {
     public static final String TAG = FieldsActivity.class.getSimpleName();
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final int REQUEST_CODE_ADDRESS = 23;
@@ -150,5 +156,18 @@ public class FieldsActivity extends BaseActivity {
             mCoord = savedInstanceState.getParcelable(INSTANCE_COORD_SELECTED);
         if (mDisplayedFragment instanceof NewFieldContract.View)
             ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
+    }
+
+    @Override
+    public void retrieveSportsSelected(String fieldId, List<Sport> sportsSelected) {
+        HashMap<String, Object> sportsMap = new HashMap<>();
+        if (sportsSelected != null)
+            for (Sport s : sportsSelected) {
+                SportCourt sc = new SportCourt(s.getSportID(), (double)s.getPunctuation(), (long)s.getVotes());
+                sportsMap.put(s.getSportID(), sc.toMap());
+            }
+        Log.d(TAG, "retrieveSportsSelected: "+fieldId);
+
+        FirebaseActions.updateFieldSports(fieldId, sportsMap);
     }
 }

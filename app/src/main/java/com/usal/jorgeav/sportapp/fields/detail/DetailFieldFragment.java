@@ -194,9 +194,8 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
             fieldEditSportListButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Fragment fragment = SportsListFragment.newInstance(sportsAdapter.getDataAsArrayList());
+                    Fragment fragment = SportsListFragment.newInstance(textViewFieldId.getText().toString(), sportsAdapter.getDataAsArrayList());
                     mFragmentManagementListener.initFragment(fragment, true);
-                    //TODO implement on sport selected
                 }
             });
         }

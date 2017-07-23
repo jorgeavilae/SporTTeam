@@ -1062,12 +1062,18 @@ public class FirebaseSync {
                             }
                             field.setId(dataSnapshot.getKey());
 
-                            ContentValues cv = UtilesDataSnapshot.fieldToContentValues(field);
-
+                            ContentValues cvData = UtilesDataSnapshot.fieldToContentValues(field);
                             MyApplication.getAppContext().getContentResolver()
-                                    .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cv);
+                                    .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
 
-                            //TODO insert sports field
+                            List<ContentValues> cvSports = UtilesDataSnapshot.fieldSportToContentValues(field);
+                            MyApplication.getAppContext().getContentResolver()
+                                    .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                            SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+                                            new String[]{field.getId()});
+                            MyApplication.getAppContext().getContentResolver()
+                                    .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                            cvSports.toArray(new ContentValues[cvSports.size()]));
                         }
                     }
 
@@ -1131,12 +1137,18 @@ public class FirebaseSync {
                                 }
                                 field.setId(data.getKey());
 
-                                ContentValues cv = UtilesDataSnapshot.fieldToContentValues(field);
-
+                                ContentValues cvData = UtilesDataSnapshot.fieldToContentValues(field);
                                 MyApplication.getAppContext().getContentResolver()
-                                        .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cv);
+                                        .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
 
-                                //TODO insert sports field
+                                List<ContentValues> cvSports = UtilesDataSnapshot.fieldSportToContentValues(field);
+                                MyApplication.getAppContext().getContentResolver()
+                                        .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                                SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+                                                new String[]{field.getId()});
+                                MyApplication.getAppContext().getContentResolver()
+                                        .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                                cvSports.toArray(new ContentValues[cvSports.size()]));
                             }
                         }
                     }

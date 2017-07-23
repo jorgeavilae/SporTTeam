@@ -41,7 +41,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
     public void onBindViewHolder(AddSportsAdapter.ViewHolder holder, int position) {
         Sport s = mDataset.get(position);
         if (s != null) {
-            String name = s.getmName();
+            String name = s.getName();
             float level = s.getPunctuation();
             holder.textViewSportName.setText(name);
             holder.ratingBarSportLevel.setRating(level);

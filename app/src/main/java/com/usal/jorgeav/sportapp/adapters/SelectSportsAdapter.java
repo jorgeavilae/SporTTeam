@@ -41,7 +41,7 @@ public class SelectSportsAdapter  extends RecyclerView.Adapter<SelectSportsAdapt
     public void onBindViewHolder(SelectSportsAdapter.ViewHolder holder, int position) {
         Sport s = mDataset.get(position);
         if (s != null) {
-            holder.textViewSportName.setText(s.getmName());
+            holder.textViewSportName.setText(s.getName());
             holder.imageViewSportIcon.setImageResource(s.getIconDrawableId());
         }
     }
