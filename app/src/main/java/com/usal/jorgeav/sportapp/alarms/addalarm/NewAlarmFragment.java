@@ -111,28 +111,17 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             if (getArguments() != null && getArguments().containsKey(BUNDLE_ALARM_ID))
                 alarmId = getArguments().getString(BUNDLE_ALARM_ID);
 
-            Log.d(TAG, "onOptionsItemSelected: "+alarmId);
-            Log.d(TAG, "onOptionsItemSelected: "+newAlarmSport.getSelectedItem().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+((AlarmsActivity)getActivity()).mFieldId);
-            Log.d(TAG, "onOptionsItemSelected: "+((AlarmsActivity)getActivity()).mCity);
-            Log.d(TAG, "onOptionsItemSelected: "+newAlarmDateFrom.getText().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+newAlarmDateTo.getText().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+newAlarmTotalFrom.getText().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+newAlarmTotalTo.getText().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+newAlarmEmptyFrom.getText().toString());
-            Log.d(TAG, "onOptionsItemSelected: "+newAlarmEmptyTo.getText().toString());
-
-//            mNewAlarmPresenter.addAlarm(
-//                    alarmId,
-//                    newAlarmSport.getSelectedItem().toString(),
-//                    ((AlarmsActivity)getActivity()).mFieldId,
-//                    ((AlarmsActivity)getActivity()).mCity,
-//                    newAlarmDateFrom.getText().toString(),
-//                    newAlarmDateTo.getText().toString(),
-//                    newAlarmTotalFrom.getText().toString(),
-//                    newAlarmTotalTo.getText().toString(),
-//                    newAlarmEmptyFrom.getText().toString(),
-//                    newAlarmEmptyTo.getText().toString());
+            mNewAlarmPresenter.addAlarm(
+                    alarmId,
+                    newAlarmSport.getSelectedItem().toString(),
+                    ((AlarmsActivity)getActivity()).mFieldId,
+                    ((AlarmsActivity)getActivity()).mCity,
+                    newAlarmDateFrom.getText().toString(),
+                    newAlarmDateTo.getText().toString(),
+                    newAlarmTotalFrom.getText().toString(),
+                    newAlarmTotalTo.getText().toString(),
+                    newAlarmEmptyFrom.getText().toString(),
+                    newAlarmEmptyTo.getText().toString());
             return true;
         }
         return false;
