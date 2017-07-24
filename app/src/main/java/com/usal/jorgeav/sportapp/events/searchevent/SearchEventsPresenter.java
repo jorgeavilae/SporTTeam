@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 /**
@@ -43,7 +43,7 @@ public class SearchEventsPresenter implements SearchEventsContract.Presenter, Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUserID = Utiles.getCurrentUserId();
         String city = UtilesPreferences.getCurrentUserCity(mSearchEventsView.getActivityContext());
         switch (id) {
             case SportteamLoader.LOADER_EVENTS_FROM_CITY:
