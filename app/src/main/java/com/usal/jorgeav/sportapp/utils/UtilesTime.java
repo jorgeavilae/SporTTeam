@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -14,31 +13,30 @@ import java.util.Locale;
 
 public class UtilesTime {
 
-    public static String calendarToDate(Date time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-        return sdf.format(time.getTime());
-    }
-
-    public static String calendarToTime(Date time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        return sdf.format(time.getTime());
-    }
-
-    public static long stringDateToMillis(String s) {
-        if (s == null || TextUtils.isEmpty(s)) return 0;
+    public static Long stringDateToMillis(String dateStr) {
+        if (dateStr == null || TextUtils.isEmpty(dateStr)) return null;
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
         try {
-            return sdf.parse(s).getTime();
+            return sdf.parse(dateStr).getTime();
         } catch (ParseException e) {
             e.printStackTrace();
-            return 0;
+            return null;
         }
     }
 
-    public static long stringTimeToMillis(String time) throws ParseException {
+    public static Long stringTimeToMillis(String timeStr) {
         //TODO esto no esta bien (edit event)
+//        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+//        return sdf.parse(time).getTime();
+
+        if (timeStr == null || TextUtils.isEmpty(timeStr)) return null;
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        return sdf.parse(time).getTime();
+        try {
+            return sdf.parse(timeStr).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static String millisToDateTimeString(long millis) {
@@ -48,16 +46,14 @@ public class UtilesTime {
     }
 
     public static String millisToTimeString(long millis) {
-        Calendar cl = Calendar.getInstance();
-        cl.setTimeInMillis(millis);
+        if (millis < 0) return "";
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        return sdf.format(cl.getTime());
+        return sdf.format(new Date(millis));
     }
 
     public static String millisToDateString(long millis) {
-        Calendar cl = Calendar.getInstance();
-        cl.setTimeInMillis(millis);
+        if (millis <= 0) return "";
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-        return sdf.format(cl.getTime());
+        return sdf.format(new Date(millis));
     }
 }

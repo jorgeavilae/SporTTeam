@@ -22,7 +22,6 @@ import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -45,14 +44,8 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                          HashMap<String, Boolean> participants,
                          HashMap<String, SimulatedUser> simulatedParticipants) {
         String myUid = Utiles.getCurrentUserId();
-        long dateMillis = UtilesTime.stringDateToMillis(date);
-        long timeMillis;
-        try { timeMillis = UtilesTime.stringTimeToMillis(time);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Toast.makeText(mNewEventView.getActivityContext(), "Error: formato de hora", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        Long dateMillis = UtilesTime.stringDateToMillis(date);
+        Long timeMillis = UtilesTime.stringTimeToMillis(time);
 
         if (isValidSport(sport) && isValidField(field, address, sport, city, coord) && isValidName(name)
                 && isValidOwner(myUid) && isDateTimeCorrect(dateMillis, timeMillis) && isPlayersCorrect(total, empty)) {
@@ -117,8 +110,8 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isDateTimeCorrect(long date, long time) {
-        if (System.currentTimeMillis() < date + time) return true;
+    private boolean isDateTimeCorrect(Long date, Long time) {
+        if (date != null && time != null && System.currentTimeMillis() < date + time) return true;
         Log.e(TAG, "isDateTimeCorrect: incorrect");
         return false;
     }

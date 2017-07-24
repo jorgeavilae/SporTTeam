@@ -89,7 +89,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             myCalendar.set(Calendar.YEAR, year);
             myCalendar.set(Calendar.MONTH, monthOfYear);
             myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            newEventDate.setText(UtilesTime.calendarToDate(myCalendar.getTime()));
+            newEventDate.setText(UtilesTime.millisToDateString(myCalendar.getTimeInMillis()));
         }
     };
     TimePickerDialog timePickerDialog;
@@ -98,7 +98,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         public void onTimeSet(TimePicker timePicker, int hour, int minute) {
             myCalendar.set(Calendar.HOUR_OF_DAY, hour);
             myCalendar.set(Calendar.MINUTE, minute);
-            newEventTime.setText(UtilesTime.calendarToTime(myCalendar.getTime()));
+            newEventTime.setText(UtilesTime.millisToTimeString(myCalendar.getTimeInMillis()));
         }
     };
 

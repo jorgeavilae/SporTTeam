@@ -193,7 +193,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                                 myCalendar.set(Calendar.YEAR, year);
                                 myCalendar.set(Calendar.MONTH, monthOfYear);
                                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                newAlarmDateFrom.setText(UtilesTime.calendarToDate(myCalendar.getTime()));
+                                newAlarmDateFrom.setText(UtilesTime.millisToDateString(myCalendar.getTimeInMillis()));
                                 newAlarmDateTo.setText("");
                                 newAlarmDateTo.setEnabled(true);
                             }
@@ -230,7 +230,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                                 c.set(Calendar.YEAR, year);
                                 c.set(Calendar.MONTH, monthOfYear);
                                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                newAlarmDateTo.setText(UtilesTime.calendarToDate(c.getTime()));
+                                newAlarmDateTo.setText(UtilesTime.millisToDateString(c.getTimeInMillis()));
                             }
                         },
                         myCalendar.get(Calendar.YEAR),

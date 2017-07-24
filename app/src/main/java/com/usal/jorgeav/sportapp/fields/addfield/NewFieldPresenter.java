@@ -4,24 +4,19 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,32 +33,30 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
         this.mNewFieldView = view;
     }
 
-    //TODO cambiar sport por una lista de sports
     @Override
     public void addField(String id, String name, String address, LatLng coords, String city,
                          String openTime, String closeTime, String userId, List<SportCourt> sports) {
-        long openMillis = 0;
-        long closeMillis = 0;
-        try {
-            openMillis = UtilesTime.stringTimeToMillis(openTime);
-            closeMillis = UtilesTime.stringTimeToMillis(closeTime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if (isValidAddress(address, city) && isValidName(name) && isValidCoords(coords)
-                && isTimesCorrect(openMillis, closeMillis) && isValidCreator(userId)) {
-            Field field = new Field(id, name, address, coords.latitude, coords.longitude, city,
-                    openMillis, closeMillis, userId, sports);
+        Long openMillis = UtilesTime.stringTimeToMillis(openTime);
+        Long closeMillis = UtilesTime.stringTimeToMillis(closeTime);
 
-            Log.d(TAG, "addField: "+field);
-            FirebaseActions.addField(field);
-            ((FieldsActivity)mNewFieldView.getActivityContext()).mFieldId = null;
-            ((FieldsActivity)mNewFieldView.getActivityContext()).mAddress = null;
-            ((FieldsActivity)mNewFieldView.getActivityContext()).mCity = null;
-            ((FieldsActivity)mNewFieldView.getActivityContext()).mCoord = null;
-            ((AppCompatActivity)mNewFieldView.getActivityContext()).onBackPressed();
-        } else
-            Toast.makeText(mNewFieldView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "addField: "+openTime);
+        Log.d(TAG, "addField: "+openMillis);
+        Log.d(TAG, "addField: "+closeTime);
+        Log.d(TAG, "addField: "+closeMillis);
+//        if (isValidAddress(address, city) && isValidName(name) && isValidCoords(coords)
+//                && isTimesCorrect(openMillis, closeMillis) && isValidCreator(userId)) {
+//            Field field = new Field(id, name, address, coords.latitude, coords.longitude, city,
+//                    openMillis, closeMillis, userId, sports);
+//
+//            Log.d(TAG, "addField: "+field);
+//            FirebaseActions.addField(field);
+//            ((FieldsActivity)mNewFieldView.getActivityContext()).mFieldId = null;
+//            ((FieldsActivity)mNewFieldView.getActivityContext()).mAddress = null;
+//            ((FieldsActivity)mNewFieldView.getActivityContext()).mCity = null;
+//            ((FieldsActivity)mNewFieldView.getActivityContext()).mCoord = null;
+//            ((AppCompatActivity)mNewFieldView.getActivityContext()).onBackPressed();
+//        } else
+//            Toast.makeText(mNewFieldView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
     }
 
     private boolean isValidAddress(String address, String city) {
@@ -92,8 +85,8 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isTimesCorrect(long open, long close) {
-        if (open <= close) return true;
+    private boolean isTimesCorrect(Long open, Long close) {
+        if (open != null && close != null && open <= close) return true;
         Log.e(TAG, "isTimesCorrect: incorrect");
         return false;
     }

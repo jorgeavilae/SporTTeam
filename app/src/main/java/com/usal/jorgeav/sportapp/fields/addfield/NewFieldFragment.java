@@ -70,7 +70,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         public void onTimeSet(TimePicker timePicker, int hour, int minute) {
             myCalendar.set(Calendar.HOUR_OF_DAY, hour);
             myCalendar.set(Calendar.MINUTE, minute);
-            newFieldOpenTime.setText(UtilesTime.calendarToTime(myCalendar.getTime()));
+            Log.d(TAG, "onTimeSet: "+myCalendar.getTimeInMillis());
+            newFieldOpenTime.setText(UtilesTime.millisToTimeString(myCalendar.getTimeInMillis()));
         }
     };
     TimePickerDialog closeTimePickerDialog;
@@ -79,7 +80,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         public void onTimeSet(TimePicker timePicker, int hour, int minute) {
             myCalendar.set(Calendar.HOUR_OF_DAY, hour);
             myCalendar.set(Calendar.MINUTE, minute);
-            newFieldCloseTime.setText(UtilesTime.calendarToTime(myCalendar.getTime()));
+            Log.d(TAG, "onTimeSet: "+myCalendar.getTimeInMillis());
+            newFieldCloseTime.setText(UtilesTime.millisToTimeString(myCalendar.getTimeInMillis()));
         }
     };
 

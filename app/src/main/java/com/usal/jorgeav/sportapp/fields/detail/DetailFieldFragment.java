@@ -168,6 +168,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void showFieldTimes(long openTime, long closeTime) {
         ((BaseActivity)getActivity()).showContent();
+        //TODO time = -36000000 ???
         this.textViewFieldOpening.setText(UtilesTime.millisToTimeString(openTime));
         this.textViewFieldClosing.setText(UtilesTime.millisToTimeString(closeTime));
     }

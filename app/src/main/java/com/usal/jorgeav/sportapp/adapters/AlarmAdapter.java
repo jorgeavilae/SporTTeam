@@ -45,8 +45,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(AlarmAdapter.ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
-            long dateFrom = mDataset.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_FROM);
-            long dateTo = mDataset.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_TO);
+            Long dateFrom = mDataset.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_FROM);
+            Long dateTo = mDataset.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_TO);
             int totalPlFrom = mDataset.getInt(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM);
             int totalPlTo = mDataset.getInt(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO);
             int emptyPlFrom = mDataset.getInt(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM);

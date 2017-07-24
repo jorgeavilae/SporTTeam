@@ -1018,8 +1018,7 @@ public class FirebaseActions {
         List<Alarm> alarms = UtilesContentProvider.getAllAlarmsFromContentProvider(MyApplication.getAppContext());
         if (alarms == null || alarms.size() < 1) return;
 
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        String myUserID = Utiles.getCurrentUserId();
         if(TextUtils.isEmpty(myUserID)) return;
         final String finalMyUserID = myUserID;
 

@@ -142,14 +142,14 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
     }
 
     private boolean isDateCorrect(String dateFrom, String dateTo) {
-        long dateFromMillis = 0, dateToMillis = 0;
+        Long dateFromMillis = null, dateToMillis = null;
         if (!TextUtils.isEmpty(dateFrom))
             dateFromMillis = UtilesTime.stringDateToMillis(dateFrom);
         if (!TextUtils.isEmpty(dateTo))
             dateToMillis = UtilesTime.stringDateToMillis(dateTo);
 
-        if (dateFromMillis > 0)
-            if (dateToMillis > 0)
+        if (dateFromMillis != null && dateFromMillis > 0)
+            if (dateToMillis != null && dateToMillis > 0)
                 return (DateUtils.isToday(dateFromMillis) || System.currentTimeMillis() < dateFromMillis)
                                 && dateFromMillis <= dateToMillis;
             else
