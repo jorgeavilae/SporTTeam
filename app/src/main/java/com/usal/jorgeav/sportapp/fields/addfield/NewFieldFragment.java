@@ -32,6 +32,7 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,8 +71,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         public void onTimeSet(TimePicker timePicker, int hour, int minute) {
             myCalendar.set(Calendar.HOUR_OF_DAY, hour);
             myCalendar.set(Calendar.MINUTE, minute);
-            Log.d(TAG, "onTimeSet: "+myCalendar.getTimeInMillis());
-            newFieldOpenTime.setText(UtilesTime.millisToTimeString(myCalendar.getTimeInMillis()));
+            long time = TimeUnit.HOURS.toMillis(hour) + TimeUnit.MINUTES.toMillis(minute);
+            newFieldOpenTime.setText(UtilesTime.millisToTimeString(time));
         }
     };
     TimePickerDialog closeTimePickerDialog;
@@ -80,8 +81,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         public void onTimeSet(TimePicker timePicker, int hour, int minute) {
             myCalendar.set(Calendar.HOUR_OF_DAY, hour);
             myCalendar.set(Calendar.MINUTE, minute);
-            Log.d(TAG, "onTimeSet: "+myCalendar.getTimeInMillis());
-            newFieldCloseTime.setText(UtilesTime.millisToTimeString(myCalendar.getTimeInMillis()));
+            long time = TimeUnit.HOURS.toMillis(hour) + TimeUnit.MINUTES.toMillis(minute);
+            newFieldCloseTime.setText(UtilesTime.millisToTimeString(time));
         }
     };
 
