@@ -4,12 +4,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Alarm;
@@ -52,18 +52,15 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
             return;
         }
 
-        if (!TextUtils.isEmpty(city))
-            a.setCity(city);
-        else {
-            Toast.makeText(mNewAlarmView.getActivityContext(), "Error en la ciudad", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // field could be null, but not city
+        if (city == null || !TextUtils.isEmpty(city))
+            city = UtilesPreferences.getCurrentUserCity(mNewAlarmView.getActivityContext());
 
-        // field could be null
-        if (isValidField(field, sport))
+        if (isValidField(city, field, sport)) {
             a.setField_id(field);
-        else {
-            Toast.makeText(mNewAlarmView.getActivityContext(), "Error en el campo", Toast.LENGTH_SHORT).show();
+            a.setCity(city);
+        } else {
+            Toast.makeText(mNewAlarmView.getActivityContext(), "Error en el lugar", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -107,7 +104,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
         FirebaseActions.addAlarm(a, myUserId);
         ((AlarmsActivity)mNewAlarmView.getActivityContext()).mFieldId = null;
         ((AlarmsActivity)mNewAlarmView.getActivityContext()).mCity = null;
-        ((AppCompatActivity)mNewAlarmView.getActivityContext()).onBackPressed();
+        ((BaseFragment)mNewAlarmView).resetBackStack();
     }
 
     private boolean isValidSport(String sport) {
@@ -120,23 +117,28 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
         return false;
     }
 
-    private boolean isValidField(String fieldId, String sportId) {
-        if (!TextUtils.isEmpty(fieldId)) {
+    private boolean isValidField(String city, String fieldId, String sportId) {
+        if (city != null && !TextUtils.isEmpty(city)) {
             // Check if the sport doesn't need a field
             String[] arraySports = mNewAlarmView.getActivityContext().getResources().getStringArray(R.array.sport_id);
             if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1]))
-                return /* todo isValidAddress ?? */ true;
+                return true;
 
-            // Query database for the fieldId and checks if this sport exists
-            Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId);
+            if (fieldId != null && !TextUtils.isEmpty(fieldId)) {
+                // Query database for the fieldId and checks if this sport exists
+                Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId);
 
-            if (field != null && field.containsSportCourt(sportId)) return true;
-            else {
-                Log.e(TAG, "isValidField: not valid");
-                return false;
-            }
+                if (field != null && field.getCity().equals(city)
+                        && field.containsSportCourt(sportId)) return true;
+                else {
+                    Log.e(TAG, "isValidField: not valid");
+                    return false;
+                }
+            } else
+                return true; //Could be null
         }
-        return true; //Could be null
+        Log.e(TAG, "isValidField: city not valid");
+        return false;
     }
 
     private boolean isDateCorrect(String dateFrom, String dateTo) {
@@ -176,6 +178,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
 
     @Override
     public void loadFields(LoaderManager loaderManager, Bundle b) {
+        loaderManager.destroyLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT);
         if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_SPORT_SELECTED_ID))
             loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT, b, this);
     }
@@ -191,6 +194,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
             case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
                 String city = UtilesPreferences.getCurrentUserCity(mNewAlarmView.getActivityContext());
                 String sportId = args.getString(NewEventFragment.BUNDLE_SPORT_SELECTED_ID);
+                Log.d(TAG, "onCreateLoader: "+city+sportId);
                 return SportteamLoader
                         .cursorLoaderFieldsFromCityWithSport(mNewAlarmView.getActivityContext(), city, sportId);
         }

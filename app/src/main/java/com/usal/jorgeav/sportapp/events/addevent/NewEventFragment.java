@@ -268,10 +268,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         if (timePickerDialog != null && timePickerDialog.isShowing()) timePickerDialog.dismiss();
     }
 
-    private String getSportSelected() {
-        return newEventSport.getSelectedItem().toString();
-    }
-
     @Override
     public void showEventSport(String sport) {
         if (sport != null && !TextUtils.isEmpty(sport))

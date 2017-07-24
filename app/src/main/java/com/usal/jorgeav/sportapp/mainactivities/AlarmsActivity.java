@@ -16,7 +16,6 @@ import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Sport;
-import com.usal.jorgeav.sportapp.events.addevent.NewEventContract;
 
 import java.util.ArrayList;
 
@@ -98,7 +97,7 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
                 } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA))
                     Toast.makeText(this, "You should select a Field", Toast.LENGTH_SHORT).show();
 
-                if (mDisplayedFragment instanceof NewEventContract.View)
+                if (mDisplayedFragment instanceof NewAlarmContract.View)
                     ((NewAlarmContract.View) mDisplayedFragment).showAlarmField(mFieldId, mCity);
             } else
                 Toast.makeText(this, "You didn't select anything", Toast.LENGTH_SHORT).show();

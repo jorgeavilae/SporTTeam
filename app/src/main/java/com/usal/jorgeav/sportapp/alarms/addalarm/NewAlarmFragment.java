@@ -3,8 +3,11 @@ package com.usal.jorgeav.sportapp.alarms.addalarm;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,17 +15,30 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
@@ -41,6 +57,10 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     public static final String BUNDLE_ALARM_ID = "BUNDLE_ALARM_ID";
     public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
 
+    // Static prevent double initialization with same ID
+    private static GoogleApiClient mGoogleApiClient;
+    PlaceAutocompleteAdapter mAdapter;
+
     NewAlarmContract.Presenter mNewAlarmPresenter;
     private static boolean sInitialize;
 
@@ -48,9 +68,11 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @BindView(R.id.new_alarm_sport)
     Spinner newAlarmSport;
     @BindView(R.id.new_alarm_field)
+    TextView newAlarmField;
+    @BindView(R.id.new_alarm_field_button)
     Button newAlarmFieldButton;
     @BindView(R.id.new_alarm_city)
-    EditText newAlarmCity;
+    AutoCompleteTextView newAlarmCity;
     @BindView(R.id.new_alarm_date_from)
     EditText newAlarmDateFrom;
     @BindView(R.id.new_alarm_date_to)
@@ -89,6 +111,19 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (mGoogleApiClient == null)
+            mGoogleApiClient = new GoogleApiClient
+                    .Builder(getActivity())
+                    .addApi(Places.GEO_DATA_API)
+                    .enableAutoManage(getActivity(), new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                            Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
+                        }
+                    })
+                    .build();
+        else mGoogleApiClient.connect();
 
         mNewAlarmPresenter = new NewAlarmPresenter(this);
     }
@@ -219,6 +254,68 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         return root;
     }
 
+    private void setAutocompleteTextView() {
+        // Set up the adapter that will retrieve suggestions from
+        // the Places Geo Data API that cover Spain
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
+                /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
+                .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
+                .build();
+
+        mAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, null, typeFilter);
+        newAlarmCity.setAdapter(mAdapter);
+
+        newAlarmCity.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                ((AlarmsActivity)getActivity()).mFieldId = null;
+                ((AlarmsActivity)getActivity()).mCity = null;
+            }
+        });
+
+        newAlarmCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                /*
+                 Retrieve the place ID of the selected item from the Adapter.
+                 The adapter stores each Place suggestion in a AutocompletePrediction from which we
+                 read the place ID and title.
+                  */
+                AutocompletePrediction item = mAdapter.getItem(position);
+                if (item != null) {
+                    Log.i(TAG, "Autocomplete item selected: " + item.getPlaceId());
+                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, item.getPlaceId())
+                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                                @Override
+                                public void onResult(@NonNull PlaceBuffer places) {
+                                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
+                                        Place myPlace = places.get(0);
+                                        ((AlarmsActivity)getActivity()).mFieldId = null;
+                                        ((AlarmsActivity)getActivity()).mCity = myPlace.getName().toString();
+                                        Log.i(TAG, "Place found: Name - " + myPlace.getName()
+                                                + " LatLng - " + myPlace.getLatLng());
+                                    } else {
+                                        Log.e(TAG, "Place not found");
+                                    }
+                                    places.release();
+                                }
+                            });
+                }
+            }
+        });
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -229,14 +326,13 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void onStart() {
         super.onStart();
-        if (!sInitialize) {
-            if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
-                setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
-            else showContent();
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
+        else showContent();
 
-            mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
-            sInitialize = true;
-        } else showContent();
+        if (sInitialize) return;
+        mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
+        sInitialize = true;
     }
 
     private void setSportLayout(String sportId) {
@@ -247,9 +343,17 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id);
         if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
             showContent();
-            //TODO set autocomplete as city
+
+            //Set AutocompleteTextView for cities
+            newAlarmCity.setVisibility(View.VISIBLE);
+            newAlarmField.setVisibility(View.INVISIBLE);
+            newAlarmFieldButton.setVisibility(View.INVISIBLE);
+            setAutocompleteTextView();
         } else {
-            // Sport needs a Field so load from ContentProvider and start MapActivity in retrieveFields()
+            newAlarmCity.setVisibility(View.INVISIBLE);
+            newAlarmField.setVisibility(View.VISIBLE);
+            newAlarmFieldButton.setVisibility(View.VISIBLE);
+            // Sport needs a Field so load from ContentProvider and store it in retrieveFields()
             mNewAlarmPresenter.loadFields(getLoaderManager(), getArguments());
         }
     }
@@ -258,10 +362,11 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     public void retrieveFields(ArrayList<Field> fieldList) {
         mFieldList = fieldList;
         showContent();
-        if (mFieldList != null && mFieldList.size() == 0) {
+        if (mFieldList != null)
+            if (mFieldList.size() == 0) {
                 Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
                 //TODO mostrar dialog "quieres crear un field nuevo?" y abrir addFieldFragment como se abren las notificationes
-        }
+            }
     }
 
     @Override
@@ -285,10 +390,6 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             newAlarmDateTo.setEnabled(true);
     }
 
-    private String getSportSelected() {
-        return newAlarmSport.getSelectedItem().toString();
-    }
-
     @Override
     public void showAlarmSport(String sport) {
         if (sport != null && !TextUtils.isEmpty(sport))
@@ -297,9 +398,12 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
     @Override
     public void showAlarmField(String fieldId, String city) {
-        if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof AlarmsActivity)
+        if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof AlarmsActivity) {
             //Coordinates aren't needed in alarms
+            Field f = UtilesContentProvider.getFieldFromContentProvider(fieldId);
+            newAlarmField.setText(f.getName());
             ((AlarmsActivity) getActivity()).mFieldId = fieldId;
+        }
 
         if (city != null && !TextUtils.isEmpty(city) && getActivity() instanceof AlarmsActivity) {
             newAlarmCity.setText(city);
@@ -341,6 +445,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         newAlarmSport.setSelection(0);
         ((AlarmsActivity)getActivity()).mFieldId = null;
         ((AlarmsActivity)getActivity()).mCity = null;
+        newAlarmField.setText("");
         newAlarmCity.setText("");
         newAlarmDateFrom.setText("");
         newAlarmDateTo.setEnabled(false);
