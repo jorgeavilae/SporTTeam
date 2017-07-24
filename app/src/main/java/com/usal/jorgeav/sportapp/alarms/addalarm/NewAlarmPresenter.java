@@ -10,16 +10,20 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
+
+import java.util.ArrayList;
 
 /**
  * Created by Jorge Avila on 06/06/2017.
@@ -98,8 +102,11 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
         }
 
         Log.d(TAG, "addAlarm: "+a);
-        FirebaseActions.addAlarm(a, FirebaseAuth.getInstance().getCurrentUser().getUid());
-        ((AlarmsActivity)mNewAlarmView.getActivityContext()).newAlarmFieldSelected = null;
+        String myUserId = Utiles.getCurrentUserId();
+        if (myUserId == null || TextUtils.isEmpty(myUserId)) return;
+        FirebaseActions.addAlarm(a, myUserId);
+        ((AlarmsActivity)mNewAlarmView.getActivityContext()).mFieldId = null;
+        ((AlarmsActivity)mNewAlarmView.getActivityContext()).mCity = null;
         ((AppCompatActivity)mNewAlarmView.getActivityContext()).onBackPressed();
     }
 
@@ -168,24 +175,51 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
     }
 
     @Override
+    public void loadFields(LoaderManager loaderManager, Bundle b) {
+        if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_SPORT_SELECTED_ID))
+            loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT, b, this);
+    }
+
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String alarmId = args.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
         switch (id) {
             case SportteamLoader.LOADER_ALARM_ID:
                 return SportteamLoader
                         .cursorLoaderOneAlarm(mNewAlarmView.getActivityContext(), alarmId);
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
+                String city = UtilesPreferences.getCurrentUserCity(mNewAlarmView.getActivityContext());
+                String sportId = args.getString(NewEventFragment.BUNDLE_SPORT_SELECTED_ID);
+                return SportteamLoader
+                        .cursorLoaderFieldsFromCityWithSport(mNewAlarmView.getActivityContext(), city, sportId);
         }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        showAlarmDetails(data);
+        switch (loader.getId()) {
+            case SportteamLoader.LOADER_EVENT_ID:
+                showAlarmDetails(data);
+                break;
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
+                ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
+                mNewAlarmView.retrieveFields(dataList);
+                break;
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        showAlarmDetails(null);
+        switch (loader.getId()) {
+            case SportteamLoader.LOADER_EVENT_ID:
+                showAlarmDetails(null);
+                break;
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
+                mNewAlarmView.retrieveFields(null);
+                break;
+        }
     }
 
     private void showAlarmDetails(Cursor data) {

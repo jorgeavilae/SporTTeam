@@ -42,6 +42,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     public static final String BUNDLE_ALARM_ID = "BUNDLE_ALARM_ID";
 
     private static String mAlarmId = "";
+    private static String mSportId = "";
     private DetailAlarmContract.Presenter mPresenter;
 
     @BindView(R.id.alarm_detail_id)
@@ -94,8 +95,11 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit) {
             Log.d(TAG, "onOptionsItemSelected: Edit");
-            Fragment fragment = NewAlarmFragment.newInstance(mAlarmId);
-            mFragmentManagementListener.initFragment(fragment, true);
+            if (mAlarmId != null && !TextUtils.isEmpty(mAlarmId)
+                    && mSportId != null && !TextUtils.isEmpty(mSportId)) {
+                Fragment fragment = NewAlarmFragment.newInstance(mAlarmId, mSportId);
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
             Log.d(TAG, "onOptionsItemSelected: Delete");
@@ -154,6 +158,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         if (sport != null) {
             ((BaseActivity) getActivity()).showContent();
             this.textViewAlarmSport.setText(sport);
+            mSportId = sport;
         }
 
     }

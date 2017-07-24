@@ -255,4 +255,13 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         mSports = null;
         mCreator = null;
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        ((FieldsActivity)getActivity()).mFieldId = null;
+        ((FieldsActivity)getActivity()).mAddress = null;
+        ((FieldsActivity)getActivity()).mCity = null;
+        ((FieldsActivity)getActivity()).mCoord = null;
+    }
 }

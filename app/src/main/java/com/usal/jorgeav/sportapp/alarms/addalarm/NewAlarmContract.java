@@ -4,6 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
+import com.usal.jorgeav.sportapp.data.Field;
+
+import java.util.ArrayList;
+
 /**
  * Created by Jorge Avila on 06/06/2017.
  */
@@ -16,6 +20,8 @@ public abstract class NewAlarmContract {
                       String dateFrom, String dateTo,
                       String totalFrom, String totalTo,
                       String emptyFrom, String emptyTo);
+
+        void loadFields(LoaderManager loaderManager, Bundle arguments);
     }
 
     public interface View {
@@ -26,5 +32,7 @@ public abstract class NewAlarmContract {
         void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo);
         void clearUI();
         Context getActivityContext();
+
+        void retrieveFields(ArrayList<Field> dataList);
     }
 }

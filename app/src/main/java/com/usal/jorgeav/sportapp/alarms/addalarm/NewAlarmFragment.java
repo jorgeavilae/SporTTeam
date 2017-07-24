@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,13 +17,15 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.events.addevent.selectfield.SelectFieldFragment;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -38,6 +39,7 @@ import butterknife.ButterKnife;
 public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.View  {
     private static final String TAG = NewAlarmFragment.class.getSimpleName();
     public static final String BUNDLE_ALARM_ID = "BUNDLE_ALARM_ID";
+    public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
 
     NewAlarmContract.Presenter mNewAlarmPresenter;
     private static boolean sInitialize;
@@ -65,18 +67,20 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     Calendar myCalendar;
     DatePickerDialog datePickerDialogFrom;
     DatePickerDialog datePickerDialogTo;
+    private ArrayList<Field> mFieldList;
 
     public NewAlarmFragment() {
         // Required empty public constructor
     }
 
-    public static NewAlarmFragment newInstance(@Nullable String alarmId) {
+    public static NewAlarmFragment newInstance(@Nullable String alarmId, @Nullable String sportId) {
         NewAlarmFragment naf = new NewAlarmFragment();
-        if (alarmId != null) {
-            Bundle b = new Bundle();
+        Bundle b = new Bundle();
+        if (alarmId != null)
             b.putString(BUNDLE_ALARM_ID, alarmId);
-            naf.setArguments(b);
-        }
+        if (sportId != null)
+            b.putString(BUNDLE_SPORT_SELECTED_ID, sportId);
+        naf.setArguments(b);
         sInitialize = false;
         return naf;
     }
@@ -107,17 +111,28 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             if (getArguments() != null && getArguments().containsKey(BUNDLE_ALARM_ID))
                 alarmId = getArguments().getString(BUNDLE_ALARM_ID);
 
-            mNewAlarmPresenter.addAlarm(
-                    alarmId,
-                    newAlarmSport.getSelectedItem().toString(),
-                    ((AlarmsActivity)getActivity()).newAlarmFieldSelected,
-                    ((AlarmsActivity)getActivity()).newAlarmCityName,
-                    newAlarmDateFrom.getText().toString(),
-                    newAlarmDateTo.getText().toString(),
-                    newAlarmTotalFrom.getText().toString(),
-                    newAlarmTotalTo.getText().toString(),
-                    newAlarmEmptyFrom.getText().toString(),
-                    newAlarmEmptyTo.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+alarmId);
+            Log.d(TAG, "onOptionsItemSelected: "+newAlarmSport.getSelectedItem().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+((AlarmsActivity)getActivity()).mFieldId);
+            Log.d(TAG, "onOptionsItemSelected: "+((AlarmsActivity)getActivity()).mCity);
+            Log.d(TAG, "onOptionsItemSelected: "+newAlarmDateFrom.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+newAlarmDateTo.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+newAlarmTotalFrom.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+newAlarmTotalTo.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+newAlarmEmptyFrom.getText().toString());
+            Log.d(TAG, "onOptionsItemSelected: "+newAlarmEmptyTo.getText().toString());
+
+//            mNewAlarmPresenter.addAlarm(
+//                    alarmId,
+//                    newAlarmSport.getSelectedItem().toString(),
+//                    ((AlarmsActivity)getActivity()).mFieldId,
+//                    ((AlarmsActivity)getActivity()).mCity,
+//                    newAlarmDateFrom.getText().toString(),
+//                    newAlarmDateTo.getText().toString(),
+//                    newAlarmTotalFrom.getText().toString(),
+//                    newAlarmTotalTo.getText().toString(),
+//                    newAlarmEmptyFrom.getText().toString(),
+//                    newAlarmEmptyTo.getText().toString());
             return true;
         }
         return false;
@@ -138,9 +153,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         newAlarmFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
-                Fragment fragment = SelectFieldFragment.newInstance(getSportSelected());
-                mFragmentManagementListener.initFragment(fragment, true);
+                if (mFieldList != null)
+                    ((AlarmsActivity) getActivity()).startMapActivityForResult(mFieldList);
             }
         });
 
@@ -226,9 +240,39 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void onStart() {
         super.onStart();
-        if (sInitialize) return;
-        mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
-        sInitialize = true;
+        if (!sInitialize) {
+            if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+                setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
+            else showContent();
+
+            mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
+            sInitialize = true;
+        } else showContent();
+    }
+
+    private void setSportLayout(String sportId) {
+        //Set sport in Spinner
+        showAlarmSport(sportId);
+
+        // Check if the sport doesn't need a field
+        String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id);
+        if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
+            showContent();
+            //TODO set autocomplete as city
+        } else {
+            // Sport needs a Field so load from ContentProvider and start MapActivity in retrieveFields()
+            mNewAlarmPresenter.loadFields(getLoaderManager(), getArguments());
+        }
+    }
+
+    @Override
+    public void retrieveFields(ArrayList<Field> fieldList) {
+        mFieldList = fieldList;
+        showContent();
+        if (mFieldList != null && mFieldList.size() == 0) {
+                Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
+                //TODO mostrar dialog "quieres crear un field nuevo?" y abrir addFieldFragment como se abren las notificationes
+        }
     }
 
     @Override
@@ -264,12 +308,14 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
     @Override
     public void showAlarmField(String fieldId, String city) {
-        if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof SelectFieldFragment.OnFieldSelected)
+        if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof AlarmsActivity)
             //Coordinates aren't needed in alarms
-            ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected(fieldId, city, null);
+            ((AlarmsActivity) getActivity()).mFieldId = fieldId;
 
-        if (city != null && !TextUtils.isEmpty(city))
+        if (city != null && !TextUtils.isEmpty(city) && getActivity() instanceof AlarmsActivity) {
             newAlarmCity.setText(city);
+            ((AlarmsActivity) getActivity()).mCity = city;
+        }
     }
 
     @Override
@@ -304,7 +350,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void clearUI() {
         newAlarmSport.setSelection(0);
-        ((SelectFieldFragment.OnFieldSelected)getActivity()).retrieveFieldSelected("", "", null);
+        ((AlarmsActivity)getActivity()).mFieldId = null;
+        ((AlarmsActivity)getActivity()).mCity = null;
         newAlarmCity.setText("");
         newAlarmDateFrom.setText("");
         newAlarmDateTo.setEnabled(false);
@@ -313,5 +360,13 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         newAlarmTotalTo.setText("");
         newAlarmEmptyFrom.setText("");
         newAlarmEmptyTo.setText("");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        ((AlarmsActivity)getActivity()).mFieldId = null;
+        ((AlarmsActivity)getActivity()).mCity = null;
+
     }
 }

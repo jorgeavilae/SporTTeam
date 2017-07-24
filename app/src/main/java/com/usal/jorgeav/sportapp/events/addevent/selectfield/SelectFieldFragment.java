@@ -26,6 +26,8 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 06/06/2017.
  */
 
+//TODO borrar clase
+
 public class SelectFieldFragment extends BaseFragment implements SelectFieldContract.View, FieldsAdapter.OnFieldItemClickListener {
     private static final String TAG = SelectFieldFragment.class.getSimpleName();
     public static final String BUNDLE_SPORT_ID = "BUNDLE_SPORT_ID";

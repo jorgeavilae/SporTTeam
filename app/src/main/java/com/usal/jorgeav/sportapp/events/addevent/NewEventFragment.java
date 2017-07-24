@@ -367,5 +367,12 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             outState.putString(INSTANCE_ADDRESS_TEXT_VIEW_ID, newEventAddress.getText().toString());
     }
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        ((EventsActivity)getActivity()).mFieldId = null;
+        ((EventsActivity)getActivity()).mAddress = null;
+        ((EventsActivity)getActivity()).mCity = null;
+        ((EventsActivity)getActivity()).mCoord = null;
+    }
 }
