@@ -124,9 +124,8 @@ public class NewUserActivity extends AppCompatActivity implements
     Button newUserPhotoButton;
     @BindView(R.id.new_user_city)
     AutoCompleteTextView newUserAutocompleteCity;
-    @BindView(R.id.new_user_add_sport_button)
-    Button newUserAddSportButton;
 
+    boolean sportsInitialize;
     ArrayList<Sport> sports;
 
     @Override
@@ -162,17 +161,11 @@ public class NewUserActivity extends AppCompatActivity implements
             });
         }
 
+        sportsInitialize = false;
         sports = new ArrayList<>();
 
-        newUserAddSportButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hideSoftKeyboard();
-                SportsListFragment slf = SportsListFragment.newInstance("", sports);
-                initFragment(slf, true);
-            }
-        });
-
+        checkUserEmailExists(newUserEmail.getText().toString());
+        checkUserNameExists(newUserName.getText().toString());
         newUserEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
@@ -199,6 +192,7 @@ public class NewUserActivity extends AppCompatActivity implements
         newUserPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hideSoftKeyboard();
                 EasyImage.configuration(NewUserActivity.this)
                         .setImagesFolderName(Environment.DIRECTORY_PICTURES)
                         .saveInAppExternalFilesDir();
@@ -290,6 +284,7 @@ public class NewUserActivity extends AppCompatActivity implements
 
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
+            hideSoftKeyboard();
 
             if (!TextUtils.isEmpty(newUserEmail.getText())
                     && TextUtils.isEmpty(newUserEmail.getError())
@@ -298,12 +293,10 @@ public class NewUserActivity extends AppCompatActivity implements
                     && !TextUtils.isEmpty(newUserName.getText())
                     && TextUtils.isEmpty(newUserName.getError())
                     && !TextUtils.isEmpty(newUserAge.getText())
-                    && croppedImageUri != null
                     && newUserCitySelectedName != null
-                    && newUserCitySelectedCoord != null
-                    && sports.size() > 0) {
-                hideContent();
-                createAuthUser(newUserEmail.getText().toString(), newUserPassword.getText().toString());
+                    && newUserCitySelectedCoord != null) {
+                SportsListFragment slf = SportsListFragment.newInstance("", sports);
+                initFragment(slf, true);
             } else {
                 Toast.makeText(getApplicationContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
             }
@@ -413,35 +406,37 @@ public class NewUserActivity extends AppCompatActivity implements
     }
 
     private void checkUserEmailExists(String email) {
-        FirebaseActions.getUserEmailReferenceEqualTo(email)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            newUserEmail.setError("Email already exist");
+        if (email != null && !TextUtils.isEmpty(email))
+            FirebaseActions.getUserEmailReferenceEqualTo(email)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                newUserEmail.setError("Email already exist");
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
     }
 
     private void checkUserNameExists(String name) {
-        FirebaseActions.getUserNameReferenceEqualTo(name)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            newUserName.setError("Name already exist");
+        if (name != null && !TextUtils.isEmpty(name))
+            FirebaseActions.getUserNameReferenceEqualTo(name)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                newUserName.setError("Name already exist");
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
     }
 
     private void createAuthUser(String email, String pass) {
@@ -451,72 +446,93 @@ public class NewUserActivity extends AppCompatActivity implements
                 if (task.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), "Log in is Successful", Toast.LENGTH_SHORT).show();
 
-                    // Get a reference to store file at chat_photos/<FILENAME>
-                    StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()
-                            .child(FirebaseDBContract.Storage.PROFILE_PICTURES);
-                    StorageReference photoRef = mChatPhotosStorageReference.child(croppedImageUri.getLastPathSegment());
+                    if (croppedImageUri != null) {
+                        // Get a reference to store file at chat_photos/<FILENAME>
+                        StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()
+                                .child(FirebaseDBContract.Storage.PROFILE_PICTURES);
+                        StorageReference photoRef = mChatPhotosStorageReference.child(croppedImageUri.getLastPathSegment());
 
-                    // Upload file to Firebase Storage
-                    // Create the file metadata
-                    StorageMetadata metadata = new StorageMetadata.Builder()
-                            .setContentType("image/jpeg")
-                            .build();
+                        // Upload file to Firebase Storage
+                        // Create the file metadata
+                        StorageMetadata metadata = new StorageMetadata.Builder()
+                                .setContentType("image/jpeg")
+                                .build();
 
-                    // Upload file and metadata to the path 'images/mountains.jpg'
-                    UploadTask uploadTask = photoRef.putFile(croppedImageUri, metadata);
+                        // Upload file and metadata to the path 'images/mountains.jpg'
+                        UploadTask uploadTask = photoRef.putFile(croppedImageUri, metadata);
 
-                    // Listen for state changes, errors, and completion of the upload.
-                    uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Listen for state changes, errors, and completion of the upload.
+                        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             /* https://stackoverflow.com/a/42616488/4235666 */
-                            @SuppressWarnings("VisibleForTests")
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                            Log.i(TAG, "createAuthUser:putFile:onProgress: Upload is " + progress + "% done");
-                        }
-                    }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.i(TAG, "createAuthUser:putFile:onPaused: Upload is paused");
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle unsuccessful uploads
-                            Log.e(TAG, "createAuthUser:putFile:onFailure: ", exception);
-                        }
-                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Handle successful uploads on complete
+                                @SuppressWarnings("VisibleForTests")
+                                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                                Log.i(TAG, "createAuthUser:putFile:onProgress: Upload is " + progress + "% done");
+                            }
+                        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                                Log.i(TAG, "createAuthUser:putFile:onPaused: Upload is paused");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle unsuccessful uploads
+                                Log.e(TAG, "createAuthUser:putFile:onFailure: ", exception);
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                // Handle successful uploads on complete
                             /* https://stackoverflow.com/a/42616488/4235666 */
-                            @SuppressWarnings("VisibleForTests")
-                            StorageMetadata metadata = taskSnapshot.getMetadata();
-                            if (metadata == null) return;
-                            final Uri downloadUrl = metadata.getDownloadUrl();
-                            if (downloadUrl == null) return;
+                                @SuppressWarnings("VisibleForTests")
+                                StorageMetadata metadata = taskSnapshot.getMetadata();
+                                if (metadata == null) return;
+                                final Uri downloadUrl = metadata.getDownloadUrl();
+                                if (downloadUrl == null) return;
 
-                            final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                            if (fUser == null) return;
+                                final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                                if (fUser == null) return;
 
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(newUserName.getText().toString())
-                                    .setPhotoUri(downloadUrl)
-                                    .build();
-                            fUser.updateProfile(profileUpdates);
+                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(newUserName.getText().toString())
+                                        .setPhotoUri(downloadUrl)
+                                        .build();
+                                fUser.updateProfile(profileUpdates);
 
-                            User user = new User(fUser.getUid(), fUser.getEmail(),
-                                    newUserName.getText().toString(), newUserCitySelectedName,
-                                    newUserCitySelectedCoord.latitude, newUserCitySelectedCoord.longitude,
-                                    Long.parseLong(newUserAge.getText().toString()), downloadUrl.toString(),
-                                    sportsArrayToHashMap(sports));
-                            FirebaseActions.addUser(user);
+                                User user = new User(fUser.getUid(), fUser.getEmail(),
+                                        newUserName.getText().toString(), newUserCitySelectedName,
+                                        newUserCitySelectedCoord.latitude, newUserCitySelectedCoord.longitude,
+                                        Long.parseLong(newUserAge.getText().toString()), downloadUrl.toString(),
+                                        sportsArrayToHashMap(sports));
+                                FirebaseActions.addUser(user);
 
-                            // Return to LoginActivity
-                            setResult(RESULT_OK);
-                            finish();
-                        }
-                    });
+                                // Return to LoginActivity
+                                setResult(RESULT_OK);
+                                finish();
+                            }
+                        });
+                    } else {
+                        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (fUser == null) return;
+
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(newUserName.getText().toString())
+                                .build();
+                        fUser.updateProfile(profileUpdates);
+
+                        User user = new User(fUser.getUid(), fUser.getEmail(),
+                                newUserName.getText().toString(), newUserCitySelectedName,
+                                newUserCitySelectedCoord.latitude, newUserCitySelectedCoord.longitude,
+                                Long.parseLong(newUserAge.getText().toString()), "",
+                                sportsArrayToHashMap(sports));
+                        FirebaseActions.addUser(user);
+
+                        // Return to LoginActivity
+                        setResult(RESULT_OK);
+                        finish();
+                    }
                 } else {
                     showContent();
                     Toast.makeText(getApplicationContext(), "Error Login in", Toast.LENGTH_SHORT).show();
@@ -538,6 +554,7 @@ public class NewUserActivity extends AppCompatActivity implements
     public void retrieveSportsSelected(String id, List<Sport> sportsSelected) {
         this.sports.clear();
         this.sports.addAll(sportsSelected);
+        sportsInitialize = true;
     }
 
     @Override
@@ -569,12 +586,14 @@ public class NewUserActivity extends AppCompatActivity implements
 
     @Override
     public void showContent() {
+        newUserToolbar.setVisibility(View.VISIBLE);
         newUserContent.setVisibility(View.VISIBLE);
         newUserProgressbar.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void hideContent() {
+        newUserToolbar.setVisibility(View.INVISIBLE);
         newUserContent.setVisibility(View.INVISIBLE);
         newUserProgressbar.setVisibility(View.VISIBLE);
     }
@@ -613,6 +632,12 @@ public class NewUserActivity extends AppCompatActivity implements
     public void onBackPressed() {
         super.onBackPressed();
         newUserToolbar.setTitle("Add User");
+        hideSoftKeyboard();
+
+        if (this.sports != null && sportsInitialize) {
+            hideContent();
+            createAuthUser(newUserEmail.getText().toString(), newUserPassword.getText().toString());
+        }
     }
 
 
