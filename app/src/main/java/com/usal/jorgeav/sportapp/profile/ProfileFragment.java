@@ -169,7 +169,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
          */
         if (relation != ProfilePresenter.RELATION_TYPE_ME) {
             if (mMenu != null) mMenu.clear();
-            Log.d(TAG, "uiSetupForUserRelation: mMenu " + mMenu);
             Log.d(TAG, "uiSetupForUserRelation: relation " + relation);
             switch (relation) {
                 case ProfilePresenter.RELATION_TYPE_FRIENDS:

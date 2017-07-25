@@ -113,7 +113,7 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
 
     @Override
     public void onFieldClick(String fieldId, String city, LatLng coordinates) {
-        Fragment newFragment = DetailFieldFragment.newInstance(fieldId);
+        Fragment newFragment = DetailFieldFragment.newInstance(fieldId, false);
         mFragmentManagementListener.initFragment(newFragment, true);
     }
 }

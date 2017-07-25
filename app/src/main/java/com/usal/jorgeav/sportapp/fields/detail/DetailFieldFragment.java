@@ -40,9 +40,11 @@ import butterknife.ButterKnife;
 public class DetailFieldFragment extends BaseFragment implements DetailFieldContract.View{
     private static final String TAG = DetailFieldFragment.class.getSimpleName();
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
+    public static final String BUNDLE_IS_INFO = "BUNDLE_IS_INFO";
 
     private DetailFieldContract.Presenter mPresenter;
     private String mFieldId = "";
+    private Menu mMenu = null;
 
     @BindView(R.id.field_detail_creator)
     TextView textViewFieldCreator;
@@ -68,10 +70,11 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         // Required empty public constructor
     }
 
-    public static DetailFieldFragment newInstance(@NonNull String fieldId) {
+    public static DetailFieldFragment newInstance(@NonNull String fieldId, boolean isInfo) {
         DetailFieldFragment fragment = new DetailFieldFragment();
         Bundle args = new Bundle();
         args.putString(BUNDLE_FIELD_ID, fieldId);
+        args.putBoolean(BUNDLE_IS_INFO, isInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -86,9 +89,9 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-        inflater.inflate(R.menu.menu_edit_delete, menu);
+        mMenu = menu;
+        super.onCreateOptionsMenu(mMenu, inflater);
+        mMenu.clear();
     }
 
     @Override
@@ -209,6 +212,14 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         String myUid = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUid)) return;
         if (myUid.equals(userId)) {
+            //Update menu
+            if (getArguments() != null && getArguments().containsKey(BUNDLE_IS_INFO))
+                if (!getArguments().getBoolean(BUNDLE_IS_INFO) && mMenu != null) {
+                    mMenu.clear();
+                    getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
+                }
+
+            //Update UI
             fieldEditSportListButton.setVisibility(View.VISIBLE);
             fieldEditSportListButton.setOnClickListener(new View.OnClickListener() {
                 @Override

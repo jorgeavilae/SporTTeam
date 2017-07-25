@@ -69,8 +69,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     TextView newEventAddress;
     @BindView(R.id.new_event_name)
     EditText newEventName;
-//    @BindView(R.id.new_event_autocomplete_city)
-//    AutoCompleteTextView newEventAutocompleteCity;
     @BindView(R.id.new_event_date)
     EditText newEventDate;
     @BindView(R.id.new_event_time)

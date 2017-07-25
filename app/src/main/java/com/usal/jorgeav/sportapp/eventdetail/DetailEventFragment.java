@@ -425,12 +425,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showEventField(final String fieldId, String address, LatLng coord) {
+        //TODO mostrar datos mejor
         ((BaseActivity)getActivity()).showContent();
         this.buttonEventPlace.setText(fieldId);
         buttonEventPlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment newFragment = DetailFieldFragment.newInstance(fieldId);
+                Fragment newFragment = DetailFieldFragment.newInstance(fieldId, true);
                 mFragmentManagementListener.initFragment(newFragment, true);
             }
         });

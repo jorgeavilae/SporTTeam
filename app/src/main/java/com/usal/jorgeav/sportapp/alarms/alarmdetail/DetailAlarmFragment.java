@@ -171,7 +171,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
             buttonAlarmPlace.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                Fragment newFragment = DetailFieldFragment.newInstance(place);
+                Fragment newFragment = DetailFieldFragment.newInstance(place, true);
                 mFragmentManagementListener.initFragment(newFragment, true);
                 }
             });
