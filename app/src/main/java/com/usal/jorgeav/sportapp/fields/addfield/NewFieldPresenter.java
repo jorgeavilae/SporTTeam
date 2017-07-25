@@ -167,17 +167,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
 
     @Override
     public void onLoaderReset(Loader loader) {
-        switch (loader.getId()) {
-            case SportteamLoader.LOADER_FIELDS_FROM_CITY:
-                mNewFieldView.retrieveFields(null);
-                break;
-            case SportteamLoader.LOADER_EVENT_ID:
-                showFieldDetail(null);
-                break;
-            case SportteamLoader.LOADER_FIELD_SPORTS_ID:
-                mNewFieldView.setSportCourts(null);
-                break;
-        }
+        //tODO deberia borrar todos los loaderreset?
     }
 
     private void showFieldDetail(Cursor data) {
