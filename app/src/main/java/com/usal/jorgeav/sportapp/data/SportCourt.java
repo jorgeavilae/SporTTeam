@@ -38,6 +38,14 @@ public class SportCourt implements Parcelable, Serializable {
         return votes;
     }
 
+    public void setPunctuation(Double punctuation) {
+        this.punctuation = punctuation;
+    }
+
+    public void setVotes(Long votes) {
+        this.votes = votes;
+    }
+
     @Override
     public String toString() {
         return "SportCourt{" +

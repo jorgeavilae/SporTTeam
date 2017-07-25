@@ -105,7 +105,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
             mUserUid = getArguments().getString(BUNDLE_INSTANCE_UID);
 
-        sportsAdapter = new ProfileSportsAdapter(null);
+        sportsAdapter = new ProfileSportsAdapter(null, null);
         userSportList.setAdapter(sportsAdapter);
         userSportList.setHasFixedSize(true);
         userSportList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.HORIZONTAL, false));

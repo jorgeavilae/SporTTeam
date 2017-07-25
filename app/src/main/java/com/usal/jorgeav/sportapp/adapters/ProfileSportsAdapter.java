@@ -26,9 +26,11 @@ import butterknife.ButterKnife;
 public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdapter.ViewHolder> {
 
     private Cursor mDataset;
+    private OnProfileSportClickListener mListener;
 
-    public ProfileSportsAdapter(Cursor mDataset) {
+    public ProfileSportsAdapter(Cursor mDataset, OnProfileSportClickListener listener) {
         this.mDataset = mDataset;
+        this.mListener = listener;
     }
 
     @Override
@@ -77,7 +79,7 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         return result;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         @BindView(R.id.sport_profile_item_icon)
         ImageView imageViewSportIcon;
         @BindView(R.id.sport_profile_item_name)
@@ -88,7 +90,23 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            mDataset.moveToPosition(position);
+            String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
+            float punctuation = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);
+
+            if (mListener != null)
+                mListener.onProfileSportClick(new Sport(name, name, punctuation, 1));
+        }
+    }
+
+    public interface OnProfileSportClickListener {
+        void onProfileSportClick(Sport s);
     }
 }
 

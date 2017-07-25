@@ -28,6 +28,7 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
+import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -90,32 +91,14 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.menu_field, menu); //TODO quitar
         inflater.inflate(R.menu.menu_edit_delete, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        if (item.getItemId() == R.id.action_vote) { //TODO mover
-            Log.d(TAG, "onOptionsItemSelected: Vote");
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            final View view = inflater.inflate(R.layout.vote_dialog, null);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-            builder.setMessage("Selecciona puntuación")
-                    .setView(view)
-                    .setPositiveButton("Votar", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_for_vote);
-                            String fieldId = getArguments().getString(DetailFieldFragment.BUNDLE_FIELD_ID);
-                            String sportId = ""; //TODO cambiar
-                            mPresenter.voteField(fieldId, sportId, ratingBar.getRating());
-                        }
-                    })
-                    .setNegativeButton("Cancelar", null);
-            builder.create().show();
-            return true;
-        } else if (item.getItemId() == R.id.action_edit) {
+
+        if (item.getItemId() == R.id.action_edit) {
             Log.d(TAG, "onOptionsItemSelected: Edit");
             String fieldId = getArguments().getString(DetailFieldFragment.BUNDLE_FIELD_ID);
             Fragment fragment = NewFieldFragment.newInstance(fieldId);
@@ -143,7 +126,27 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         View root = inflater.inflate(R.layout.fragment_detail_field, container, false);
         ButterKnife.bind(this, root);
 
-        sportsAdapter = new ProfileSportsAdapter(null);
+        sportsAdapter = new ProfileSportsAdapter(null, new ProfileSportsAdapter.OnProfileSportClickListener() {
+            @Override
+            public void onProfileSportClick(final Sport s) {
+                Log.d(TAG, "onProfileSportClick: "+s);
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final View view = inflater.inflate(R.layout.vote_dialog, null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                builder.setMessage("Selecciona puntuación")
+                        .setView(view)
+                        .setPositiveButton("Votar", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_for_vote);
+                                String fieldId = getArguments().getString(DetailFieldFragment.BUNDLE_FIELD_ID);
+                                String sportId = s.getSportID();
+                                mPresenter.voteField(fieldId, sportId, ratingBar.getRating());
+                            }
+                        })
+                        .setNegativeButton("Cancelar", null);
+                builder.create().show();
+            }
+        });
         fieldSportList.setAdapter(sportsAdapter);
         fieldSportList.setHasFixedSize(true);
         fieldSportList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.HORIZONTAL, false));

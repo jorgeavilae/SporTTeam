@@ -886,37 +886,40 @@ public class FirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
-    public static void voteField(String fieldId, String sportId, final float vote) {
+    public static void voteField(final String fieldId, String sportId, final float rate) {
         //Add vote to count and recalculate average rating
-        Log.e(TAG, "voteField: NOt implemented"); //TODO Implementar votar field
-//        DatabaseReference fieldSportRef = FirebaseDatabase.getInstance()
-//                .getReference(FirebaseDBContract.TABLE_FIELDS)
-//                .child(fieldId)
-//                .child(FirebaseDBContract.DATA)
-//                .child(FirebaseDBContract.Field.SPORT)
-//                .child(sportId);
-//        fieldSportRef.runTransaction(new Transaction.Handler() {
-//            @Override
-//            public Transaction.Result doTransaction(MutableData mutableData) {
-//                Sport s = mutableData.getValue(Sport.class); //TODO que es esto??
-//                if (s == null) return Transaction.success(mutableData);
-//
-//                float newRating = (s.getPunctuation()*s.getVotes() + vote) / (s.getVotes()+1);
-//                s.setVotes(s.getVotes() + 1);
-//                s.setPunctuation((float) (Math.round(newRating * 2) / 2.0));
-//
-//                mutableData.setValue(s);
-//
-//                return Transaction.success(mutableData);
-//            }
-//
-//            @Override
-//            public void onComplete(DatabaseError databaseError, boolean b,
-//                                   DataSnapshot dataSnapshot) {
-//                // Transaction completed
-//                Log.d(TAG, "postTransaction:onComplete:" + databaseError);
-//            }
-//        });
+        DatabaseReference fieldSportRef = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_FIELDS)
+                .child(fieldId)
+                .child(FirebaseDBContract.DATA)
+                .child(FirebaseDBContract.Field.SPORT)
+                .child(sportId);
+        fieldSportRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                SportCourt sport = mutableData.getValue(SportCourt.class);
+                if (sport == null) return Transaction.success(mutableData);
+
+                double newRating = (sport.getPunctuation()*sport.getVotes() + rate) / (sport.getVotes()+1);
+                sport.setVotes(sport.getVotes() + 1);
+
+                // Round to .5 or .0 https://stackoverflow.com/a/23449769/4235666
+                sport.setPunctuation(Math.round(newRating * 2) / 2.0);
+
+                mutableData.setValue(sport);
+
+                FirebaseSync.loadAField(fieldId);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+                // Transaction completed
+                Log.d(TAG, "voteField: onComplete:" + databaseError);
+            }
+        });
     }
 
     public static void deleteAlarm(BaseFragment baseFragment, String userId, String alarmId) {
