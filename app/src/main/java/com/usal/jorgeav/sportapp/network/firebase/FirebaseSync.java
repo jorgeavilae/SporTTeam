@@ -1124,6 +1124,67 @@ public class FirebaseSync {
         DatabaseReference fieldsRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
 
+        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.exists())
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        Field field = data.child(FirebaseDBContract.DATA).getValue(Field.class);
+                        if (field == null) {
+                            Log.e(TAG, "loadFieldsFromCity: onDataChangeExecutor: Error parsing Field");
+                            return;
+                        }
+                        field.setId(data.getKey());
+
+                        ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
+                        MyApplication.getAppContext().getContentResolver()
+                                .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
+
+                        List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
+                        MyApplication.getAppContext().getContentResolver()
+                                .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                        SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+                                        new String[]{field.getId()});
+                        MyApplication.getAppContext().getContentResolver()
+                                .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                        cvSports.toArray(new ContentValues[cvSports.size()]));
+                    }
+            }
+
+            @Override
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
+                onChildAdded(dataSnapshot, s);
+            }
+
+            @Override
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
+                String fieldId = dataSnapshot.getKey();
+                Log.d(TAG, "onChildRemovedExecutor: "+fieldId);
+                MyApplication.getAppContext().getContentResolver()
+                        .delete(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                                SportteamContract.FieldEntry.FIELD_ID + " = ? ",
+                                new String[]{fieldId});
+                MyApplication.getAppContext().getContentResolver()
+                        .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+                                new String[]{fieldId});
+            }
+
+            @Override
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        };
+        if (!listenerMap.containsKey(fieldsRef)) {
+            fieldsRef.orderByChild(filter).equalTo(city).addChildEventListener(childEventListener);
+            listenerMap.put(fieldsRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + fieldsRef);
+        }
         fieldsRef.orderByChild(filter).equalTo(city)
                 .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
                     @Override

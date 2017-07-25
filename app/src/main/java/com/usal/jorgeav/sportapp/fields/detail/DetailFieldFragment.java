@@ -103,11 +103,11 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         } else if (item.getItemId() == R.id.action_delete) {
             Log.d(TAG, "onOptionsItemSelected: Delete");
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-            builder.setTitle("Borrar evento")
+            builder.setTitle("Borrar campo")
                     .setMessage("Seguro que desea borrarlo?")
                     .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            // TODO implementar
+                            mPresenter.deleteField(mFieldId);
                         }})
                     .setNegativeButton("No", null);
             builder.create().show();
@@ -138,7 +138,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
                             public void onClick(DialogInterface dialog, int id) {
                                 RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_for_vote);
                                 String sportId = s.getSportID();
-                                mPresenter.voteField(mFieldId, sportId, ratingBar.getRating());
+                                mPresenter.voteSportInField(mFieldId, sportId, ratingBar.getRating());
                             }
                         })
                         .setNegativeButton("Cancelar", null);

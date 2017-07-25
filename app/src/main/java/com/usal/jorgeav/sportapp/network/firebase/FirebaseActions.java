@@ -204,6 +204,15 @@ public class FirebaseActions {
                 .child(fieldId).child(FirebaseDBContract.DATA)
                 .child(FirebaseDBContract.Field.SPORT).child(sport.getSport_id()).setValue(sport.toMap());
     }
+    public static DatabaseReference getFieldNextEventsReferenceWithId(String fieldId) {
+        //Return reference to NextEvents in Field for checks.
+        return FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS)
+                .child(fieldId).child(FirebaseDBContract.Field.NEXT_EVENTS);
+    }
+    public static void deleteField(String fieldId) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS)
+            .child(fieldId).setValue(null);
+    }
 
     // Add Alarm
     public static void addAlarm(Alarm alarm, String myUserId) {
@@ -1204,5 +1213,4 @@ public class FirebaseActions {
             }
         });
     }
-
 }

@@ -270,6 +270,10 @@ public class SportteamProvider extends ContentProvider {
             case CODE_USER_SPORT:
                 count = db.delete(TABLE_USER_SPORTS, selection, selectionArgs);
                 break;
+            case CODE_FIELDS:
+                count = db.delete(TABLE_FIELD, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI, null);
+                break;
             case CODE_FIELD_SPORT:
                 count = db.delete(TABLE_FIELD_SPORTS, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI, null);

@@ -6,8 +6,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
@@ -26,20 +31,45 @@ public class DetailFieldPresenter implements DetailFieldContract.Presenter, Load
     }
 
     @Override
-    public void openField(LoaderManager loaderManager, Bundle b) {
-        String fieldId = b.getString(DetailFieldFragment.BUNDLE_FIELD_ID);
-        FirebaseSync.loadAField(fieldId);
-        loaderManager.initLoader(SportteamLoader.LOADER_FIELD_ID, b, this);
-        loaderManager.initLoader(SportteamLoader.LOADER_FIELD_SPORTS_ID, b, this);
-    }
-
-    @Override
-    public void voteField(String fieldId, String sportId, float rating) {
+    public void voteSportInField(String fieldId, String sportId, float rating) {
         if (fieldId != null && !TextUtils.isEmpty(fieldId)
                 && sportId != null && !TextUtils.isEmpty(sportId)
                 && rating > 0 && rating <= 5) {
             FirebaseActions.voteField(fieldId, sportId, rating);
         }
+    }
+
+    @Override
+    public void deleteField(final String fieldId) {
+        if (fieldId != null && !TextUtils.isEmpty(fieldId)) {
+            FirebaseActions.getFieldNextEventsReferenceWithId(fieldId)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                Toast.makeText(mView.getActivityContext(),
+                                        "Lo siento. Hay eventos proximos que se perderian",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                FirebaseActions.deleteField(fieldId);
+                                ((BaseFragment)mView).resetBackStack();
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+        }
+    }
+
+    @Override
+    public void openField(LoaderManager loaderManager, Bundle b) {
+        String fieldId = b.getString(DetailFieldFragment.BUNDLE_FIELD_ID);
+        FirebaseSync.loadAField(fieldId);
+        loaderManager.initLoader(SportteamLoader.LOADER_FIELD_ID, b, this);
+        loaderManager.initLoader(SportteamLoader.LOADER_FIELD_SPORTS_ID, b, this);
     }
 
     @Override
