@@ -14,8 +14,8 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class UtilesDataSnapshot { // TODO: 22/07/2017 cambiar por UtilesContentValues
-    private static final String TAG = UtilesDataSnapshot.class.getSimpleName();
+public class UtilesContentValues {
+    private static final String TAG = UtilesContentValues.class.getSimpleName();
 
     public static ContentValues alarmToContentValues(Alarm alarm) {
         ContentValues cv = new ContentValues();

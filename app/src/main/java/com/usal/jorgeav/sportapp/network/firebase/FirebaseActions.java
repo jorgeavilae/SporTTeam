@@ -852,7 +852,7 @@ public class FirebaseActions {
 
     public static void voteField(String fieldId, String sportId, final float vote) {
         //Add vote to count and recalculate average rating
-        Log.e(TAG, "voteField: NOt implemented");
+        Log.e(TAG, "voteField: NOt implemented"); //TODO Implementar votar field
 //        DatabaseReference fieldSportRef = FirebaseDatabase.getInstance()
 //                .getReference(FirebaseDBContract.TABLE_FIELDS)
 //                .child(fieldId)
