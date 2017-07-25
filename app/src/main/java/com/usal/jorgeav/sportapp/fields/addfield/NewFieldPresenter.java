@@ -15,6 +15,9 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
@@ -49,7 +52,10 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
                     openMillis, closeMillis, userId, sports);
 
             Log.d(TAG, "addField: "+field);
-            FirebaseActions.addField(field);
+            if(TextUtils.isEmpty(field.getId()))
+                FirebaseActions.addField(field);
+            else
+                FirebaseActions.updateField(field);
             ((FieldsActivity)mNewFieldView.getActivityContext()).mFieldId = null;
             ((FieldsActivity)mNewFieldView.getActivityContext()).mAddress = null;
             ((FieldsActivity)mNewFieldView.getActivityContext()).mCity = null;
@@ -74,7 +80,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
 
     private boolean isValidCreator(String userId) {
         if (!TextUtils.isEmpty(userId)) return true;
-        Log.e(TAG, "isValidName: not valid");
+        Log.e(TAG, "isValidCreator: not valid");
         return false;
     }
 
@@ -100,8 +106,30 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
     }
 
     @Override
+    public void destroyOpenFieldLoader(LoaderManager loaderManager) {
+        loaderManager.destroyLoader(SportteamLoader.LOADER_FIELD_ID);
+        loaderManager.destroyLoader(SportteamLoader.LOADER_FIELD_SPORTS_ID);
+    }
+
+    @Override
+    public void loadNearbyFields(LoaderManager loaderManager, Bundle b) {
+        loaderManager.destroyLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY);
+        String city = UtilesPreferences.getCurrentUserCity(mNewFieldView.getActivityContext());
+
+        if (city != null) {
+            FirebaseSync.loadFieldsFromCity(city);
+            loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY, b, this);
+        }
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY:
+                String city = UtilesPreferences.getCurrentUserCity(mNewFieldView.getActivityContext());
+                if (city != null)
+                    return SportteamLoader
+                            .cursorLoaderFieldsFromCity(mNewFieldView.getActivityContext(), city);
             case SportteamLoader.LOADER_FIELD_ID:
                 return SportteamLoader
                         .cursorLoaderOneField(mNewFieldView.getActivityContext(),
@@ -117,6 +145,10 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY:
+                ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
+                mNewFieldView.retrieveFields(dataList);
+                break;
             case SportteamLoader.LOADER_FIELD_ID:
                 showFieldDetail(data);
                 break;
@@ -136,6 +168,9 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
     @Override
     public void onLoaderReset(Loader loader) {
         switch (loader.getId()) {
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY:
+                mNewFieldView.retrieveFields(null);
+                break;
             case SportteamLoader.LOADER_EVENT_ID:
                 showFieldDetail(null);
                 break;

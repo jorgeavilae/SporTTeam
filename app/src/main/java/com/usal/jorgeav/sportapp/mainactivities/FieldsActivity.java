@@ -37,7 +37,8 @@ import java.util.List;
 public class FieldsActivity extends BaseActivity implements SportsListFragment.OnSportsSelected {
     public static final String TAG = FieldsActivity.class.getSimpleName();
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
-    public static final int REQUEST_CODE_ADDRESS = 23;
+    public static final int REQUEST_CODE_ADDRESS_TO_RETRIEVE = 23;
+    public static final int REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT = 24;
 
     private static final String INSTANCE_FIELD_ID_SELECTED = "INSTANCE_FIELD_ID_SELECTED";
     public String mFieldId;
@@ -61,16 +62,19 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
         return item.getItemId() != R.id.nav_fields && super.onNavigationItemSelected(item);
     }
 
-    public void startMapActivityForResult(ArrayList<Field> dataList) {
+    public void startMapActivityForResult(ArrayList<Field> dataList, boolean startNewField) {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra(INTENT_EXTRA_FIELD_LIST, dataList);
-        startActivityForResult(intent, REQUEST_CODE_ADDRESS);
+        if (startNewField)
+            startActivityForResult(intent, REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT);
+        else
+            startActivityForResult(intent, REQUEST_CODE_ADDRESS_TO_RETRIEVE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE_ADDRESS) {
+        if(requestCode == REQUEST_CODE_ADDRESS_TO_RETRIEVE || requestCode == REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT) {
             if (resultCode == RESULT_OK) {
                 // Expect a Field where add a new Sport,
                 // or an address (MyPlace) add a new Field
@@ -90,12 +94,15 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                     mCity = myPlace.getShortNameLocality();
                     mCoord = myPlace.getCoordinates();
 
-                    //Start new Field
-                    Fragment fragment = NewFieldFragment.newInstance(null);
-                    initFragment(fragment, true);
+                    if (requestCode == REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT) {
+                        //Start new Field
+                        Fragment fragment = NewFieldFragment.newInstance(null);
+                        initFragment(fragment, true);
+                    } else {
+                        if (mDisplayedFragment instanceof NewFieldContract.View)
+                            ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
+                    }
                 }
-                if (mDisplayedFragment instanceof NewFieldContract.View)
-                    ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
             } else {
                 Toast.makeText(this, "You should select a place", Toast.LENGTH_SHORT).show();
             }

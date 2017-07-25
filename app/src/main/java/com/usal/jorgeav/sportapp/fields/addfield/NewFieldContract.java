@@ -6,8 +6,10 @@ import android.support.v4.app.LoaderManager;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SportCourt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,8 +20,11 @@ public abstract class NewFieldContract {
 
     public interface Presenter {
         void openField(LoaderManager loaderManager, Bundle b);
+        void loadNearbyFields(LoaderManager loaderManager, Bundle b);
         void addField(String id, String name, String address, LatLng coords, String city,
                       String openTime, String closeTime, String creator, List<SportCourt> sports);
+
+        void destroyOpenFieldLoader(LoaderManager loaderManager);
     }
 
     public interface View {
@@ -31,5 +36,7 @@ public abstract class NewFieldContract {
         void clearUI();
         Context getActivityContext();
         BaseFragment getThis();
+
+        void retrieveFields(ArrayList<Field> fieldList);
     }
 }

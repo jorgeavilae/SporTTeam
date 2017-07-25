@@ -148,21 +148,51 @@ public class FirebaseActions {
 
     // Add Event
     public static void addField(Field field) {
-        if(TextUtils.isEmpty(field.getId())) {
-            //Create fieldId
-            DatabaseReference fieldTable = FirebaseDatabase.getInstance()
-                    .getReference(FirebaseDBContract.TABLE_FIELDS);
-            field.setId(fieldTable.push().getKey());
-        }
+        //Create fieldId
+        DatabaseReference fieldTable = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_FIELDS);
+        field.setId(fieldTable.push().getKey());
 
         //Set Field in Field Table
         String fieldInFieldTable = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + field.getId();
 
-        //Set Field created in creatorId
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(fieldInFieldTable, field.toMap());
 
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
+    }
+    public static void updateField(final Field field) {
+        //Set Field in Field Table
+        DatabaseReference fieldRef = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_FIELDS)
+                .child(field.getId());
+        fieldRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                //Update field
+                mutableData.child(FirebaseDBContract.DATA).setValue(field);
+
+                //Update field data in Events
+                Map<String, Object> childUpdates = new HashMap<>();
+                for (MutableData md : mutableData.child(FirebaseDBContract.Field.NEXT_EVENTS).getChildren()) {
+                    //Event reference
+                    String eventRef = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + md.getKey() + "/"
+                            + FirebaseDBContract.DATA;
+                    childUpdates.put(eventRef + "/" + FirebaseDBContract.Event.ADDRESS, field.getAddress());
+                    childUpdates.put(eventRef + "/" + FirebaseDBContract.Event.CITY, field.getCity());
+                    childUpdates.put(eventRef + "/" + FirebaseDBContract.Event.COORD_LATITUDE, field.getCoord_latitude());
+                    childUpdates.put(eventRef + "/" + FirebaseDBContract.Event.COORD_LONGITUDE, field.getCoord_longitude());
+                }
+                FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
     }
     public static void updateFieldSports(String fieldId, Map<String, Object> sportsMap) {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS)

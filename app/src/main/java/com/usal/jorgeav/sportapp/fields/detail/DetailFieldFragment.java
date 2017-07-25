@@ -28,6 +28,7 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
+import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
@@ -90,7 +91,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_field, menu); //TODO quitar
-        inflater.inflate(R.menu.menu_edit_delete, menu); // TODO implementar
+        inflater.inflate(R.menu.menu_edit_delete, menu);
     }
 
     @Override
@@ -114,9 +115,26 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
                     .setNegativeButton("Cancelar", null);
             builder.create().show();
             return true;
-        } else
+        } else if (item.getItemId() == R.id.action_edit) {
+            Log.d(TAG, "onOptionsItemSelected: Edit");
+            String fieldId = getArguments().getString(DetailFieldFragment.BUNDLE_FIELD_ID);
+            Fragment fragment = NewFieldFragment.newInstance(fieldId);
+            mFragmentManagementListener.initFragment(fragment, true);
             return true;
-//        return false;
+        } else if (item.getItemId() == R.id.action_delete) {
+            Log.d(TAG, "onOptionsItemSelected: Delete");
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+            builder.setTitle("Borrar evento")
+                    .setMessage("Seguro que desea borrarlo?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // TODO implementar
+                        }})
+                    .setNegativeButton("No", null);
+            builder.create().show();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -168,7 +186,6 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void showFieldTimes(long openTime, long closeTime) {
         ((BaseActivity)getActivity()).showContent();
-        //TODO time = -36000000 ???
         this.textViewFieldOpening.setText(UtilesTime.millisToTimeString(openTime));
         this.textViewFieldClosing.setText(UtilesTime.millisToTimeString(closeTime));
     }

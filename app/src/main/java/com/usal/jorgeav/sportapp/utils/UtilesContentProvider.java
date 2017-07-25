@@ -238,10 +238,10 @@ public class UtilesContentProvider {
                     result.add(new SportCourt(sportId, punctuation, votes));
                 }
             } else
-                Log.e(TAG, "getFieldSportFromContentProvider: Field with ID "+fieldId+" not found");
+                Log.e(TAG, "getFieldSportFromContentProvider: Sports of Field with ID "+fieldId+" not found");
             cursorFieldSport.close();
         } else
-            Log.e(TAG, "getFieldSportFromContentProvider: Error with field "+fieldId);
+            Log.e(TAG, "getFieldSportFromContentProvider: Error with Sports of Field "+fieldId);
         return result;
     }
 

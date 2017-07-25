@@ -122,15 +122,14 @@ public class MapsActivity extends AppCompatActivity implements
         for (int i = 0; i < mFieldsList.size(); i++) {
             Field f = mFieldsList.get(i);
             LatLng latLong = new LatLng(f.getCoord_latitude(), f.getCoord_longitude());
-            if (latLong != null) {
-                float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
-                Marker m = mMap.addMarker(new MarkerOptions()
-                        .position(latLong)
-                        .title(f.getName())
-                        .icon(BitmapDescriptorFactory.defaultMarker(hue)));
-                m.setTag(i);
-                mMarkersList.add(m);
-            }
+
+            float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
+            Marker m = mMap.addMarker(new MarkerOptions()
+                    .position(latLong)
+                    .title(f.getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+            m.setTag(i);
+            mMarkersList.add(m);
         }
 
         // Move Camera
@@ -196,6 +195,7 @@ public class MapsActivity extends AppCompatActivity implements
                 mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
             }
         } else {
+            mPlaceSelected = selectedPlace;
             switch (mPlaceSelected.getStatus()) {
                 case "OK":
                     break;

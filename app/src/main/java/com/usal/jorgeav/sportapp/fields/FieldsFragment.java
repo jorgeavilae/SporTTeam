@@ -71,7 +71,7 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
             @Override
             public void onClick(View view) {
                 if (mFieldsList != null)
-                    ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList);
+                    ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList, true);
             }
         });
         return root;

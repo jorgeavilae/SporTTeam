@@ -23,11 +23,13 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +51,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     // Static prevent double initialization with same ID
     private static GoogleApiClient mGoogleApiClient;
     private String mCreator = "";
+    private ArrayList<Field> mFieldList;
 
     @BindView(R.id.new_field_address)
     TextView newFieldAddress;
@@ -176,6 +179,14 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             }
         });
 
+        newFieldMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mFieldList != null)
+                    ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldList, false);
+            }
+        });
+
         showFieldPlace(((FieldsActivity)getActivity()).mAddress,
                 ((FieldsActivity)getActivity()).mCity,
                 ((FieldsActivity)getActivity()).mCoord);
@@ -193,10 +204,19 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     @Override
     public void onStart() {
         super.onStart();
-
-        if (sInitialize) return;
+        mNewFieldPresenter.loadNearbyFields(getLoaderManager(), getArguments());
+        if (sInitialize) {
+            //To prevent double initialization on edits
+            mNewFieldPresenter.destroyOpenFieldLoader(getLoaderManager());
+            return;
+        }
         mNewFieldPresenter.openField(getLoaderManager(), getArguments());
         sInitialize = true;
+    }
+
+    @Override
+    public void retrieveFields(ArrayList<Field> fieldList) {
+        mFieldList = fieldList;
     }
 
     @Override
@@ -221,6 +241,9 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     @Override
     public void showFieldPlace(String address, String city, LatLng coords) {
         newFieldAddress.setText(address);
+        ((FieldsActivity)getActivity()).mAddress = address;
+        ((FieldsActivity)getActivity()).mCity = city;
+        ((FieldsActivity)getActivity()).mCoord = coords;
     }
 
     @Override
