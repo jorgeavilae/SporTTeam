@@ -42,17 +42,14 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
 
     private DetailFieldContract.Presenter mPresenter;
+    private String mFieldId = "";
 
-    @BindView(R.id.field_detail_id)
-    TextView textViewFieldId;
+    @BindView(R.id.field_detail_creator)
+    TextView textViewFieldCreator;
     @BindView(R.id.field_detail_name)
     TextView textViewFieldName;
     @BindView(R.id.field_detail_address)
     TextView textViewFieldAddress;
-    @BindView(R.id.field_detail_rating)
-    TextView textViewFieldRating;
-    @BindView(R.id.field_detail_sport)
-    TextView textViewFieldSport;
     @BindView(R.id.field_detail_opening)
     TextView textViewFieldOpening;
     @BindView(R.id.field_detail_closing)
@@ -100,8 +97,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
         if (item.getItemId() == R.id.action_edit) {
             Log.d(TAG, "onOptionsItemSelected: Edit");
-            String fieldId = getArguments().getString(DetailFieldFragment.BUNDLE_FIELD_ID);
-            Fragment fragment = NewFieldFragment.newInstance(fieldId);
+            Fragment fragment = NewFieldFragment.newInstance(mFieldId);
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
@@ -126,6 +122,9 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         View root = inflater.inflate(R.layout.fragment_detail_field, container, false);
         ButterKnife.bind(this, root);
 
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID))
+            mFieldId = getArguments().getString(BUNDLE_FIELD_ID);
+
         sportsAdapter = new ProfileSportsAdapter(null, new ProfileSportsAdapter.OnProfileSportClickListener() {
             @Override
             public void onProfileSportClick(final Sport s) {
@@ -138,9 +137,8 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
                         .setPositiveButton("Votar", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_for_vote);
-                                String fieldId = getArguments().getString(DetailFieldFragment.BUNDLE_FIELD_ID);
                                 String sportId = s.getSportID();
-                                mPresenter.voteField(fieldId, sportId, ratingBar.getRating());
+                                mPresenter.voteField(mFieldId, sportId, ratingBar.getRating());
                             }
                         })
                         .setNegativeButton("Cancelar", null);
@@ -170,7 +168,6 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void showFieldId(String id) {
         ((BaseActivity)getActivity()).showContent();
-        this.textViewFieldId.setText(id);
     }
 
     @Override
@@ -207,7 +204,8 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
     @Override
     public void showFieldCreator(String userId) {
-        //TODO show in UI
+        this.textViewFieldCreator.setText(userId);
+
         String myUid = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUid)) return;
         if (myUid.equals(userId)) {
@@ -215,7 +213,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
             fieldEditSportListButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Fragment fragment = SportsListFragment.newInstance(textViewFieldId.getText().toString(), sportsAdapter.getDataAsArrayList());
+                    Fragment fragment = SportsListFragment.newInstance(mFieldId, sportsAdapter.getDataAsArrayList());
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });
@@ -224,12 +222,10 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
     @Override
     public void clearUI() {
-        this.textViewFieldId.setText("");
+        this.textViewFieldCreator.setText("");
         this.textViewFieldName.setText("");
         this.mFragmentManagementListener.setActionBarTitle("");
         this.textViewFieldAddress.setText("");
-        this.textViewFieldRating.setText("");
-        this.textViewFieldSport.setText("");
         this.textViewFieldOpening.setText("");
         this.textViewFieldClosing.setText("");
     }
