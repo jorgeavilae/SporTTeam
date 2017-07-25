@@ -23,13 +23,11 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -195,7 +193,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     @Override
     public void onStart() {
         super.onStart();
-        mNewFieldPresenter.loadNearbyFields(getLoaderManager(), getArguments());
+
         if (sInitialize) return;
         mNewFieldPresenter.openField(getLoaderManager(), getArguments());
         sInitialize = true;
@@ -212,11 +210,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         super.onPause();
         if (openTimePickerDialog != null && openTimePickerDialog.isShowing()) openTimePickerDialog.dismiss();
         if (closeTimePickerDialog != null && closeTimePickerDialog.isShowing()) closeTimePickerDialog.dismiss();
-    }
-
-    @Override
-    public void retrieveFields(ArrayList<Field> dataList) {
-
     }
 
     @Override

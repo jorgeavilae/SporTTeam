@@ -30,6 +30,7 @@ import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
+import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -167,6 +168,11 @@ public class FirebaseActions {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS)
                 .child(fieldId).child(FirebaseDBContract.DATA)
                 .child(FirebaseDBContract.Field.SPORT).setValue(sportsMap);
+    }
+    public static void addFieldSport(String fieldId, SportCourt sport) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS)
+                .child(fieldId).child(FirebaseDBContract.DATA)
+                .child(FirebaseDBContract.Field.SPORT).child(sport.getSport_id()).setValue(sport.toMap());
     }
 
     // Add Alarm

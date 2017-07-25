@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,6 +26,7 @@ import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -75,15 +75,14 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                 // Expect a Field where add a new Sport,
                 // or an address (MyPlace) add a new Field
                 if (data.hasExtra(MapsActivity.FIELD_SELECTED_EXTRA)) {
-                    //TODO retrieve aqui tambien los deportes de este field
                     Field field = data.getParcelableExtra(MapsActivity.FIELD_SELECTED_EXTRA);
                     mFieldId = field.getId();
                     mAddress = field.getAddress();
                     mCity = field.getCity();
                     mCoord = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
-                    
+
                     //Start dialog to add sport to this Field
-                    startDialogToAddSport();
+                    startDialogToAddSport(field);
                 } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
                     MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
                     mFieldId = null;
@@ -103,12 +102,18 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
         }
     }
 
-    private void startDialogToAddSport() {
+    private void startDialogToAddSport(final Field field) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
         View view = getLayoutInflater().inflate(R.layout.add_sport_dialog, null);
 
-        ArrayAdapter sportsAdapter = ArrayAdapter.createFromResource(this, R.array.sport_id, android.R.layout.simple_spinner_item);
+        List<String> sportsResources = Arrays.asList(getResources().getStringArray(R.array.sport_id));
+        ArrayList<String> sportsLeft = new ArrayList<>();
+        for (String sportId : sportsResources)
+            if (!field.getSport().containsKey(sportId))
+                sportsLeft.add(sportId);
+
+        ArrayAdapter<String> sportsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, sportsLeft);
         sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         final Spinner sportSpinner = (Spinner) view.findViewById(R.id.add_sport_dialog_sport);
         sportSpinner.setAdapter(sportsAdapter);
@@ -117,9 +122,11 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
         dialog.setPositiveButton("Añadir", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //TODO completar
-                Log.d(TAG, "onClick: añadir deporte "+sportSpinner.getSelectedItem().toString());
-                Log.d(TAG, "onClick: añadir puntuacion "+ratingBar.getRating());
+                String sportId = sportSpinner.getSelectedItem().toString();
+                float punctuation = ratingBar.getRating();
+                FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double)punctuation, 1L));
+                Toast.makeText(FieldsActivity.this, "Sport añadido", Toast.LENGTH_SHORT).show();
+                startMainFragment();
             }
         });
         dialog.setNegativeButton("Cancelar", null);
@@ -166,7 +173,6 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                 SportCourt sc = new SportCourt(s.getSportID(), (double)s.getPunctuation(), (long)s.getVotes());
                 sportsMap.put(s.getSportID(), sc.toMap());
             }
-        Log.d(TAG, "retrieveSportsSelected: "+fieldId);
 
         FirebaseActions.updateFieldSports(fieldId, sportsMap);
     }
