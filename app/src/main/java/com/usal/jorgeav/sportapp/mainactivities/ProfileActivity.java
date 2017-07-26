@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,10 +39,13 @@ public class ProfileActivity extends BaseActivity implements SportsListFragment.
 
     @Override
     public void retrieveSportsSelected(String myUserID, List<Sport> sportsSelected) {
-        HashMap<String, Float> sportsMap = new HashMap<>();
-        if (sportsSelected != null)
-            for (Sport sport : sportsSelected)
-                sportsMap.put(sport.getName(), sport.getPunctuation());
-        FirebaseActions.updateSports(myUserID, sportsMap);
+        if (myUserID != null && !TextUtils.isEmpty(myUserID)) {
+            HashMap<String, Float> sportsMap = new HashMap<>();
+            if (sportsSelected != null)
+                for (Sport sport : sportsSelected)
+                    sportsMap.put(sport.getName(), sport.getPunctuation());
+            FirebaseActions.updateSports(myUserID, sportsMap);
+        }
+        onBackPressed();
     }
 }

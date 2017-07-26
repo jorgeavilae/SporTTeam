@@ -67,10 +67,11 @@ public class SportsListFragment extends BaseFragment {
         if (item.getItemId() == R.id.action_ok) {
             Log.d(TAG, "onOptionsItemSelected: Ok");
             if (getActivity() instanceof OnSportsSelected) {
-                String id = getArguments().getString(BUNDLE_INSTANCE_OBJECT_ID);
-                Log.d(TAG, "onOptionsItemSelected: "+id);
+                String id = null;
+                if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_OBJECT_ID))
+                    id = getArguments().getString(BUNDLE_INSTANCE_OBJECT_ID);
+
                 ((OnSportsSelected) getActivity()).retrieveSportsSelected(id, mSportAdapter.getDataAsArrayList());
-                getActivity().onBackPressed();
             } else {
                 Log.e(TAG, "onOptionsItemSelected: Activity does not implement OnSportsSelected");
             }
@@ -133,7 +134,6 @@ public class SportsListFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        mFragmentManagementListener.setCurrentDisplayedFragment(null, null);
         mSportAdapter.replaceData(null);
     }
 

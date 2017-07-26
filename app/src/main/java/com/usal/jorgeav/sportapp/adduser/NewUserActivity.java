@@ -58,6 +58,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
@@ -555,6 +556,7 @@ public class NewUserActivity extends AppCompatActivity implements
         this.sports.clear();
         this.sports.addAll(sportsSelected);
         sportsInitialize = true;
+        onBackPressed();
     }
 
     @Override
@@ -573,7 +575,7 @@ public class NewUserActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void setCurrentDisplayedFragment(String title, Fragment fragment) {
+    public void setCurrentDisplayedFragment(String title, BaseFragment fragment) {
         setActionBarTitle(title);
         mDisplayedFragment = fragment;
     }
