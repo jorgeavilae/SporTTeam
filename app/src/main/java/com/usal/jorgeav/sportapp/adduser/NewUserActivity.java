@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.adduser;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -64,6 +65,7 @@ import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
@@ -440,12 +442,17 @@ public class NewUserActivity extends AppCompatActivity implements
                     });
     }
 
-    private void createAuthUser(String email, String pass) {
+    private void createAuthUser(final String email, String pass) {
         final OnCompleteListener<AuthResult> onCompleteListener = new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), "Log in is Successful", Toast.LENGTH_SHORT).show();
+
+                    //Add email to emails logged table
+                    ContentValues cv = new ContentValues();
+                    cv.put(SportteamContract.EmailLoggedEntry.EMAIL, email);
+                    getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
 
                     if (croppedImageUri != null) {
                         // Get a reference to store file at chat_photos/<FILENAME>

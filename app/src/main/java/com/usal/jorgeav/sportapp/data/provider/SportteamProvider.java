@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract.AlarmEntry;
+import com.usal.jorgeav.sportapp.data.provider.SportteamContract.EmailLoggedEntry;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract.JoinQueryEntries;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract.SimulatedParticipantEntry;
 
@@ -24,6 +25,7 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.FriendsE
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_ALARMS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EMAIL_LOGGED;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS_PARTICIPATION;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS_PARTICIPATION_WITH_EVENT;
@@ -49,6 +51,7 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_NOT
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_USERS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_USER_SPORT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_ALARM;
+import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EMAIL_LOGGED;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENT;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENTS_PARTICIPATION;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_EVENTS_REQUESTS;
@@ -65,6 +68,7 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.UserEntr
 public class SportteamProvider extends ContentProvider {
     private static final String TAG = SportteamProvider.class.getSimpleName();
 
+    public static final int CODE_EMAIL_LOGGED = 10;
     public static final int CODE_USERS = 100;
     public static final int CODE_USER_SPORT = 110;
     public static final int CODE_FIELDS = 200;
@@ -101,6 +105,8 @@ public class SportteamProvider extends ContentProvider {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = CONTENT_AUTHORITY;
 
+        // This URI is content://com.usal.jorgeav.sportapp/users/
+        matcher.addURI(authority, PATH_EMAIL_LOGGED, CODE_EMAIL_LOGGED);
         // This URI is content://com.usal.jorgeav.sportapp/users/
         matcher.addURI(authority, PATH_USERS, CODE_USERS);
         // This URI is content://com.usal.jorgeav.sportapp/userSport/
@@ -338,6 +344,10 @@ public class SportteamProvider extends ContentProvider {
         Uri returnUri = null;
         long _id = 0;
         switch (sUriMatcher.match(uri)) {
+            case CODE_EMAIL_LOGGED:
+                _id = db.insert(TABLE_EMAIL_LOGGED, null, values);
+                if ( _id > 0 ) returnUri = EmailLoggedEntry.buildUserUriWith(_id);
+                break;
             case CODE_USERS:
                 _id = db.insert(TABLE_USER, null, values);
                 if ( _id > 0 ) returnUri = UserEntry.buildUserUriWith(_id);
@@ -416,6 +426,16 @@ public class SportteamProvider extends ContentProvider {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         Cursor cursor;
         switch (sUriMatcher.match(uri)) {
+            case CODE_EMAIL_LOGGED:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        TABLE_EMAIL_LOGGED,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
             case CODE_USERS:
                 cursor = mOpenHelper.getReadableDatabase().query(
                         TABLE_USER,

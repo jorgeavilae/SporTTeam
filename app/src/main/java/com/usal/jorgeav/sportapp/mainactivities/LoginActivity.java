@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -145,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        final String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -188,6 +189,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 deleteContentProvider();
+
+                                //Add email to emails logged table
+                                ContentValues cv = new ContentValues();
+                                cv.put(SportteamContract.EmailLoggedEntry.EMAIL, email);
+                                getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
+
                                 // The user is logged and his data is in Firebase. Retrieve that data and
                                 // populate Content Provider. Later finishLoadMyProfile() will be invoked
                                 SportteamSyncUtils.initialize(LoginActivity.this);
@@ -206,13 +213,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void deleteContentProvider() {
         SportteamDBHelper db = new SportteamDBHelper(this);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER_SPORTS);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT_SIMULATED_PARTICIPANT);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_ALARM);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD_SPORTS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FRIENDS_REQUESTS);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_ALARM);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FRIENDS);
+        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FRIENDS_REQUESTS);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENTS_PARTICIPATION);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT_INVITATIONS);
         db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENTS_REQUESTS);
@@ -261,10 +270,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        //TODO CRear table para usuarios que metireon sus emails ya
         return new CursorLoader(this,
-                SportteamContract.UserEntry.CONTENT_USER_URI,
-                new String[]{SportteamContract.UserEntry.EMAIL},
+                SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI,
+                SportteamContract.EmailLoggedEntry.EMAIL_LOGGED_COLUMNS,
                 null, null, null);
     }
 
@@ -272,13 +280,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         List<String> emails = new ArrayList<>();
         while (cursor.moveToNext())
-            emails.add(cursor.getString(0));
+            emails.add(cursor.getString(SportteamContract.EmailLoggedEntry.COLUMN_EMAIL));
         addEmailsToAutoComplete(emails);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        mEmailView.setAdapter(null);
     }
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {

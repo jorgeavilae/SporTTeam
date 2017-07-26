@@ -21,6 +21,39 @@ public final class SportteamContract {
      */
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
+    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
+    public static final String PATH_EMAIL_LOGGED = "email_logged";
+    /* Used internally as the name of our email logged table. */
+    public static final String TABLE_EMAIL_LOGGED = "email_logged";
+    /* Inner class that defines the table contents of the email logged table */
+    public static final class EmailLoggedEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the email logged table from the content provider */
+        public static final Uri CONTENT_EMAIL_LOGGED_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_EMAIL_LOGGED)
+                .build();
+
+        /* Column names */
+        public static final String EMAIL = "email";
+
+        /* Column names with table prefix*/
+        public static final String EMAIL_TABLE_PREFIX = TABLE_EMAIL_LOGGED + "." + EMAIL;
+
+        /* All column projection */
+        public static final String[] EMAIL_LOGGED_COLUMNS = {
+                TABLE_EMAIL_LOGGED + "." + EmailLoggedEntry._ID,
+                EMAIL_TABLE_PREFIX
+        };
+
+        /* Column indexes */
+        public static final int COLUMN_ID = 0;
+        public static final int COLUMN_EMAIL = 1;
+
+        /* URI for one user */
+        public static Uri buildUserUriWith(long id) {
+            return ContentUris.withAppendedId(CONTENT_EMAIL_LOGGED_URI, id);
+        }
+    }
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_USERS = "users";
@@ -68,7 +101,7 @@ public final class SportteamContract {
 
         /* All column projection */
         public static final String[] USER_COLUMNS = {
-                TABLE_USER+"."+UserEntry._ID,
+                TABLE_USER + "." + UserEntry._ID,
                 USER_ID_TABLE_PREFIX,
                 EMAIL_TABLE_PREFIX,
                 NAME_TABLE_PREFIX,
@@ -685,7 +718,7 @@ public final class SportteamContract {
 
         /* All column projection */
         public static final String[] EVENT_INVITATIONS_COLUMNS = {
-                TABLE_EVENT_INVITATIONS + "."  +EventsInvitationEntry._ID,
+                TABLE_EVENT_INVITATIONS + "." + EventsInvitationEntry._ID,
                 RECEIVER_ID_TABLE_PREFIX,
                 SENDER_ID_TABLE_PREFIX,
                 EVENT_ID_TABLE_PREFIX,

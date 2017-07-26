@@ -19,7 +19,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
      * If you change the database schema, you must increment the database version or the onUpgrade
      * method will not be called.
      */
-    private static final int DATABASE_VERSION = 24;
+    private static final int DATABASE_VERSION = 25;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,6 +27,10 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        final String SQL_CREATE_EMAIL_LOGGED_TABLE = "CREATE TABLE " + SportteamContract.TABLE_EMAIL_LOGGED + " (" +
+                SportteamContract.EmailLoggedEntry._ID      + " INTEGER PRIMARY KEY,"       +
+                SportteamContract.EmailLoggedEntry.EMAIL    + " TEXT UNIQUE NOT NULL"      + ");";
+
         final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + SportteamContract.TABLE_USER + " (" +
                 SportteamContract.UserEntry._ID             + " INTEGER PRIMARY KEY,"       +
                 SportteamContract.UserEntry.USER_ID         + " TEXT UNIQUE NOT NULL,"      +
@@ -151,6 +155,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 " UNIQUE (" + SportteamContract.EventRequestsEntry.EVENT_ID     + ", "
                             + SportteamContract.EventRequestsEntry.SENDER_ID    + ") ON CONFLICT REPLACE);";
 
+        sqLiteDatabase.execSQL(SQL_CREATE_EMAIL_LOGGED_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_EVENT_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_ALARM_TABLE);
@@ -167,6 +172,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_EMAIL_LOGGED);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_USER);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_EVENT);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_ALARM);
