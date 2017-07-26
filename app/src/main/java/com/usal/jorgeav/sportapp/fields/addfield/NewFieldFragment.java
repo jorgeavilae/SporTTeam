@@ -204,14 +204,21 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     @Override
     public void onStart() {
         super.onStart();
+        //Do always to have Fields to populate Map
         mNewFieldPresenter.loadNearbyFields(getLoaderManager(), getArguments());
-        if (sInitialize) {
-            //To prevent double initialization on edits
-            mNewFieldPresenter.destroyOpenFieldLoader(getLoaderManager());
-            return;
+
+        //Do when edit a Field
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID)) {
+            if (sInitialize) {
+                //To prevent double initialization on edits
+                mNewFieldPresenter.destroyOpenFieldLoader(getLoaderManager());
+                return;
+            }
+            mNewFieldPresenter.openField(getLoaderManager(), getArguments());
+            sInitialize = true;
+        } else { //Do when create a new Field
+            setSportCourts(((FieldsActivity)getActivity()).mSports);
         }
-        mNewFieldPresenter.openField(getLoaderManager(), getArguments());
-        sInitialize = true;
     }
 
     @Override
@@ -241,9 +248,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     @Override
     public void showFieldPlace(String address, String city, LatLng coords) {
         newFieldAddress.setText(address);
-        ((FieldsActivity)getActivity()).mAddress = address;
-        ((FieldsActivity)getActivity()).mCity = city;
-        ((FieldsActivity)getActivity()).mCoord = coords;
     }
 
     @Override
@@ -273,14 +277,5 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         newFieldCloseTime.setText("");
         mSports = null;
         mCreator = null;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        ((FieldsActivity)getActivity()).mFieldId = null;
-        ((FieldsActivity)getActivity()).mAddress = null;
-        ((FieldsActivity)getActivity()).mCity = null;
-        ((FieldsActivity)getActivity()).mCoord = null;
     }
 }

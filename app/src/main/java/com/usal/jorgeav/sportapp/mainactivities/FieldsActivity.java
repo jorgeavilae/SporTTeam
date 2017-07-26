@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -49,6 +50,8 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
     public String mCity;
     private static final String INSTANCE_COORD_SELECTED = "INSTANCE_COORD_SELECTED";
     public LatLng mCoord;
+    private static final String INSTANCE_SPORTS_COURT_SELECTED = "INSTANCE_SPORTS_COURT_SELECTED";
+    public ArrayList<SportCourt> mSports;
 
     @Override
     public void startMainFragment() {
@@ -98,11 +101,12 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                     mCity = myPlace.getShortNameLocality();
                     mCoord = myPlace.getCoordinates();
 
+                    //When select a place from FieldsFragment's addFieldButton
                     if (requestCode == REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT) {
-                        //Start new Field
-                        Fragment fragment = NewFieldFragment.newInstance(null);
+                        //Select sports and later, in retrieveFields(), start new Field fragment
+                        Fragment fragment = SportsListFragment.newInstance("", null);
                         initFragment(fragment, true);
-                    } else {
+                    } else { //When edit Field's place from NewFieldFragment's button
                         if (mDisplayedFragment instanceof NewFieldContract.View)
                             ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
                     }
@@ -137,8 +141,6 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                 float punctuation = ratingBar.getRating();
                 FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double)punctuation, 1L));
                 Toast.makeText(FieldsActivity.this, "Sport añadido", Toast.LENGTH_SHORT).show();
-                //startMainFragment();
-
             }
         });
         dialog.setNegativeButton("Cancelar", null);
@@ -160,6 +162,8 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
             outState.putString(INSTANCE_CITY_SELECTED, mCity);
         if (mCoord != null)
             outState.putParcelable(INSTANCE_COORD_SELECTED, mCoord);
+        if (mSports != null && mSports.size() > 0)
+            outState.putParcelableArrayList(INSTANCE_SPORTS_COURT_SELECTED, mSports);
     }
 
     @Override
@@ -175,17 +179,35 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
             mCoord = savedInstanceState.getParcelable(INSTANCE_COORD_SELECTED);
         if (mDisplayedFragment instanceof NewFieldContract.View)
             ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
+
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_SPORTS_COURT_SELECTED)) {
+            mSports = savedInstanceState.getParcelableArrayList(INSTANCE_SPORTS_COURT_SELECTED);
+            if (mDisplayedFragment instanceof NewFieldContract.View)
+                ((NewFieldContract.View) mDisplayedFragment).setSportCourts(mSports);
+        }
     }
 
     @Override
     public void retrieveSportsSelected(String fieldId, List<Sport> sportsSelected) {
         HashMap<String, Object> sportsMap = new HashMap<>();
-        if (sportsSelected != null)
+        mSports = new ArrayList<>();
+        if (sportsSelected != null) {
             for (Sport s : sportsSelected) {
-                SportCourt sc = new SportCourt(s.getSportID(), (double)s.getPunctuation(), (long)s.getVotes());
+                SportCourt sc = new SportCourt(s.getSportID(), (double) s.getPunctuation(), (long) s.getVotes());
                 sportsMap.put(s.getSportID(), sc.toMap());
+                mSports.add(sc);
             }
 
-        FirebaseActions.updateFieldSports(fieldId, sportsMap);
+            if (fieldId != null && !TextUtils.isEmpty(fieldId)) {
+                //Update sports (DetailFieldFragment update sports)
+                FirebaseActions.updateFieldSports(fieldId, sportsMap);
+                onBackPressed();
+            } else {
+                //Start NewFieldFragment with sport already selected
+                Fragment fragment = NewFieldFragment.newInstance(null);
+                initFragment(fragment, true);
+            }
+        }
     }
 }

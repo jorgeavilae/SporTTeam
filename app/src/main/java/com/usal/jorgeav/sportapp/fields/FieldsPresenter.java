@@ -47,6 +47,6 @@ public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.
 
     @Override
     public void onLoaderReset(Loader loader) {
-        mFieldsView.showFields(null);
+//        mFieldsView.showFields(null);
     }
 }

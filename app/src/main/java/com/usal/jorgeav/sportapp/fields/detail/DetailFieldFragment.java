@@ -31,6 +31,7 @@ import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
+import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -184,6 +185,12 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     public void showFieldPlace(String address, String city, LatLng coordinates) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewFieldAddress.setText(address);
+
+        if (getActivity() instanceof FieldsActivity) {
+            ((FieldsActivity) getActivity()).mAddress = address;
+            ((FieldsActivity) getActivity()).mCity = city;
+            ((FieldsActivity) getActivity()).mCoord = coordinates;
+        }
     }
 
     @Override
@@ -245,5 +252,16 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     public void onPause() {
         super.onPause();
         sportsAdapter.replaceData(null);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        if (getActivity() instanceof FieldsActivity) {
+            ((FieldsActivity) getActivity()).mAddress = null;
+            ((FieldsActivity) getActivity()).mCity = null;
+            ((FieldsActivity) getActivity()).mCoord = null;
+        }
     }
 }
