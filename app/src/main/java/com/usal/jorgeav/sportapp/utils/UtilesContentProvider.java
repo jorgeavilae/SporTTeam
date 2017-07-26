@@ -89,7 +89,9 @@ public class UtilesContentProvider {
 
     public static ArrayList<Field> cursorToMultipleField(Cursor cursor) {
         ArrayList<Field> result = new ArrayList<>();
-        if (cursor != null)
+        if (cursor != null) {
+            /* https://stackoverflow.com/questions/10723770/whats-the-best-way-to-iterate-an-android-cursor#comment33274077_10723771 */
+            cursor.moveToPosition(-1); //TODO poner en todos los movetonext
             while (cursor.moveToNext()) {
                 String fieldId = cursor.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
                 String name = cursor.getString(SportteamContract.FieldEntry.COLUMN_NAME);
@@ -105,6 +107,7 @@ public class UtilesContentProvider {
                 result.add(new Field(fieldId, name, address, lat, lng, city,
                         openTime, closeTime, creator, sports));
             }
+        }
         return result;
     }
 
