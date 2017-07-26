@@ -155,45 +155,52 @@ public class MapsActivity extends AppCompatActivity implements
     public void onMapLongClick(LatLng latLng) {
         Log.d(TAG, "onMapClick: "+latLng);
 
-        //TODO if latlng esta cerca de un field de mFieldList: onMarkerCLick(mMarkerList.get(fieldPosition))
-        new AsyncTask<LatLng, Void, MyPlace>(){
-            @Override
-            protected MyPlace doInBackground(LatLng... latLng) {
-                String apiKey = getResources().getString(R.string.google_maps_key);
-                return HttpRequestTask.placeInLatLngLocation(apiKey, latLng[0]);
-            }
+        int position = Utiles.searchClosestFieldInList(mFieldsList, latLng);
+        if (position > -1) {
+            // latLng are too near from a Field
+            onMarkerClick(mMarkersList.get(position));
+        } else {
+            new AsyncTask<LatLng, Void, MyPlace>() {
+                @Override
+                protected MyPlace doInBackground(LatLng... latLng) {
+                    String apiKey = getResources().getString(R.string.google_maps_key);
+                    return HttpRequestTask.placeInLatLngLocation(apiKey, latLng[0]);
+                }
 
-            @Override
-            protected void onPostExecute(MyPlace place) {
-                updateSelectedPlace(place);
-            }
-        }.execute(latLng);
+                @Override
+                protected void onPostExecute(MyPlace place) {
+                    updateSelectedPlace(place);
+                }
+            }.execute(latLng);
+        }
     }
 
     private void updateSelectedPlace(MyPlace selectedPlace) {
         if (selectedPlace.isSucceed()) {
+            // If the closest address to onMapLongClick's coordinates was already in the Field list
+            // means the distance is greater that the distance allowed but the address is the same
+            // so it is like the user click on that Marker.
             int position = Utiles.searchCoordinatesInFieldList(mFieldsList, selectedPlace.getCoordinates());
             if (position > -1) {
-                // mPlaceSelected is already a Field todo should move this to before asynctask.execute, finding near Latlng
                 onMarkerClick(mMarkersList.get(position));
-            } else {
-                //MyPlace selected: invalid Field selected
-                mFieldSelected = null;
-
-                mPlaceSelected = selectedPlace;
-
-                if (mMarkerSelectedPlace != null) mMarkerSelectedPlace.remove();
-                mMarkerSelectedPlace = null;
-
-                float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
-                mMarkerSelectedPlace = mMap.addMarker(new MarkerOptions()
-                        .position(mPlaceSelected.getCoordinates())
-                        .title(mPlaceSelected.getAddress())
-                        .icon(BitmapDescriptorFactory.defaultMarker(hue)));
-                LatLngBounds llb = new LatLngBounds(mPlaceSelected.getViewPortSouthwest(),
-                        mPlaceSelected.getViewPortNortheast());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
+                return;
             }
+
+            //MyPlace selected: invalid Field selected
+            mFieldSelected = null;
+            mPlaceSelected = selectedPlace;
+
+            if (mMarkerSelectedPlace != null) mMarkerSelectedPlace.remove();
+            mMarkerSelectedPlace = null;
+
+            float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
+            mMarkerSelectedPlace = mMap.addMarker(new MarkerOptions()
+                    .position(mPlaceSelected.getCoordinates())
+                    .title(mPlaceSelected.getAddress())
+                    .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+            LatLngBounds llb = new LatLngBounds(mPlaceSelected.getViewPortSouthwest(),
+                    mPlaceSelected.getViewPortNortheast());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
         } else {
             mPlaceSelected = selectedPlace;
             switch (mPlaceSelected.getStatus()) {
