@@ -227,6 +227,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_ADDRESS_TEXT_VIEW_ID))
             newEventAddress.setText(savedInstanceState.getString(INSTANCE_ADDRESS_TEXT_VIEW_ID));
 
+        //Show newField dialog on rotation if needed, after retrieveFields are called
+        if (mFieldList != null && mFieldList.size() == 0) startNewFieldTask();
+
         return root;
     }
 
@@ -243,11 +246,14 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         if (!sInitialize) {
             mNewEventPresenter.openEvent(getLoaderManager(), getArguments());
 
+            //Only need to show MapActivity on init once, not on rotation
             if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
                 setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
             else showContent();
             sInitialize = true;
-        } else showContent();
+        } else {
+            showContent();
+        }
     }
 
     private void setSportLayout(String sportId) {
@@ -336,35 +342,40 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         showContent();
         if (mFieldList != null) {
             if (mFieldList.size() == 0) {
-                Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
-                //TODO mostrar dialog "quieres crear un field nuevo?" y abrir addFieldFragment como se abren las notificationes
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                builder.setMessage("Quieres crear un campo nuevo?")
-                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                startFieldsActivityAndNewField();
-                            }
-                        })
-                        .setNegativeButton("No", null);
-                builder.create().show();
+                startNewFieldTask();
             } else
                 if (!getArguments().containsKey(BUNDLE_EVENT_ID))
                     ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
         }
     }
 
+    private void startNewFieldTask() {
+        Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setMessage("Quieres crear un campo nuevo?")
+                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startFieldsActivityAndNewField();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        getActivity().onBackPressed();
+                    }
+                })
+                .setCancelable(false);
+        builder.create().show();
+    }
+
     private void startFieldsActivityAndNewField() {
         /* https://stackoverflow.com/a/24927301/4235666 */
         Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(getActivityContext(), FieldsActivity.class));
 
-        String sportId = "";
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
-            sportId = getArguments().getString(BUNDLE_SPORT_SELECTED_ID);
-
-        startActivityIntent.putExtra(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "");
-        //TODO eventActivity return to NewEventFragment cuando se pulsa desde el menu--> cambiar FLAG
+        startActivityIntent.putExtra(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "dummy");
         startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(startActivityIntent);
+        getActivity().finish();
     }
 
     @Override
