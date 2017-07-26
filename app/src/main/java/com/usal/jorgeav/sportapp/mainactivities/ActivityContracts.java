@@ -2,6 +2,8 @@ package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.support.v4.app.Fragment;
 
+import com.usal.jorgeav.sportapp.BaseFragment;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +15,7 @@ public abstract class ActivityContracts {
     public interface FragmentManagement {
         void startMainFragment();
         void initFragment(@NotNull Fragment fragment, boolean isOnBackStack);
-        void setCurrentDisplayedFragment(String title, Fragment fragment);
+        void setCurrentDisplayedFragment(String title, BaseFragment fragment);
         void setActionBarTitle(String title);
         void showContent();
         void hideContent();

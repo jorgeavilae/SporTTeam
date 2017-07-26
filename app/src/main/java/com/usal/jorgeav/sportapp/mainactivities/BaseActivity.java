@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
@@ -57,7 +58,7 @@ public class BaseActivity extends AppCompatActivity
     FrameLayout mContentFrame;
     @BindView(R.id.main_activity_progressbar)
     ProgressBar mProgressbar;
-    Fragment mDisplayedFragment;
+    BaseFragment mDisplayedFragment;
     ActionBarDrawerToggle mToggle;
 
     private FirebaseAuth mAuth;
@@ -179,7 +180,7 @@ public class BaseActivity extends AppCompatActivity
         mDisplayedFragment = null;
         if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
             try {
-                mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
+                mDisplayedFragment = (BaseFragment) getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
             } catch (IllegalStateException e) { e.printStackTrace(); }
         } else {
             onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
@@ -287,7 +288,7 @@ public class BaseActivity extends AppCompatActivity
     }
 
     @Override
-    public void setCurrentDisplayedFragment(String title, Fragment fragment) {
+    public void setCurrentDisplayedFragment(String title, BaseFragment fragment) {
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(title);
         mDisplayedFragment = fragment;
