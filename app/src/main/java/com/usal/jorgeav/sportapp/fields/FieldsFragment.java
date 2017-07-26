@@ -33,6 +33,7 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
     FieldsContract.Presenter mFieldsPresenter;
     FieldsAdapter mFieldsRecyclerAdapter;
     ArrayList<Field> mFieldsList;
+    private static boolean sInitialize;
 
     @BindView(R.id.fields_new_field)
     Button fieldsNewField;
@@ -45,8 +46,15 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
         // Required empty public constructor
     }
 
-    public static FieldsFragment newInstance() {
-        return new FieldsFragment();
+    public static FieldsFragment newInstance(boolean createNewField) {
+        Bundle b = new Bundle();
+        //If is necessary to init NewField programmatically
+        if (createNewField)
+            b.putString(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "");
+        FieldsFragment fragment = new FieldsFragment();
+        fragment.setArguments(b);
+        sInitialize = false;
+        return fragment;
     }
 
     @Override
@@ -74,6 +82,8 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
                     ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList, true);
             }
         });
+
+        hideContent();
         return root;
     }
 
@@ -87,6 +97,7 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
     @Override
     public void onStart() {
         super.onStart();
+
         mFieldsPresenter.loadNearbyFields(getLoaderManager(), getArguments());
     }
 
@@ -99,6 +110,14 @@ public class FieldsFragment extends BaseFragment implements FieldsContract.View,
     @Override
     public void showFields(Cursor cursor) {
         mFieldsList = UtilesContentProvider.cursorToMultipleField(cursor);
+
+        //If is necessary to init NewField programmatically
+        if (!sInitialize && getArguments() != null && getArguments().containsKey(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD)) {
+            fieldsNewField.callOnClick(); /*https://stackoverflow.com/a/18250395/4235666*/
+            sInitialize = true;
+            return;
+        }
+
         mFieldsRecyclerAdapter.replaceData(cursor);
         if (cursor != null && cursor.getCount() > 0) {
             fieldsRecyclerList.setVisibility(View.VISIBLE);

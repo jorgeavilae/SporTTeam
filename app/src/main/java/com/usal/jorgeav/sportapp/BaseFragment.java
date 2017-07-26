@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -13,6 +14,7 @@ import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
  */
 
 public abstract class BaseFragment extends Fragment {
+    private static final String TAG = BaseFragment.class.getSimpleName();
 
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
     protected ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
@@ -41,11 +43,13 @@ public abstract class BaseFragment extends Fragment {
     public BaseFragment getThis() { return this;}
 
     public void showContent() {
+        Log.d(TAG, "showContent: ");
         if (mFragmentManagementListener != null)
             mFragmentManagementListener.showContent();
     }
 
     public void hideContent() {
+        Log.d(TAG, "hideContent: ");
         if (mFragmentManagementListener != null)
             mFragmentManagementListener.hideContent();
     }

@@ -37,6 +37,7 @@ import java.util.List;
 public class FieldsActivity extends BaseActivity implements SportsListFragment.OnSportsSelected {
     public static final String TAG = FieldsActivity.class.getSimpleName();
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
+    public static final String INTENT_EXTRA_CREATE_NEW_FIELD = "INTENT_EXTRA_CREATE_NEW_FIELD";
     public static final int REQUEST_CODE_ADDRESS_TO_RETRIEVE = 23;
     public static final int REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT = 24;
 
@@ -53,7 +54,10 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
     public void startMainFragment() {
         super.startMainFragment();
 
-        initFragment(FieldsFragment.newInstance(), false);
+        boolean createNewField = false;
+        if (getIntent().hasExtra(INTENT_EXTRA_CREATE_NEW_FIELD)) createNewField = true;
+
+        initFragment(FieldsFragment.newInstance(createNewField), false);
         mNavigationView.setCheckedItem(R.id.nav_fields);
     }
 
@@ -133,7 +137,8 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                 float punctuation = ratingBar.getRating();
                 FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double)punctuation, 1L));
                 Toast.makeText(FieldsActivity.this, "Sport añadido", Toast.LENGTH_SHORT).show();
-                startMainFragment();
+                //startMainFragment();
+
             }
         });
         dialog.setNegativeButton("Cancelar", null);

@@ -1127,28 +1127,28 @@ public class FirebaseSync {
         ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists())
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        Field field = data.child(FirebaseDBContract.DATA).getValue(Field.class);
-                        if (field == null) {
-                            Log.e(TAG, "loadFieldsFromCity: onDataChangeExecutor: Error parsing Field");
-                            return;
-                        }
-                        field.setId(data.getKey());
-
-                        ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
-                        MyApplication.getAppContext().getContentResolver()
-                                .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
-
-                        List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
-                        MyApplication.getAppContext().getContentResolver()
-                                .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
-                                        SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
-                                        new String[]{field.getId()});
-                        MyApplication.getAppContext().getContentResolver()
-                                .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
-                                        cvSports.toArray(new ContentValues[cvSports.size()]));
+                if(dataSnapshot.exists()) {
+                    Field field = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Field.class);
+                    if (field == null) {
+                        Log.e(TAG, "loadFieldsFromCity: onDataChangeExecutor: Error parsing Field from "
+                                + dataSnapshot.child(FirebaseDBContract.DATA).getRef());
+                        return;
                     }
+                    field.setId(dataSnapshot.getKey());
+
+                    ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
+
+                    List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
+                    MyApplication.getAppContext().getContentResolver()
+                            .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                    SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+                                    new String[]{field.getId()});
+                    MyApplication.getAppContext().getContentResolver()
+                            .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                    cvSports.toArray(new ContentValues[cvSports.size()]));
+                }
             }
 
             @Override
@@ -1185,40 +1185,6 @@ public class FirebaseSync {
             listenerMap.put(fieldsRef, childEventListener);
             Log.d(TAG, "attachListener ref " + fieldsRef);
         }
-        fieldsRef.orderByChild(filter).equalTo(city)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                Field field = data.child(FirebaseDBContract.DATA).getValue(Field.class);
-                                if (field == null) {
-                                    Log.e(TAG, "loadAField: onDataChangeExecutor: Error parsing Field");
-                                    return;
-                                }
-                                field.setId(data.getKey());
-
-                                ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
-                                MyApplication.getAppContext().getContentResolver()
-                                        .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
-
-                                List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
-                                MyApplication.getAppContext().getContentResolver()
-                                        .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
-                                                SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
-                                                new String[]{field.getId()});
-                                MyApplication.getAppContext().getContentResolver()
-                                        .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
-                                                cvSports.toArray(new ContentValues[cvSports.size()]));
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
-
-                    }
-                });
     }
     public static void loadEventsFromCity(String city) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();

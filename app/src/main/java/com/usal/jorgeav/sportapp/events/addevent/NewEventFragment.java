@@ -1,7 +1,11 @@
 package com.usal.jorgeav.sportapp.events.addevent;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.ComponentName;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,6 +35,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
+import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
@@ -333,10 +338,33 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             if (mFieldList.size() == 0) {
                 Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
                 //TODO mostrar dialog "quieres crear un field nuevo?" y abrir addFieldFragment como se abren las notificationes
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                builder.setMessage("Quieres crear un campo nuevo?")
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                startFieldsActivityAndNewField();
+                            }
+                        })
+                        .setNegativeButton("No", null);
+                builder.create().show();
             } else
                 if (!getArguments().containsKey(BUNDLE_EVENT_ID))
                     ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
         }
+    }
+
+    private void startFieldsActivityAndNewField() {
+        /* https://stackoverflow.com/a/24927301/4235666 */
+        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(getActivityContext(), FieldsActivity.class));
+
+        String sportId = "";
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+            sportId = getArguments().getString(BUNDLE_SPORT_SELECTED_ID);
+
+        startActivityIntent.putExtra(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "");
+        //TODO eventActivity return to NewEventFragment cuando se pulsa desde el menu--> cambiar FLAG
+        startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(startActivityIntent);
     }
 
     @Override
