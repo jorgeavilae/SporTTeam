@@ -59,7 +59,6 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
         boolean createNewField = false;
         if (getIntent().hasExtra(INTENT_EXTRA_CREATE_NEW_FIELD)) createNewField = true;
         initFragment(FieldsMapFragment.newInstance(createNewField), false);
-        showContent();
 
         mNavigationView.setCheckedItem(R.id.nav_fields);
     }
@@ -142,7 +141,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                 float punctuation = ratingBar.getRating();
                 FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double)punctuation, 1L));
                 Toast.makeText(FieldsActivity.this, "Sport añadido", Toast.LENGTH_SHORT).show();
-                mDisplayedFragment.resetBackStack();
+                if (mDisplayedFragment != null) mDisplayedFragment.resetBackStack();
             }
         });
         dialog.setNegativeButton("Cancelar", null);

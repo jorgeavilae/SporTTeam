@@ -6,15 +6,28 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.MapMarkerInfoAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 import java.util.ArrayList;
 
@@ -28,7 +41,10 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
     protected ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
+    private GoogleMap mMap;
     FieldsContract.Presenter mFieldsPresenter;
+
+    ArrayList<Marker> mMarkersList;
     ArrayList<Field> mFieldsList;
     private static boolean sInitialize;
 
@@ -49,12 +65,32 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-//                if (mFieldsList != null)
-//                    ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList, true);
+        setHasOptionsMenu(true);
 
         mFieldsPresenter = new FieldsPresenter(this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_map, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        hideSoftKeyboard();
+        if (item.getItemId() == R.id.action_ok) {
+            Log.d(TAG, "onOptionsItemSelected: Ok");
+            return true;
+        } else if (item.getItemId() == R.id.action_new_field) {
+            Log.d(TAG, "onOptionsItemSelected: New Field");
+            if (mFieldsList != null)
+                ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList, true);
+            return true;
+        }
+        return false;
     }
 
 
@@ -75,18 +111,60 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
     @Override
     public void showFields(Cursor cursor) {
         mFieldsList = UtilesContentProvider.cursorToMultipleField(cursor);
+        mMarkersList = new ArrayList<>();
         Log.d(TAG, "showFields: "+mFieldsList);
 
         //If is necessary to init NewField programmatically
         if (!sInitialize && getArguments() != null && getArguments().containsKey(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD)) {
-            //TODO Start new field workflow
+            if (mFieldsList != null)
+                ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList, true);
             sInitialize = true;
             return;
         }
 
-        //TODO Update Fields in map
+        getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+                mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+//                mMap.setOnMapLongClickListener(this);
+//                mMap.setOnMarkerClickListener(this);
+                mMap.setInfoWindowAdapter(new MapMarkerInfoAdapter(getActivity().getLayoutInflater(), mFieldsList));
 
-        mFragmentManagementListener.showContent();
+                //Populate map with Fields
+                for (int i = 0; i < mFieldsList.size(); i++) {
+                    Field f = mFieldsList.get(i);
+                    LatLng latLong = new LatLng(f.getCoord_latitude(), f.getCoord_longitude());
+
+                    float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
+                    Marker m = mMap.addMarker(new MarkerOptions()
+                            .position(latLong)
+                            .title(f.getName())
+                            .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+                    m.setTag(i);
+                    mMarkersList.add(m);
+                }
+
+                // Move Camera
+                centerCameraOnInit();
+            }
+        });
+    }
+
+    private void centerCameraOnInit() {
+        showContent();
+        mMap.setMinZoomPreference(20); //Buildings
+        mMap.setMinZoomPreference(5); //Continent
+        String myUserId = Utiles.getCurrentUserId();
+        if (myUserId != null) {
+            LatLng myCityLatLong = UtilesPreferences.getCurrentUserCityCoords(getActivityContext());
+
+            if (myCityLatLong.latitude == 0 && myCityLatLong.longitude == 0)
+                myCityLatLong = new LatLng(UtilesPreferences.CACERES_LATITUDE, UtilesPreferences.CACERES_LONGITUDE);
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
+        }
     }
 
     @Override
