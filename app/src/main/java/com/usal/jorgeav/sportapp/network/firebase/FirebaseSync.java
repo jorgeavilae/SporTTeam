@@ -693,8 +693,7 @@ public class FirebaseSync {
     }
 
     public static void loadMyNotifications(ValueEventListener listener) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();

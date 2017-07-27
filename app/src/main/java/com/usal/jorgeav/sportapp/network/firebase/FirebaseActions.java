@@ -1072,6 +1072,7 @@ public class FirebaseActions {
         for (final Alarm a : alarms) {
             final String eventId = UtilesContentProvider.eventsCoincidenceAlarmFromContentProvider(a, myUserID);
             if (eventId != null) {
+                //Check if notification already exists
                 FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                         .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
                         .child(a.getId() + FirebaseDBContract.User.ALARMS)
@@ -1104,6 +1105,7 @@ public class FirebaseActions {
                                             .setValue(n.toMap());
 
                                     // Notify
+                                    n.setChecked(false); /* storing true in Firebase but changing false for show in StatusBar */
                                     UtilesNotification.createNotification(MyApplication.getAppContext(), n, a);
                                 }
                             }

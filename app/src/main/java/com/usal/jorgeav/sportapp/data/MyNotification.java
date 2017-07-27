@@ -66,6 +66,10 @@ public class MyNotification {
         return checked;
     }
 
+    public void setChecked(Boolean checked) {
+        this.checked = checked;
+    }
+
     public String getTitle() {
         return title;
     }
