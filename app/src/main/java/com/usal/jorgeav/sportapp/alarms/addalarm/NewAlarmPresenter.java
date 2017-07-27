@@ -15,7 +15,6 @@ import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -193,7 +192,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
                         .cursorLoaderOneAlarm(mNewAlarmView.getActivityContext(), alarmId);
             case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
                 String city = UtilesPreferences.getCurrentUserCity(mNewAlarmView.getActivityContext());
-                String sportId = args.getString(NewEventFragment.BUNDLE_SPORT_SELECTED_ID);
+                String sportId = args.getString(NewAlarmFragment.BUNDLE_SPORT_SELECTED_ID);
                 Log.d(TAG, "onCreateLoader: "+city+sportId);
                 return SportteamLoader
                         .cursorLoaderFieldsFromCityWithSport(mNewAlarmView.getActivityContext(), city, sportId);

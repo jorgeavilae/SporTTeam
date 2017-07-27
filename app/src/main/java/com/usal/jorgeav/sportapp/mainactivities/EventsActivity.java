@@ -76,9 +76,11 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
         return item.getItemId() != R.id.nav_events && super.onNavigationItemSelected(item);
     }
 
+    // Start MapActivity to pick a place for new Events
     public void startMapActivityForResult(ArrayList<Field> dataList, boolean onlyField) {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra(MapsActivity.INTENT_EXTRA_FIELD_LIST, dataList);
+        intent.putExtra(MapsActivity.INTENT_EXTRA_ONLY_FIELDS, onlyField);
         startActivityForResult(intent, REQUEST_CODE_ADDRESS);
     }
 

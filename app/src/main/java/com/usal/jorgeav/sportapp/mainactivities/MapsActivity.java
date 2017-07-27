@@ -35,12 +35,14 @@ public class MapsActivity extends AppCompatActivity implements
         GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
     public static final String TAG = MapsActivity.class.getSimpleName();
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
+    public static final String INTENT_EXTRA_ONLY_FIELDS = "INTENT_EXTRA_ONLY_FIELDS";
     public static final String PLACE_SELECTED_EXTRA = "PLACE_SELECTED_EXTRA";
     public static final String FIELD_SELECTED_EXTRA = "FIELD_SELECTED_EXTRA";
 
     private GoogleMap mMap;
     ArrayList<Field> mFieldsList;
     ArrayList<Marker> mMarkersList;
+    boolean mOnlyField;
     Toolbar mToolbar;
     MyPlace mPlaceSelected;
     Marker mMarkerSelectedPlace;
@@ -102,6 +104,9 @@ public class MapsActivity extends AppCompatActivity implements
         mFieldsList = getIntent().getParcelableArrayListExtra(INTENT_EXTRA_FIELD_LIST);
         if (mFieldsList == null) mFieldsList = new ArrayList<>();
 
+        //False by default to select anywhere
+        mOnlyField = getIntent().getBooleanExtra(INTENT_EXTRA_ONLY_FIELDS, false);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -160,7 +165,7 @@ public class MapsActivity extends AppCompatActivity implements
         if (position > -1) {
             // latLng are too near from a Field
             onMarkerClick(mMarkersList.get(position));
-        } else {
+        } else if (!mOnlyField) { /* Only allow MyPlace when mOnlyFields it set false */
             new AsyncTask<LatLng, Void, MyPlace>() {
                 @Override
                 protected MyPlace doInBackground(LatLng... latLng) {

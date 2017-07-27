@@ -194,7 +194,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         newEventFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
+                boolean onlyFields = true;
+                if (mFieldList == null) onlyFields = false;
+                ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList, onlyFields);
             }
         });
 
@@ -265,7 +267,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
             showContent();
             if (!getArguments().containsKey(BUNDLE_EVENT_ID))
-                ((EventsActivity)getActivity()).startMapActivityForResult(null);
+                ((EventsActivity)getActivity()).startMapActivityForResult(null, false);
         } else {
             // Sport needs a Field so load from ContentProvider and start MapActivity in retrieveFields()
             mNewEventPresenter.loadFields(getLoaderManager(), getArguments());
@@ -345,7 +347,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                 startNewFieldTask();
             } else
                 if (!getArguments().containsKey(BUNDLE_EVENT_ID))
-                    ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
+                    ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList, true);
         }
 
         //Since mFieldList are retain in savedInstance no need to load again
