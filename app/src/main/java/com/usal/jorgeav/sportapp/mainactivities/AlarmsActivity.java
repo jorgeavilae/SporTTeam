@@ -28,7 +28,6 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
 
     public static final String ALARMID_PENDING_INTENT_EXTRA = "ALARMID_PENDING_INTENT_EXTRA";
 
-    public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final int REQUEST_CODE_ADDRESS = 23;
 
     private static final String INSTANCE_FIELD_ID_SELECTED = "INSTANCE_FIELD_ID_SELECTED";
@@ -79,7 +78,7 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
 
     public void startMapActivityForResult(ArrayList<Field> dataList) {
         Intent intent = new Intent(this, MapsActivity.class);
-        intent.putExtra(INTENT_EXTRA_FIELD_LIST, dataList);
+        intent.putExtra(MapsActivity.INTENT_EXTRA_FIELD_LIST, dataList);
         startActivityForResult(intent, REQUEST_CODE_ADDRESS);
     }
     @Override

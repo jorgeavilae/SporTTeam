@@ -42,7 +42,6 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
 
     public static final String EVENTID_PENDING_INTENT_EXTRA = "EVENTID_PENDING_INTENT_EXTRA";
 
-    public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final int REQUEST_CODE_ADDRESS = 23;
 
     private static final String INSTANCE_FIELD_ID_SELECTED = "INSTANCE_FIELD_ID_SELECTED";
@@ -77,9 +76,9 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
         return item.getItemId() != R.id.nav_events && super.onNavigationItemSelected(item);
     }
 
-    public void startMapActivityForResult(ArrayList<Field> dataList) {
+    public void startMapActivityForResult(ArrayList<Field> dataList, boolean onlyField) {
         Intent intent = new Intent(this, MapsActivity.class);
-        intent.putExtra(INTENT_EXTRA_FIELD_LIST, dataList);
+        intent.putExtra(MapsActivity.INTENT_EXTRA_FIELD_LIST, dataList);
         startActivityForResult(intent, REQUEST_CODE_ADDRESS);
     }
 

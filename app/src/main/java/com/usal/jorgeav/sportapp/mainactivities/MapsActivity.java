@@ -34,6 +34,7 @@ public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
     public static final String TAG = MapsActivity.class.getSimpleName();
+    public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final String PLACE_SELECTED_EXTRA = "PLACE_SELECTED_EXTRA";
     public static final String FIELD_SELECTED_EXTRA = "FIELD_SELECTED_EXTRA";
 
@@ -98,7 +99,7 @@ public class MapsActivity extends AppCompatActivity implements
 
     public void startMapFragment() {
         mMarkersList = new ArrayList<>();
-        mFieldsList = getIntent().getParcelableArrayListExtra(FieldsActivity.INTENT_EXTRA_FIELD_LIST);
+        mFieldsList = getIntent().getParcelableArrayListExtra(INTENT_EXTRA_FIELD_LIST);
         if (mFieldsList == null) mFieldsList = new ArrayList<>();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.

@@ -37,7 +37,6 @@ import java.util.List;
 
 public class FieldsActivity extends BaseActivity implements SportsListFragment.OnSportsSelected {
     public static final String TAG = FieldsActivity.class.getSimpleName();
-    public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final String INTENT_EXTRA_CREATE_NEW_FIELD = "INTENT_EXTRA_CREATE_NEW_FIELD";
     public static final int REQUEST_CODE_ADDRESS_TO_RETRIEVE = 23;
     public static final int REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT = 24;
@@ -71,7 +70,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
 
     public void startMapActivityForResult(ArrayList<Field> dataList, boolean startNewField) {
         Intent intent = new Intent(this, MapsActivity.class);
-        intent.putExtra(INTENT_EXTRA_FIELD_LIST, dataList);
+        intent.putExtra(MapsActivity.INTENT_EXTRA_FIELD_LIST, dataList);
         if (startNewField)
             startActivityForResult(intent, REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT);
         else
