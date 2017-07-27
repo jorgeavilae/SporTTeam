@@ -104,8 +104,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        //Si la activity ha girado mientras se completaba la descarga de datos de Firebase
+        //If Activity rotate while downloading Firebase data
         if(mAuth.getCurrentUser() != null) showProgress(true);
+        //If the user is no logged yet
+        else SportteamSyncUtils.finalize(this);
+
     }
 
     private void startNewUserForResult() {
@@ -117,7 +120,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode) {
-            case RESULT_OK:
+            case RESULT_OK: //User created 
                 Log.d(TAG, "onActivityResult: RESULT_OK");
                 deleteContentProvider();
                 // The user is logged and his data is in Firebase. Retrieve that data and

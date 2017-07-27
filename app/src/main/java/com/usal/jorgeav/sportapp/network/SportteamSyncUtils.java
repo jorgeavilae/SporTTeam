@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.network;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.Driver;
@@ -21,7 +22,9 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class SportteamSyncUtils {
-    private static boolean sScheduled;
+    public static final String TAG = SportteamSyncUtils.class.getSimpleName();
+
+    private static boolean sScheduled = false;
     private static final String SPORTTEAM_SYNC_TAG = "SPORTTEAM_SYNC_TAG";
 
     /*
@@ -40,16 +43,18 @@ public class SportteamSyncUtils {
      * @param context Context that will be passed to other methods
      */
     synchronized public static void initialize(@NonNull final Context context) {
-
-        LoginActivity loginActivity = null;
-        if (context instanceof LoginActivity) loginActivity = (LoginActivity) context;
-        FirebaseSync.syncFirebaseDatabase(loginActivity);
+        Log.d(TAG, "initialize: "+sScheduled);
 
         /*
          * Only perform schedule once per app lifetime. If schedule has already been
          * performed, we have nothing else to do in this method.
          */
         if (sScheduled) return;   sScheduled = true;
+
+        //Populate Content Provider with data and pass LoginActivity if needed
+        LoginActivity loginActivity = null;
+        if (context instanceof LoginActivity) loginActivity = (LoginActivity) context;
+        FirebaseSync.syncFirebaseDatabase(loginActivity);
 
         // TODO: 06/07/2017 inciar aunque no se haya inciado la app porque cuando se fuerza la detencion ya no se poduce este Job
         /* This method create its task to synchronize Firebase data periodically. */
@@ -113,5 +118,22 @@ public class SportteamSyncUtils {
 
         /* Schedule the Job with the dispatcher */
         dispatcher.schedule(syncJob);
+    }
+
+    synchronized public static void finalize(@NonNull final Context context) {
+        Log.d(TAG, "finalize: "+sScheduled);
+        FirebaseSync.detachListeners();
+
+        /*
+         * Only cancel schedule once per app lifetime and if it was set true.
+         * If schedule has already been cancelled, we have nothing else to do in this method.
+         */
+        if (!sScheduled) return;   sScheduled = false;
+
+        /* This cancel the task which synchronize Firebase data periodically. */
+        /* Init GooglePlayDriver and FirebaseJobDispatcher */
+        Driver driver = new GooglePlayDriver(context);
+        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
+        dispatcher.cancel(SPORTTEAM_SYNC_TAG);
     }
 }

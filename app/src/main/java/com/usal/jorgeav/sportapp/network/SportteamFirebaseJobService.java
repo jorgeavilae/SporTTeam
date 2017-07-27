@@ -1,5 +1,7 @@
 package com.usal.jorgeav.sportapp.network;
 
+import android.util.Log;
+
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
@@ -20,6 +22,7 @@ public class SportteamFirebaseJobService extends JobService {
      */
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
+        Log.d(TAG, "onStartJob: ");
         FirebaseSync.loadMyNotifications(null);
         /* Avisar al usuario cuando:
          *  - Recibe peticion de amistad - uid sender + "friends_requests_sent"             UID sender

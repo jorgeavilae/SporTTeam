@@ -105,8 +105,9 @@ public class BaseActivity extends AppCompatActivity
                 } else {
                     // User is signed out
                     Log.d(TAG, "userID: null");
-                    FirebaseSync.detachListeners();
+                    SportteamSyncUtils.finalize(BaseActivity.this);
                     UtilesNotification.clearAllNotifications(BaseActivity.this);
+
                     Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
