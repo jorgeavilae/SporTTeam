@@ -76,7 +76,6 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
         inflater.inflate(R.menu.menu_map, menu);
     }
 
