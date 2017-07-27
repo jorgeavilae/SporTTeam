@@ -1,16 +1,18 @@
 package com.usal.jorgeav.sportapp.alarms.alarmdetail;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 /**
@@ -28,7 +30,6 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
 
     @Override
     public void openAlarm(LoaderManager loaderManager, Bundle b) {
-        String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
         // The only fragment initializing this one is AlarmsFragment
         // in which this method it's already invoked
         // FirebaseSync.loadAnAlarm(alarmId);
@@ -39,9 +40,12 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     @Override
     public void deleteAlarm(Bundle b) {
         String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        FirebaseActions.deleteAlarm(mView.getThis(), userId, alarmId);
-        ((Activity) mView.getActivityContext()).onBackPressed();
+        String userId = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(userId)) {
+            Toast.makeText(mView.getActivityContext(), "No se ha podido completar la accion", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        FirebaseActions.deleteAlarm(userId, alarmId);
     }
 
     @Override

@@ -104,6 +104,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         } else if (item.getItemId() == R.id.action_delete) {
             Log.d(TAG, "onOptionsItemSelected: Delete");
             mPresenter.deleteAlarm(getArguments());
+            resetBackStack();
             return true;
         }
         return false;
