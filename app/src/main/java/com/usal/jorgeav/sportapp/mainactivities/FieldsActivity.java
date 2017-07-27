@@ -21,7 +21,7 @@ import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.SportCourt;
-import com.usal.jorgeav.sportapp.fields.FieldsFragment;
+import com.usal.jorgeav.sportapp.fields.FieldsMapFragment;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldContract;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
@@ -58,8 +58,9 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
 
         boolean createNewField = false;
         if (getIntent().hasExtra(INTENT_EXTRA_CREATE_NEW_FIELD)) createNewField = true;
+        initFragment(FieldsMapFragment.newInstance(createNewField), false);
+        showContent();
 
-        initFragment(FieldsFragment.newInstance(createNewField), false);
         mNavigationView.setCheckedItem(R.id.nav_fields);
     }
 
