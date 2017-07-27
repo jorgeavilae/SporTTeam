@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -20,7 +22,15 @@ import android.widget.TimePicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
@@ -41,7 +51,7 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class NewFieldFragment extends BaseFragment implements NewFieldContract.View  {
+public class NewFieldFragment extends BaseFragment implements NewFieldContract.View {
     public static final String TAG = NewFieldFragment.class.getSimpleName();
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
 
@@ -53,6 +63,9 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     private String mCreator = "";
     private ArrayList<Field> mFieldList;
 
+    @BindView(R.id.new_field_map)
+    MapView newFieldMap;
+    private GoogleMap mMap;
     @BindView(R.id.new_field_address)
     TextView newFieldAddress;
     @BindView(R.id.new_field_map_button)
@@ -63,6 +76,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     EditText newFieldOpenTime;
     @BindView(R.id.new_field_close_time)
     EditText newFieldCloseTime;
+    @BindView(R.id.new_field_all_day_time)
+    CheckBox newFieldAllDayTime;
     List<SportCourt> mSports;
 
     Calendar myCalendar;
@@ -140,6 +155,10 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
                 fieldId = getArguments().getString(BUNDLE_FIELD_ID);
 
             if (mCreator == null || TextUtils.isEmpty(mCreator)) mCreator = Utiles.getCurrentUserId();
+            if (newFieldAllDayTime.isChecked()) {
+                newFieldOpenTime.setText(UtilesTime.millisToTimeString(0));
+                newFieldCloseTime.setText(UtilesTime.millisToTimeString(0));
+            }
             mNewFieldPresenter.addField(
                     fieldId,
                     newFieldName.getText().toString(),
@@ -158,6 +177,38 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_new_field, container, false);
         ButterKnife.bind(this, root);
+
+        //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
+        newFieldMap.onCreate(savedInstanceState);
+        newFieldMap.onResume(); // needed to get the map to display immediately
+        try { MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) { e.printStackTrace(); }
+        newFieldMap.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+
+                LatLng coords = ((FieldsActivity)getActivity()).mCoord;
+                if (mMap != null && coords != null) {
+                    // Add a marker, and move the camera.
+                    float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
+                    mMap.addMarker(new MarkerOptions().position(coords)
+                            .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+                    LatLng southwest = new LatLng(coords.latitude - 0.00135, coords.longitude - 0.00135);
+                    LatLng northeast = new LatLng(coords.latitude + 0.00135, coords.longitude + 0.00135);
+                    LatLngBounds llb = new LatLngBounds(southwest, northeast);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
+                }
+            }
+        });
+
+        newFieldMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mFieldList != null)
+                    ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldList, false);
+            }
+        });
 
         myCalendar = Calendar.getInstance();
 
@@ -179,11 +230,16 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             }
         });
 
-        newFieldMapButton.setOnClickListener(new View.OnClickListener() {
+        newFieldAllDayTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                if (mFieldList != null)
-                    ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldList, false);
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    newFieldOpenTime.setEnabled(false); newFieldOpenTime.setText("");
+                    newFieldCloseTime.setEnabled(false); newFieldCloseTime.setText("");
+                } else {
+                    newFieldOpenTime.setEnabled(true);
+                    newFieldCloseTime.setEnabled(true);
+                }
             }
         });
 
@@ -230,11 +286,13 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     public void onResume() {
         super.onResume();
         mFragmentManagementListener.showContent();
+        newFieldMap.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        newFieldMap.onPause();
         if (openTimePickerDialog != null && openTimePickerDialog.isShowing()) openTimePickerDialog.dismiss();
         if (closeTimePickerDialog != null && closeTimePickerDialog.isShowing()) closeTimePickerDialog.dismiss();
     }
@@ -248,6 +306,17 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     @Override
     public void showFieldPlace(String address, String city, LatLng coords) {
         newFieldAddress.setText(address);
+
+        if (mMap != null) {
+            // Add a marker, and move the camera.
+            float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
+            mMap.addMarker(new MarkerOptions().position(coords)
+                    .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+            LatLng southwest = new LatLng(coords.latitude - 0.00135, coords.longitude - 0.00135);
+            LatLng northeast = new LatLng(coords.latitude + 0.00135, coords.longitude + 0.00135);
+            LatLngBounds llb = new LatLngBounds(southwest, northeast);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
+        }
     }
 
     @Override
@@ -277,5 +346,17 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         newFieldCloseTime.setText("");
         mSports = null;
         mCreator = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        newFieldMap.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        newFieldMap.onLowMemory();
     }
 }
