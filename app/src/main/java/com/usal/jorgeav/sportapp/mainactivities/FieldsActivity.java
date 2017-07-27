@@ -71,6 +71,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
     public void startMapActivityForResult(ArrayList<Field> dataList, boolean startNewField) {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra(MapsActivity.INTENT_EXTRA_FIELD_LIST, dataList);
+        intent.putExtra(MapsActivity.INTENT_EXTRA_PARENT_FIELDS_ACTIVITY, true);
         if (startNewField)
             startActivityForResult(intent, REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT);
         else
@@ -140,6 +141,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                 float punctuation = ratingBar.getRating();
                 FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double)punctuation, 1L));
                 Toast.makeText(FieldsActivity.this, "Sport añadido", Toast.LENGTH_SHORT).show();
+                mDisplayedFragment.resetBackStack();
             }
         });
         dialog.setNegativeButton("Cancelar", null);

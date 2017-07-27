@@ -79,6 +79,7 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
     public void startMapActivityForResult(ArrayList<Field> dataList) {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra(MapsActivity.INTENT_EXTRA_FIELD_LIST, dataList);
+        intent.putExtra(MapsActivity.INTENT_EXTRA_ONLY_FIELDS, true);
         startActivityForResult(intent, REQUEST_CODE_ADDRESS);
     }
     @Override
@@ -93,8 +94,13 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
                     mFieldId = field.getId();
                     mCity = field.getCity();
                     Log.d(TAG, "onActivityResult: " + field);
-                } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA))
+                } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
                     Toast.makeText(this, "You should select a Field", Toast.LENGTH_SHORT).show();
+                } else if (data.hasExtra(MapsActivity.ADD_FIELD_SELECTED_EXTRA)) {
+                    if (mDisplayedFragment instanceof NewAlarmContract.View)
+                        ((NewAlarmContract.View) mDisplayedFragment).startFieldsActivityAndNewField();
+                    Log.d(TAG, "onActivityResult: ADD_FIELD_SELECTED_EXTRA");
+                }
 
                 if (mDisplayedFragment instanceof NewAlarmContract.View)
                     ((NewAlarmContract.View) mDisplayedFragment).showAlarmField(mFieldId, mCity);

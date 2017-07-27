@@ -1,5 +1,7 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,8 +38,10 @@ public class MapsActivity extends AppCompatActivity implements
     public static final String TAG = MapsActivity.class.getSimpleName();
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final String INTENT_EXTRA_ONLY_FIELDS = "INTENT_EXTRA_ONLY_FIELDS";
+    public static final String INTENT_EXTRA_PARENT_FIELDS_ACTIVITY = "INTENT_EXTRA_PARENT_FIELDS_ACTIVITY";
     public static final String PLACE_SELECTED_EXTRA = "PLACE_SELECTED_EXTRA";
     public static final String FIELD_SELECTED_EXTRA = "FIELD_SELECTED_EXTRA";
+    public static final String ADD_FIELD_SELECTED_EXTRA = "ADD_FIELD_SELECTED_EXTRA";
 
     private GoogleMap mMap;
     ArrayList<Field> mFieldsList;
@@ -71,7 +75,10 @@ public class MapsActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_ok, menu);
+        if (getIntent().getBooleanExtra(INTENT_EXTRA_PARENT_FIELDS_ACTIVITY, false))
+            getMenuInflater().inflate(R.menu.menu_ok, menu);
+        else
+            getMenuInflater().inflate(R.menu.menu_map, menu);
         return true;
     }
 
@@ -95,6 +102,19 @@ public class MapsActivity extends AppCompatActivity implements
                 Toast.makeText(this, "No place selected", Toast.LENGTH_SHORT).show();
             }
             return true;
+        } else if (item.getItemId() == R.id.action_new_field) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Quieres crear un campo nuevo?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra(ADD_FIELD_SELECTED_EXTRA, "dummy");
+                            setResult(RESULT_OK, resultIntent);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("No", null);
+            builder.create().show();
         }
         return false;
     }
