@@ -347,6 +347,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                 if (!getArguments().containsKey(BUNDLE_EVENT_ID))
                     ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList);
         }
+
+        //Since mFieldList are retain in savedInstance no need to load again
+        mNewEventPresenter.stopLoadFields(getLoaderManager());
     }
 
     private void startNewFieldTask() {

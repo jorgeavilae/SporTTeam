@@ -140,6 +140,11 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
     }
 
     @Override
+    public void stopLoadFields(LoaderManager loaderManager) {
+        loaderManager.destroyLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT);
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String eventId, city, sportId;
         switch (id) {

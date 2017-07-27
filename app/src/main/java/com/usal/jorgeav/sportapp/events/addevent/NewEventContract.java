@@ -25,6 +25,8 @@ public abstract class NewEventContract {
                       String date, String time, String total, String empty,
                       HashMap<String, Boolean> participants,
                       HashMap<String, SimulatedUser> simulatedParticipants);
+
+        void stopLoadFields(LoaderManager loaderManager);
     }
 
     public interface View {
