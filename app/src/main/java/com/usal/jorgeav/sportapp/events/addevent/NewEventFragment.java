@@ -344,6 +344,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         showContent();
         if (mFieldList != null) {
             if (mFieldList.size() == 0) {
+                Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
                 startNewFieldTask();
             } else
                 if (!getArguments().containsKey(BUNDLE_EVENT_ID))
@@ -355,7 +356,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     }
 
     private void startNewFieldTask() {
-        Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
         builder.setMessage("Quieres crear un campo nuevo?")
                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -373,7 +373,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         builder.create().show();
     }
 
-    private void startFieldsActivityAndNewField() {
+    @Override
+    public void startFieldsActivityAndNewField() {
         /* https://stackoverflow.com/a/24927301/4235666 */
         Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(getActivityContext(), FieldsActivity.class));
 

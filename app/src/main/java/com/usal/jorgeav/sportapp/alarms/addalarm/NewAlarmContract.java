@@ -22,6 +22,8 @@ public abstract class NewAlarmContract {
                       String emptyFrom, String emptyTo);
 
         void loadFields(LoaderManager loaderManager, Bundle arguments);
+
+        void stopLoadFields(LoaderManager loaderManager);
     }
 
     public interface View {
@@ -34,5 +36,7 @@ public abstract class NewAlarmContract {
         Context getActivityContext();
 
         void retrieveFields(ArrayList<Field> dataList);
+
+        void startFieldsActivityAndNewField();
     }
 }

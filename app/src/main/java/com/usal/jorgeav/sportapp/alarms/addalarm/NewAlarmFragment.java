@@ -1,7 +1,10 @@
 package com.usal.jorgeav.sportapp.alarms.addalarm;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,6 +41,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
+import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -60,6 +64,9 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     // Static prevent double initialization with same ID
     private static GoogleApiClient mGoogleApiClient;
     PlaceAutocompleteAdapter mAdapter;
+    public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
+    ArrayList<Field> mFieldList;
+    public static final String INSTANCE_ADDRESS_TEXT_VIEW_ID = "INSTANCE_ADDRESS_TEXT_VIEW_ID";
 
     NewAlarmContract.Presenter mNewAlarmPresenter;
     private static boolean sInitialize;
@@ -89,7 +96,6 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     Calendar myCalendar;
     DatePickerDialog datePickerDialogFrom;
     DatePickerDialog datePickerDialogTo;
-    private ArrayList<Field> mFieldList;
 
     public NewAlarmFragment() {
         // Required empty public constructor
@@ -251,6 +257,15 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             }
         });
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
+            mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_ADDRESS_TEXT_VIEW_ID))
+            newAlarmField.setText(savedInstanceState.getString(INSTANCE_ADDRESS_TEXT_VIEW_ID));
+
+        //Show newField dialog on rotation if needed, after retrieveFields are called
+        if (mFieldList != null && mFieldList.size() == 0) startNewFieldTask();
+
         return root;
     }
 
@@ -365,8 +380,42 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         if (mFieldList != null)
             if (mFieldList.size() == 0) {
                 Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
-                //TODO mostrar dialog "quieres crear un field nuevo?" y abrir addFieldFragment como se abren las notificationes
-            }
+                startNewFieldTask();
+            } /* else startMapForPickAField();
+               * Not necessary since isn't needed a Field to create a new Alarm
+               */
+
+        //Since mFieldList are retain in savedInstance no need to load again
+        mNewAlarmPresenter.stopLoadFields(getLoaderManager());
+    }
+
+    private void startNewFieldTask() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setMessage("Quieres crear un campo nuevo?")
+                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startFieldsActivityAndNewField();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        getActivity().onBackPressed();
+                    }
+                })
+                .setCancelable(false);
+        builder.create().show();
+    }
+
+    @Override
+    public void startFieldsActivityAndNewField() {
+        /* https://stackoverflow.com/a/24927301/4235666 */
+        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(getActivityContext(), FieldsActivity.class));
+
+        startActivityIntent.putExtra(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "dummy");
+        startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(startActivityIntent);
+        getActivity().finish();
     }
 
     @Override
@@ -462,5 +511,14 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         ((AlarmsActivity)getActivity()).mFieldId = null;
         ((AlarmsActivity)getActivity()).mCity = null;
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mFieldList != null)
+            outState.putParcelableArrayList(INSTANCE_FIELD_LIST_ID, mFieldList);
+        if (!TextUtils.isEmpty(newAlarmField.getText().toString()))
+            outState.putString(INSTANCE_ADDRESS_TEXT_VIEW_ID, newAlarmField.getText().toString());
     }
 }

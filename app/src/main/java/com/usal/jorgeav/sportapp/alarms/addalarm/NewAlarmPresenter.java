@@ -177,11 +177,14 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
 
     @Override
     public void loadFields(LoaderManager loaderManager, Bundle b) {
-        loaderManager.destroyLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT);
         if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_SPORT_SELECTED_ID))
             loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT, b, this);
     }
 
+    @Override
+    public void stopLoadFields(LoaderManager loaderManager) {
+        loaderManager.destroyLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

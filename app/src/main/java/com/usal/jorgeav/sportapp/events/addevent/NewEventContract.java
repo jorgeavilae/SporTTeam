@@ -44,5 +44,6 @@ public abstract class NewEventContract {
         Context getActivityContext();
         BaseFragment getThis();
 
+        void startFieldsActivityAndNewField();
     }
 }
