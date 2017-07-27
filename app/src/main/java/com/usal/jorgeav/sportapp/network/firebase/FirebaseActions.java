@@ -931,11 +931,10 @@ public class FirebaseActions {
         });
     }
 
-    public static void deleteAlarm(BaseFragment baseFragment, String userId, String alarmId) {
+    public static void deleteAlarm(String userId, String alarmId) {
         //Delete Alarm in my User
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                 .child(userId).child(FirebaseDBContract.User.ALARMS).child(alarmId).removeValue();
-        baseFragment.resetBackStack();
     }
 
     public static void deleteEvent(final BaseFragment baseFragment, String eventId) {
@@ -1080,8 +1079,10 @@ public class FirebaseActions {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (!dataSnapshot.exists()) {
-                                    // Alarm a has some Event Coincidence and
-                                    // notification doesn't exists. Notify
+                                    // Alarm a has some Event Coincidence (both in ContentProvider)
+                                    // and notification doesn't exists
+
+                                    // Create MyNotification
                                     long currentTime = System.currentTimeMillis();
                                     String notificationTitle = MyApplication.getAppContext()
                                             .getString(R.string.notification_title_alarm_event);
@@ -1092,14 +1093,18 @@ public class FirebaseActions {
                                     @UtilesNotification.NotificationType
                                     Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_ALARM_EVENT;
                                     MyNotification n = new MyNotification(
-                                            notificationType, false, notificationTitle,
+                                            notificationType, true, notificationTitle,
                                             notificationMessage, a.getId(), eventId,
                                             type, currentTime);
 
+                                    // Store on Firebase
                                     FirebaseDatabase.getInstance().getReference().child(FirebaseDBContract.TABLE_USERS)
                                             .child(finalMyUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
                                             .child(a.getId() + FirebaseDBContract.User.ALARMS)
                                             .setValue(n.toMap());
+
+                                    // Notify
+                                    UtilesNotification.createNotification(MyApplication.getAppContext(), n, a);
                                 }
                             }
 

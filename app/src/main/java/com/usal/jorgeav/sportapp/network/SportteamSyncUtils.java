@@ -31,6 +31,8 @@ public class SportteamSyncUtils {
     private static final int SYNC_INTERVAL_HOURS = 3;
     private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS);
     private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / SYNC_INTERVAL_HOURS;
+//    private static final int SYNC_INTERVAL_SECONDS = (int) 5;
+//    private static final int SYNC_FLEXTIME_SECONDS = 3;
 
     /**
      * Creates periodic sync tasks and attach the listeners to Firebase Database.
