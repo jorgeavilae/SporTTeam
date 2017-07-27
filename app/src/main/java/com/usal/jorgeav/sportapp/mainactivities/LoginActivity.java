@@ -277,10 +277,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
         List<String> emails = new ArrayList<>();
-        while (cursor.moveToNext())
-            emails.add(cursor.getString(SportteamContract.EmailLoggedEntry.COLUMN_EMAIL));
+        //Loader reuses Cursor so move to first position
+        for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext())
+            emails.add(data.getString(SportteamContract.EmailLoggedEntry.COLUMN_EMAIL));
         addEmailsToAutoComplete(emails);
     }
 

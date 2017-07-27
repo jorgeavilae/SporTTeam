@@ -154,7 +154,8 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
                 break;
             case SportteamLoader.LOADER_FIELD_SPORTS_ID:
                 ArrayList<SportCourt> sports = new ArrayList<>();
-                while(data.moveToNext()) {
+                //Loader reuses Cursor so move to first position
+                for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                     String sportId = data.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
                     Double punctuation = data.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
                     Long votes = data.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);

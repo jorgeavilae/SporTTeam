@@ -172,7 +172,8 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 break;
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
                 HashMap<String, Boolean> map = new HashMap<>();
-                while(data.moveToNext()) {
+                //Loader reuses Cursor so move to first position
+                for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                     String userId = data.getString(SportteamContract.EventsParticipationEntry.COLUMN_USER_ID);
                     Boolean participates = data.getInt(SportteamContract.EventsParticipationEntry.COLUMN_PARTICIPATES) == 1;
                     map.put(userId, participates);
@@ -181,7 +182,8 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 break;
             case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
                 HashMap<String, SimulatedUser> simulatedUserHashMap = new HashMap<>();
-                while(data.moveToNext()) {
+                //Loader reuses Cursor so move to first position
+                for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                     String key = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_SIMULATED_USER_ID);
 
                     String alias = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_ALIAS);

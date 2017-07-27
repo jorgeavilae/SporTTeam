@@ -57,7 +57,8 @@ public class UtilesContentProvider {
     public static ArrayList<Alarm> cursorToMultipleAlarm(Cursor cursor) {
         ArrayList<Alarm> result = new ArrayList<>();
         if (cursor != null)
-            while (cursor.moveToNext()) {
+            //Move to first position to prevent errors
+            for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
                 String alarmId = cursor.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID);
                 String sport = cursor.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
                 String field = cursor.getString(SportteamContract.AlarmEntry.COLUMN_FIELD);
@@ -91,8 +92,8 @@ public class UtilesContentProvider {
         ArrayList<Field> result = new ArrayList<>();
         if (cursor != null) {
             /* https://stackoverflow.com/questions/10723770/whats-the-best-way-to-iterate-an-android-cursor#comment33274077_10723771 */
-            cursor.moveToPosition(-1); //TODO poner en todos los movetonext
-            while (cursor.moveToNext()) {
+            //Move to first position to prevent errors
+            for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()){
                 String fieldId = cursor.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
                 String name = cursor.getString(SportteamContract.FieldEntry.COLUMN_NAME);
                 String address = cursor.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
@@ -232,15 +233,16 @@ public class UtilesContentProvider {
         ArrayList<SportCourt> result = new ArrayList<>();
         Cursor cursorFieldSport = SportteamLoader.simpleQuerySportsOfFieldId(MyApplication.getAppContext(), fieldId);
         if (cursorFieldSport != null) {
-            if (cursorFieldSport.getCount() > 0) {
-                while (cursorFieldSport.moveToNext()) {
+            if (cursorFieldSport.getCount() > 0)
+                //Move to first position to prevent errors
+                for(cursorFieldSport.moveToFirst(); !cursorFieldSport.isAfterLast(); cursorFieldSport.moveToNext()) {
                     String sportId = cursorFieldSport.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
                     Double punctuation = cursorFieldSport.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
                     Long votes = cursorFieldSport.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);
 
                     result.add(new SportCourt(sportId, punctuation, votes));
                 }
-            } else
+            else
                 Log.e(TAG, "getFieldSportFromContentProvider: Sports of Field with ID "+fieldId+" not found");
             cursorFieldSport.close();
         } else
