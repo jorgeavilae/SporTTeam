@@ -152,7 +152,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
     @Override
     public void showMyOwnEvents(Cursor cursor) {
-        mEventList.addAll(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
+        mEventList.replaceOwnEvents(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
                 ContextCompat.getColor(getActivity(), R.color.colorLighter)));
         initCalendar();
 
@@ -161,7 +161,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
     @Override
     public void showParticipatesEvents(Cursor cursor) {
-        mEventList.addAll(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
+        mEventList.replaceParticipationEvents(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
                 ContextCompat.getColor(getActivity(), R.color.colorLighter)));
         initCalendar();
 

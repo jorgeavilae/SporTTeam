@@ -9,54 +9,90 @@ import java.util.List;
  * Created by Jorge Avila on 28/07/2017.
  */
 
-//TODO dos listas una para mis eventos y otra para los participo. No addAll si no replaceAll
 public class MyCalendarEventList {
-    private List<MyCalendarEvent> mList;
+    private List<MyCalendarEvent> mOwnEventList;
+    private List<MyCalendarEvent> mParticipationEventList;
 
-    public MyCalendarEventList(List<MyCalendarEvent> mList) {
-        this.mList = mList;
+    public MyCalendarEventList(List<MyCalendarEvent> list) {
+        this.mOwnEventList = list;
+        this.mParticipationEventList = list;
         notifyListChange();
     }
 
     public List<CalendarEvent> getAsCalendarEventList() {
         List<CalendarEvent> result = new ArrayList<>();
-        if (mList != null)
-            for (MyCalendarEvent event : mList)
+        if (mOwnEventList != null)
+            for (MyCalendarEvent event : mOwnEventList)
+                result.add(event);
+        if (mParticipationEventList != null)
+            for (MyCalendarEvent event : mParticipationEventList)
                 result.add(event);
         return result;
     }
 
     public MyCalendarEvent getItemAtPosition(int position) {
-        if (mList == null || position < 0 || mList.size() <= position) return null;
-        return mList.get(position);
+        int sizeOwn = 0, sizeParticipation = 0;
+        if (mOwnEventList != null) sizeOwn = mOwnEventList.size();
+        if (mParticipationEventList != null) sizeParticipation = mParticipationEventList.size();
+        if (position < 0 || position >= sizeOwn + sizeParticipation) return null;
+
+        List<MyCalendarEvent> result = new ArrayList<>();
+        if (mOwnEventList != null)
+            for (MyCalendarEvent event : mOwnEventList)
+                result.add(event);
+        if (mParticipationEventList != null)
+            for (MyCalendarEvent event : mParticipationEventList)
+                result.add(event);
+        return result.get(position);
     }
 
-    public void addAll(List<MyCalendarEvent> addList) {
-        if (mList == null) this.mList = new ArrayList<>();
+    public void replaceOwnEvents(List<MyCalendarEvent> addList) {
+        if (mOwnEventList == null) this.mOwnEventList = new ArrayList<>();
 
-        List<String> eventsId = getAllEventId();
+        List<String> eventsId = getAllEventId(mOwnEventList);
         if (addList != null)
             for (MyCalendarEvent event : addList)
                 if (!eventsId.contains(event.getEvent_id()))
-                    this.mList.add(event);
+                    this.mOwnEventList.add(event);
+
+        notifyListChange();
+    }
+
+    public void replaceParticipationEvents(List<MyCalendarEvent> addList) {
+        if (mParticipationEventList == null) this.mParticipationEventList = new ArrayList<>();
+
+        List<String> eventsId = getAllEventId(mParticipationEventList);
+        if (addList != null)
+            for (MyCalendarEvent event : addList)
+                if (!eventsId.contains(event.getEvent_id()))
+                    this.mParticipationEventList.add(event);
 
         notifyListChange();
     }
 
     public void clear(){
-        this.mList.clear();
+        this.mOwnEventList.clear();
+        this.mParticipationEventList.clear();
     }
 
+    /* Set ID as the position number in List returned by getAsCalendarEventList() */
     private void notifyListChange() {
-        if (mList != null)
-            for (int i = 0; i < mList.size(); i++)
-                mList.get(i).setId(i);
+        int i, j = 0;
+        if (mOwnEventList != null) {
+            j = mOwnEventList.size();
+            for (i = 0; i < mOwnEventList.size(); i++)
+                mOwnEventList.get(i).setId(i);
+        }
+
+        if (mParticipationEventList != null)
+            for (i = 0; i < mParticipationEventList.size(); i++, j++)
+                mParticipationEventList.get(i).setId(j);
     }
 
-    private List<String> getAllEventId() {
+    private List<String> getAllEventId(List<MyCalendarEvent> list) {
         List<String> result = new ArrayList<>();
-        if (mList != null)
-            for (MyCalendarEvent event : mList)
+        if (list != null)
+            for (MyCalendarEvent event : list)
                 result.add(event.getEvent_id());
         return result;
     }
@@ -64,7 +100,8 @@ public class MyCalendarEventList {
     @Override
     public String toString() {
         return "MyCalendarEventList{" +
-                "mList=" + mList +
+                "mOwnEventList=" + mOwnEventList +
+                ", mParticipationEventList=" + mParticipationEventList +
                 '}';
     }
 }
