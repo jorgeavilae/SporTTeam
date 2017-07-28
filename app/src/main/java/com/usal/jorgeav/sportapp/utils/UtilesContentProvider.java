@@ -13,6 +13,7 @@ import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEvent;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 
@@ -291,6 +292,36 @@ public class UtilesContentProvider {
             if (c.getCount() > 0 && c.moveToFirst()) result = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
             c.close();
         }
+        return result;
+    }
+
+    public static ArrayList<MyCalendarEvent> cursorToMultipleCalendarEvent(Cursor c, int color) {
+        ArrayList<MyCalendarEvent> result = new ArrayList<>();
+        if (c != null) {
+            //Move to first position to prevent errors
+            for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                Field field = getFieldFromContentProvider(c.getString(SportteamContract.EventEntry.COLUMN_FIELD));
+
+                String eventId = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
+                String sport = c.getString(SportteamContract.EventEntry.COLUMN_SPORT);
+                String fieldId = c.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+                String address = c.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
+                double latitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
+                double longitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
+                LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+                String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
+                String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
+                Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
+                String owner = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
+                Long totalPl = c.getLong(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
+                Long emptyPl = c.getLong(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
+
+                Event event = new Event(eventId, sport, fieldId, address, coord, name, city, date, owner, totalPl, emptyPl, null, null);
+
+                result.add(MyCalendarEvent.Builder.newInstance(event, field, color));
+            }
+        }
+        Log.d(TAG, "cursorToMultipleCalendarEvent: "+result);
         return result;
     }
 }

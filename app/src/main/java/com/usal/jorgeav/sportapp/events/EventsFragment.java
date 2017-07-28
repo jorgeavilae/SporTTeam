@@ -7,26 +7,29 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.github.tibolte.agendacalendarview.AgendaCalendarView;
 import com.github.tibolte.agendacalendarview.CalendarPickerController;
-import com.github.tibolte.agendacalendarview.models.BaseCalendarEvent;
 import com.github.tibolte.agendacalendarview.models.CalendarEvent;
 import com.github.tibolte.agendacalendarview.models.DayItem;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
+import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEvent;
+import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEventList;
+import com.usal.jorgeav.sportapp.data.calendarevent.MyEventRenderer;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
 import com.usal.jorgeav.sportapp.events.eventrequest.EventRequestsFragment;
 import com.usal.jorgeav.sportapp.events.searchevent.SearchEventsFragment;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -37,14 +40,15 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
     EventsContract.Presenter mEventsPresenter;
 
-    @BindView(R.id.events_create_button)
-    Button eventsCreateButton;
-    @BindView(R.id.events_requests_button)
-    Button eventsRequestsButton;
-    @BindView(R.id.events_search_button)
-    Button eventsSearchButton;
+//    @BindView(R.id.events_create_button)
+//    Button eventsCreateButton;
+//    @BindView(R.id.events_requests_button)
+//    Button eventsRequestsButton;
+//    @BindView(R.id.events_search_button)
+//    Button eventsSearchButton;
     @BindView(R.id.agenda_calendar_view)
     AgendaCalendarView eventsAgendaCalendarView;
+    MyCalendarEventList mEventList;
 //    EventsAdapter mMyOwnEventsRecyclerAdapter;
 //    @BindView(R.id.my_own_events_list)
 //    RecyclerView myOwnEventsRecyclerList;
@@ -67,10 +71,39 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mEventsPresenter = new EventsPresenter(this);
-//        mMyOwnEventsRecyclerAdapter = new EventsAdapter(null, this);
-//        mEventsParticipationRecyclerAdapter = new EventsAdapter(null, this);
+        mEventList = new MyCalendarEventList(null);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_events_calendar, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        hideSoftKeyboard();
+        if (item.getItemId() == R.id.action_new_event) {
+            Log.d(TAG, "onOptionsItemSelected: New Event");
+            Fragment fragment = SelectSportFragment.newInstance();
+            mFragmentManagementListener.initFragment(fragment, true);
+            return true;
+        } else if (item.getItemId() == R.id.action_event_requests) {
+            Log.d(TAG, "onOptionsItemSelected: Event Requests");
+            Fragment fragment = EventRequestsFragment.newInstance();
+            mFragmentManagementListener.initFragment(fragment, true);
+            return true;
+        } else if (item.getItemId() == R.id.action_search_events) {
+            Log.d(TAG, "onOptionsItemSelected: Search Events");
+            Fragment fragment = SearchEventsFragment.newInstance();
+            mFragmentManagementListener.initFragment(fragment, true);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -79,36 +112,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         ButterKnife.bind(this, root);
 
         initCalendar();
-//        myOwnEventsRecyclerList.setAdapter(mMyOwnEventsRecyclerAdapter);
-//        myOwnEventsRecyclerList.setHasFixedSize(true);
-//        myOwnEventsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-//
-//        eventsParticipationRecyclerList.setAdapter(mEventsParticipationRecyclerAdapter);
-//        eventsParticipationRecyclerList.setHasFixedSize(true);
-//        eventsParticipationRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
-        eventsCreateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = SelectSportFragment.newInstance();
-                mFragmentManagementListener.initFragment(fragment, true);
-            }
-        });
-        eventsRequestsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = EventRequestsFragment.newInstance();
-                mFragmentManagementListener.initFragment(fragment, true);
-            }
-        });
-        eventsSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = SearchEventsFragment.newInstance();
-                mFragmentManagementListener.initFragment(fragment, true);
-
-            }
-        });
         return root;
     }
 
@@ -121,37 +125,9 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         minDate.set(Calendar.DAY_OF_MONTH, 1);
         maxDate.add(Calendar.YEAR, 1);
 
-        List<CalendarEvent> eventList = new ArrayList<>();
-        mockList(eventList);
-
-        eventsAgendaCalendarView.init(eventList, minDate, maxDate, Locale.getDefault(), this);
-    }
-    private void mockList(List<CalendarEvent> eventList) {
-        Calendar startTime1 = Calendar.getInstance();
-        Calendar endTime1 = Calendar.getInstance();
-        endTime1.add(Calendar.MONTH, 1);
-        BaseCalendarEvent event1 = new BaseCalendarEvent("Thibault travels in Iceland", "A wonderful journey!", "Iceland",
-                ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark), startTime1, endTime1, true);
-        eventList.add(event1);
-
-        Calendar startTime2 = Calendar.getInstance();
-        startTime2.add(Calendar.DAY_OF_YEAR, 1);
-        Calendar endTime2 = Calendar.getInstance();
-        endTime2.add(Calendar.DAY_OF_YEAR, 3);
-        BaseCalendarEvent event2 = new BaseCalendarEvent("Visit to Dalvík", "A beautiful small town", "Dalvík",
-                ContextCompat.getColor(getActivity(), R.color.colorAccent), startTime2, endTime2, true);
-        eventList.add(event2);
-
-        // Example on how to provide your own layout
-        Calendar startTime3 = Calendar.getInstance();
-        Calendar endTime3 = Calendar.getInstance();
-        startTime3.set(Calendar.HOUR_OF_DAY, 14);
-        startTime3.set(Calendar.MINUTE, 0);
-        endTime3.set(Calendar.HOUR_OF_DAY, 15);
-        endTime3.set(Calendar.MINUTE, 0);
-        DrawableCalendarEvent event3 = new DrawableCalendarEvent("Visit of Harpa", "", "Dalvík",
-                ContextCompat.getColor(getActivity(), R.color.colorAccent), startTime3, endTime3, false, R.layout.events_item_list);
-        eventList.add(event3);
+        // Init is the only way to pass events to eventsCalendar
+        eventsAgendaCalendarView.init(mEventList.getAsCalendarEventList(), minDate, maxDate, Locale.getDefault(), this);
+        eventsAgendaCalendarView.addEventRenderer(new MyEventRenderer());
     }
 
     @Override
@@ -171,33 +147,24 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     @Override
     public void onPause() {
         super.onPause();
-//        mMyOwnEventsRecyclerAdapter.replaceData(null);
-//        mEventsParticipationRecyclerAdapter.replaceData(null);
+        mEventList.clear();
     }
 
     @Override
     public void showMyOwnEvents(Cursor cursor) {
-//        mMyOwnEventsRecyclerAdapter.replaceData(cursor);
-//        if (cursor != null && cursor.getCount() > 0) {
-//            myOwnEventsRecyclerList.setVisibility(View.VISIBLE);
-//            myOwnEventsPlaceholder.setVisibility(View.INVISIBLE);
-//        } else {
-//            myOwnEventsRecyclerList.setVisibility(View.INVISIBLE);
-//            myOwnEventsPlaceholder.setVisibility(View.VISIBLE);
-//        }
+        mEventList.addAll(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
+                ContextCompat.getColor(getActivity(), R.color.colorLighter)));
+        initCalendar();
+
         showContent();
     }
 
     @Override
     public void showParticipatesEvents(Cursor cursor) {
-//        mEventsParticipationRecyclerAdapter.replaceData(cursor);
-//        if (cursor != null && cursor.getCount() > 0) {
-//            eventsParticipationRecyclerList.setVisibility(View.VISIBLE);
-//            eventsParticipationPlaceholder.setVisibility(View.INVISIBLE);
-//        } else {
-//            eventsParticipationRecyclerList.setVisibility(View.INVISIBLE);
-//            eventsParticipationPlaceholder.setVisibility(View.VISIBLE);
-//        }
+        mEventList.addAll(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
+                ContextCompat.getColor(getActivity(), R.color.colorLighter)));
+        initCalendar();
+
         showContent();
     }
 
@@ -214,7 +181,10 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
     @Override
     public void onEventSelected(CalendarEvent event) {
-        Log.d(TAG, "onEventSelected: "+event);
+        MyCalendarEvent myCalendarEvent = mEventList.getItemAtPosition((int) event.getId());
+
+        Fragment newFragment = DetailEventFragment.newInstance(myCalendarEvent.getEvent_id());
+        mFragmentManagementListener.initFragment(newFragment, true);
     }
 
     @Override

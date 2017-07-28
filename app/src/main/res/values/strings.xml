@@ -17,6 +17,9 @@
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
     <string name="action_vote">Vote</string>
+    <string name="action_create_event">New Event</string>
+    <string name="action_event_requests">Event Requests Sent</string>
+    <string name="action_search_events">Search Events</string>
 
     <string name="title_activity_login">Sign in</string>
 
