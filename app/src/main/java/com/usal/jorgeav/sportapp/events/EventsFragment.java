@@ -40,25 +40,9 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
     EventsContract.Presenter mEventsPresenter;
 
-//    @BindView(R.id.events_create_button)
-//    Button eventsCreateButton;
-//    @BindView(R.id.events_requests_button)
-//    Button eventsRequestsButton;
-//    @BindView(R.id.events_search_button)
-//    Button eventsSearchButton;
     @BindView(R.id.agenda_calendar_view)
     AgendaCalendarView eventsAgendaCalendarView;
     MyCalendarEventList mEventList;
-//    EventsAdapter mMyOwnEventsRecyclerAdapter;
-//    @BindView(R.id.my_own_events_list)
-//    RecyclerView myOwnEventsRecyclerList;
-//    @BindView(R.id.my_own_events_placeholder)
-//    ConstraintLayout myOwnEventsPlaceholder;
-//    EventsAdapter mEventsParticipationRecyclerAdapter;
-//    @BindView(R.id.my_events_participation_list)
-//    RecyclerView eventsParticipationRecyclerList;
-//    @BindView(R.id.my_events_participation_placeholder)
-//    ConstraintLayout eventsParticipationPlaceholder;
 
     public EventsFragment() {
         // Required empty public constructor
