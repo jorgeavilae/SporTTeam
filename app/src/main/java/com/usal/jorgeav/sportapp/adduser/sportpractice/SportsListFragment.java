@@ -97,7 +97,7 @@ public class SportsListFragment extends BaseFragment {
     private List<Sport> loadSports() {
         ArrayList<Sport> result = new ArrayList<>();
 
-        String[] sportsNameArray = getResources().getStringArray(R.array.sport_id);
+        String[] sportsNameArray = getResources().getStringArray(R.array.sport_id_values);
         for (String aSportsNameArray : sportsNameArray) {
             result.add(new Sport(aSportsNameArray, aSportsNameArray, 0f, 1));
         }

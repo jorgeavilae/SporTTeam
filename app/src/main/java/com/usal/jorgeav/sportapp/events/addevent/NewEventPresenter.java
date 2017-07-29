@@ -70,7 +70,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
 
     private boolean isValidSport(String sport) {
         // If R.array.sport_id contains this sport
-        String[] arraySports = mNewEventView.getActivityContext().getResources().getStringArray(R.array.sport_id);
+        String[] arraySports = mNewEventView.getActivityContext().getResources().getStringArray(R.array.sport_id_values);
         for (String sportArr : arraySports)
             if (sport.equals(sportArr)) return true;
         Log.e(TAG, "isValidSport: not valid");
@@ -79,7 +79,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
 
     private boolean isValidField(String fieldId, String address, String sportId, String city, LatLng coordinates) {
         // Check if the sport doesn't need a field
-        String[] arraySports = mNewEventView.getActivityContext().getResources().getStringArray(R.array.sport_id);
+        String[] arraySports = mNewEventView.getActivityContext().getResources().getStringArray(R.array.sport_id_values);
         if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) return true;
 
         // Query database for the fieldId and checks if this sport exists

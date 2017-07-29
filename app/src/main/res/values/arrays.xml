@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="sport_id">
+    <!--Sport ID for internal storage-->
+    <string-array name="sport_id_values">
         <item>running</item>
         <item>biking</item>
         <item>basketball</item>
@@ -9,5 +10,16 @@
         <item>football_7</item>
         <item>football_11</item>
         <item>tennis</item>
+    </string-array>
+    <!--Sport ID for display to the user (translate)-->
+    <string-array name="sport_id_entries">
+        <item>@string/running</item>
+        <item>@string/biking</item>
+        <item>@string/basketball</item>
+        <item>@string/skating</item>
+        <item>@string/football_5</item>
+        <item>@string/football_7</item>
+        <item>@string/football_11</item>
+        <item>@string/tennis</item>
     </string-array>
 </resources>

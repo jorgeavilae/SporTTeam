@@ -122,7 +122,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
 
         View view = getLayoutInflater().inflate(R.layout.add_sport_dialog, null);
 
-        List<String> sportsResources = Arrays.asList(getResources().getStringArray(R.array.sport_id));
+        List<String> sportsResources = Arrays.asList(getResources().getStringArray(R.array.sport_id_values));
         ArrayList<String> sportsLeft = new ArrayList<>();
         for (String sportId : sportsResources)
             if (!field.getSport().containsKey(sportId))

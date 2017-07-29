@@ -33,11 +33,11 @@ public class SportDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Pick a Sport");
-        builder.setItems(R.array.sport_id, new DialogInterface.OnClickListener() {
+        builder.setItems(R.array.sport_id_values, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (mListener != null)
-                    mListener.onDialogSportClick(getResources().getStringArray(R.array.sport_id)[i]);
+                    mListener.onDialogSportClick(getResources().getStringArray(R.array.sport_id_values)[i]);
             }
         });
         return builder.create();

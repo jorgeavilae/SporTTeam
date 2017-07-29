@@ -176,7 +176,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         myCalendar = Calendar.getInstance();
 
         sportsAdapter = ArrayAdapter.createFromResource(
-                getActivityContext(), R.array.sport_id, android.R.layout.simple_spinner_item);
+                getActivityContext(), R.array.sport_id_values, android.R.layout.simple_spinner_item);
         sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         newAlarmSport.setAdapter(sportsAdapter);
 
@@ -355,7 +355,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         showAlarmSport(sportId);
 
         // Check if the sport doesn't need a field
-        String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id);
+        String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id_values);
         if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
             showContent();
 
