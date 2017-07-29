@@ -16,7 +16,6 @@ public abstract class ActivityContracts {
         void startMainFragment();
         void initFragment(@NotNull Fragment fragment, boolean isOnBackStack);
         void setCurrentDisplayedFragment(String title, BaseFragment fragment);
-        void setActionBarTitle(String title);
         void showContent();
         void hideContent();
     }
@@ -24,5 +23,6 @@ public abstract class ActivityContracts {
     public interface ActionBarIconManagement {
         void setToolbarAsNav();
         void setToolbarAsUp();
+        void setActionBarTitle(String title);
     }
 }

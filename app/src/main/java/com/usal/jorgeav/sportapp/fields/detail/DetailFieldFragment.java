@@ -178,7 +178,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     public void showFieldName(String name) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewFieldName.setText(name);
-        mFragmentManagementListener.setActionBarTitle(name);
+        mActionBarIconManagementListener.setActionBarTitle(name);
     }
 
     @Override
@@ -242,7 +242,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     public void clearUI() {
         this.textViewFieldCreator.setText("");
         this.textViewFieldName.setText("");
-        this.mFragmentManagementListener.setActionBarTitle("");
+        this.mActionBarIconManagementListener.setActionBarTitle("");
         this.textViewFieldAddress.setText("");
         this.textViewFieldOpening.setText("");
         this.textViewFieldClosing.setText("");

@@ -587,7 +587,6 @@ public class NewUserActivity extends AppCompatActivity implements
         mDisplayedFragment = fragment;
     }
 
-    @Override
     public void setActionBarTitle(String title) {
         if (getSupportActionBar() != null && title != null)
             getSupportActionBar().setTitle(title);

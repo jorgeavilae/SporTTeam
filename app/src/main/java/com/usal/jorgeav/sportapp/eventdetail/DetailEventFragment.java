@@ -441,7 +441,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public void showEventName(String name) {
         ((BaseActivity)getActivity()).showContent();
         this.textViewEventName.setText(name);
-        mFragmentManagementListener.setActionBarTitle(name);
+        mActionBarIconManagementListener.setActionBarTitle(name);
     }
 
     @Override
@@ -506,7 +506,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         this.buttonEventPlace.setText("");
         this.buttonEventPlace.setOnClickListener(null);
         this.textViewEventName.setText("");
-        this.mFragmentManagementListener.setActionBarTitle("");
+        this.mActionBarIconManagementListener.setActionBarTitle("");
         this.textViewEventDate.setText("");
         this.textViewEventOwner.setText("");
         this.textViewEventTotal.setText("");

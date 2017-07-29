@@ -268,7 +268,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void showUserName(String name) {
         userName.setText(name);
-        mFragmentManagementListener.setActionBarTitle(name);
+        mActionBarIconManagementListener.setActionBarTitle(name);
     }
 
     @Override
@@ -299,7 +299,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     public void clearUI() {
         this.userImage.setVisibility(View.INVISIBLE);
         this.userName.setText("");
-        this.mFragmentManagementListener.setActionBarTitle("");
+        this.mActionBarIconManagementListener.setActionBarTitle("");
         this.userCity.setText("");
         this.userAge.setText("");
     }
