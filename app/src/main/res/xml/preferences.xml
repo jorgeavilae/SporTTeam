@@ -15,5 +15,7 @@
         android:entryValues="@array/sport_id_values"
         android:defaultValue="@string/running" />
     <EditTextPreference
-        />
+        android:key="pref_city"
+        android:title="pref_city"
+        android:dialogTitle="pref_city" />
 </PreferenceScreen>

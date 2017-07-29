@@ -1,9 +1,11 @@
-package com.usal.jorgeav.sportapp;
+package com.usal.jorgeav.sportapp.preferences;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+
+import com.usal.jorgeav.sportapp.R;
 
 public class SettingsActivity extends AppCompatActivity {
 
