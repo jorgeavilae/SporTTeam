@@ -104,10 +104,17 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
         Calendar minDate = Calendar.getInstance();
         Calendar maxDate = Calendar.getInstance();
+        Long minDateInMillis = mEventList.getMinDateInMillis();
+        Long maxDateInMillis = mEventList.getMaxDateInMillis();
 
+        if (minDateInMillis != null) minDate.setTimeInMillis(minDateInMillis);
         minDate.add(Calendar.MONTH, -2);
-        minDate.set(Calendar.DAY_OF_MONTH, 1);
-        maxDate.add(Calendar.YEAR, 1);
+
+        if (maxDateInMillis != null) maxDate.setTimeInMillis(maxDateInMillis);
+        maxDate.add(Calendar.MONTH, 2);
+
+        Log.d(TAG, "initCalendar: "+minDate);
+        Log.d(TAG, "initCalendar: "+maxDate);
 
         // Init is the only way to pass events to eventsCalendar
         eventsAgendaCalendarView.init(mEventList.getAsCalendarEventList(), minDate, maxDate, Locale.getDefault(), this);

@@ -46,6 +46,36 @@ public class MyCalendarEventList {
         return result.get(position);
     }
 
+    public Long getMinDateInMillis() {
+        List<MyCalendarEvent> result = new ArrayList<>();
+        if (mOwnEventList != null)
+            for (MyCalendarEvent event : mOwnEventList)
+                result.add(event);
+        if (mParticipationEventList != null)
+            for (MyCalendarEvent event : mParticipationEventList)
+                result.add(event);
+
+        Long min = null;
+        for(MyCalendarEvent event : result)
+            min = (min == null || event.getStartTime().getTimeInMillis() < min) ? event.getStartTime().getTimeInMillis() : min;
+        return min;
+    }
+
+    public Long getMaxDateInMillis() {
+        List<MyCalendarEvent> result = new ArrayList<>();
+        if (mOwnEventList != null)
+            for (MyCalendarEvent event : mOwnEventList)
+                result.add(event);
+        if (mParticipationEventList != null)
+            for (MyCalendarEvent event : mParticipationEventList)
+                result.add(event);
+
+        Long max = null;
+        for(MyCalendarEvent event : result)
+            max = (max == null || event.getStartTime().getTimeInMillis() > max) ? event.getStartTime().getTimeInMillis() : max;
+        return max;
+    }
+
     public void replaceOwnEvents(List<MyCalendarEvent> addList) {
         if (mOwnEventList == null) this.mOwnEventList = new ArrayList<>();
 
