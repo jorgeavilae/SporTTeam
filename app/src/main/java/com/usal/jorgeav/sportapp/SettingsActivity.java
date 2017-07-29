@@ -20,7 +20,7 @@ public class SettingsActivity extends AppCompatActivity {
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    finish();
+                    onBackPressed();
                 }
             });
         }
@@ -31,5 +31,11 @@ public class SettingsActivity extends AppCompatActivity {
                 .replace(R.id.contentFrame, settingsFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }
