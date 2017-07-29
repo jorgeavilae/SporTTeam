@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.SettingsActivity;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
@@ -222,8 +223,8 @@ public class BaseActivity extends AppCompatActivity
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_settings) {
             Log.d(TAG, "onOptionsItemSelected: Settings");
-            // TODO: 27/06/2017 Settings
-            finish();
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
         return false;

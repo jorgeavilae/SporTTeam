@@ -22,6 +22,17 @@
     <string name="action_search_events">Search Events</string>
 
     <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_maps">Map</string>
+
+    <!--Sports-->
+    <string name="running">Running</string>
+    <string name="biking">Biking</string>
+    <string name="basketball">Basketball</string>
+    <string name="skating">Skating</string>
+    <string name="football_5">Football 5</string>
+    <string name="football_7">Football 7</string>
+    <string name="football_11">Football 11</string>
+    <string name="tennis">Tennis</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -34,7 +45,7 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
 
-
+    <!--Strings for notification messages-->
     <string name="notification_title_friend_request_received">New friend request</string>
     <string name="notification_title_friend_request_accepted">New friend!!</string>
     <string name="notification_title_event_invitation_received">New event invitation</string>
@@ -62,7 +73,8 @@
     <string name="notification_msg_event_delete">The %1$s event in %2$s on %3$s has been cancelled</string>
     <string name="notification_msg_alarm_event">Some event coincidence in your area</string>
 
-    <string name="title_activity_maps">Map</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
