@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
+import com.google.firebase.database.ValueEventListener;
+
 /**
  * Created by Jorge Avila on 23/04/2017.
  */
@@ -34,5 +36,8 @@ public abstract class ProfileContract {
         void deleteFriend(String uid);
         void registerUserRelationObserver();
         void unregisterUserRelationObserver();
+
+        void checkUserName(String s, ValueEventListener listener);
+        void updateUserName(String s);
     }
 }

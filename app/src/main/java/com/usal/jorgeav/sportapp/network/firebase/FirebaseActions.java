@@ -66,6 +66,11 @@ public class FirebaseActions {
                 .child(myUid).child(FirebaseDBContract.DATA)
                 .child(FirebaseDBContract.User.SPORTS_PRACTICED).setValue(sportsMap);
     }
+    public static void updateUserName(String myUid, String name) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUid).child(FirebaseDBContract.DATA)
+                .child(FirebaseDBContract.User.ALIAS).setValue(name);
+    }
 
     // Add Event
     public static void addEvent(Event event) {

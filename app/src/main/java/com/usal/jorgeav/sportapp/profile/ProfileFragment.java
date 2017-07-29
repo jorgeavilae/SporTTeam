@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,11 +19,15 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
@@ -30,6 +35,7 @@ import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.Locale;
 
@@ -110,32 +116,10 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         userSportList.setHasFixedSize(true);
         userSportList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.HORIZONTAL, false));
 
-
-        if (mUserUid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-            userEventInvitationsButton.setVisibility(View.VISIBLE);
-            userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Fragment fragment = new EventInvitationsFragment();
-                    mFragmentManagementListener.initFragment(fragment, true);
-                }
-            });
-            userFriendRequestsButton.setVisibility(View.VISIBLE);
-            userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Fragment fragment = new FriendRequestsFragment();
-                    mFragmentManagementListener.initFragment(fragment, true);
-                }
-            });
-            userEditSportListButton.setVisibility(View.VISIBLE);
-            userEditSportListButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Fragment fragment = SportsListFragment.newInstance(mUserUid, sportsAdapter.getDataAsArrayList());
-                    mFragmentManagementListener.initFragment(fragment, true);
-                }
-            });
+        String currentUserId = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(currentUserId)) throw new NullPointerException();
+        if (mUserUid.equals(currentUserId)) {
+            setLayoutAsMyUser();
         } else {
             userSendInvitationButton.setVisibility(View.VISIBLE);
             userSendInvitationButton.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +135,86 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
 
         return root;
+    }
+
+    private void setLayoutAsMyUser() {
+        userEventInvitationsButton.setVisibility(View.VISIBLE);
+        userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new EventInvitationsFragment();
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
+        });
+        userFriendRequestsButton.setVisibility(View.VISIBLE);
+        userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new FriendRequestsFragment();
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
+        });
+        userEditSportListButton.setVisibility(View.VISIBLE);
+        userEditSportListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = SportsListFragment.newInstance(mUserUid, sportsAdapter.getDataAsArrayList());
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
+        });
+
+        userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogForEditName();
+            }
+        });
+
+    }
+
+    private void showDialogForEditName() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edittext_dialog, null);
+        builder.setView(dialogView);
+
+        final EditText edt = (EditText) dialogView.findViewById(R.id.edittext_dialog_edittext);
+        builder.setTitle("Change Name")
+                .setPositiveButton("Accept", null)
+                .setNegativeButton("Cancel", null);
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mProfilePresenter.checkUserName(edt.getText().toString(), new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    edt.setError("Name already exist");
+                                } else {
+                                    mProfilePresenter.updateUserName(edt.getText().toString());
+                                    alertDialog.dismiss();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                hideSoftKeyboard();
+            }
+        });
+        alertDialog.show();
     }
 
     @Override

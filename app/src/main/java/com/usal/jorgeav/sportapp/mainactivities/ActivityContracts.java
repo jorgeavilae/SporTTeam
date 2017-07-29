@@ -24,5 +24,6 @@ public abstract class ActivityContracts {
         void setToolbarAsNav();
         void setToolbarAsUp();
         void setActionBarTitle(String title);
+        void setUserInfoInNavigationDrawer();
     }
 }

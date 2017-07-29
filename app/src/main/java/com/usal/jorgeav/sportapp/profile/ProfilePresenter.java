@@ -10,9 +10,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
@@ -228,6 +233,33 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
         if (!TextUtils.isEmpty(uid)) {
             FirebaseActions.deleteFriend(myUid, uid);
         }
+    }
+
+    @Override
+    public void checkUserName(String name, ValueEventListener listener) {
+        if (name != null && !TextUtils.isEmpty(name))
+            FirebaseActions.getUserNameReferenceEqualTo(name)
+                    .addListenerForSingleValueEvent(listener);
+    }
+
+    @Override
+    public void updateUserName(String name) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (fUser == null) return;
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build();
+        fUser.updateProfile(profileUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                if (mUserView.getActivityContext() instanceof ActivityContracts.ActionBarIconManagement)
+                    ((ActivityContracts.ActionBarIconManagement)mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
+            }
+        });
+
+        FirebaseActions.updateUserName(fUser.getUid(), name);
+        FirebaseSync.loadAProfile(fUser.getUid(), false);
     }
 
     @Override

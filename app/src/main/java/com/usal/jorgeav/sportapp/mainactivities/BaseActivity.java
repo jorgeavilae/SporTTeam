@@ -98,7 +98,7 @@ public class BaseActivity extends AppCompatActivity
                 if (fuser != null) {
                     // User is signed in
                     Log.d(TAG, "userID: "+fuser.getUid());
-                    setUserInfoInNavigationDrawer(mNavigationView, fuser);
+                    setUserInfoInNavigationDrawer();
                     // Initialization is cases when user is already logged.
                     SportteamSyncUtils.initialize(BaseActivity.this);
                     if(mDisplayedFragment == null)
@@ -120,11 +120,15 @@ public class BaseActivity extends AppCompatActivity
         shouldDetachFirebaseListener = true;
     }
 
-    private void setUserInfoInNavigationDrawer(NavigationView mNavigationView, FirebaseUser fuser) {
+    @Override
+    public void setUserInfoInNavigationDrawer() {
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        if (fuser == null) return;
         ImageView image = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_image);
         TextView title = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_title);
         TextView subtitle = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_subtitle);
 
+        Log.d(TAG, "setUserInfoInNavigationDrawer: "+fuser.getDisplayName());
         title.setText(fuser.getDisplayName());
         subtitle.setText(fuser.getEmail());
         Glide.with(this)
