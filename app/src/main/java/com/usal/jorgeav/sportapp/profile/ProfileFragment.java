@@ -177,7 +177,9 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edittext_dialog, null);
         builder.setView(dialogView);
 
-        final EditText edt = (EditText) dialogView.findViewById(R.id.edittext_dialog_edittext);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.edittext_dialog_edittext);
+        editText.setText(userName.getText());
+
         builder.setTitle("Change Name")
                 .setPositiveButton("Accept", null)
                 .setNegativeButton("Cancel", null);
@@ -189,13 +191,13 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        mProfilePresenter.checkUserName(edt.getText().toString(), new ValueEventListener() {
+                        mProfilePresenter.checkUserName(editText.getText().toString(), new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    edt.setError("Name already exist");
+                                    editText.setError("Name already exist");
                                 } else {
-                                    mProfilePresenter.updateUserName(edt.getText().toString());
+                                    mProfilePresenter.updateUserName(editText.getText().toString());
                                     alertDialog.dismiss();
                                 }
                             }
