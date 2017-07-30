@@ -76,6 +76,8 @@ public class MyCalendarEventList {
         return max;
     }
 
+    //TODO Cambiar: si se actualiza el nombre de un evento no se vera relfejado porq el eventId es el mismo
+    // Si se devuelven las filas modificadas/añadidas se podria saber si hay que cambiar el calendar
     public void replaceOwnEvents(List<MyCalendarEvent> addList) {
         if (mOwnEventList == null) this.mOwnEventList = new ArrayList<>();
 
@@ -88,6 +90,7 @@ public class MyCalendarEventList {
         notifyListChange();
     }
 
+    //TODO Cambiar: si se actualiza el nombre de un evento no se vera relfejado porq el eventId es el mismo
     public void replaceParticipationEvents(List<MyCalendarEvent> addList) {
         if (mParticipationEventList == null) this.mParticipationEventList = new ArrayList<>();
 

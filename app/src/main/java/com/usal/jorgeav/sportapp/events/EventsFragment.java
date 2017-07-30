@@ -145,7 +145,9 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     public void showMyOwnEvents(Cursor cursor) {
         mEventList.replaceOwnEvents(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
                 ContextCompat.getColor(getActivity(), R.color.colorLighter)));
-        initCalendar();
+
+        if (cursor != null && cursor.getCount() > 0)
+            initCalendar();
 
         showContent();
     }
@@ -154,7 +156,9 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     public void showParticipatesEvents(Cursor cursor) {
         mEventList.replaceParticipationEvents(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
                 ContextCompat.getColor(getActivity(), R.color.colorLighter)));
-        initCalendar();
+
+        if (cursor != null && cursor.getCount() > 0)
+            initCalendar();
 
         showContent();
     }

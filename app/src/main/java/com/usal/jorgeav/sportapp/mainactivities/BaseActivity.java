@@ -128,7 +128,6 @@ public class BaseActivity extends AppCompatActivity
         TextView title = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_title);
         TextView subtitle = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_subtitle);
 
-        Log.d(TAG, "setUserInfoInNavigationDrawer: "+fuser.getDisplayName());
         title.setText(fuser.getDisplayName());
         subtitle.setText(fuser.getEmail());
         Glide.with(this)
