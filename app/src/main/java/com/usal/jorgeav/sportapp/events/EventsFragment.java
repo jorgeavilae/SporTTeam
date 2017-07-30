@@ -58,7 +58,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         setHasOptionsMenu(true);
 
         mEventsPresenter = new EventsPresenter(this);
-        mEventList = new MyCalendarEventList(null);
+        mEventList = new MyCalendarEventList(null, null);
     }
 
     @Override
@@ -138,7 +138,8 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     @Override
     public void onPause() {
         super.onPause();
-        mEventList.clear();
+        if (mEventList != null)
+            mEventList.clear();
     }
 
     @Override

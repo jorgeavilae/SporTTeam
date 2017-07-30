@@ -13,9 +13,9 @@ public class MyCalendarEventList {
     private List<MyCalendarEvent> mOwnEventList;
     private List<MyCalendarEvent> mParticipationEventList;
 
-    public MyCalendarEventList(List<MyCalendarEvent> list) {
-        this.mOwnEventList = list;
-        this.mParticipationEventList = list;
+    public MyCalendarEventList(List<MyCalendarEvent> mOwnEventListlist, List<MyCalendarEvent> mParticipationEventList) {
+        this.mOwnEventList = mOwnEventListlist;
+        this.mParticipationEventList = mParticipationEventList;
         notifyListChange();
     }
 
@@ -76,36 +76,27 @@ public class MyCalendarEventList {
         return max;
     }
 
-    //TODO Cambiar: si se actualiza el nombre de un evento no se vera relfejado porq el eventId es el mismo
-    // Si se devuelven las filas modificadas/añadidas se podria saber si hay que cambiar el calendar
     public void replaceOwnEvents(List<MyCalendarEvent> addList) {
-        if (mOwnEventList == null) this.mOwnEventList = new ArrayList<>();
-
-        List<String> eventsId = getAllEventId(mOwnEventList);
+        this.mOwnEventList = new ArrayList<>();
         if (addList != null)
-            for (MyCalendarEvent event : addList)
-                if (!eventsId.contains(event.getEvent_id()))
-                    this.mOwnEventList.add(event);
+            this.mOwnEventList.addAll(addList);
 
         notifyListChange();
     }
 
-    //TODO Cambiar: si se actualiza el nombre de un evento no se vera relfejado porq el eventId es el mismo
     public void replaceParticipationEvents(List<MyCalendarEvent> addList) {
-        if (mParticipationEventList == null) this.mParticipationEventList = new ArrayList<>();
-
-        List<String> eventsId = getAllEventId(mParticipationEventList);
+        this.mParticipationEventList = new ArrayList<>();
         if (addList != null)
-            for (MyCalendarEvent event : addList)
-                if (!eventsId.contains(event.getEvent_id()))
-                    this.mParticipationEventList.add(event);
+            this.mParticipationEventList.addAll(addList);
 
         notifyListChange();
     }
 
     public void clear(){
-        this.mOwnEventList.clear();
-        this.mParticipationEventList.clear();
+        if (this.mOwnEventList != null)
+            this.mOwnEventList.clear();
+        if (this.mParticipationEventList != null)
+            this.mParticipationEventList.clear();
     }
 
     /* Set ID as the position number in List returned by getAsCalendarEventList() */
