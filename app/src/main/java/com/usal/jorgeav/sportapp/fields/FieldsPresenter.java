@@ -25,7 +25,7 @@ public class FieldsPresenter implements FieldsContract.Presenter, LoaderManager.
     @Override
     public void loadNearbyFields(LoaderManager loaderManager, Bundle b) {
         String city = UtilesPreferences.getCurrentUserCity(mFieldsView.getActivityContext());
-        FirebaseSync.loadFieldsFromCity(city);
+        FirebaseSync.loadFieldsFromCity(city, false);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY, b, this);
     }
 

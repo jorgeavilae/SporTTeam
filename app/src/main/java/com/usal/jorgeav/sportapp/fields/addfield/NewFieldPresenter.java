@@ -117,7 +117,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
         String city = UtilesPreferences.getCurrentUserCity(mNewFieldView.getActivityContext());
 
         if (city != null) {
-            FirebaseSync.loadFieldsFromCity(city);
+            FirebaseSync.loadFieldsFromCity(city, false);
             loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY, b, this);
         }
     }

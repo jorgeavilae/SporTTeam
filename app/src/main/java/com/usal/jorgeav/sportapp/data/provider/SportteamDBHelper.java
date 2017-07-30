@@ -19,7 +19,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
      * If you change the database schema, you must increment the database version or the onUpgrade
      * method will not be called.
      */
-    private static final int DATABASE_VERSION = 25;
+    private static final int DATABASE_VERSION = 26;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,8 +28,9 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         final String SQL_CREATE_EMAIL_LOGGED_TABLE = "CREATE TABLE " + SportteamContract.TABLE_EMAIL_LOGGED + " (" +
-                SportteamContract.EmailLoggedEntry._ID      + " INTEGER PRIMARY KEY,"       +
-                SportteamContract.EmailLoggedEntry.EMAIL    + " TEXT UNIQUE NOT NULL"      + ");";
+                SportteamContract.EmailLoggedEntry._ID      + " INTEGER PRIMARY KEY,"   +
+                SportteamContract.EmailLoggedEntry.EMAIL    + " TEXT NOT NULL,"         +
+                " UNIQUE (" + SportteamContract.EmailLoggedEntry.EMAIL + ") ON CONFLICT IGNORE);";
 
         final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + SportteamContract.TABLE_USER + " (" +
                 SportteamContract.UserEntry._ID             + " INTEGER PRIMARY KEY,"       +

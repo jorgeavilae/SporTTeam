@@ -49,11 +49,6 @@ public class FirebaseSync {
             // Load current user profile and sports
             loadAProfile(myUserID, true);
 
-            // Load fields from user city
-            loadFieldsFromCity(UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext()));
-            // Load events from user city
-            loadEventsFromCity(UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext()));
-
             // Load friends list and user data
             loadUsersFromFriends();
 
@@ -634,8 +629,9 @@ public class FirebaseSync {
     }
 
     public static void loadAlarmsFromMyAlarms() {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        String myUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserID)) return;
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID).child(FirebaseDBContract.User.ALARMS);
@@ -788,6 +784,11 @@ public class FirebaseSync {
                                 UtilesPreferences.setCurrentUserCity(MyApplication.getAppContext());
                                 UtilesPreferences.setCurrentUserCityCoords(MyApplication.getAppContext());
 
+                                // Load fields from user city
+                                loadFieldsFromCity(UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext()), true);
+                                // Load events from user city
+                                loadEventsFromCity(UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext()));
+
                                 // Updates in prefs came from new login in so if the mLoginActivity
                                 // isn't null, ends that Activity and start BaseActivity with the
                                 // User data in ContentProvider.
@@ -883,8 +884,9 @@ public class FirebaseSync {
                 });
     }
     public static void loadAnAlarmAndNotify(final String notificationRef, final MyNotification notification) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        String myUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserID)) return;
+
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
@@ -911,10 +913,8 @@ public class FirebaseSync {
 
                             String eventId = notification.getExtra_data_two();
                             if (eventId != null)
-                                database.getReference(FirebaseDBContract.TABLE_USERS)
-                                        .child(eventId + "/" + FirebaseDBContract.DATA)
-                                        .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()){
-
+                                database.getReference(FirebaseDBContract.TABLE_EVENTS)
+                                        .child(eventId).addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()){
                                 @Override
                                 protected void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists()) {
@@ -1118,10 +1118,25 @@ public class FirebaseSync {
         }
     }
 
-    public static void loadFieldsFromCity(String city) {
+    public static void loadFieldsFromCity(String city, boolean shouldResetFieldsData) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference fieldsRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
+
+        // Should reset Fields table because it's first load or it's change city.
+        if (shouldResetFieldsData) {
+            /* remove listener from DatabaseReference and from listenerMap */
+            if (listenerMap.get(fieldsRef) != null) {
+                fieldsRef.removeEventListener(listenerMap.get(fieldsRef));
+                listenerMap.remove(fieldsRef);
+            }
+
+            /* remove Fields and FieldsSport from tables */
+            MyApplication.getAppContext().getContentResolver()
+                    .delete(SportteamContract.FieldEntry.CONTENT_FIELD_URI, null, null);
+            MyApplication.getAppContext().getContentResolver()
+                    .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI, null, null);
+        }
 
         ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
@@ -1140,10 +1155,11 @@ public class FirebaseSync {
                             .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
 
                     List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
-                    MyApplication.getAppContext().getContentResolver()
-                            .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
-                                    SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
-                                    new String[]{field.getId()});
+//                    TODO Para que borrar si se va a update??
+//                    MyApplication.getAppContext().getContentResolver()
+//                            .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+//                                    SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+//                                    new String[]{field.getId()});
                     MyApplication.getAppContext().getContentResolver()
                             .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
                                     cvSports.toArray(new ContentValues[cvSports.size()]));

@@ -82,7 +82,7 @@ public class FirebaseActions {
                 .child(myUid).child(FirebaseDBContract.DATA)
                 .child(FirebaseDBContract.User.PROFILE_PICTURE).setValue(photo);
     }
-    public static void updateUserCity(String myUid, final String citySelectedName, final LatLng citySelectedCoord) {
+    public static void updateUserCityAndReload(final String myUid, final String citySelectedName, final LatLng citySelectedCoord) {
         DatabaseReference userRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUid);
@@ -100,8 +100,13 @@ public class FirebaseActions {
             }
 
             @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
+            public void onComplete(DatabaseError databaseError, boolean success, DataSnapshot dataSnapshot) {
+                // This action should perform AFTER updates success, not in SettingsFragment
+                if (success) {
+                    // Passing true makes update sharedPreferences and
+                    // perform loadEventsFromCity and loadFieldsFromCity
+                    FirebaseSync.loadAProfile(myUid, true);
+                }
             }
         });
     }

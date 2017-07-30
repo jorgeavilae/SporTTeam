@@ -62,9 +62,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             // Set summary to be the user-description for the selected value
             cityPref.setSummary(sharedPreferences.getString(key, ""));
 
-            FirebaseActions.updateUserCity(myUid, cityPref.citySelectedName, cityPref.citySelectedCoord);
-
-            // TODO: 30/07/2017 HAcer mas cambios en consecuencia
+            //Update User and reload data
+            FirebaseActions.updateUserCityAndReload(myUid, cityPref.citySelectedName, cityPref.citySelectedCoord);
         }
     }
 
