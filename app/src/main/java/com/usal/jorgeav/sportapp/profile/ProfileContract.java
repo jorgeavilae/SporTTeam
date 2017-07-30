@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.profile;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
@@ -14,6 +15,9 @@ import com.google.firebase.database.ValueEventListener;
 public abstract class ProfileContract {
 
     public interface View {
+        void croppedResult(Uri photoCroppedUri);
+        void startCropActivity(Uri uri);
+
         void showUserImage(String image);
         void showUserName(String name);
         void showUserCity(String city);
@@ -41,5 +45,7 @@ public abstract class ProfileContract {
         void updateUserName(String s);
 
         void updateUserAge(int age);
+
+        void updateUserPhoto(Uri photoCroppedUri);
     }
 }

@@ -76,6 +76,11 @@ public class FirebaseActions {
                 .child(myUid).child(FirebaseDBContract.DATA)
                 .child(FirebaseDBContract.User.AGE).setValue(age);
     }
+    public static void updateUserPhoto(String myUid, String photo) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUid).child(FirebaseDBContract.DATA)
+                .child(FirebaseDBContract.User.PROFILE_PICTURE).setValue(photo);
+    }
 
     // Add Event
     public static void addEvent(Event event) {

@@ -325,10 +325,9 @@ public class NewUserActivity extends AppCompatActivity implements
             }
         });
 
-        if (resultCode == RESULT_OK) {
-            if (requestCode == UCrop.REQUEST_CROP) {
+        if (requestCode == UCrop.REQUEST_CROP) {
+            if (resultCode == RESULT_OK) {
                 croppedImageUri = UCrop.getOutput(data);
-                Log.d(TAG, "onActivityResult: " + croppedImageUri);
                 Glide.with(this)
                         .load(croppedImageUri)
                         .placeholder(R.drawable.profile_picture_placeholder)
@@ -338,7 +337,6 @@ public class NewUserActivity extends AppCompatActivity implements
             } else {
                 // Cancel after pick image and before crop
                 croppedImageUri = null;
-                Log.d(TAG, "onActivityResult: Cancel after pick image and before crop");
             }
         } else if (resultCode == UCrop.RESULT_ERROR)
             Log.e(TAG, "onActivityResult: error ", UCrop.getError(data));

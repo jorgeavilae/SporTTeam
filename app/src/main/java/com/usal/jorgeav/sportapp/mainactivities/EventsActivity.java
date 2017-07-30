@@ -159,8 +159,8 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
             }
         });
 
-        if (resultCode == RESULT_OK) {
-            if (requestCode == UCrop.REQUEST_CROP) {
+        if (requestCode == UCrop.REQUEST_CROP) {
+            if (resultCode == RESULT_OK) {
                 if (mDisplayedFragment instanceof SimulateParticipantContract.View)
                     ((SimulateParticipantContract.View) mDisplayedFragment).croppedResult(UCrop.getOutput(data));
             } else {

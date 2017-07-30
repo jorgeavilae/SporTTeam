@@ -2,11 +2,16 @@ package com.usal.jorgeav.sportapp.profile;
 
 
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,14 +41,23 @@ import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragme
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.yalantis.ucrop.UCrop;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pl.aprilapps.easyphotopicker.EasyImage;
+
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class ProfileFragment extends BaseFragment implements ProfileContract.View {
     private final static String TAG = ProfileFragment.class.getSimpleName();
+    public static final int RC_PERMISSIONS = 3;
+    public static final int RC_PHOTO_PICKER = 2;
 
     public static final String BUNDLE_INSTANCE_UID = "BUNDLE_INSTANCE_UID";
     private static String mUserUid = "";
@@ -175,7 +189,35 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 showDialogForEditAge();
             }
         });
+        userImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EasyImage.configuration(getActivity())
+                        .setImagesFolderName(Environment.DIRECTORY_PICTURES)
+                        .saveInAppExternalFilesDir();
+                if (isStorageCameraPermissionGranted())
+                    EasyImage.openChooserWithGallery(getActivity(), "Elegir foto de...", RC_PHOTO_PICKER);
+            }
+        });
 
+    }
+
+    /* Checks if external storage is available for read and write */
+    private  boolean isStorageCameraPermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (getActivity().checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                    && getActivity().checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permissions are granted");
+                return true;
+            } else {
+                Log.v(TAG,"Permissions are revoked");
+                ActivityCompat.requestPermissions(getActivity(), new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, RC_PERMISSIONS);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permissions are granted");
+            return true;
+        }
     }
 
     private void showDialogForEditName() {
@@ -263,6 +305,45 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             }
         });
         alertDialog.show();
+    }
+
+    @Override
+    public void startCropActivity(Uri imageFileUri) {
+        long millis = System.currentTimeMillis();
+        Uri imageCroppedFileUri;
+        // Uri to store cropped photo in filesystem
+        if (imageFileUri.getLastPathSegment().contains("."))
+            imageCroppedFileUri = getAlbumStorageDir(imageFileUri.getLastPathSegment().replace(".","_cropped" + millis + "."));
+        else
+            imageCroppedFileUri = getAlbumStorageDir(imageFileUri.getLastPathSegment() + "_cropped" + millis);
+        UCrop.of(imageFileUri, imageCroppedFileUri)
+                .withAspectRatio(1, 1)
+                .withMaxResultSize(512, 512)
+                .start(getActivity());
+    }
+
+    private Uri getAlbumStorageDir(@NonNull String path) {
+        // Get the directory for the user's public pictures directory.
+        File f = getActivity().getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        Uri uri = Uri.fromFile(f).buildUpon().appendPath(path).build();
+        File file = new File(uri.getPath());
+        if (!file.exists()) {
+            try {
+                if (!file.createNewFile())
+                    Log.e(TAG, "getAlbumStorageDir: file not created");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return Uri.fromFile(file);
+    }
+
+
+    @Override
+    public void croppedResult(Uri photoCroppedUri) {
+        // Uri from cropped photo as result of UCrop
+        if (photoCroppedUri != null)
+            mProfilePresenter.updateUserPhoto(photoCroppedUri);
     }
 
     @Override
@@ -367,10 +448,10 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     }
 
     @Override
-    public void showUserImage(String image) {
+    public void showUserImage(String imageUrl) {
         userImage.setVisibility(View.VISIBLE);
         Glide.with(this.getActivity())
-                .load(image)
+                .load(imageUrl)
                 .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)
                 .centerCrop()

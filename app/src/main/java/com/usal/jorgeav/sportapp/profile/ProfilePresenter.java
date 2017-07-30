@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.profile;
 
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -270,6 +271,26 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
         FirebaseActions.updateUserAge(myUserId, age);
         FirebaseSync.loadAProfile(myUserId, false);
+    }
+
+    @Override
+    public void updateUserPhoto(Uri photoCroppedUri) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (fUser == null) return;
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(photoCroppedUri)
+                .build();
+        fUser.updateProfile(profileUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                if (mUserView.getActivityContext() instanceof ActivityContracts.ActionBarIconManagement)
+                    ((ActivityContracts.ActionBarIconManagement)mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
+            }
+        });
+
+        FirebaseActions.updateUserPhoto(fUser.getUid(), photoCroppedUri.toString());
+        FirebaseSync.loadAProfile(fUser.getUid(), false);
     }
 
     @Override
