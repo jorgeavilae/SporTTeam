@@ -498,46 +498,11 @@ public class NewUserActivity extends AppCompatActivity implements
                                 final Uri downloadUrl = metadata.getDownloadUrl();
                                 if (downloadUrl == null) return;
 
-                                final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                                if (fUser == null) return;
-
-                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(newUserName.getText().toString())
-                                        .setPhotoUri(downloadUrl)
-                                        .build();
-                                fUser.updateProfile(profileUpdates);
-
-                                User user = new User(fUser.getUid(), fUser.getEmail(),
-                                        newUserName.getText().toString(), newUserCitySelectedName,
-                                        newUserCitySelectedCoord.latitude, newUserCitySelectedCoord.longitude,
-                                        Long.parseLong(newUserAge.getText().toString()), downloadUrl.toString(),
-                                        sportsArrayToHashMap(sports));
-                                FirebaseActions.addUser(user);
-
-                                // Return to LoginActivity
-                                setResult(RESULT_OK);
-                                finish();
+                                setUserDataAndFinish(downloadUrl);
                             }
                         });
                     } else {
-                        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                        if (fUser == null) return;
-
-                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                .setDisplayName(newUserName.getText().toString())
-                                .build();
-                        fUser.updateProfile(profileUpdates);
-
-                        User user = new User(fUser.getUid(), fUser.getEmail(),
-                                newUserName.getText().toString(), newUserCitySelectedName,
-                                newUserCitySelectedCoord.latitude, newUserCitySelectedCoord.longitude,
-                                Long.parseLong(newUserAge.getText().toString()), "",
-                                sportsArrayToHashMap(sports));
-                        FirebaseActions.addUser(user);
-
-                        // Return to LoginActivity
-                        setResult(RESULT_OK);
-                        finish();
+                        setUserDataAndFinish(null);
                     }
                 } else {
                     showContent();
@@ -548,6 +513,40 @@ public class NewUserActivity extends AppCompatActivity implements
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(this, onCompleteListener);
     }
+
+    private void setUserDataAndFinish(Uri photoUri) {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (fUser == null) return;
+
+        UserProfileChangeRequest.Builder profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(newUserName.getText().toString());
+        if(photoUri != null) profileUpdates = profileUpdates.setPhotoUri(photoUri);
+        fUser.updateProfile(profileUpdates.build());
+
+        fUser.sendEmailVerification()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Email sent.");
+                        }
+                    }
+                });
+
+        String photoUriStr = "";
+        if (photoUri != null) photoUriStr = photoUri.toString();
+        User user = new User(fUser.getUid(), fUser.getEmail(),
+                newUserName.getText().toString(), newUserCitySelectedName,
+                newUserCitySelectedCoord.latitude, newUserCitySelectedCoord.longitude,
+                Long.parseLong(newUserAge.getText().toString()), photoUriStr,
+                sportsArrayToHashMap(sports));
+        FirebaseActions.addUser(user);
+
+        // Return to LoginActivity
+        setResult(RESULT_OK);
+        finish();
+    }
+
 
     private Map<String,Double> sportsArrayToHashMap(List<Sport> sports) {
         HashMap<String, Double> result = new HashMap<>();

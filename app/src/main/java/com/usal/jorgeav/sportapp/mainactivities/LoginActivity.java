@@ -35,6 +35,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.NewUserActivity;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -54,6 +55,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Button mAuxButton;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -100,6 +102,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startNewUserForResult();
             }
         });
+        Button mResetPassword = (Button) findViewById(R.id.reset_password_button);
+        mResetPassword.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String emailAddress = mEmailView.getText().toString();
+
+                FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Email sent.");
+                                }
+                            }
+                        });
+            }
+        });
+
+        mAuxButton = (Button) findViewById(R.id.aux_button);
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -122,10 +143,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         switch (resultCode) {
             case RESULT_OK: //User created 
                 Log.d(TAG, "onActivityResult: RESULT_OK");
-                deleteContentProvider();
-                // The user is logged and his data is in Firebase. Retrieve that data and
-                // populate Content Provider. Later finishLoadMyProfile() will be invoked
-                SportteamSyncUtils.initialize(LoginActivity.this);
+                initLoadMyProfile();
                 break;
             case RESULT_CANCELED:
                 Log.d(TAG, "onActivityResult: RESULT_CANCELED");
@@ -191,20 +209,33 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 Toast.makeText(LoginActivity.this, R.string.error_incorrect_password,
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                deleteContentProvider();
-
-                                //Add email to emails logged table
-                                ContentValues cv = new ContentValues();
-                                cv.put(SportteamContract.EmailLoggedEntry.EMAIL, email);
-                                getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
-
-                                // The user is logged and his data is in Firebase. Retrieve that data and
-                                // populate Content Provider. Later finishLoadMyProfile() will be invoked
-                                SportteamSyncUtils.initialize(LoginActivity.this);
+                                initLoadMyProfile();
                             }
                         }
                     });
         }
+    }
+
+    private void initLoadMyProfile() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (fUser != null && fUser.isEmailVerified()) {
+            deleteContentProvider();
+
+            //Add email to emails logged table
+            ContentValues cv = new ContentValues();
+            cv.put(SportteamContract.EmailLoggedEntry.EMAIL, fUser.getEmail());
+            getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
+
+            // The user is logged and his data is in Firebase. Retrieve that data and
+            // populate Content Provider. Later finishLoadMyProfile() will be invoked
+            SportteamSyncUtils.initialize(LoginActivity.this);
+        } else {
+            showProgress(false);
+            Toast.makeText(this, "Should verified your email", Toast.LENGTH_SHORT).show();
+            mAuxButton.setVisibility(View.VISIBLE);
+            mAuxButton.setText("Resend email verification");
+        }
+
     }
 
     public void finishLoadMyProfile() {
