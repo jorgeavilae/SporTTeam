@@ -169,6 +169,12 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 showDialogForEditName();
             }
         });
+        userAge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogForEditAge();
+            }
+        });
 
     }
 
@@ -206,6 +212,46 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                             public void onCancelled(DatabaseError databaseError) {
                             }
                         });
+                    }
+                });
+            }
+        });
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                hideSoftKeyboard();
+            }
+        });
+        alertDialog.show();
+    }
+    private void showDialogForEditAge() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edittext_dialog, null);
+        builder.setView(dialogView);
+
+        final EditText editText = (EditText) dialogView.findViewById(R.id.edittext_dialog_edittext);
+        editText.setText(userAge.getText());
+
+        builder.setTitle("Change Age")
+                .setPositiveButton("Accept", null)
+                .setNegativeButton("Cancel", null);
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (Utiles.isNumeric(editText.getText().toString())) {
+                            Integer age = Integer.parseInt(editText.getText().toString());
+                            if (age > 12 && age < 100) {
+                                mProfilePresenter.updateUserAge(age);
+                                alertDialog.dismiss();
+                            } else
+                                editText.setError("Age should be greater than 12 and less than 100");
+                        } else
+                            editText.setError("Not a valid number");
                     }
                 });
             }

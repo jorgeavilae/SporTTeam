@@ -39,5 +39,7 @@ public abstract class ProfileContract {
 
         void checkUserName(String s, ValueEventListener listener);
         void updateUserName(String s);
+
+        void updateUserAge(int age);
     }
 }

@@ -20,6 +20,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -260,6 +261,15 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
         FirebaseActions.updateUserName(fUser.getUid(), name);
         FirebaseSync.loadAProfile(fUser.getUid(), false);
+    }
+
+    @Override
+    public void updateUserAge(int age) {
+        String myUserId = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserId)) return;
+
+        FirebaseActions.updateUserAge(myUserId, age);
+        FirebaseSync.loadAProfile(myUserId, false);
     }
 
     @Override

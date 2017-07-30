@@ -71,6 +71,11 @@ public class FirebaseActions {
                 .child(myUid).child(FirebaseDBContract.DATA)
                 .child(FirebaseDBContract.User.ALIAS).setValue(name);
     }
+    public static void updateUserAge(String myUid, Integer age) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUid).child(FirebaseDBContract.DATA)
+                .child(FirebaseDBContract.User.AGE).setValue(age);
+    }
 
     // Add Event
     public static void addEvent(Event event) {
