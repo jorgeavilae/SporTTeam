@@ -4,13 +4,19 @@ package com.usal.jorgeav.sportapp.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
+    private final static String TAG = SettingsFragment.class.getSimpleName();
+
+    public static final String KEY_PREF_SYNC_CONN = "pref_syncConnectionType";
+    public static final String KEY_PREF_CITY = "pref_city";
 
     private Context mActivityContext;
 
@@ -46,14 +52,19 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 .registerOnSharedPreferenceChangeListener(this);
     }
 
-    public static final String KEY_PREF_SYNC_CONN = "pref_syncConnectionType";
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(KEY_PREF_CITY)) {
+            String myUid = Utiles.getCurrentUserId();
+            if (TextUtils.isEmpty(myUid)) return;
 
-        if (key.equals(KEY_PREF_SYNC_CONN)) {
-            Preference connectionPref = findPreference(key);
+            CityAutocompleteEditTextPreference cityPref = (CityAutocompleteEditTextPreference)findPreference(key);
             // Set summary to be the user-description for the selected value
-            connectionPref.setSummary(sharedPreferences.getString(key, ""));
+            cityPref.setSummary(sharedPreferences.getString(key, ""));
+
+            FirebaseActions.updateUserCity(myUid, cityPref.citySelectedName, cityPref.citySelectedCoord);
+
+            // TODO: 30/07/2017 HAcer mas cambios en consecuencia
         }
     }
 

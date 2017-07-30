@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -80,6 +81,29 @@ public class FirebaseActions {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUid).child(FirebaseDBContract.DATA)
                 .child(FirebaseDBContract.User.PROFILE_PICTURE).setValue(photo);
+    }
+    public static void updateUserCity(String myUid, final String citySelectedName, final LatLng citySelectedCoord) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUid);
+        userRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                mutableData.child(FirebaseDBContract.DATA)
+                        .child(FirebaseDBContract.User.CITY).setValue(citySelectedName);
+                mutableData.child(FirebaseDBContract.DATA)
+                        .child(FirebaseDBContract.User.COORD_LATITUDE).setValue(citySelectedCoord.latitude);
+                mutableData.child(FirebaseDBContract.DATA)
+                        .child(FirebaseDBContract.User.COORD_LONGITUDE).setValue(citySelectedCoord.longitude);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
     }
 
     // Add Event
