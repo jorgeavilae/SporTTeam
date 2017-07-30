@@ -19,6 +19,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -407,7 +408,7 @@ public class NewUserActivity extends AppCompatActivity implements
     }
 
     private void checkUserEmailExists(String email) {
-        if (email != null && !TextUtils.isEmpty(email))
+        if (email != null && !TextUtils.isEmpty(email) && isEmailValid(email))
             FirebaseActions.getUserEmailReferenceEqualTo(email)
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -421,6 +422,10 @@ public class NewUserActivity extends AppCompatActivity implements
                         public void onCancelled(DatabaseError databaseError) {
                         }
                     });
+    }
+
+    private boolean isEmailValid(@NonNull String email) {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private void checkUserNameExists(String name) {
