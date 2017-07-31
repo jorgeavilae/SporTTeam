@@ -1298,44 +1298,44 @@ public class FirebaseActions {
                                 invitationsSentUserId.add(data.child(FirebaseDBContract.Invitation.SENDER).getValue(String.class));
                             }
 
-                            //Delete User
-                            String user =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUser.getUid();
-                            childDeletes.put(user, null);
-
                             //Delete User in Friends
-                            for (String friendUid : friendsList) {
-                                deleteFriend(myUser.getUid(), friendUid);
+                            for (DataSnapshot friendUid : dataSnapshot.child(FirebaseDBContract.User.FRIENDS).getChildren()) {
+                                deleteFriend(myUser.getUid(), friendUid.getKey());
                             }
 
                             //Delete User in Friends who Received a friendRequest
-                            for (String friendRequestSent : friendsRequestSentList) {
+                            for (DataSnapshot friendRequestSent : dataSnapshot.child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT).getChildren()) {
                                 cancelFriendRequest(myUser.getUid(), friendRequestSent);
                             }
 
                             //Delete User in Friends who Send me a friendRequest
-                            for (String friendRequestReceived : friendsRequestReceivedList) {
+                            for (DataSnapshot friendRequestReceived : dataSnapshot.child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED).getChildren()) {
                                 declineFriendRequest(myUser.getUid(), friendRequestReceived);
                             }
 
                             //Delete Events from User events created
-                            for (String eventCreated : eventsCreatedList) {
+                            for (DataSnapshot eventCreated : dataSnapshot.child(FirebaseDBContract.User.EVENTS_CREATED).getChildren()) {
                                 deleteEvent(null, eventCreated);
                             }
 
                             //Delete participant from User events participation
-                            for (String eventParticipation : eventsParticipationList) {
+                            for (DataSnapshot eventParticipation : dataSnapshot.child(FirebaseDBContract.User.EVENTS_PARTICIPATION).getChildren()) {
                                 quitEvent(myUser.getUid(), eventParticipation);
                             }
 
                             //Delete Invitation Sent from User event invitations received
-                            for (String eventInvitationReceived : eventInvitationReceivedList) {
+                            for (DataSnapshot eventInvitationReceived : dataSnapshot.child(FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED).getChildren()) {
                                 declineEventInvitation(myUser.getUid(), eventInvitationReceived, sender);
                             }
 
                             //Delete User in Events with a userRequest from me
-                            for (String eventUserRequestsSent : eventsUserRequestsSentList) {
+                            for (DataSnapshot eventUserRequestsSent : dataSnapshot.child(FirebaseDBContract.User.EVENTS_REQUESTS).getChildren()) {
                                 cancelEventRequest(myUser.getUid(), eventUserRequestsSent, owner);
                             }
+
+                            //Delete User
+                            String user =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUser.getUid();
+                            childDeletes.put(user, null);
                         }
                     }
 
