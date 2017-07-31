@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.utils;
 
 import android.content.res.Resources;
+import android.text.TextUtils;
 import android.util.TypedValue;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -9,6 +10,8 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 
 import java.util.List;
 
@@ -78,5 +81,20 @@ public class Utiles {
 
     public static boolean isNumeric(String str) {
         return str.matches("\\d+");  //match a number without '-' and decimal.
+    }
+
+    public static void checkEmailFromDatabaseIsCorrect(FirebaseUser fUser, User myUserDatabase) {
+        String fUserEmail = ""; if (fUser != null) fUserEmail = fUser.getEmail();
+        // If the user try to change his email but cancel process by clicking in url
+        // from email received, could has an email address in FirebaseUser and a different
+        // one in FirebaseDatabase. So it needs to update.
+        if (fUserEmail != null && !TextUtils.isEmpty(fUserEmail)) {
+            if (!fUserEmail.equals(myUserDatabase.getEmail())) {
+                //Update email in FirebaseDatabase
+                FirebaseActions.updateUserEmail(myUserDatabase.getUid(), fUserEmail);
+
+                myUserDatabase.setEmail(fUserEmail);
+            }
+        }
     }
 }

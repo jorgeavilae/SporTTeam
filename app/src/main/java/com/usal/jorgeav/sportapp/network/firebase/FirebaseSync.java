@@ -767,6 +767,13 @@ public class FirebaseSync {
                             }
                             anUser.setUid(dataSnapshot.getKey());
 
+                            FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                            String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+                            if (!TextUtils.isEmpty(myUserID) && myUserID.equals(anUser.getUid()))
+                                // anUser is the current User so check email address in case
+                                // it was recently changed and later cancel that change.
+                                Utiles.checkEmailFromDatabaseIsCorrect(fUser, anUser);
+
                             ContentValues cvData = UtilesContentValues.dataUserToContentValues(anUser);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
