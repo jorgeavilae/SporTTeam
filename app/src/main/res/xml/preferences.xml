@@ -17,9 +17,11 @@
     <com.usal.jorgeav.sportapp.preferences.CityAutocompleteEditTextPreference
         android:key="pref_city"
         android:title="pref_city"
-        android:dialogTitle="pref_city"/>
+        android:dialogTitle="pref_city"
+        android:inputType="textPostalAddress"/>
     <EditTextPreference
         android:key="pref_email"
         android:title="pref_email"
-        android:dialogTitle="pref_email"/>
+        android:dialogTitle="pref_email"
+        android:inputType="textEmailAddress"/>
 </PreferenceScreen>

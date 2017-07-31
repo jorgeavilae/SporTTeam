@@ -110,6 +110,11 @@ public class FirebaseActions {
             }
         });
     }
+    public static void updateUserEmail(String myUid, String email) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUid).child(FirebaseDBContract.DATA)
+                .child(FirebaseDBContract.User.EMAIL).setValue(email);
+    }
 
     // Add Event
     public static void addEvent(Event event) {

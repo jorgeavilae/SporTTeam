@@ -1,7 +1,6 @@
 package com.usal.jorgeav.sportapp.preferences;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.preference.EditTextPreference;
 import android.support.annotation.NonNull;
 import android.text.Editable;
@@ -144,11 +143,5 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
                 setText(value);
             }
         }
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        ((SettingsActivity) getContext()).hideSoftKeyboard();
     }
 }
