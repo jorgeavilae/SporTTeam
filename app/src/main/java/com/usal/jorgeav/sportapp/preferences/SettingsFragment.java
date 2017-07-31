@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -36,6 +37,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public static final String KEY_PREF_SYNC_CONN = "pref_syncConnectionType";
     public static final String KEY_PREF_CITY = "pref_city";
     public static final String KEY_PREF_EMAIL = "pref_email";
+    public static final String KEY_PREF_PASSWORD = "pref_password";
+    public static final String KEY_PREF_DELETE = "pref_delete";
 
     private Context mActivityContext;
 
@@ -53,6 +56,27 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
+
+        Preference deletePref = findPreference(KEY_PREF_DELETE);
+        deletePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("BORRAR USUARIO")
+                        .setMessage("Estas seguro de que quieres BORRAR este usuario y" +
+                                " PERDER todos los datos guardados?")
+                        .setPositiveButton("Borrar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //TODO
+                            }
+                        })
+                        .setNegativeButton("Cancelar", null)
+                        .create();
+                dialog.show();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -96,10 +120,19 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 }
             } else
                 Toast.makeText(getActivity(), "Not a valid email", Toast.LENGTH_SHORT).show();
+        } else if (key.equals(KEY_PREF_PASSWORD)) {
+            final String password = sharedPreferences.getString(key, "");
+            if (password.length() > 6) {
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null)
+                    updatePassword(user, password);
+            } else
+                Toast.makeText(getActivity(), "Not a valid password", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void updateEmail(final FirebaseUser user, final String email, final SharedPreferences sharedPreferences, final String key) {
+    private void updateEmail(final FirebaseUser user, final String email,
+                             final SharedPreferences sharedPreferences, final String key) {
         //Update email in FirebaseAuth
         final String oldEmail = user.getEmail();
         user.updateEmail(email)
@@ -143,8 +176,40 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                             displayReauthenticateDialog(user, new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    Log.d(TAG, "User re-authenticated.");
-                                    updateEmail(user, email, sharedPreferences, key);
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "User re-authenticated.");
+                                        updateEmail(user, email, sharedPreferences, key);
+                                    }
+                                }
+                            });
+                        } else {
+                            Toast.makeText(getActivity(), "Error updating email", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "onComplete: Error updating email", task.getException());
+                            task.getException().printStackTrace();
+                        }
+
+                    }
+                });
+    }
+
+    private void updatePassword(final FirebaseUser user, final String password) {
+        //Update password in FirebaseAuth
+        user.updatePassword(password)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User password updated.");
+                            Toast.makeText(getActivity(), "Password updated.", Toast.LENGTH_SHORT).show();
+
+                        } else if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
+                            displayReauthenticateDialog(user, new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "User re-authenticated");
+                                        updatePassword(user, password);
+                                    }
                                 }
                             });
                         } else {
@@ -184,11 +249,19 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                         String emailStr = emailEditText.getText().toString();
                         String passStr = passEditText.getText().toString();
 
-                        if (!TextUtils.isEmpty(emailStr) && isEmailValid(emailStr) && !TextUtils.isEmpty(passStr)) {
+                        if (!TextUtils.isEmpty(emailStr) && isEmailValid(emailStr) && passStr.length() > 6) {
                             AuthCredential credential = EmailAuthProvider
                                     .getCredential(emailStr, passStr);
                             user.reauthenticate(credential)
-                                    .addOnCompleteListener(listener);
+                                    .addOnCompleteListener(listener)
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "User re-authenticated fails.");
+                                    Toast.makeText(getActivity(), "Incorrect email/password", Toast.LENGTH_SHORT).show();
+                                    getActivity().onBackPressed();
+                                }
+                            });
                         }
                     }
                 })

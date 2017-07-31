@@ -24,4 +24,13 @@
         android:title="pref_email"
         android:dialogTitle="pref_email"
         android:inputType="textEmailAddress"/>
+    <EditTextPreference
+        android:key="pref_password"
+        android:title="pref_password"
+        android:dialogTitle="pref_password"
+        android:inputType="textVisiblePassword"/>
+    <Preference
+        android:key="pref_delete"
+        android:title="pref_delete"
+        android:dialogTitle="pref_delete"/>
 </PreferenceScreen>
