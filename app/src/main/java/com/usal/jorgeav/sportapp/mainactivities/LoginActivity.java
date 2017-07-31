@@ -231,7 +231,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             SportteamSyncUtils.initialize(LoginActivity.this);
         } else {
             showProgress(false);
-            Toast.makeText(this, "Should verified your email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You have to verify your email", Toast.LENGTH_SHORT).show();
             mAuxButton.setVisibility(View.VISIBLE);
             mAuxButton.setText("Resend email verification");
         }
