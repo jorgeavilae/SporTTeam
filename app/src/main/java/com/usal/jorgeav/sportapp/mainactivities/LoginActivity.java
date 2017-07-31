@@ -7,17 +7,21 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -26,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +60,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    private Button mAuxButton;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -84,6 +88,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return true;
                 }
                 return false;
+            }
+        });
+        ImageButton visibleButton = (ImageButton) findViewById(R.id.login_visible_pass);
+        visibleButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
+                    mPasswordView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                else if (event.getAction() == MotionEvent.ACTION_UP)
+                    mPasswordView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                return true;
             }
         });
 
@@ -119,8 +134,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         });
             }
         });
-
-        mAuxButton = (Button) findViewById(R.id.aux_button);
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -205,7 +218,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (!task.isSuccessful()) {
                                 showProgress(false);
-                                Log.e(TAG, "onComplete: ", task.getException());
+                                Log.e(TAG, "signInWithEmailAndPassword: onComplete: ", task.getException());
                                 Toast.makeText(LoginActivity.this, R.string.error_incorrect_password,
                                         Toast.LENGTH_SHORT).show();
                             } else {
@@ -217,25 +230,46 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void initLoadMyProfile() {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (fUser != null && fUser.isEmailVerified()) {
-            deleteContentProvider();
+        final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (fUser != null) {
+            Log.d(TAG, "initLoadMyProfile: ");
+            if (fUser.isEmailVerified()) {
+                deleteContentProvider();
 
-            //Add email to emails logged table
-            ContentValues cv = new ContentValues();
-            cv.put(SportteamContract.EmailLoggedEntry.EMAIL, fUser.getEmail());
-            getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
+                //Add email to emails logged table
+                ContentValues cv = new ContentValues();
+                cv.put(SportteamContract.EmailLoggedEntry.EMAIL, fUser.getEmail());
+                getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
 
-            // The user is logged and his data is in Firebase. Retrieve that data and
-            // populate Content Provider. Later finishLoadMyProfile() will be invoked
-            SportteamSyncUtils.initialize(LoginActivity.this);
-        } else {
-            showProgress(false);
-            Toast.makeText(this, "You have to verify your email", Toast.LENGTH_SHORT).show();
-            mAuxButton.setVisibility(View.VISIBLE);
-            mAuxButton.setText("Resend email verification");
+                // The user is logged and his data is in Firebase. Retrieve that data and
+                // populate Content Provider. Later finishLoadMyProfile() will be invoked
+                SportteamSyncUtils.initialize(LoginActivity.this);
+            } else {
+                showProgress(false);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                        .setTitle("You have to verify your email")
+                        .setMessage("Resend email verification?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                fUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Log.d(TAG, "sendEmailVerification: onComplete: "+task.isSuccessful());
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("No", null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        FirebaseAuth.getInstance().signOut();
+                    }
+                });
+                builder.create().show();
+            }
         }
-
     }
 
     public void finishLoadMyProfile() {

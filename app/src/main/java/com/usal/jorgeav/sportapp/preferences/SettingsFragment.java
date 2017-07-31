@@ -11,11 +11,14 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -229,18 +232,17 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         final EditText emailEditText = (EditText) dialogView.findViewById(R.id.reauthenticate_dialog_email);
         final EditText passEditText = (EditText) dialogView.findViewById(R.id.reauthenticate_dialog_password);
-        //TODO button show password
-//        final Button visibleButton = (Button) dialogView.findViewById(R.id.reauthenticate_dialog_visible_pass);
-//        visibleButton.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_BUTTON_PRESS)
-//                    passEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-//                else if (event.getAction() == MotionEvent.ACTION_BUTTON_RELEASE)
-//                    passEditText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-//                return true;
-//            }
-//        });
+        ImageButton visibleButton = (ImageButton) dialogView.findViewById(R.id.reauthenticate_dialog_visible_pass);
+        visibleButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
+                    passEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                else if (event.getAction() == MotionEvent.ACTION_UP)
+                    passEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                return true;
+            }
+        });
 
         builder.setTitle("Reauthenticate")
                 .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
