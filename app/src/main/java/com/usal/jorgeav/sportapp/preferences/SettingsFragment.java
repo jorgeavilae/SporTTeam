@@ -257,8 +257,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
+                                    //TODO prevent from logout
+                                    // If fails, logout is automatic
                                     Log.d(TAG, "User re-authenticated fails.");
                                     Toast.makeText(getActivity(), "Incorrect email/password", Toast.LENGTH_SHORT).show();
+
+                                    // onBackPressed to display LoginActivity again
                                     getActivity().onBackPressed();
                                 }
                             });
