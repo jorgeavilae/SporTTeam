@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.preferences;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -13,10 +14,14 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
@@ -113,10 +118,13 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    builder.setMessage("Debes confirmar el email de verificacion clickando en su enlace." +
-                                            "De lo contrario, no podrás volver a identificarte en la pantalla de login y " +
-                                            "perderas la cuenta.")
-                                            .setNeutralButton("Ok", null);
+                                    builder.setTitle("Tu email ha sido cambiado")
+                                            .setMessage("Recibiras un correo en tu direccion que proporcionaste al registrarte" +
+                                                    " por primera vez por si quieres revertir el proceso, y otro correo en" +
+                                                    " la nueva direccion para confirmarlo.\n" +
+                                                    "Para volver a identificarte cuando cierres la sesion, debes confirmar el" +
+                                                    " correo de la nueva direccion.")
+                                            .setPositiveButton("Ok", null);
                                     builder.create().show();
                                 }
                             });
@@ -132,7 +140,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                                     SportteamContract.EmailLoggedEntry.EMAIL + " = ? ",
                                     new String[]{oldEmail});
                         } else if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
-                            displayReauthenticateDialog(new OnCompleteListener<Void>() {
+                            displayReauthenticateDialog(user, new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     Log.d(TAG, "User re-authenticated.");
@@ -149,7 +157,44 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 });
     }
 
-    private void displayReauthenticateDialog(OnCompleteListener listener) {
+    private void displayReauthenticateDialog(final FirebaseUser user, final OnCompleteListener<Void> listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.reauthenticate_dialog, null);
+        builder.setView(dialogView);
+
+        final EditText emailEditText = (EditText) dialogView.findViewById(R.id.reauthenticate_dialog_email);
+        final EditText passEditText = (EditText) dialogView.findViewById(R.id.reauthenticate_dialog_password);
+        //TODO button show password
+//        final Button visibleButton = (Button) dialogView.findViewById(R.id.reauthenticate_dialog_visible_pass);
+//        visibleButton.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_BUTTON_PRESS)
+//                    passEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+//                else if (event.getAction() == MotionEvent.ACTION_BUTTON_RELEASE)
+//                    passEditText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+//                return true;
+//            }
+//        });
+
+        builder.setTitle("Reauthenticate")
+                .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String emailStr = emailEditText.getText().toString();
+                        String passStr = passEditText.getText().toString();
+
+                        if (!TextUtils.isEmpty(emailStr) && isEmailValid(emailStr) && !TextUtils.isEmpty(passStr)) {
+                            AuthCredential credential = EmailAuthProvider
+                                    .getCredential(emailStr, passStr);
+                            user.reauthenticate(credential)
+                                    .addOnCompleteListener(listener);
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", null);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private boolean isEmailValid(@NonNull String email) {

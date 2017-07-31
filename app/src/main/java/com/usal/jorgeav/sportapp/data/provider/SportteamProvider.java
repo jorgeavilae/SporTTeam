@@ -724,6 +724,9 @@ public class SportteamProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count = 0;
         switch (sUriMatcher.match(uri)) {
+            case CODE_EMAIL_LOGGED:
+                count = db.update(TABLE_EMAIL_LOGGED, values, selection, selectionArgs);
+                break;
             case CODE_USERS:
                 count = db.update(TABLE_USER, values, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_NOT_FRIENDS_USERS_FROM_CITY_URI, null);
