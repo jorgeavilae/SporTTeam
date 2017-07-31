@@ -1084,7 +1084,8 @@ public class FirebaseActions {
                     //No need to delete notifications since is automatic when it can not found eventId
                     database.updateChildren(childDeletes);
 
-                    baseFragment.resetBackStack();
+                    if (baseFragment != null)
+                        baseFragment.resetBackStack();
                 }
             }
 
@@ -1268,5 +1269,80 @@ public class FirebaseActions {
                     Log.e(TAG, "deleteSimulatedParticipant: onComplete: Transaction error "+databaseError);
             }
         });
+    }
+
+    public static void deleteCurrentUser() {
+        final String myUserId = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserId)) return;
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+
+        eventRef.child(myUserId).addListenerForSingleValueEvent(
+                new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+                    @Override
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            User myUser = dataSnapshot.child(FirebaseDBContract.DATA).getValue(User.class);
+                            if (myUser == null) return;
+                            myUser.setUid(dataSnapshot.getKey());
+
+                            ArrayList<String> participantsUserId = new ArrayList<>();
+                            if (e.getParticipants() != null)
+                                participantsUserId.addAll(new ArrayList<>(e.getParticipants().keySet()));
+
+                            ArrayList<String> invitationsSentUserId = new ArrayList<>();
+                            ArrayList<String> invitationsReceivedUserId = new ArrayList<>();
+                            DataSnapshot dataInvitations = dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS);
+                            for (DataSnapshot data : dataInvitations.getChildren()) {
+                                invitationsReceivedUserId.add(data.getKey());
+                                invitationsSentUserId.add(data.child(FirebaseDBContract.Invitation.SENDER).getValue(String.class));
+                            }
+
+                            //Delete User
+                            String user =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUser.getUid();
+                            childDeletes.put(user, null);
+
+                            //Delete User in Friends
+                            for (String friendUid : friendsList) {
+                                deleteFriend(myUser.getUid(), friendUid);
+                            }
+
+                            //Delete User in Friends who Received a friendRequest
+                            for (String friendRequestSent : friendsRequestSentList) {
+                                cancelFriendRequest(myUser.getUid(), friendRequestSent);
+                            }
+
+                            //Delete User in Friends who Send me a friendRequest
+                            for (String friendRequestReceived : friendsRequestReceivedList) {
+                                declineFriendRequest(myUser.getUid(), friendRequestReceived);
+                            }
+
+                            //Delete Events from User events created
+                            for (String eventCreated : eventsCreatedList) {
+                                deleteEvent(null, eventCreated);
+                            }
+
+                            //Delete participant from User events participation
+                            for (String eventParticipation : eventsParticipationList) {
+                                quitEvent(myUser.getUid(), eventParticipation);
+                            }
+
+                            //Delete Invitation Sent from User event invitations received
+                            for (String eventInvitationReceived : eventInvitationReceivedList) {
+                                declineEventInvitation(myUser.getUid(), eventInvitationReceived, sender);
+                            }
+
+                            //Delete User in Events with a userRequest from me
+                            for (String eventUserRequestsSent : eventsUserRequestsSentList) {
+                                cancelEventRequest(myUser.getUid(), eventUserRequestsSent, owner);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelledExecutor(DatabaseError databaseError) {
+
+                    }
+                });
     }
 }

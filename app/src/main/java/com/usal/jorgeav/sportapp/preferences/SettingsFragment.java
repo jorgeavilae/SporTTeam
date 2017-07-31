@@ -72,6 +72,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //TODO
+                                FirebaseActions.deleteCurrentUser();
                             }
                         })
                         .setNegativeButton("Cancelar", null)
