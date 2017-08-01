@@ -29,9 +29,11 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
@@ -41,6 +43,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public static final String KEY_PREF_CITY = "pref_city";
     public static final String KEY_PREF_EMAIL = "pref_email";
     public static final String KEY_PREF_PASSWORD = "pref_password";
+    public static final String KEY_PREF_RESET = "pref_reset";
     public static final String KEY_PREF_DELETE = "pref_delete";
 
     private Context mActivityContext;
@@ -61,6 +64,38 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         addPreferencesFromResource(R.xml.preferences);
 
         Preference deletePref = findPreference(KEY_PREF_DELETE);
+        preparePreferenceDeleteUser(deletePref);
+        Preference resetPref = findPreference(KEY_PREF_RESET);
+        preparePreferenceResetUser(resetPref);
+    }
+
+    private void preparePreferenceResetUser(Preference deletePref) {
+        deletePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("Borrar datos")
+                        .setMessage("Estas seguro de que quieres BORRAR los datos de este usuario?\n" +
+                                "Los partidos, las invitaciones, los amigos... todo se borrara. Solo " +
+                                "mantendremos tus datos personales como tu nombre, tu ciudad o" +
+                                " deportes que praticas.")
+                        .setPositiveButton("Borrar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                if (user != null)
+                                    FirebaseActions.deleteCurrentUser(user.getUid(), SettingsFragment.this, false);
+                            }
+                        })
+                        .setNegativeButton("Cancelar", null)
+                        .create();
+                dialog.show();
+                return true;
+            }
+        });
+    }
+
+    private void preparePreferenceDeleteUser(Preference deletePref) {
         deletePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -71,14 +106,57 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                         .setPositiveButton("Borrar", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                //TODO
-                                FirebaseActions.deleteCurrentUser();
+                                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                if (user != null) {
+                                    final String uid = user.getUid();
+                                    user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                FirebaseActions.deleteCurrentUser(uid, SettingsFragment.this, true);
+                                            } else if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
+                                                displayReauthenticateDialog(user, new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Log.d(TAG, "User re-authenticated.");
+                                                            FirebaseActions.deleteCurrentUser(uid, SettingsFragment.this, true);
+                                                        }
+                                                    }
+                                                });
+                                            } else {
+                                                Toast.makeText(getActivity(), "Error deleting user", Toast.LENGTH_SHORT).show();
+                                                Log.e(TAG, "onComplete: Error deleting user", task.getException());
+                                                task.getException().printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         })
                         .setNegativeButton("Cancelar", null)
                         .create();
                 dialog.show();
                 return true;
+            }
+        });
+    }
+
+    public void userDataDeleted(final String myUserID, final boolean deleteUser) {
+        Log.d(TAG, "userDataDeleted: "+myUserID);
+        /* https://stackoverflow.com/a/3875204/4235666
+         * https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)
+         */
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (deleteUser) {
+                    FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                            .child(myUserID).removeValue();
+                    getActivity().onBackPressed();
+                } else
+                    Toast.makeText(getActivity(), "User reset", Toast.LENGTH_SHORT).show();
+
             }
         });
     }

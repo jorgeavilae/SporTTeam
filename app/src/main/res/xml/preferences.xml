@@ -30,6 +30,10 @@
         android:dialogTitle="pref_password"
         android:inputType="textVisiblePassword"/>
     <Preference
+        android:key="pref_reset"
+        android:title="pref_reset"
+        android:dialogTitle="pref_reset"/>
+    <Preference
         android:key="pref_delete"
         android:title="pref_delete"
         android:dialogTitle="pref_delete"/>

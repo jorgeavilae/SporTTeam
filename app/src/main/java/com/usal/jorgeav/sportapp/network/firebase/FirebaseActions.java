@@ -33,7 +33,8 @@ import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.User;
-import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
+import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantContract;
+import com.usal.jorgeav.sportapp.preferences.SettingsFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
@@ -671,6 +672,8 @@ public class FirebaseActions {
                     }
                 }
 
+                //TODO delete simulateduser?
+
                 return Transaction.success(mutableData);
             }
 
@@ -1209,14 +1212,18 @@ public class FirebaseActions {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToSimulatedParticipants(simulatedParticipantKey, su);
                     if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
-                    if (fragment != null)
-                        if (fragment instanceof SimulateParticipantFragment)
-                            ((SimulateParticipantFragment) fragment).showResult(null);
+                    if (fragment != null && fragment instanceof SimulateParticipantContract.View)
+                            ((SimulateParticipantContract.View) fragment).showResult(null);
+                    else
+                        Log.e(TAG, "addSimulatedParticipant: doTransaction: " +
+                                "fragment not instanceof SimulateParticipantContract.View");
                 } else
-                    if (fragment != null)
-                        if (fragment instanceof SimulateParticipantFragment)
-                            ((SimulateParticipantFragment) fragment).showResult(
+                    if (fragment != null && fragment instanceof SimulateParticipantContract.View)
+                            ((SimulateParticipantContract.View) fragment).showResult(
                                     "There isn't empty slots for Simulated User");
+                    else
+                        Log.e(TAG, "addSimulatedParticipant: doTransaction: " +
+                                "fragment not instanceof SimulateParticipantContract.View");
 
                 // Set ID to null to not store ID under data in Event's tree in Firebase.
                 e.setEvent_id(null);
@@ -1271,13 +1278,11 @@ public class FirebaseActions {
         });
     }
 
-    public static void deleteCurrentUser() {
-        final String myUserId = Utiles.getCurrentUserId();
-        if (TextUtils.isEmpty(myUserId)) return;
+    public static void deleteCurrentUser(String myUserId, final SettingsFragment settingsFragment, final boolean deleteUser) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+        DatabaseReference userRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
-        eventRef.child(myUserId).addListenerForSingleValueEvent(
+        userRef.child(myUserId).addListenerForSingleValueEvent(
                 new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
@@ -1286,56 +1291,57 @@ public class FirebaseActions {
                             if (myUser == null) return;
                             myUser.setUid(dataSnapshot.getKey());
 
-                            ArrayList<String> participantsUserId = new ArrayList<>();
-                            if (e.getParticipants() != null)
-                                participantsUserId.addAll(new ArrayList<>(e.getParticipants().keySet()));
-
-                            ArrayList<String> invitationsSentUserId = new ArrayList<>();
-                            ArrayList<String> invitationsReceivedUserId = new ArrayList<>();
-                            DataSnapshot dataInvitations = dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS);
-                            for (DataSnapshot data : dataInvitations.getChildren()) {
-                                invitationsReceivedUserId.add(data.getKey());
-                                invitationsSentUserId.add(data.child(FirebaseDBContract.Invitation.SENDER).getValue(String.class));
-                            }
-
                             //Delete User in Friends
                             for (DataSnapshot friendUid : dataSnapshot.child(FirebaseDBContract.User.FRIENDS).getChildren()) {
+                                Log.d(TAG, "deleteCurrentUser: onDataChangeExecutor: deleteFriend "+friendUid.getKey());
                                 deleteFriend(myUser.getUid(), friendUid.getKey());
                             }
 
                             //Delete User in Friends who Received a friendRequest
                             for (DataSnapshot friendRequestSent : dataSnapshot.child(FirebaseDBContract.User.FRIENDS_REQUESTS_SENT).getChildren()) {
-                                cancelFriendRequest(myUser.getUid(), friendRequestSent);
+                                Log.d(TAG, "deleteCurrentUser: onDataChangeExecutor: cancelFriendRequest "+friendRequestSent.getKey());
+                                cancelFriendRequest(myUser.getUid(), friendRequestSent.getKey());
                             }
 
                             //Delete User in Friends who Send me a friendRequest
                             for (DataSnapshot friendRequestReceived : dataSnapshot.child(FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED).getChildren()) {
-                                declineFriendRequest(myUser.getUid(), friendRequestReceived);
+                                Log.d(TAG, "deleteCurrentUser: onDataChangeExecutor: declineFriendRequest "+friendRequestReceived.getKey());
+                                declineFriendRequest(myUser.getUid(), friendRequestReceived.getKey());
                             }
 
                             //Delete Events from User events created
                             for (DataSnapshot eventCreated : dataSnapshot.child(FirebaseDBContract.User.EVENTS_CREATED).getChildren()) {
-                                deleteEvent(null, eventCreated);
+                                Log.d(TAG, "deleteCurrentUser: onDataChangeExecutor: deleteEvent "+eventCreated.getKey());
+                                deleteEvent(null, eventCreated.getKey());
                             }
 
                             //Delete participant from User events participation
                             for (DataSnapshot eventParticipation : dataSnapshot.child(FirebaseDBContract.User.EVENTS_PARTICIPATION).getChildren()) {
-                                quitEvent(myUser.getUid(), eventParticipation);
+                                Log.d(TAG, "deleteCurrentUser: onDataChangeExecutor: quitEvent "+eventParticipation.getKey());
+                                quitEvent(myUser.getUid(), eventParticipation.getKey());
                             }
 
                             //Delete Invitation Sent from User event invitations received
                             for (DataSnapshot eventInvitationReceived : dataSnapshot.child(FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED).getChildren()) {
-                                declineEventInvitation(myUser.getUid(), eventInvitationReceived, sender);
+                                Log.d(TAG, "deleteCurrentUser: onDataChangeExecutor: declineEventInvitation "+eventInvitationReceived.getKey());
+                                String sender = eventInvitationReceived.child(FirebaseDBContract.Invitation.SENDER).getValue(String.class);
+                                declineEventInvitation(myUser.getUid(), eventInvitationReceived.getKey(), sender);
                             }
 
                             //Delete User in Events with a userRequest from me
                             for (DataSnapshot eventUserRequestsSent : dataSnapshot.child(FirebaseDBContract.User.EVENTS_REQUESTS).getChildren()) {
-                                cancelEventRequest(myUser.getUid(), eventUserRequestsSent, owner);
+                                Log.d(TAG, "deleteCurrentUser: onDataChangeExecutor: cancelEventRequest "+eventUserRequestsSent.getKey());
+                                Event e = UtilesContentProvider.getEventFromContentProvider(eventUserRequestsSent.getKey());
+                                if (e != null)
+                                    cancelEventRequest(myUser.getUid(), eventUserRequestsSent.getKey(), e.getOwner());
                             }
 
+                            //Delete all notifications
+                            deleteAllNotifications(myUser.getUid());
+
                             //Delete User
-                            String user =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUser.getUid();
-                            childDeletes.put(user, null);
+                            if (settingsFragment != null)
+                                settingsFragment.userDataDeleted(myUser.getUid(), deleteUser);
                         }
                     }
 

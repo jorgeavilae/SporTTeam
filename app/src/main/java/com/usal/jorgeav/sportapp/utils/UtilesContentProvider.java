@@ -177,6 +177,7 @@ public class UtilesContentProvider {
 
     public static Event getEventFromContentProvider(@NonNull String eventId) {
         Event e = null;
+        if (TextUtils.isEmpty(eventId)) return null; // TODO comprobar esto en los demas y comprobar loq devuelve esta funcion
         Cursor c = SportteamLoader.simpleQueryEventId(MyApplication.getAppContext(), eventId);
         if (c != null) {
             if (c.getCount() == 1 && c.moveToFirst()) {
