@@ -205,6 +205,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 buttonSendInvitation.setVisibility(View.VISIBLE);
                 buttonSimulateParticipant.setVisibility(View.VISIBLE);
                 if (!isFull) {
+                    buttonSendInvitation.setEnabled(true);
+                    buttonSimulateParticipant.setEnabled(true);
                     buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
