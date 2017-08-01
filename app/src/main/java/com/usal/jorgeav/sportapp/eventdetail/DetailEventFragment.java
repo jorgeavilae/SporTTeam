@@ -39,6 +39,7 @@ import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Locale;
 
@@ -55,6 +56,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     private String mSportId = "";
     private String mOwnerId = "";
     private boolean isFull = false;
+    private boolean isPast = false;
     @DetailEventPresenter.EventRelationType int mRelation;
     private DetailEventContract.Presenter mPresenter;
 
@@ -174,6 +176,14 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @Override
     public void uiSetupForEventRelation(@DetailEventPresenter.EventRelationType int relation) {
         mRelation = relation;
+        if (isPast) {
+            buttonSendRequest.setVisibility(View.GONE);
+            buttonSimulateParticipant.setVisibility(View.GONE);
+            buttonUserRequests.setVisibility(View.GONE);
+            buttonSendInvitation.setVisibility(View.GONE);
+            buttonUnansweredInvitations.setVisibility(View.GONE);
+            return;
+        }
         switch (relation) {
             case DetailEventPresenter.RELATION_TYPE_OWNER:
                 if (mMenu != null) {
@@ -447,9 +457,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     }
 
     @Override
-    public void showEventDate(String date) {
+    public void showEventDate(long date) {
         ((BaseActivity)getActivity()).showContent();
-        this.textViewEventDate.setText(date);
+        this.textViewEventDate.setText(UtilesTime.millisToDateTimeString(date));
+
+        //Change UI if event it's already happen.
+        isPast = System.currentTimeMillis() > date;
+        uiSetupForEventRelation(mRelation);
     }
 
     @Override

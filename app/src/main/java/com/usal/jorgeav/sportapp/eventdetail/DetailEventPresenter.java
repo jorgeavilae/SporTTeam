@@ -21,7 +21,6 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -143,7 +142,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
             mView.showEventField(fieldId, address, coord);
             mView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
-            mView.showEventDate(UtilesTime.millisToDateTimeString(data.getLong(SportteamContract.EventEntry.COLUMN_DATE)));
+            mView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));
             ownerUid = data.getString(SportteamContract.EventEntry.COLUMN_OWNER);
             mView.showEventOwner(ownerUid);
             mView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));

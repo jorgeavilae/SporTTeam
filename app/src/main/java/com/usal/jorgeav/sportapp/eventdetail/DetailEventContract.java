@@ -20,7 +20,7 @@ public abstract class DetailEventContract {
         void showEventSport(String sport);
         void showEventField(String fieldId, String address, LatLng coord);
         void showEventName(String name);
-        void showEventDate(String date);
+        void showEventDate(long date);
         void showEventOwner(String city);
         void showEventTotalPlayers(int totalPlayers);
         void showEventEmptyPlayers(int emptyPlayers);

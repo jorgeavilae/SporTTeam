@@ -7,14 +7,12 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -233,7 +231,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         if (fUser != null) {
             Log.d(TAG, "initLoadMyProfile: ");
-            if (fUser.isEmailVerified()) {
+//            if (fUser.isEmailVerified()) {
                 deleteContentProvider();
 
                 //Add email to emails logged table
@@ -244,31 +242,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // The user is logged and his data is in Firebase. Retrieve that data and
                 // populate Content Provider. Later finishLoadMyProfile() will be invoked
                 SportteamSyncUtils.initialize(LoginActivity.this);
-            } else {
-                showProgress(false);
-                AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                        .setTitle("You have to verify your email")
-                        .setMessage("Resend email verification?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                fUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        Log.d(TAG, "sendEmailVerification: onComplete: "+task.isSuccessful());
-                                    }
-                                });
-                            }
-                        })
-                        .setNegativeButton("No", null);
-                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        FirebaseAuth.getInstance().signOut();
-                    }
-                });
-                builder.create().show();
-            }
+//            } else {
+//                showProgress(false);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+//                        .setTitle("You have to verify your email")
+//                        .setMessage("Resend email verification?")
+//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                fUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Void> task) {
+//                                        Log.d(TAG, "sendEmailVerification: onComplete: "+task.isSuccessful());
+//                                    }
+//                                });
+//                            }
+//                        })
+//                        .setNegativeButton("No", null);
+//                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialogInterface) {
+//                        FirebaseAuth.getInstance().signOut();
+//                    }
+//                });
+//                builder.create().show();
+//            }
         }
     }
 
