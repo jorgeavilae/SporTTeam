@@ -1,40 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout="@layout/fragment_list">
-    <CheckBoxPreference
-        android:key="pref_sync"
-        android:title="pref_sync"
-        android:summary="pref_sync_summ"
-        android:defaultValue="true" />
-    <ListPreference
-        android:dependency="pref_sync"
-        android:key="pref_syncConnectionType"
-        android:title="pref_syncConnectionType"
-        android:dialogTitle="pref_syncConnectionType"
-        android:entries="@array/sport_id_entries"
-        android:entryValues="@array/sport_id_values"
-        android:defaultValue="@string/running" />
     <com.usal.jorgeav.sportapp.preferences.CityAutocompleteEditTextPreference
         android:key="pref_city"
-        android:title="pref_city"
-        android:dialogTitle="pref_city"
-        android:inputType="textPostalAddress"/>
+        android:title="@string/pref_city_title"
+        android:dialogTitle="@string/pref_city_dialog"
+        android:inputType="textPostalAddress"
+        android:defaultValue=" "/>
     <EditTextPreference
         android:key="pref_email"
-        android:title="pref_email"
-        android:dialogTitle="pref_email"
-        android:inputType="textEmailAddress"/>
+        android:title="@string/pref_email_title"
+        android:dialogTitle="@string/pref_email_dialog"
+        android:inputType="textEmailAddress"
+        android:defaultValue=" "
+        android:persistent="true"/>
     <EditTextPreference
         android:key="pref_password"
-        android:title="pref_password"
-        android:dialogTitle="pref_password"
-        android:inputType="textVisiblePassword"/>
+        android:title="@string/pref_password_title"
+        android:dialogTitle="@string/pref_password_dialog"
+        android:inputType="textVisiblePassword"
+        android:defaultValue=" " />
     <Preference
         android:key="pref_reset"
-        android:title="pref_reset"
-        android:dialogTitle="pref_reset"/>
+        android:title="@string/pref_reset_title"
+        android:defaultValue=" "/>
     <Preference
         android:key="pref_delete"
-        android:title="pref_delete"
-        android:dialogTitle="pref_delete"/>
+        android:title="@string/pref_delete_title"
+        android:defaultValue=" "/>
 </PreferenceScreen>

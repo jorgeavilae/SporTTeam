@@ -2,10 +2,10 @@ package com.usal.jorgeav.sportapp.preferences;
 
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
@@ -35,18 +35,17 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
+@SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
-    public static final String KEY_PREF_SYNC_CONN = "pref_syncConnectionType";
     public static final String KEY_PREF_CITY = "pref_city";
     public static final String KEY_PREF_EMAIL = "pref_email";
     public static final String KEY_PREF_PASSWORD = "pref_password";
     public static final String KEY_PREF_RESET = "pref_reset";
     public static final String KEY_PREF_DELETE = "pref_delete";
-
-    private Context mActivityContext;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -63,10 +62,21 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
 
+        //Add click listener for preference actions
         Preference deletePref = findPreference(KEY_PREF_DELETE);
         preparePreferenceDeleteUser(deletePref);
         Preference resetPref = findPreference(KEY_PREF_RESET);
         preparePreferenceResetUser(resetPref);
+
+        //Write summaries
+        EditTextPreference cityPref = (EditTextPreference) findPreference(KEY_PREF_CITY);
+        cityPref.setSummary(UtilesPreferences.getCurrentUserCity(getActivity()));
+        cityPref.setText("");
+        EditTextPreference emailPref = (EditTextPreference) findPreference(KEY_PREF_EMAIL);
+        emailPref.setSummary(Utiles.getCurrentUserEmail());
+        emailPref.setText("");
+        EditTextPreference passPref = (EditTextPreference) findPreference(KEY_PREF_PASSWORD);
+        passPref.setText("");
     }
 
     private void preparePreferenceResetUser(Preference deletePref) {
@@ -179,37 +189,43 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(KEY_PREF_CITY)) {
-            String myUid = Utiles.getCurrentUserId();
-            if (TextUtils.isEmpty(myUid)) return;
+        switch (key) {
+            case KEY_PREF_CITY:
+                CityAutocompleteEditTextPreference cityPref = (CityAutocompleteEditTextPreference) findPreference(key);
 
-            CityAutocompleteEditTextPreference cityPref = (CityAutocompleteEditTextPreference)findPreference(key);
-            // Set summary to be the user-description for the selected value
-            cityPref.setSummary(sharedPreferences.getString(key, ""));
+                //Update User and reload data
+                String myUid = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(myUid)) return;
+                FirebaseActions.updateUserCityAndReload(myUid, cityPref.citySelectedName, cityPref.citySelectedCoord);
 
-            //Update User and reload data
-            FirebaseActions.updateUserCityAndReload(myUid, cityPref.citySelectedName, cityPref.citySelectedCoord);
-        } else if (key.equals(KEY_PREF_EMAIL)) {
-            final String email = sharedPreferences.getString(key, "");
-            if (!TextUtils.isEmpty(email) && isEmailValid(email)) {
-                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
-                    String oldEmail = user.getEmail();
-                    if (oldEmail != null && !oldEmail.equals(email)) {
-                        updateEmail(user, email, sharedPreferences, key);
-                    } else
-                        Toast.makeText(getActivity(), "That is your current email", Toast.LENGTH_SHORT).show();
+                // Set summary to be the user-description for the selected value
+                cityPref.setSummary(cityPref.citySelectedName);
+                cityPref.setText("");
+                break;
+            case KEY_PREF_EMAIL:
+                final String email = sharedPreferences.getString(key, "");
+                if (!TextUtils.isEmpty(email) && isEmailValid(email)) {
+                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        String oldEmail = user.getEmail();
+                        if (oldEmail != null && !oldEmail.equals(email)) {
+                            updateEmail(user, email, sharedPreferences, key);
+                        } else
+                            Toast.makeText(getActivity(), "That is your current email", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Not a valid email", Toast.LENGTH_SHORT).show();
                 }
-            } else
-                Toast.makeText(getActivity(), "Not a valid email", Toast.LENGTH_SHORT).show();
-        } else if (key.equals(KEY_PREF_PASSWORD)) {
-            final String password = sharedPreferences.getString(key, "");
-            if (password.length() > 6) {
-                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null)
-                    updatePassword(user, password);
-            } else
-                Toast.makeText(getActivity(), "Not a valid password", Toast.LENGTH_SHORT).show();
+                break;
+            case KEY_PREF_PASSWORD:
+                final String password = sharedPreferences.getString(key, "");
+                if (password.length() > 6) {
+                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null)
+                        updatePassword(user, password);
+                } else
+                    Toast.makeText(getActivity(), "Not a valid password", Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 
@@ -223,10 +239,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "User email address updated.");
-
                             //Update Preference summary
-                            Preference emailPref = findPreference(key);
-                            emailPref.setSummary(sharedPreferences.getString(key, ""));
+                            EditTextPreference emailPref = (EditTextPreference) findPreference(key);
+                            emailPref.setSummary(email);
+                            emailPref.setText("");
 
                             //Send email verification
                             user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -357,18 +373,5 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     private boolean isEmailValid(@NonNull String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
-    /* getActivity only returns != null inside attach/detach lifecycle */
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mActivityContext = getActivity();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mActivityContext = null;
     }
 }

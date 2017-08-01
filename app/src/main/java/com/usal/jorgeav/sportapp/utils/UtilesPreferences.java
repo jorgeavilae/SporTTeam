@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.usal.jorgeav.sportapp.preferences.SettingsFragment;
 
 /**
  * Created by Jorge Avila on 15/07/2017.
@@ -19,7 +20,6 @@ public class UtilesPreferences {
     private static final String TAG = UtilesPreferences.class.getSimpleName();
 
     private static final String PREFS_FILE = "PREFS_FILE";
-    private static final String CITY_PREF_KEY = "CITY_PREF_KEY";
     private static final String COORD_LAT_PREF_KEY = "COORD_LAT_PREF_KEY";
     private static final String COORD_LNG_PREF_KEY = "COORD_LNG_PREF_KEY";
 
@@ -28,7 +28,7 @@ public class UtilesPreferences {
         SharedPreferences.Editor editor = settings.edit();
         String city = UtilesContentProvider.getCurrentUserCityFromContentProvider();
         if (city == null) return;
-        editor.putString(CITY_PREF_KEY, city);
+        editor.putString(SettingsFragment.KEY_PREF_CITY, city);
         editor.apply();
     }
 
@@ -44,7 +44,7 @@ public class UtilesPreferences {
 
     public static String getCurrentUserCity(Context context) {
         SharedPreferences settings = context.getSharedPreferences(PREFS_FILE, 0);
-        String city = settings.getString(CITY_PREF_KEY, null);
+        String city = settings.getString(SettingsFragment.KEY_PREF_CITY, null);
         if (city != null) return city;
         else {
             setCurrentUserCity(context);

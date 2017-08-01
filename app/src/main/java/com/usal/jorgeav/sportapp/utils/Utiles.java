@@ -38,6 +38,12 @@ public class Utiles {
         return myUserID;
     }
 
+    public static String getCurrentUserEmail() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserEmail = ""; if (fUser != null) myUserEmail = fUser.getEmail();
+        return myUserEmail;
+    }
+
     public static float getFloatFromResources(Resources resources, int resourceID) {
         TypedValue outValue = new TypedValue();
         resources.getValue(resourceID, outValue, true);

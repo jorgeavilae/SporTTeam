@@ -73,8 +73,15 @@
     <string name="notification_msg_event_delete">The %1$s event in %2$s on %3$s has been cancelled</string>
     <string name="notification_msg_alarm_event">Some event coincidence in your area</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Strings for preference Activity -->
+    <string name="pref_city_title">Current City</string>
+    <string name="pref_city_dialog">Select current City</string>
+    <string name="pref_email_title">Email Address</string>
+    <string name="pref_email_dialog">Change Email address</string>
+    <string name="pref_password_title">Change Password</string>
+    <string name="pref_password_dialog">New password</string>
+    <string name="pref_reset_title">Delete User data</string>
+    <string name="pref_delete_title">Delete User</string>
 
 
 </resources>

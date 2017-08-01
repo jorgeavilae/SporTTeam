@@ -6,8 +6,10 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -84,32 +86,33 @@ public class FirebaseActions {
                 .child(FirebaseDBContract.User.PROFILE_PICTURE).setValue(photo);
     }
     public static void updateUserCityAndReload(final String myUid, final String citySelectedName, final LatLng citySelectedCoord) {
-        DatabaseReference userRef = FirebaseDatabase.getInstance()
-                .getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUid);
-        userRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                mutableData.child(FirebaseDBContract.DATA)
-                        .child(FirebaseDBContract.User.CITY).setValue(citySelectedName);
-                mutableData.child(FirebaseDBContract.DATA)
-                        .child(FirebaseDBContract.User.COORD_LATITUDE).setValue(citySelectedCoord.latitude);
-                mutableData.child(FirebaseDBContract.DATA)
-                        .child(FirebaseDBContract.User.COORD_LONGITUDE).setValue(citySelectedCoord.longitude);
+        //Set City
+        String city = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid + "/"
+                + FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.CITY;
 
-                return Transaction.success(mutableData);
-            }
+        //Set Latitude
+        String latitude = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid + "/"
+                + FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.COORD_LATITUDE;
 
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean success, DataSnapshot dataSnapshot) {
-                // This action should perform AFTER updates success, not in SettingsFragment
-                if (success) {
-                    // Passing true makes update sharedPreferences and
-                    // perform loadEventsFromCity and loadFieldsFromCity
-                    FirebaseSync.loadAProfile(myUid, true);
-                }
-            }
-        });
+        //Set Longitude
+        String longitude = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid + "/"
+                + FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.COORD_LONGITUDE;
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(city, citySelectedName);
+        childUpdates.put(latitude, citySelectedCoord.latitude);
+        childUpdates.put(longitude, citySelectedCoord.longitude);
+
+        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful())
+                            // Passing true makes update sharedPreferences and
+                            // perform loadEventsFromCity and loadFieldsFromCity
+                            FirebaseSync.loadAProfile(myUid, true);
+                    }
+                });
     }
     public static void updateUserEmail(String myUid, String email) {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
