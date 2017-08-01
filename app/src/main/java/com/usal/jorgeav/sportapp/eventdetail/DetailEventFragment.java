@@ -186,227 +186,255 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         }
         switch (relation) {
             case DetailEventPresenter.RELATION_TYPE_OWNER:
-                if (mMenu != null) {
-                    mMenu.clear();
-                    getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
-                }
-                buttonUserRequests.setVisibility(View.VISIBLE);
-                buttonUserRequests.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //DONE ver peticiones para entrar en este evento
-                        if(mEventId != null) {
-                            Fragment fragment = UsersRequestsFragment.newInstance(mEventId);
-                            mFragmentManagementListener.initFragment(fragment, true);
-                        }
-                    }
-                });
-                buttonUnansweredInvitations.setVisibility(View.VISIBLE);
-                buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //DONE ver invitaciones enviadas y no contestadas
-                        if(mEventId != null) {
-                            Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
-                            mFragmentManagementListener.initFragment(fragment, true);
-                        }
-                    }
-                });
-                buttonSendInvitation.setVisibility(View.VISIBLE);
-                buttonSimulateParticipant.setVisibility(View.VISIBLE);
-                if (!isFull) {
-                    buttonSendInvitation.setEnabled(true);
-                    buttonSimulateParticipant.setEnabled(true);
-                    buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //DONE ver lista de amigos para enviarles invitaciones
-                            Fragment fragment = InviteUserFragment.newInstance(mEventId);
-                            mFragmentManagementListener.initFragment(fragment, true);
-                        }
-                    });
-                    buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //DONE añadir participante que no es usuario de la app
-                            if (mEventId != null
-                                    && getActivity() instanceof EventsActivity) { //Necessary for photo picker
-                                Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
-                                mFragmentManagementListener.initFragment(fragment, true);
-                            } else
-                                Log.e(TAG, "uiSetupForEventRelation: buttonSimulateParticipant: onClick: "
-                                        + "eventId " + mEventId + "\ngetActivity is EventsActivity? "
-                                        + (getActivity() instanceof EventsActivity));
-                        }
-                    });
-                } else {
-                    buttonSendInvitation.setEnabled(false);
-                    buttonSimulateParticipant.setEnabled(false);
-                }
-                buttonSendRequest.setVisibility(View.INVISIBLE);
+                setupForOwner();
                 break;
             case DetailEventPresenter.RELATION_TYPE_NONE:
-                if (mMenu != null) mMenu.clear();
-                buttonSendRequest.setVisibility(View.VISIBLE);
-                buttonSendRequest.setText("Enviar peticion de entrada");
-                if (!isFull) {
-                    buttonSendRequest.setEnabled(true);
-                    buttonSendRequest.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                        /*Enviar peticion de entrada*/
-                            mPresenter.sendEventRequest(mEventId);
-                        }
-                    });
-                } else {
-                    buttonSendRequest.setEnabled(false);
-                }
-                buttonSimulateParticipant.setVisibility(View.INVISIBLE);
-                buttonUserRequests.setVisibility(View.INVISIBLE);
-                buttonSendInvitation.setVisibility(View.INVISIBLE);
-                buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
+                setupForNone();
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
-                if (mMenu != null) mMenu.clear();
-                buttonSendRequest.setVisibility(View.VISIBLE);
-                buttonSendRequest.setText("Cancelar peticion de entrada");
-                buttonSendRequest.setEnabled(true);
-                buttonSendRequest.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        /*Canncelar peticion de entrada*/
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                        builder.setMessage("Seguro de que quieres eliminar la peticion?")
-                                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        mPresenter.cancelEventRequest(mEventId);
-                                    }
-                                })
-                                .setNegativeButton("No", null);
-                        builder.create().show();
-                    }
-                });
-                buttonSimulateParticipant.setVisibility(View.INVISIBLE);
-                buttonUserRequests.setVisibility(View.INVISIBLE);
-                buttonSendInvitation.setVisibility(View.INVISIBLE);
-                buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
+                setupForRequestSent();
                 break;
             case DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION:
-                if (mMenu != null) mMenu.clear();
-                buttonSendRequest.setVisibility(View.VISIBLE);
-                buttonSendRequest.setText("Contestar invitacion");
-                if (!isFull) {
-                    buttonSendRequest.setEnabled(true);
-                    buttonSendRequest.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                        /*Contestar invitacion*/
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                            builder.setMessage("Quieres asistir a este evento?")
-                                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            mPresenter.acceptEventInvitation(mEventId, mPresenter.getEventInvitation().getSender());
-                                        }
-                                    })
-                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            mPresenter.declineEventInvitation(mEventId, mPresenter.getEventInvitation().getSender());
-                                        }
-                                    });
-                            builder.create().show();
-                        }
-                    });
-                } else {
-                    buttonSendRequest.setEnabled(false);
-                }
-                buttonSimulateParticipant.setVisibility(View.INVISIBLE);
-                buttonUserRequests.setVisibility(View.INVISIBLE);
-                buttonSendInvitation.setVisibility(View.INVISIBLE);
-                buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
+                setupForInvitationReceived();
                 break;
             case DetailEventPresenter.RELATION_TYPE_ASSISTANT:
-                if (mMenu != null) mMenu.clear();
-                buttonSendRequest.setVisibility(View.VISIBLE);
-                buttonSendRequest.setText("Abandonar partido");
-                buttonSendRequest.setEnabled(true);
-                buttonSendRequest.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        /*Abandonar partido*/
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                        builder.setMessage("Quieres abandonar este partido?")
-                                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        mPresenter.quitEvent(mEventId);
-                                    }
-                                })
-                                .setNegativeButton("No", null);
-                        builder.create().show();
-                    }
-                });
-                buttonUnansweredInvitations.setVisibility(View.VISIBLE);
-                buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //DONE ver invitaciones enviadas y no contestadas
-                        if(mEventId != null) {
-                            Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
-                            mFragmentManagementListener.initFragment(fragment, true);
-                        }
-                    }
-                });
-                buttonSendInvitation.setVisibility(View.VISIBLE);
-                buttonSimulateParticipant.setVisibility(View.VISIBLE);
-                if (!isFull) {
-                    buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //DONE ver lista de amigos para enviarles invitaciones
-                            Fragment fragment = InviteUserFragment.newInstance(mEventId);
-                            mFragmentManagementListener.initFragment(fragment, true);
-                        }
-                    });
-                    buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //DONE añadir participante que no es usuario de la app
-                            if (mEventId != null
-                                    && getActivity() instanceof EventsActivity) { //Necessary for photo picker
-                                Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
-                                mFragmentManagementListener.initFragment(fragment, true);
-                            } else
-                                Log.e(TAG, "uiSetupForEventRelation: buttonSimulateParticipant: onClick: "
-                                        + "eventId " + mEventId + "\ngetActivity is EventsActivity? "
-                                        + (getActivity() instanceof EventsActivity));
-                        }
-                    });
-                } else {
-                    buttonSendInvitation.setEnabled(false);
-                    buttonSimulateParticipant.setEnabled(false);
-                }
+                setupForParticipant();
                 break;
             case DetailEventPresenter.RELATION_TYPE_BLOCKED:
-                if (mMenu != null) mMenu.clear();
-                buttonSendRequest.setVisibility(View.VISIBLE);
-                buttonSendRequest.setText("No puedes asistir");
-                buttonSendRequest.setEnabled(false);
-                buttonSimulateParticipant.setVisibility(View.INVISIBLE);
-                buttonUserRequests.setVisibility(View.INVISIBLE);
-                buttonSendInvitation.setVisibility(View.INVISIBLE);
-                buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
+                setupForBlocked();
                 break;
             default: case DetailEventPresenter.RELATION_TYPE_ERROR:
-                if (mMenu != null) mMenu.clear();
-                buttonSendRequest.setVisibility(View.VISIBLE);
-                buttonSendRequest.setText("Error");
-                buttonSendRequest.setEnabled(false);
-                buttonSimulateParticipant.setVisibility(View.INVISIBLE);
-                buttonUserRequests.setVisibility(View.INVISIBLE);
-                buttonSendInvitation.setVisibility(View.INVISIBLE);
-                buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
+                setupForError();
                 break;
         }
+    }
+
+    private void setupForError() {
+        if (mMenu != null) mMenu.clear();
+        buttonSendRequest.setVisibility(View.VISIBLE);
+        buttonSendRequest.setText("Error");
+        buttonSendRequest.setEnabled(false);
+        buttonSimulateParticipant.setVisibility(View.INVISIBLE);
+        buttonUserRequests.setVisibility(View.INVISIBLE);
+        buttonSendInvitation.setVisibility(View.INVISIBLE);
+        buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
+    }
+
+    private void setupForBlocked() {
+        if (mMenu != null) mMenu.clear();
+        buttonSendRequest.setVisibility(View.VISIBLE);
+        buttonSendRequest.setText("No puedes asistir");
+        buttonSendRequest.setEnabled(false);
+        buttonSimulateParticipant.setVisibility(View.INVISIBLE);
+        buttonUserRequests.setVisibility(View.INVISIBLE);
+        buttonSendInvitation.setVisibility(View.INVISIBLE);
+        buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
+    }
+
+    private void setupForParticipant() {
+        if (mMenu != null) mMenu.clear();
+        buttonSendRequest.setVisibility(View.VISIBLE);
+        buttonSendRequest.setText("Abandonar partido");
+        buttonSendRequest.setEnabled(true);
+        buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                        /*Abandonar partido*/
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                builder.setMessage("Quieres abandonar este partido?")
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mPresenter.quitEvent(mEventId);
+                            }
+                        })
+                        .setNegativeButton("No", null);
+                builder.create().show();
+            }
+        });
+        buttonUnansweredInvitations.setVisibility(View.VISIBLE);
+        buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //DONE ver invitaciones enviadas y no contestadas
+                if(mEventId != null) {
+                    Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
+                    mFragmentManagementListener.initFragment(fragment, true);
+                }
+            }
+        });
+        buttonSendInvitation.setVisibility(View.VISIBLE);
+        buttonSimulateParticipant.setVisibility(View.VISIBLE);
+        if (!isFull) {
+            buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //DONE ver lista de amigos para enviarles invitaciones
+                    Fragment fragment = InviteUserFragment.newInstance(mEventId);
+                    mFragmentManagementListener.initFragment(fragment, true);
+                }
+            });
+            buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //DONE añadir participante que no es usuario de la app
+                    if (mEventId != null
+                            && getActivity() instanceof EventsActivity) { //Necessary for photo picker
+                        Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
+                        mFragmentManagementListener.initFragment(fragment, true);
+                    } else
+                        Log.e(TAG, "uiSetupForEventRelation: buttonSimulateParticipant: onClick: "
+                                + "eventId " + mEventId + "\ngetActivity is EventsActivity? "
+                                + (getActivity() instanceof EventsActivity));
+                }
+            });
+        } else {
+            buttonSendInvitation.setEnabled(false);
+            buttonSimulateParticipant.setEnabled(false);
+        }
+    }
+
+    private void setupForInvitationReceived() {
+        if (mMenu != null) mMenu.clear();
+        buttonSendRequest.setVisibility(View.VISIBLE);
+        buttonSendRequest.setText("Contestar invitacion");
+        if (!isFull) {
+            buttonSendRequest.setEnabled(true);
+            buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                        /*Contestar invitacion*/
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                    builder.setMessage("Quieres asistir a este evento?")
+                            .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    mPresenter.acceptEventInvitation(mEventId, mPresenter.getEventInvitation().getSender());
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    mPresenter.declineEventInvitation(mEventId, mPresenter.getEventInvitation().getSender());
+                                }
+                            });
+                    builder.create().show();
+                }
+            });
+        } else {
+            buttonSendRequest.setEnabled(false);
+        }
+        buttonSimulateParticipant.setVisibility(View.INVISIBLE);
+        buttonUserRequests.setVisibility(View.INVISIBLE);
+        buttonSendInvitation.setVisibility(View.INVISIBLE);
+        buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
+    }
+
+    private void setupForRequestSent() {
+        if (mMenu != null) mMenu.clear();
+        buttonSendRequest.setVisibility(View.VISIBLE);
+        buttonSendRequest.setText("Cancelar peticion de entrada");
+        buttonSendRequest.setEnabled(true);
+        buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                        /*Canncelar peticion de entrada*/
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                builder.setMessage("Seguro de que quieres eliminar la peticion?")
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mPresenter.cancelEventRequest(mEventId);
+                            }
+                        })
+                        .setNegativeButton("No", null);
+                builder.create().show();
+            }
+        });
+        buttonSimulateParticipant.setVisibility(View.INVISIBLE);
+        buttonUserRequests.setVisibility(View.INVISIBLE);
+        buttonSendInvitation.setVisibility(View.INVISIBLE);
+        buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
+    }
+
+    private void setupForNone() {
+        if (mMenu != null) mMenu.clear();
+        buttonSendRequest.setVisibility(View.VISIBLE);
+        buttonSendRequest.setText("Enviar peticion de entrada");
+        if (!isFull) {
+            buttonSendRequest.setEnabled(true);
+            buttonSendRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                        /*Enviar peticion de entrada*/
+                    mPresenter.sendEventRequest(mEventId);
+                }
+            });
+        } else {
+            buttonSendRequest.setEnabled(false);
+        }
+        buttonSimulateParticipant.setVisibility(View.INVISIBLE);
+        buttonUserRequests.setVisibility(View.INVISIBLE);
+        buttonSendInvitation.setVisibility(View.INVISIBLE);
+        buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
+    }
+
+    private void setupForOwner() {
+        if (mMenu != null) {
+            mMenu.clear();
+            getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
+        }
+        buttonUserRequests.setVisibility(View.VISIBLE);
+        buttonUserRequests.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //DONE ver peticiones para entrar en este evento
+                if(mEventId != null) {
+                    Fragment fragment = UsersRequestsFragment.newInstance(mEventId);
+                    mFragmentManagementListener.initFragment(fragment, true);
+                }
+            }
+        });
+        buttonUnansweredInvitations.setVisibility(View.VISIBLE);
+        buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //DONE ver invitaciones enviadas y no contestadas
+                if(mEventId != null) {
+                    Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
+                    mFragmentManagementListener.initFragment(fragment, true);
+                }
+            }
+        });
+        buttonSendInvitation.setVisibility(View.VISIBLE);
+        buttonSimulateParticipant.setVisibility(View.VISIBLE);
+        if (!isFull) {
+            buttonSendInvitation.setEnabled(true);
+            buttonSimulateParticipant.setEnabled(true);
+            buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //DONE ver lista de amigos para enviarles invitaciones
+                    Fragment fragment = InviteUserFragment.newInstance(mEventId);
+                    mFragmentManagementListener.initFragment(fragment, true);
+                }
+            });
+            buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //DONE añadir participante que no es usuario de la app
+                    if (mEventId != null
+                            && getActivity() instanceof EventsActivity) { //Necessary for photo picker
+                        Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
+                        mFragmentManagementListener.initFragment(fragment, true);
+                    } else
+                        Log.e(TAG, "uiSetupForEventRelation: buttonSimulateParticipant: onClick: "
+                                + "eventId " + mEventId + "\ngetActivity is EventsActivity? "
+                                + (getActivity() instanceof EventsActivity));
+                }
+            });
+        } else {
+            buttonSendInvitation.setEnabled(false);
+            buttonSimulateParticipant.setEnabled(false);
+        }
+        buttonSendRequest.setVisibility(View.INVISIBLE);
     }
 
     @Override

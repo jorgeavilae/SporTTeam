@@ -82,7 +82,7 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".preferences.SettingsActivity"
-            android:label="@string/action_settings"
+            android:label="@string/settings"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
