@@ -988,7 +988,13 @@ public class FirebaseSync {
                             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                             if (currentUser != null && e.getOwner().equals(currentUser.getUid())
                                     && System.currentTimeMillis() > e.getDate()) {
-                                //TODO If the current user is the owner and it is a past event delete user requests and invitations
+                                for (DataSnapshot d : dataSnapshot.child(FirebaseDBContract.Event.USER_REQUESTS).getChildren())
+                                    FirebaseActions.cancelEventRequest(d.getKey(), e.getEvent_id(), e.getOwner());
+                                for (DataSnapshot d : dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS).getChildren()) {
+                                    Invitation invitation = d.getValue(Invitation.class);
+                                    if (invitation != null)
+                                        FirebaseActions.deleteInvitationToThisEvent(invitation.getSender(), e.getEvent_id(), invitation.getReceiver());
+                                }
                             }
 
                             ContentValues cv = UtilesContentValues.eventToContentValues(e);
@@ -1168,11 +1174,6 @@ public class FirebaseSync {
                             .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
 
                     List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
-//                    TODO Para que borrar si se va a update??
-//                    MyApplication.getAppContext().getContentResolver()
-//                            .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
-//                                    SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
-//                                    new String[]{field.getId()});
                     MyApplication.getAppContext().getContentResolver()
                             .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
                                     cvSports.toArray(new ContentValues[cvSports.size()]));
