@@ -1277,6 +1277,7 @@ public class FirebaseActions {
                     Log.d(TAG, "deleteSimulatedParticipant: onComplete: Transaction completed");
                 else
                     Log.e(TAG, "deleteSimulatedParticipant: onComplete: Transaction error "+databaseError);
+                FirebaseSync.loadAnEvent(eventId);
             }
         });
     }
