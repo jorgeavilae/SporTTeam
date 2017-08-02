@@ -381,6 +381,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                             builder.create().show();
                         }
                     });
+                    userSendInvitationButton.setVisibility(View.VISIBLE);
                     break;
                 case ProfilePresenter.RELATION_TYPE_I_RECEIVE_REQUEST:
                     userAddFriendButton.setText("Responder peticion");
@@ -403,6 +404,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                             builder.create().show();
                         }
                     });
+                    userSendInvitationButton.setVisibility(View.INVISIBLE);
                     break;
                 case ProfilePresenter.RELATION_TYPE_I_SEND_REQUEST:
                     userAddFriendButton.setText("Peticion Enviada");
@@ -413,6 +415,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                             mProfilePresenter.cancelFriendRequest(mUserUid);
                         }
                     });
+                    userSendInvitationButton.setVisibility(View.INVISIBLE);
                     break;
                 case ProfilePresenter.RELATION_TYPE_NONE:
                     userAddFriendButton.setText("Enviar peticion");
@@ -423,9 +426,11 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                             mProfilePresenter.sendFriendRequest(mUserUid);
                         }
                     });
+                    userSendInvitationButton.setVisibility(View.INVISIBLE);
                     break;
                 case ProfilePresenter.RELATION_TYPE_ERROR:
                     userAddFriendButton.setText("Error");
+                    userSendInvitationButton.setVisibility(View.INVISIBLE);
                     break;
             }
         }
