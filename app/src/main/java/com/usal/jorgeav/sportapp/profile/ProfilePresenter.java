@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.UploadTask;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
@@ -275,22 +276,31 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void updateUserPhoto(Uri photoCroppedUri) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (fUser == null) return;
-
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setPhotoUri(photoCroppedUri)
-                .build();
-        fUser.updateProfile(profileUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+        FirebaseActions.storePhotoOnFirebase(photoCroppedUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onSuccess(Void aVoid) {
-                if (mUserView.getActivityContext() instanceof ActivityContracts.ActionBarIconManagement)
-                    ((ActivityContracts.ActionBarIconManagement)mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // Handle successful uploads on complete
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                if (downloadUrl != null) {
+                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    if (fUser == null) return;
+
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setPhotoUri(downloadUrl)
+                            .build();
+                    fUser.updateProfile(profileUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            if (mUserView.getActivityContext() instanceof ActivityContracts.ActionBarIconManagement)
+                                ((ActivityContracts.ActionBarIconManagement) mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
+                        }
+                    });
+
+                    FirebaseActions.updateUserPhoto(fUser.getUid(), downloadUrl.toString());
+                    FirebaseSync.loadAProfile(fUser.getUid(), false);
+                }
             }
         });
-
-        FirebaseActions.updateUserPhoto(fUser.getUid(), photoCroppedUri.toString());
-        FirebaseSync.loadAProfile(fUser.getUid(), false);
     }
 
     @Override

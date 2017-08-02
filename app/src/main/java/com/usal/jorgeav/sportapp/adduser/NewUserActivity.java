@@ -471,7 +471,6 @@ public class NewUserActivity extends AppCompatActivity implements
                     cv.put(SportteamContract.EmailLoggedEntry.EMAIL, email);
                     getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
 
-                    //TODO repetir esto para otras fotos, no se estan subiendo a firebase
                     if (croppedImageUri != null) {
                         // Get a reference to store file at chat_photos/<FILENAME>
                         StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()
