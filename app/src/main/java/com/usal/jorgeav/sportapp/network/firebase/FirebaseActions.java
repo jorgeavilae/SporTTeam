@@ -640,7 +640,7 @@ public class FirebaseActions {
 
         database.updateChildren(childUpdates);
     }
-    public static void quitEvent(final String uid, final String eventId) {
+    public static void quitEvent(final String uid, final String eventId, final boolean deleteSimulatedUsers) {
         //Delete Assistant User to that Event (uid can be another user, not the current one)
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -652,15 +652,6 @@ public class FirebaseActions {
                 if (e == null) return Transaction.success(mutableData);
                 e.setEvent_id(eventId);
 
-                e.setEmpty_players(e.getEmpty_players() + 1);
-                e.deleteParticipant(uid);
-                // The event isn't complete because this quit
-                if (e.getEmpty_players() == 1) eventCompleteNotifications(false, e);
-
-                // Set ID to null to not store ID under data in Event's tree in Firebase.
-                e.setEvent_id(null);
-                mutableData.child(FirebaseDBContract.DATA).setValue(e);
-
                 //Delete Assistant Event to User
                 FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(uid)
                         .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).removeValue();
@@ -668,14 +659,32 @@ public class FirebaseActions {
                 // Delete invitations sent by User UID
                 for (MutableData mutableInvitation : mutableData.child(FirebaseDBContract.Event.INVITATIONS).getChildren()) {
                     Invitation invitation = mutableInvitation.getValue(Invitation.class);
-                    if (invitation != null) {
-                        if (invitation.getSender().equals(uid)) {
+                    if (invitation != null)
+                        if (invitation.getSender().equals(uid))
                             deleteInvitationToThisEvent(invitation.getSender(), invitation.getEvent(), invitation.getReceiver());
-                        }
-                    }
                 }
 
-                //TODO delete simulateduser?
+                int usersLeaving = 0;
+                // Delete simulated participants added by User UID
+                if (deleteSimulatedUsers)
+                    for (Map.Entry<String, SimulatedUser> entry : e.getSimulated_participants().entrySet()) {
+                        if (entry.getValue().getOwner().equals(uid)) {
+                            usersLeaving++;
+                            e.deleteSimulatedParticipant(entry.getKey());
+                        }
+                    }
+
+                // Delete participant
+                usersLeaving++;
+                e.deleteParticipant(uid);
+
+                // The event isn't complete because this quits
+                e.setEmpty_players(e.getEmpty_players() + usersLeaving);
+                if (e.getEmpty_players() == usersLeaving) eventCompleteNotifications(false, e);
+
+                // Set ID to null to not store ID under data in Event's tree in Firebase.
+                e.setEvent_id(null);
+                mutableData.child(FirebaseDBContract.DATA).setValue(e);
 
                 return Transaction.success(mutableData);
             }
@@ -1322,7 +1331,7 @@ public class FirebaseActions {
                             //Delete participant from User events participation
                             for (DataSnapshot eventParticipation : dataSnapshot.child(FirebaseDBContract.User.EVENTS_PARTICIPATION).getChildren()) {
                                 Log.d(TAG, "deleteCurrentUser: onDataChangeExecutor: quitEvent "+eventParticipation.getKey());
-                                quitEvent(myUser.getUid(), eventParticipation.getKey());
+                                quitEvent(myUser.getUid(), eventParticipation.getKey(), true);
                             }
 
                             //Delete Invitation Sent from User event invitations received

@@ -21,6 +21,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -321,17 +322,16 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     }
 
     @Override
-    public void quitEvent(String eventId) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+    public void quitEvent(String eventId, boolean deleteSimulatedParticipant) {
+        String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId))
-            FirebaseActions.quitEvent(myUid, eventId);
+            FirebaseActions.quitEvent(myUid, eventId, deleteSimulatedParticipant);
     }
 
     @Override
-    public void quitEvent(String userId, String eventId) {
+    public void quitEvent(String userId, String eventId, boolean deleteSimulatedParticipant) {
         if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(eventId))
-            FirebaseActions.quitEvent(userId, eventId);
+            FirebaseActions.quitEvent(userId, eventId, deleteSimulatedParticipant);
     }
 
     @Override

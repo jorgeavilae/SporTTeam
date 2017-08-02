@@ -45,8 +45,8 @@ public abstract class DetailEventContract {
         void acceptEventInvitation(String eventId, String sender);
         Invitation getEventInvitation();
         void declineEventInvitation(String eventId, String sender);
-        void quitEvent(String eventId);
-        void quitEvent(String userId, String eventId);
+        void quitEvent(String eventId, boolean deleteSimulatedParticipants);
+        void quitEvent(String userId, String eventId, boolean deleteSimulatedParticipant);
         void deleteSimulatedUser(String simulatedUserId, String eventId);
 
         void registerUserRelationObserver();

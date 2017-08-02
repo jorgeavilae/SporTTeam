@@ -244,7 +244,19 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 builder.setMessage("Quieres abandonar este partido?")
                         .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                mPresenter.quitEvent(mEventId);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                                builder.setMessage("Quieres que se borren los usuarios simulados por ti?")
+                                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                mPresenter.quitEvent(mEventId, true);
+                                            }
+                                        })
+                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                mPresenter.quitEvent(mEventId, false);
+                                            }
+                                        });
+                                builder.create().show();
                             }
                         })
                         .setNegativeButton("No", null);
@@ -589,7 +601,19 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 builder.setMessage("Quieres expulsarlo del evento?")
                         .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                mPresenter.quitEvent(uid, mEventId);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                                builder.setMessage("Quieres que se borren los usuarios simulados por este usuario?")
+                                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                mPresenter.quitEvent(uid, mEventId, true);
+                                            }
+                                        })
+                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                mPresenter.quitEvent(uid, mEventId, false);
+                                            }
+                                        });
+                                builder.create().show();
                             }
                         })
                         .setNegativeButton("No", null)
