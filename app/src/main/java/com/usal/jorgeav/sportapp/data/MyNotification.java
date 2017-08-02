@@ -93,14 +93,16 @@ public class MyNotification {
 
     @FirebaseDBContract.NotificationDataTypes
     private int longToNotificationDataType(Long type) {
-        if (type == (long) FirebaseDBContract.NOTIFICATION_TYPE_NONE)
-            return FirebaseDBContract.NOTIFICATION_TYPE_NONE;
-        if (type == (long) FirebaseDBContract.NOTIFICATION_TYPE_USER)
-            return FirebaseDBContract.NOTIFICATION_TYPE_USER;
-        if (type == (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT)
-            return FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-        if (type == (long) FirebaseDBContract.NOTIFICATION_TYPE_ALARM)
-            return FirebaseDBContract.NOTIFICATION_TYPE_ALARM;
+        if (type != null) {
+            if (type == (long) FirebaseDBContract.NOTIFICATION_TYPE_NONE)
+                return FirebaseDBContract.NOTIFICATION_TYPE_NONE;
+            if (type == (long) FirebaseDBContract.NOTIFICATION_TYPE_USER)
+                return FirebaseDBContract.NOTIFICATION_TYPE_USER;
+            if (type == (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT)
+                return FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
+            if (type == (long) FirebaseDBContract.NOTIFICATION_TYPE_ALARM)
+                return FirebaseDBContract.NOTIFICATION_TYPE_ALARM;
+        }
         return FirebaseDBContract.NOTIFICATION_TYPE_ERROR;
     }
 
