@@ -1210,7 +1210,7 @@ public class FirebaseActions {
                 e.setEvent_id(eventId);
 
                 String simulatedParticipantKey = eventRef
-                        .child(FirebaseDBContract.Event.PARTICIPANTS).push().getKey();
+                        .child(FirebaseDBContract.Event.SIMULATED_PARTICIPANTS).push().getKey();
                 if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToSimulatedParticipants(simulatedParticipantKey, su);

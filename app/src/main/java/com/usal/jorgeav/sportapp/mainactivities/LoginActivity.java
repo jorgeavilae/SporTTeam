@@ -230,7 +230,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void initLoadMyProfile() {
         final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         if (fUser != null) {
-            Log.d(TAG, "initLoadMyProfile: ");
+            Log.d(TAG, "initLoadMyProfile: "); //TODO isEmailVerified()
 //            if (fUser.isEmailVerified()) {
                 deleteContentProvider();
 

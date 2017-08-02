@@ -16,12 +16,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -29,6 +31,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -183,6 +186,17 @@ public class NewUserActivity extends AppCompatActivity implements
                 if (!hasFocus)
                     if (newUserPassword.getText().toString().length() < 6)
                         newUserPassword.setError("Necesita al menos 6 caracteres");
+            }
+        });
+        ImageButton visibleButton = (ImageButton) findViewById(R.id.new_user_visible_pass);
+        visibleButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
+                    newUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                else if (event.getAction() == MotionEvent.ACTION_UP)
+                    newUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                return true;
             }
         });
         newUserName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -457,6 +471,7 @@ public class NewUserActivity extends AppCompatActivity implements
                     cv.put(SportteamContract.EmailLoggedEntry.EMAIL, email);
                     getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
 
+                    //TODO repetir esto para otras fotos, no se estan subiendo a firebase
                     if (croppedImageUri != null) {
                         // Get a reference to store file at chat_photos/<FILENAME>
                         StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()

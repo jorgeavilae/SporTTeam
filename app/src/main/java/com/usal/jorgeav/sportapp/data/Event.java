@@ -127,8 +127,10 @@ public class Event implements Parcelable {
     }
 
     public void deleteParticipant(String userId) {
-        if (this.participants != null)
+        if (this.participants != null) {
             this.participants.remove(userId);
+            if (this.participants.size() == 0) this.participants = null;
+        }
     }
 
     public void addToSimulatedParticipants(String key, SimulatedUser participant) {
@@ -137,8 +139,10 @@ public class Event implements Parcelable {
     }
 
     public void deleteSimulatedParticipant(String key) {
-        if (this.simulated_participants != null)
+        if (this.simulated_participants != null) {
             this.simulated_participants.remove(key);
+            if (this.simulated_participants.size() == 0) this.simulated_participants = null;
+        }
     }
 
     // Need to be under DATA in Event's tree

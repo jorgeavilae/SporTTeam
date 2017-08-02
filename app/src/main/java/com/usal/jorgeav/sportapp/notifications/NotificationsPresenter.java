@@ -103,5 +103,7 @@ public class NotificationsPresenter implements NotificationsContract.Presenter {
 
         FirebaseActions.deleteAllNotifications(myUserID);
 
+        loadNotifications();
+
     }
 }

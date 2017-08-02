@@ -983,6 +983,14 @@ public class FirebaseSync {
                             }
                             e.setEvent_id(dataSnapshot.getKey());
 
+                            //If the current user is the owner and it is a past event
+                            // delete user requests and invitations
+                            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                            if (currentUser != null && e.getOwner().equals(currentUser.getUid())
+                                    && System.currentTimeMillis() > e.getDate()) {
+                                //TODO If the current user is the owner and it is a past event delete user requests and invitations
+                            }
+
                             ContentValues cv = UtilesContentValues.eventToContentValues(e);
                             MyApplication.getAppContext().getContentResolver()
                                     .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
@@ -990,12 +998,10 @@ public class FirebaseSync {
                             loadAField(e.getField_id());
 
                             // Load users participants with data
-                            if (e.getParticipants() != null)
-                                loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+                            loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
 
                             // Load simulated users participants with data
-                            if (e.getSimulated_participants() != null)
-                                loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
+                            loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
                         }
                     }
 
@@ -1029,12 +1035,10 @@ public class FirebaseSync {
                             loadAField(e.getField_id());
 
                             // Load users participants with data
-                            if (e.getParticipants() != null)
-                                loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+                            loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
 
                             // Load simulated users participants with data
-                            if (e.getSimulated_participants() != null)
-                                loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
+                            loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
 
                             //Notify
                             UtilesNotification.createNotification(MyApplication.getAppContext(), notification, e);
@@ -1095,16 +1099,17 @@ public class FirebaseSync {
                         SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
                         new String[]{eventId});
 
-        for (Map.Entry<String, Boolean> entry : participants.entrySet()) {
-            loadAProfile(entry.getKey(), false);
+        if (participants != null)
+            for (Map.Entry<String, Boolean> entry : participants.entrySet()) {
+                loadAProfile(entry.getKey(), false);
 
-            ContentValues cv = new ContentValues();
-            cv.put(SportteamContract.EventsParticipationEntry.USER_ID, entry.getKey());
-            cv.put(SportteamContract.EventsParticipationEntry.EVENT_ID, eventId);
-            cv.put(SportteamContract.EventsParticipationEntry.PARTICIPATES, entry.getValue() ? 1 : 0);
-            MyApplication.getAppContext().getContentResolver()
-                    .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cv);
-        }
+                ContentValues cv = new ContentValues();
+                cv.put(SportteamContract.EventsParticipationEntry.USER_ID, entry.getKey());
+                cv.put(SportteamContract.EventsParticipationEntry.EVENT_ID, eventId);
+                cv.put(SportteamContract.EventsParticipationEntry.PARTICIPATES, entry.getValue() ? 1 : 0);
+                MyApplication.getAppContext().getContentResolver()
+                        .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cv);
+            }
     }
     private static void loadSimulatedParticipants(String eventId, Map<String, SimulatedUser> simulatedParticipants) {
         MyApplication.getAppContext().getContentResolver()
@@ -1112,17 +1117,18 @@ public class FirebaseSync {
                         SportteamContract.SimulatedParticipantEntry.EVENT_ID + " = ? ",
                         new String[]{eventId});
 
-        for (Map.Entry<String, SimulatedUser> entry : simulatedParticipants.entrySet()) {
-            ContentValues cv = new ContentValues();
-            cv.put(SportteamContract.SimulatedParticipantEntry.EVENT_ID, eventId);
-            cv.put(SportteamContract.SimulatedParticipantEntry.SIMULATED_USER_ID, entry.getKey());
-            cv.put(SportteamContract.SimulatedParticipantEntry.ALIAS, entry.getValue().getAlias());
-            cv.put(SportteamContract.SimulatedParticipantEntry.PROFILE_PICTURE, entry.getValue().getProfile_picture());
-            cv.put(SportteamContract.SimulatedParticipantEntry.AGE, entry.getValue().getAge());
-            cv.put(SportteamContract.SimulatedParticipantEntry.OWNER, entry.getValue().getOwner());
-            MyApplication.getAppContext().getContentResolver()
-                    .insert(SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI, cv);
-        }
+        if (simulatedParticipants != null)
+            for (Map.Entry<String, SimulatedUser> entry : simulatedParticipants.entrySet()) {
+                ContentValues cv = new ContentValues();
+                cv.put(SportteamContract.SimulatedParticipantEntry.EVENT_ID, eventId);
+                cv.put(SportteamContract.SimulatedParticipantEntry.SIMULATED_USER_ID, entry.getKey());
+                cv.put(SportteamContract.SimulatedParticipantEntry.ALIAS, entry.getValue().getAlias());
+                cv.put(SportteamContract.SimulatedParticipantEntry.PROFILE_PICTURE, entry.getValue().getProfile_picture());
+                cv.put(SportteamContract.SimulatedParticipantEntry.AGE, entry.getValue().getAge());
+                cv.put(SportteamContract.SimulatedParticipantEntry.OWNER, entry.getValue().getOwner());
+                MyApplication.getAppContext().getContentResolver()
+                        .insert(SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI, cv);
+            }
     }
 
     public static void loadFieldsFromCity(String city, boolean shouldResetFieldsData) {
@@ -1237,12 +1243,10 @@ public class FirebaseSync {
                                     loadAField(e.getField_id());
 
                                     // Load users participants with data
-                                    if (e.getParticipants() != null)
-                                        loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+                                    loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
 
                                     // Load simulated users participants with data
-                                    if (e.getSimulated_participants() != null)
-                                        loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
+                                    loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
                                 }
                             }
                             FirebaseActions.checkAlarmsForNotifications();

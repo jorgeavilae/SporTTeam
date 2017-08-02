@@ -56,7 +56,6 @@ public class SportteamSyncUtils {
         if (context instanceof LoginActivity) loginActivity = (LoginActivity) context;
         FirebaseSync.syncFirebaseDatabase(loginActivity);
 
-        // TODO: 06/07/2017 inciar aunque no se haya inciado la app porque cuando se fuerza la detencion ya no se poduce este Job
         /* This method create its task to synchronize Firebase data periodically. */
         scheduleFirebaseJobDispatcherSync(context);
     }
