@@ -848,13 +848,15 @@ public final class SportteamContract {
                         + " AND " + EventRequestsEntry.SENDER_ID_TABLE_PREFIX + " = ? )";
         /* WHERE for CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
         public static final String WHERE_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND =
-                "( " + EventEntry.OWNER_TABLE_PREFIX + " = ? OR p1." + EventsParticipationEntry.USER_ID + " = ? ) "
+                EventEntry.DATE_TABLE_PREFIX + " > ? "
+                    + "AND ( " + EventEntry.OWNER_TABLE_PREFIX + " = ? OR p1." + EventsParticipationEntry.USER_ID + " = ? ) "
                     + "AND p2." + EventsParticipationEntry.EVENT_ID + " IS NULL "
                     + "AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
                     + "AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " IS NULL ";
         /* Arguments fro JOIN and WHERE in CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
         public static String[] queryMyEventsWithoutRelationWithFriendArguments(String ownerId, String friendId) {
-            return new String[]{friendId, friendId, friendId, ownerId, ownerId};
+            String currentTime = String.valueOf(System.currentTimeMillis());
+            return new String[]{friendId, friendId, friendId, currentTime, ownerId, ownerId};
         }
         /* SELECT
          * FROM event
@@ -894,18 +896,20 @@ public final class SportteamContract {
                         + " AND " + EventRequestsEntry.SENDER_ID_TABLE_PREFIX + " = ? )";
         /* WHERE for CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
         public static final String WHERE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME =
-                EventEntry.CITY_TABLE_PREFIX + " = ? "
+                EventEntry.DATE_TABLE_PREFIX + " > ? "
+                        + "AND " + EventEntry.CITY_TABLE_PREFIX + " = ? "
                         + "AND " + EventEntry.OWNER_TABLE_PREFIX + " <> ? "
                         + "AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
                         + "AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
                         + "AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " IS NULL ";
         /* Arguments for JOIN and WHERE in CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
         public static String[] queryCityEventsWithoutRelationWithMeArguments(String myUserId, String city) {
-            return new String[]{myUserId, myUserId, myUserId, city, myUserId};
+            String currentTime = String.valueOf(System.currentTimeMillis());
+            return new String[]{myUserId, myUserId, myUserId, currentTime, city, myUserId};
         }
 
         /* The base CONTENT_URI used to query the event table for events
-           in city without relation with me AND for a sport from the content provider */
+           in city without relation with me AND with a sport from the content provider */
         public static final Uri CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME)
                 .build();
@@ -913,7 +917,8 @@ public final class SportteamContract {
         /* Already defined TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS */
         /* WHERE for CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
         public static final String WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME =
-                EventEntry.CITY_TABLE_PREFIX + " = ? "
+                EventEntry.DATE_TABLE_PREFIX + " > ? "
+                        + "AND " + EventEntry.CITY_TABLE_PREFIX + " = ? "
                         + "AND " + EventEntry.SPORT_TABLE_PREFIX + " = ? "
                         + "AND " + EventEntry.OWNER_TABLE_PREFIX + " <> ? "
                         + "AND " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
@@ -921,7 +926,8 @@ public final class SportteamContract {
                         + "AND " + EventRequestsEntry.EVENT_ID_TABLE_PREFIX + " IS NULL ";
         /* Arguments for JOIN and WHERE in CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI */
         public static String[] queryCitySportEventsWithoutRelationWithMeArguments(String myUserId, String city, String sportId) {
-            return new String[]{myUserId, myUserId, myUserId, city, sportId, myUserId};
+            String currentTime = String.valueOf(System.currentTimeMillis());
+            return new String[]{myUserId, myUserId, myUserId, currentTime, city, sportId, myUserId};
         }
 
 
