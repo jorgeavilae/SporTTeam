@@ -214,22 +214,6 @@ public class BaseActivity extends AppCompatActivity
         mToggle.onConfigurationChanged(newConfig);
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        super.onOptionsItemSelected(item);
-//        if (item.getItemId() == R.id.action_settings) {
-//            Log.d(TAG, "onOptionsItemSelected: Settings");
-//            return true;
-//        }
-//        return false;
-//    }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
