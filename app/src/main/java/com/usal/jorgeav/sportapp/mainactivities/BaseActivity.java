@@ -220,8 +220,10 @@ public class BaseActivity extends AppCompatActivity
         Log.d(TAG, "onNavigationItemSelected: "+item.getTitle());
 
         if (id == R.id.nav_sign_out) {
-            getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
-            mDisplayedFragment = null;
+            if (mDisplayedFragment != null) {
+                getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
+                mDisplayedFragment = null;
+            }
             mAuth.signOut();
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);

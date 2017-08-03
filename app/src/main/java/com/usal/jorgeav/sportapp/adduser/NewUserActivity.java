@@ -75,8 +75,6 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.yalantis.ucrop.UCrop;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -588,7 +586,7 @@ public class NewUserActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void initFragment(@NotNull Fragment fragment, boolean isOnBackStack) {
+    public void initFragment(@NonNull Fragment fragment, boolean isOnBackStack) {
         hideContent();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
