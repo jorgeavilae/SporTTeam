@@ -119,16 +119,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 String emailAddress = mEmailView.getText().toString();
-
-                FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, "Email sent.");
+                if (!TextUtils.isEmpty(emailAddress) && isEmailValid(emailAddress))
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "Email sent.");
+                                    }
                                 }
-                            }
-                        });
+                            });
+                else
+                    Toast.makeText(LoginActivity.this, R.string.error_invalid_email,
+                            Toast.LENGTH_SHORT).show();
             }
         });
 
