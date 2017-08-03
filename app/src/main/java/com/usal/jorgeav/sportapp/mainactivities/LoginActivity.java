@@ -28,7 +28,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,14 +80,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                if (id == R.id.login || id == EditorInfo.IME_ACTION_GO) {
                     attemptLogin();
                     return true;
                 }
                 return false;
             }
         });
-        ImageButton visibleButton = (ImageButton) findViewById(R.id.login_visible_pass);
+        ImageView visibleButton = (ImageView) findViewById(R.id.login_visible_pass);
         visibleButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -108,14 +107,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 attemptLogin();
             }
         });
-        Button mNewUserButton = (Button) findViewById(R.id.new_user_button);
+        TextView mNewUserButton = (TextView) findViewById(R.id.new_user_button);
         mNewUserButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 startNewUserForResult();
             }
         });
-        Button mResetPassword = (Button) findViewById(R.id.reset_password_button);
+        TextView mResetPassword = (TextView) findViewById(R.id.reset_password_button);
         mResetPassword.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -217,6 +216,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             if (!task.isSuccessful()) {
                                 showProgress(false);
                                 Log.e(TAG, "signInWithEmailAndPassword: onComplete: ", task.getException());
+                                mPasswordView.setError(getString(R.string.error_incorrect_password));
                                 Toast.makeText(LoginActivity.this, R.string.error_incorrect_password,
                                         Toast.LENGTH_SHORT).show();
                             } else {
