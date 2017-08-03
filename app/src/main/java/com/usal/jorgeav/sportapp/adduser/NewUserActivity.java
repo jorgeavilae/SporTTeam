@@ -87,7 +87,7 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
+//TODO dividir en activity y fragment
 public class NewUserActivity extends AppCompatActivity implements
         ActivityContracts.FragmentManagement,
         SportsListFragment.OnSportsSelected {
