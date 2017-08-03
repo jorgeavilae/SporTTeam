@@ -9,13 +9,13 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adapters.SportSpinnerAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
@@ -128,12 +128,11 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
             if (!field.getSport().containsKey(sportId))
                 sportsLeft.add(sportId);
 
-        ArrayAdapter<String> sportsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, sportsLeft);
-        sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         final Spinner sportSpinner = (Spinner) view.findViewById(R.id.add_sport_dialog_sport);
-        sportSpinner.setAdapter(sportsAdapter);
+        sportSpinner.setAdapter(new SportSpinnerAdapter(this, R.layout.sport_spinner_item, sportsLeft));
 
         final RatingBar ratingBar = (RatingBar) view.findViewById(R.id.add_sport_dialog_rate);
+
         dialog.setPositiveButton("Añadir", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

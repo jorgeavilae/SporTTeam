@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/spinner_item_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal">
+    <ImageView
+        android:id="@+id/sport_spinner_item_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="@dimen/spinner_item_margin"
+        android:layout_marginLeft="@dimen/spinner_item_margin"
+        android:layout_gravity="center"
+        tools:src="@drawable/basketball"/>
+
+    <TextView
+        android:id="@+id/sport_spinner_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spinner_item_margin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
+        tools:text="@string/basketball" />
+
+</LinearLayout>
