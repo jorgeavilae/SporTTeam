@@ -6,36 +6,38 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_nav_profile"
             android:title="@string/profile" />
         <item
             android:id="@+id/nav_notifications"
-            android:icon="@drawable/ic_menu_send"
+            android:icon="@drawable/ic_nav_notifications"
             android:title="@string/notifications" />
         <item
             android:id="@+id/nav_events"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_nav_events"
             android:title="@string/events" />
         <item
             android:id="@+id/nav_friends"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_nav_friends"
             android:title="@string/friends" />
         <item
             android:id="@+id/nav_alarms"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_nav_alarms"
             android:title="@string/alarms" />
         <item
             android:id="@+id/nav_fields"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_nav_fields"
             android:title="@string/fields" />
     </group>
     <group
         android:id="@+id/nav_bottom">
         <item
             android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_nav_settings"
             android:title="@string/settings" />
         <item
             android:id="@+id/nav_sign_out"
+            android:icon="@drawable/ic_nav_sign_out"
             android:title="@string/action_sign_out" />
     </group>
 
