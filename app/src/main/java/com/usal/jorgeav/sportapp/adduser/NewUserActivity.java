@@ -113,6 +113,7 @@ public class NewUserActivity extends AppCompatActivity implements
     Toolbar newUserToolbar;
     @BindView(R.id.new_user_progressbar)
     ProgressBar newUserProgressbar;
+
     @BindView(R.id.new_user_content)
     FrameLayout newUserContent;
     @BindView(R.id.new_user_email)
@@ -155,7 +156,7 @@ public class NewUserActivity extends AppCompatActivity implements
 
         setSupportActionBar(newUserToolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Add User");
+            getSupportActionBar().setTitle(getString(R.string.new_user_title));
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             newUserToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -653,7 +654,7 @@ public class NewUserActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        newUserToolbar.setTitle("Add User");
+        newUserToolbar.setTitle(getString(R.string.new_user_title));
         hideSoftKeyboard();
 
         if (this.sports != null && sportsInitialize) {

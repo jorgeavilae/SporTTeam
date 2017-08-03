@@ -101,8 +101,8 @@
             android:name=".adduser.NewUserActivity"
             android:parentActivityName=".mainactivities.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden">
+            android:theme="@style/AppTheme.NoActionBar.Login"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.usal.jorgeav.sportapp.mainactivities.LoginActivity" />
