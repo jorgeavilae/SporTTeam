@@ -3,6 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="edittext_icon_below">8dp</dimen>
+    <dimen name="image_button_size">32dp</dimen>
+    <dimen name="image_button_margin">8dp</dimen>
 
     <!-- Navigation View metrics -->
     <dimen name="nav_header_profile_picture_below">2dp</dimen>

@@ -28,10 +28,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -124,12 +122,12 @@ public class NewUserActivity extends AppCompatActivity implements
     EditText newUserName;
     @BindView(R.id.new_user_age)
     EditText newUserAge;
+    @BindView(R.id.new_user_city)
+    AutoCompleteTextView newUserAutocompleteCity;
     @BindView(R.id.new_user_photo)
     ImageView newUserPhoto;
     @BindView(R.id.new_user_photo_button)
-    Button newUserPhotoButton;
-    @BindView(R.id.new_user_city)
-    AutoCompleteTextView newUserAutocompleteCity;
+    ImageView newUserPhotoButton;
 
     boolean sportsInitialize;
     ArrayList<Sport> sports;
@@ -187,7 +185,7 @@ public class NewUserActivity extends AppCompatActivity implements
                         newUserPassword.setError("Necesita al menos 6 caracteres");
             }
         });
-        ImageButton visibleButton = (ImageButton) findViewById(R.id.new_user_visible_pass);
+        ImageView visibleButton = (ImageView) findViewById(R.id.new_user_visible_pass);
         visibleButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

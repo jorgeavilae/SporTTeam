@@ -47,6 +47,11 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
 
+    <!-- Strings for new user -->
+    <string name="prompt_name">Name</string>
+    <string name="prompt_age">Age</string>
+    <string name="prompt_city">City</string>
+
     <!--Strings for notification messages-->
     <string name="notification_title_friend_request_received">New friend request</string>
     <string name="notification_title_friend_request_accepted">New friend!!</string>
