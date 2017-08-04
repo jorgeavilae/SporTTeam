@@ -8,8 +8,7 @@ import android.widget.TextView;
 import com.github.tibolte.agendacalendarview.render.EventRenderer;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
-
-import java.util.Locale;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 /**
  * Created by Jorge Avila on 28/07/2017.
@@ -23,16 +22,16 @@ public class MyEventRenderer extends EventRenderer<MyCalendarEvent> {
         ImageView imageViewEventSport = (ImageView) view.findViewById(R.id.event_item_calendar_sport);
         TextView textViewEventPlace = (TextView) view.findViewById(R.id.event_item_calendar_place);
         TextView textViewEventName = (TextView) view.findViewById(R.id.event_item_calendar_name);
-        TextView textViewEventTotal = (TextView) view.findViewById(R.id.event_item_calendar_total);
-        TextView textViewEventEmpty = (TextView) view.findViewById(R.id.event_item_calendar_empty);
+        ImageView imageViewEventPlayer = (ImageView) view.findViewById(R.id.event_item_calendar_player);
 
         int sportIcon = MyApplication.getAppContext().getResources()
                 .getIdentifier(event.getSport_id(), "drawable", MyApplication.getAppContext().getPackageName());
         imageViewEventSport.setImageResource(sportIcon);
         textViewEventPlace.setText(event.getField_name());
         textViewEventName.setText(event.getTitle());
-        textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d", event.getTotal_players()));
-        textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d", event.getEmpty_players()));
+        int playerIcon = Utiles.getPlayerIconFromResource(event.getEmpty_players(), event.getTotal_players());
+        if (playerIcon != -1)
+            imageViewEventPlayer.setImageResource(playerIcon);
     }
 
     @Override

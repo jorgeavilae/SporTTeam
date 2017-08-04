@@ -9,6 +9,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
@@ -102,5 +103,22 @@ public class Utiles {
                 myUserDatabase.setEmail(fUserEmail);
             }
         }
+    }
+
+    public static int getPlayerIconFromResource(long empty_players, long total_players) {
+        if (empty_players >= 0 && total_players >= 0 && empty_players <= total_players) {
+            float proportion = ((float)empty_players / (float)total_players) * 100;
+            if (proportion == 0)
+                return R.drawable.logo_full;
+            else if (proportion > 0 && proportion < 35)
+                return R.drawable.logo_almost_full;
+            else if (proportion >= 35 && proportion < 65)
+                return R.drawable.logo_half;
+            else if (proportion >= 65 && proportion < 100)
+                return R.drawable.logo_almost_empty;
+            else if (proportion == 100)
+                return R.drawable.logo_empty;
+        }
+        return -1;
     }
 }
