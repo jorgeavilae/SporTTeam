@@ -83,8 +83,8 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE_ADDRESS_TO_RETRIEVE || requestCode == REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT) {
             if (resultCode == RESULT_OK) {
-                // Expect a Field where add a new Sport,
-                // or an address (MyPlace) add a new Field
+                // Expect a Field where to add a new Sport,
+                // or an address (MyPlace) where to add a new Field
                 if (data.hasExtra(MapsActivity.FIELD_SELECTED_EXTRA)) {
                     Field field = data.getParcelableExtra(MapsActivity.FIELD_SELECTED_EXTRA);
                     mFieldId = field.getId();
@@ -103,7 +103,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
 
                     //When select a place from FieldsFragment's addFieldButton
                     if (requestCode == REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT) {
-                        //Select sports and later, in retrieveFields(), start new Field fragment
+                        //Select sports and later, in retrieveFields(), start new Field fragment flow
                         Fragment fragment = SportsListFragment.newInstance("", null);
                         initFragment(fragment, true);
                     } else { //When edit Field's place from NewFieldFragment's button
@@ -112,41 +112,41 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                     }
                 }
             } else {
-                Toast.makeText(this, "You should select a place", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_should_select_place), Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void startDialogToAddSport(final Field field) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        View view = getLayoutInflater().inflate(R.layout.add_sport_dialog, null);
-
+        // Prepare list
         List<String> sportsResources = Arrays.asList(getResources().getStringArray(R.array.sport_id_values));
         ArrayList<String> sportsLeft = new ArrayList<>();
         for (String sportId : sportsResources)
             if (!field.getSport().containsKey(sportId))
                 sportsLeft.add(sportId);
 
+        // Prepare view
+        View view = getLayoutInflater().inflate(R.layout.add_sport_dialog, null);
         final Spinner sportSpinner = (Spinner) view.findViewById(R.id.add_sport_dialog_sport);
         sportSpinner.setAdapter(new SportSpinnerAdapter(this, R.layout.sport_spinner_item, sportsLeft));
-
         final RatingBar ratingBar = (RatingBar) view.findViewById(R.id.add_sport_dialog_rate);
 
-        dialog.setPositiveButton("Añadir", new DialogInterface.OnClickListener() {
+        // Prepare dialog
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(getString(R.string.add_sport_to_field_dialog_title));
+        dialog.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String sportId = sportSpinner.getSelectedItem().toString();
                 float punctuation = ratingBar.getRating();
                 FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double)punctuation, 1L));
-                Toast.makeText(FieldsActivity.this, "Sport añadido", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FieldsActivity.this, getString(R.string.toast_add_sport_success), Toast.LENGTH_SHORT).show();
                 if (mDisplayedFragment != null) mDisplayedFragment.resetBackStack();
             }
         });
-        dialog.setNegativeButton("Cancelar", null);
-
-        dialog.setTitle("Add Sport to this Field");
+        dialog.setNegativeButton(android.R.string.cancel, null);
         dialog.setView(view);
+
         dialog.show();
     }
 

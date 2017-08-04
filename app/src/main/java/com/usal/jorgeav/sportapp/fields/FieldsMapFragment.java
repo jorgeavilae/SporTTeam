@@ -152,9 +152,6 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
                     .icon(BitmapDescriptorFactory.defaultMarker(hue)));
             m.setTag(i);
             mMarkersList.add(m);
-            Log.d(TAG, "onMapReady: "+i);
-            Log.d(TAG, "onMapReady: "+m);
-            Log.d(TAG, "onMapReady: "+f);
         }
 
         // Move Camera
@@ -190,7 +187,6 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
             marker.showInfoWindow();
 
-            Log.d(TAG, "onMarkerClick: " + f);
             return true;
         }
         return false;
@@ -207,7 +203,6 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
             mFragmentManagementListener.initFragment(newFragment, true);
 
             marker.hideInfoWindow();
-            Log.d(TAG, "onInfoWindowClick: " + f);
         }
     }
 

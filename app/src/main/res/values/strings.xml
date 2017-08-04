@@ -89,7 +89,15 @@
     <string name="pref_password_dialog">New password</string>
     <string name="pref_reset_title">Delete User data</string>
     <string name="pref_delete_title">Delete User</string>
+
+
     <string name="new_user_title">New User</string>
+    <string name="pick_sport">Pick a sport</string>
+    <string name="punctuation">Punctuation</string>
+    <string name="add_sport_to_field_dialog_title">Add a sport to this field</string>
+    <string name="add">Add</string>
+    <string name="toast_add_sport_success">Sport added</string>
+    <string name="toast_should_select_place">You should select a place</string>
 
 
 </resources>
