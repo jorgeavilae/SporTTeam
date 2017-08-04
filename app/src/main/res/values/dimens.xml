@@ -18,6 +18,7 @@
     <dimen name="dialog_vertical_margin_inner">16dp</dimen>
 
     <!-- List item metrics -->
+    <dimen name="list_item_icon_size">40dp</dimen>
     <dimen name="list_item_vertical_margin">8dp</dimen>
     <dimen name="list_item_horizontal_margin">16dp</dimen>
 
@@ -28,5 +29,13 @@
     <dimen name="nav_header_horizontal_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="status_bar_height">24dp</dimen>
+
+
+    <!-- This layout should set marginLeft to not be overlap by dayView -->
+    <!-- https://github.com/Tibolte/AgendaCalendarView/issues/3 -->
+    <!-- "In AgendaEventView's layout, the marginLeft is 75dp(paddingLeft 15dp + marginLeft 55dp + marginLeft 5dp)." -->
+    <dimen name="agenda_calendar_item_margin_start">70dp</dimen>
+    <dimen name="agenda_calendar_item_margin_end">16dp</dimen>
+    <dimen name="agenda_calendar_item_margin_vertical">4dp</dimen>
 
 </resources>

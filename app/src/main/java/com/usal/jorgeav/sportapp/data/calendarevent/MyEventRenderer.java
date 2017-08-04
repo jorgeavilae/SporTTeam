@@ -37,10 +37,6 @@ public class MyEventRenderer extends EventRenderer<MyCalendarEvent> {
 
     @Override
     public int getEventLayout() {
-        /* This layout should set marginLeft to not be overlap by dayView */
-        /* https://github.com/Tibolte/AgendaCalendarView/issues/3
-        * "In AgendaEventView's layout, the marginLeft is 75dp(paddingLeft 15dp + marginLeft 55dp + marginLeft 5dp)."
-        */
         return R.layout.event_item_calendar;
     }
 
