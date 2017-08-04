@@ -479,6 +479,14 @@ public final class SportteamLoader {
                 new String[]{fieldId},
                 null);
     }
+    public static Cursor simpleQueryFieldIdName(Context context, String fieldId) {
+        return context.getContentResolver().query(
+                SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                new String[]{SportteamContract.FieldEntry.NAME_TABLE_PREFIX},
+                SportteamContract.FieldEntry.FIELD_ID + " = ? ",
+                new String[]{fieldId},
+                null);
+    }
 
     public static Cursor simpleQueryAlarmId(Context context, String alarmId) {
         return context.getContentResolver().query(

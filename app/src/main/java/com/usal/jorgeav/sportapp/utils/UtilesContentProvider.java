@@ -251,6 +251,21 @@ public class UtilesContentProvider {
             Log.e(TAG, "getFieldSportFromContentProvider: Error with Sports of Field "+fieldId);
         return result;
     }
+    public static String getFieldNameFromContentProvider(@NonNull String fieldId) {
+        if (TextUtils.isEmpty(fieldId)) return null;
+        Cursor cursorField = SportteamLoader.simpleQueryFieldIdName(MyApplication.getAppContext(), fieldId);
+        if (cursorField != null) {
+            if (cursorField.getCount() == 1 && cursorField.moveToFirst()) {
+                return cursorField.getString(0);
+            } else if (cursorField.getCount() == 0)
+                Log.e(TAG, "getFieldNameFromContentProvider: Field with ID "+fieldId+" not found");
+            else
+                Log.e(TAG, "getFieldNameFromContentProvider: More than one field with ID "+fieldId+" ("+cursorField.getCount()+")");
+            cursorField.close();
+        } else
+            Log.e(TAG, "getFieldNameFromContentProvider: Error with field "+fieldId);
+        return null;
+    }
 
     public static Alarm getAlarmFromContentProvider(@NonNull String alarmId) {
         Alarm a = null;

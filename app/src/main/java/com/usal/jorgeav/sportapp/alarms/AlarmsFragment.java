@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.AlarmAdapter;
@@ -47,7 +48,7 @@ public class AlarmsFragment extends BaseFragment implements AlarmsContract.View,
         super.onCreate(savedInstanceState);
 
         mAlarmsPresenter = new AlarmsPresenter(this);
-        mAlarmsRecyclerAdapter = new AlarmAdapter(null, this);
+        mAlarmsRecyclerAdapter = new AlarmAdapter(null, this, Glide.with(this));
 
     }
 

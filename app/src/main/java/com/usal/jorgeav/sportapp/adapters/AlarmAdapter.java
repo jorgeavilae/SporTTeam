@@ -3,17 +3,20 @@ package com.usal.jorgeav.sportapp.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestManager;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
-
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,10 +30,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     private Cursor mDataset;
     private OnAlarmitemClickListener mClickListener;
+    // To use Glide with hosted Fragment Context (https://stackoverflow.com/a/32887693/4235666)
+    private final RequestManager mGlide;
 
-    public AlarmAdapter(Cursor mDataset, OnAlarmitemClickListener clickListener) {
+    public AlarmAdapter(Cursor mDataset, OnAlarmitemClickListener clickListener, RequestManager glide) {
         this.mDataset = mDataset;
         this.mClickListener = clickListener;
+        this.mGlide = glide;
     }
 
     @Override
@@ -45,19 +51,26 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(AlarmAdapter.ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
+            // Set icon
+            String sportId = mDataset.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
+            int sportDrawableResource = MyApplication.getAppContext().getResources()
+                    .getIdentifier(sportId , "drawable", MyApplication.getAppContext().getPackageName());
+            mGlide.load(sportDrawableResource).into(holder.imageViewAlarmSport);
+
+            // Set title
+            String fieldName = UtilesContentProvider.getFieldNameFromContentProvider(
+                    mDataset.getString(SportteamContract.AlarmEntry.COLUMN_FIELD));
+            String city = mDataset.getString(SportteamContract.AlarmEntry.COLUMN_CITY);
+            if (fieldName == null) fieldName = "";
+            if (!TextUtils.isEmpty(fieldName)) fieldName = fieldName + ", ";
+            holder.textViewAlarmPlace.setText(fieldName + city);
+
+            // Set subtitle
             Long dateFrom = mDataset.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_FROM);
-            Long dateTo = mDataset.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_TO);
-            int totalPlFrom = mDataset.getInt(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_FROM);
-            int totalPlTo = mDataset.getInt(SportteamContract.AlarmEntry.COLUMN_TOTAL_PLAYERS_TO);
-            int emptyPlFrom = mDataset.getInt(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_FROM);
-            int emptyPlTo = mDataset.getInt(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO);
-            holder.textViewAlarmId.setText(mDataset.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID));
-            holder.textViewAlarmSport.setText(mDataset.getString(SportteamContract.AlarmEntry.COLUMN_SPORT));
-            holder.textViewAlarmPlace.setText(mDataset.getString(SportteamContract.AlarmEntry.COLUMN_FIELD));
-            holder.textViewAlarmDateFrom.setText(UtilesTime.millisToDateString(dateFrom));
-            holder.textViewAlarmDateTo.setText(UtilesTime.millisToDateString(dateTo));
-            holder.textViewAlarmTotal.setText(String.format(Locale.getDefault(), "%2d/%2d",totalPlFrom,totalPlTo));
-            holder.textViewAlarmEmpty.setText(String.format(Locale.getDefault(), "%2d/%2d",emptyPlFrom,emptyPlTo));
+            holder.textViewAlarmDateFrom.setText(UtilesTime.millisToDateStringShort(dateFrom));
+            String dateToStr = UtilesTime.millisToDateStringShort(mDataset.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_TO));
+            if (TextUtils.isEmpty(dateToStr)) dateToStr = MyApplication.getAppContext().getString(R.string.forever);
+            holder.textViewAlarmDateTo.setText(dateToStr);
         }
     }
 
@@ -77,20 +90,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
-        @BindView(R.id.alarm_item_id)
-        TextView textViewAlarmId;
         @BindView(R.id.alarm_item_sport)
-        TextView textViewAlarmSport;
+        ImageView imageViewAlarmSport;
         @BindView(R.id.alarm_item_place)
         TextView textViewAlarmPlace;
         @BindView(R.id.alarm_item_date_from)
         TextView textViewAlarmDateFrom;
         @BindView(R.id.alarm_item_date_to)
         TextView textViewAlarmDateTo;
-        @BindView(R.id.alarm_item_total)
-        TextView textViewAlarmTotal;
-        @BindView(R.id.alarm_item_empty)
-        TextView textViewAlarmEmpty;
 
         public ViewHolder(View itemView) {
             super(itemView);

@@ -47,7 +47,8 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
         if (isValidSport(sport))
             a.setSport_id(sport);
         else {
-            Toast.makeText(mNewAlarmView.getActivityContext(), "Error en el deporte", Toast.LENGTH_SHORT).show();
+            String toastMsg = mNewAlarmView.getActivityContext().getString(R.string.toast_sport_invalid);
+            Toast.makeText(mNewAlarmView.getActivityContext(), toastMsg, Toast.LENGTH_SHORT).show();
             return;
         }
 

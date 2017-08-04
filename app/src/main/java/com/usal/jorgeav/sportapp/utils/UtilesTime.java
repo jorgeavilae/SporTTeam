@@ -58,4 +58,11 @@ public class UtilesTime {
         sdf.setTimeZone(TimeZone.getTimeZone("GTM")); /* https://stackoverflow.com/a/14400005/4235666 */
         return sdf.format(new Date(millis));
     }
+
+    public static String millisToDateStringShort(long millis) {
+        if (millis <= 0) return "";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MMMM", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("GTM")); /* https://stackoverflow.com/a/14400005/4235666 */
+        return sdf.format(new Date(millis));
+    }
 }

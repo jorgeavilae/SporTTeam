@@ -4,14 +4,23 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="label_margin">8dp</dimen>
 
+    <!-- Inside Spinner -->
     <dimen name="spinner_item_margin">8dp</dimen>
 
+    <!-- EditText right Button -->
     <dimen name="edittext_icon_below">8dp</dimen>
     <dimen name="image_button_size">32dp</dimen>
     <dimen name="image_button_margin">8dp</dimen>
 
+    <!-- Dialogs metrics -->
     <dimen name="dialog_horizontal_margin">24dp</dimen>
     <dimen name="dialog_vertical_margin">24dp</dimen>
+    <dimen name="dialog_vertical_margin_inner">16dp</dimen>
+
+    <!-- List item metrics -->
+    <dimen name="list_item_vertical_margin">8dp</dimen>
+    <dimen name="list_item_horizontal_margin">16dp</dimen>
+
 
     <!-- Navigation View metrics -->
     <dimen name="nav_header_profile_picture_below">2dp</dimen>
