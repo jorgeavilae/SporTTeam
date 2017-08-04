@@ -54,6 +54,9 @@
     <string name="prompt_name">Name</string>
     <string name="prompt_age">Age</string>
     <string name="prompt_city">City</string>
+    <string name="error_not_unique_name">This name is already in use</string>
+    <string name="error_incorrect_age">Age should be greater than 12 and less than 100</string>
+    <string name="error_invalid_age">Not a valid number</string>
 
     <!--Strings for notification messages-->
     <string name="notification_title_friend_request_received">New friend request</string>
@@ -94,7 +97,7 @@
     <string name="pref_delete_title">Delete User</string>
 
     <!-- Fields Activity -->
-    <string name="add_sport_to_field_dialog_title">Add a sport to this field</string>
+    <string name="dialog_title_add_sport_to_field">Add a sport to this field</string>
     <string name="pick_sport">Pick a sport</string>
     <string name="punctuation">Punctuation</string>
     <string name="toast_add_sport_success">Sport added</string>
@@ -107,6 +110,10 @@
     <string name="from">From:\u0020</string>
     <string name="until">Until:\u0020</string>
     <string name="forever">Forever</string>
+
+    <!-- Profile Fragment -->
+    <string name="dialog_title_change_name">Change name</string>
+    <string name="dialog_title_change_age">Change age</string>
 
 
 </resources>

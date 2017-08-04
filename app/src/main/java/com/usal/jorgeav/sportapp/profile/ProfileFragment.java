@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -221,21 +222,26 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     }
 
     private void showDialogForEditName() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edittext_dialog, null);
-        builder.setView(dialogView);
-
-        final EditText editText = (EditText) dialogView.findViewById(R.id.edittext_dialog_edittext);
+        // Prepare View
+        final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edit_text_change_dialog, null);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.change_dialog_text);
         editText.setText(userName.getText());
+        editText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME|InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        editText.setHint(R.string.prompt_name);
 
-        builder.setTitle("Change Name")
-                .setPositiveButton("Accept", null)
-                .setNegativeButton("Cancel", null);
+        // Create dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setView(dialogView);
+        builder.setTitle(getString(R.string.dialog_title_change_name))
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null);
         final AlertDialog alertDialog = builder.create();
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
                 Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+
+                // Setting clickListener like this prevent from automatic dismiss Dialog
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -243,7 +249,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    editText.setError("Name already exist");
+                                    editText.setError(getString(R.string.error_not_unique_name));
                                 } else {
                                     mProfilePresenter.updateUserName(editText.getText().toString());
                                     alertDialog.dismiss();
@@ -267,21 +273,26 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         alertDialog.show();
     }
     private void showDialogForEditAge() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edittext_dialog, null);
-        builder.setView(dialogView);
-
-        final EditText editText = (EditText) dialogView.findViewById(R.id.edittext_dialog_edittext);
+        // Prepare View
+        final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edit_text_change_dialog, null);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.change_dialog_text);
         editText.setText(userAge.getText());
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editText.setHint(R.string.prompt_age);
 
-        builder.setTitle("Change Age")
-                .setPositiveButton("Accept", null)
-                .setNegativeButton("Cancel", null);
+        // Create dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setView(dialogView);
+        builder.setTitle(getString(R.string.dialog_title_change_age))
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null);
         final AlertDialog alertDialog = builder.create();
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
                 Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+
+                // Setting clickListener like this prevent from automatic dismiss Dialog
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -291,9 +302,9 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                                 mProfilePresenter.updateUserAge(age);
                                 alertDialog.dismiss();
                             } else
-                                editText.setError("Age should be greater than 12 and less than 100");
+                                editText.setError(getString(R.string.error_incorrect_age));
                         } else
-                            editText.setError("Not a valid number");
+                            editText.setError(getString(R.string.error_invalid_age));
                     }
                 });
             }

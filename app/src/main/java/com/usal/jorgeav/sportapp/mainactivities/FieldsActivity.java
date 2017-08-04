@@ -133,7 +133,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
 
         // Prepare dialog
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.add_sport_to_field_dialog_title));
+        dialog.setTitle(getString(R.string.dialog_title_add_sport_to_field));
         dialog.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
