@@ -30,8 +30,7 @@ public class MyEventRenderer extends EventRenderer<MyCalendarEvent> {
         textViewEventPlace.setText(event.getField_name());
         textViewEventName.setText(event.getTitle());
         int playerIcon = Utiles.getPlayerIconFromResource(event.getEmpty_players(), event.getTotal_players());
-        if (playerIcon != -1)
-            imageViewEventPlayer.setImageResource(playerIcon);
+        if (playerIcon != -1) imageViewEventPlayer.setImageResource(playerIcon);
     }
 
     @Override

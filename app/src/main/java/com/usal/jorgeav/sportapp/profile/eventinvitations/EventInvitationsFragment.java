@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
@@ -43,7 +44,7 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
         setHasOptionsMenu(true);
 
         mEventInvitationsPresenter = new EventInvitationsPresenter(this);
-        mEventsRecyclerAdapter = new EventsAdapter(null, this);
+        mEventsRecyclerAdapter = new EventsAdapter(null, this, Glide.with(this));
     }
 
     @Override

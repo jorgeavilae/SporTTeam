@@ -9,7 +9,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/event_item_calendar_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/agenda_calendar_item_margin_vertical"
         android:layout_marginEnd="@dimen/agenda_calendar_item_margin_end"
         android:layout_marginLeft="@dimen/agenda_calendar_item_margin_start"
@@ -32,29 +32,37 @@
 
         <TextView
             android:id="@+id/event_item_calendar_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/list_item_horizontal_margin"
             android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+            android:layout_marginRight="@dimen/list_item_horizontal_margin"
             android:layout_marginStart="@dimen/list_item_horizontal_margin"
             android:layout_marginTop="@dimen/list_item_vertical_margin"
+            android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintLeft_toRightOf="@+id/event_item_calendar_sport"
+            app:layout_constraintRight_toLeftOf="@+id/event_item_calendar_player"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Name of the event" />
 
 
         <TextView
             android:id="@+id/event_item_calendar_place"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/list_item_vertical_margin"
+            android:layout_marginEnd="@dimen/list_item_horizontal_margin"
             android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+            android:layout_marginRight="@dimen/list_item_horizontal_margin"
             android:layout_marginStart="@dimen/list_item_horizontal_margin"
+            android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/event_item_calendar_sport"
+            app:layout_constraintRight_toLeftOf="@+id/event_item_calendar_player"
             tools:text="Name of field, City" />
 
         <ImageView
@@ -62,8 +70,8 @@
             android:layout_width="@dimen/list_item_icon_two_size"
             android:layout_height="@dimen/list_item_icon_two_size"
             android:layout_marginBottom="@dimen/list_item_vertical_margin"
-            android:layout_marginRight="@dimen/list_item_horizontal_margin"
             android:layout_marginEnd="@dimen/list_item_horizontal_margin"
+            android:layout_marginRight="@dimen/list_item_horizontal_margin"
             android:layout_marginTop="@dimen/list_item_vertical_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"

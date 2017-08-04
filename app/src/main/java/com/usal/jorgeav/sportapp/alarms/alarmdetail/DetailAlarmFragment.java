@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
@@ -119,7 +120,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         if (getArguments() != null && getArguments().containsKey(BUNDLE_ALARM_ID))
             mAlarmId = getArguments().getString(BUNDLE_ALARM_ID);
 
-        eventsAdapter = new EventsAdapter(null, this);
+        eventsAdapter = new EventsAdapter(null, this, Glide.with(this));
         eventsCoincidenceList.setAdapter(eventsAdapter);
         eventsCoincidenceList.setHasFixedSize(true);
         eventsCoincidenceList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));

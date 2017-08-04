@@ -3,114 +3,189 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/events_item_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        tools:text="ididididididididdid"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/events_item_name"
-        android:layout_marginLeft="24dp" />
-
-    <TextView
+    <ImageView
         android:id="@+id/events_item_sport"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="@dimen/list_item_icon_size"
+        android:layout_height="@dimen/list_item_icon_size"
+        android:layout_marginBottom="@dimen/list_item_vertical_margin"
+        android:layout_marginLeft="@dimen/list_item_vertical_margin"
+        android:layout_marginStart="@dimen/list_item_vertical_margin"
+        android:layout_marginTop="@dimen/list_item_vertical_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        tools:text="Sport"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp" />
-
-    <TextView
-        android:id="@+id/events_item_place"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        tools:text="Place"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/events_item_sport" />
+        tools:src="@drawable/basketball" />
 
     <TextView
         android:id="@+id/events_item_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/list_item_horizontal_margin"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
+        android:layout_marginStart="@dimen/list_item_horizontal_margin"
+        android:layout_marginTop="@dimen/list_item_vertical_margin"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         app:layout_constraintLeft_toRightOf="@+id/events_item_sport"
+        app:layout_constraintRight_toLeftOf="@+id/events_item_player"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Name" />
+        tools:text="Name of the event" />
+
+
+    <TextView
+        android:id="@+id/events_item_place"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/list_item_vertical_margin"
+        android:layout_marginEnd="@dimen/list_item_vertical_margin"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_vertical_margin"
+        android:layout_marginStart="@dimen/list_item_horizontal_margin"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/events_item_sport"
+        app:layout_constraintRight_toLeftOf="@+id/events_item_date"
+        tools:text="Name of field, City" />
 
     <TextView
         android:id="@+id/events_item_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        app:layout_constraintLeft_toRightOf="@+id/events_item_place"
-        tools:text="da/te/1992"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/events_item_sport" />
-
-    <TextView
-        android:id="@+id/events_item_owner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/events_item_date"
-        app:layout_constraintTop_toBottomOf="@+id/events_item_sport"
-        tools:text="ti:me" />
-
-    <TextView
-        android:id="@+id/events_item_total"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:text="10"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/events_item_empty"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.516"
-        tools:text="10" />
-
-    <TextView
-        android:id="@+id/events_item_empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
-        android:text="10"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.516"
-        tools:text="10" />
-
-    <View
         android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimary"
-        app:layout_constraintLeft_toRightOf="parent"
-        android:layout_marginRight="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/list_item_vertical_margin"
+        android:layout_marginEnd="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/events_item_player"
+        tools:text="10 Agosto 13:00" />
+
+    <ImageView
+        android:id="@+id/events_item_player"
+        android:layout_width="@dimen/list_item_icon_two_size"
+        android:layout_height="@dimen/list_item_icon_two_size"
+        android:layout_marginBottom="@dimen/list_item_vertical_margin"
+        android:layout_marginEnd="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
+        android:layout_marginTop="@dimen/list_item_vertical_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        tools:layout_editor_absoluteY="0dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/logo_half" />
+
+    <!--<TextView-->
+    <!--android:id="@+id/events_item_id"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="24dp"-->
+    <!--android:layout_marginStart="24dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--app:layout_constraintLeft_toRightOf="@+id/events_item_name"-->
+    <!--app:layout_constraintTop_toTopOf="parent"-->
+    <!--tools:text="ididididididididdid" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/events_item_sport"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="16dp"-->
+    <!--android:layout_marginStart="16dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent"-->
+    <!--tools:text="Sport" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/events_item_place"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="16dp"-->
+    <!--android:layout_marginStart="16dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/events_item_sport"-->
+    <!--tools:text="Place" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/events_item_name"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="24dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--app:layout_constraintLeft_toRightOf="@+id/events_item_sport"-->
+    <!--app:layout_constraintTop_toTopOf="parent"-->
+    <!--tools:text="Name" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/events_item_date"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="24dp"-->
+    <!--android:layout_marginStart="24dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--app:layout_constraintLeft_toRightOf="@+id/events_item_place"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/events_item_sport"-->
+    <!--tools:text="da/te/1992" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/events_item_owner"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--app:layout_constraintLeft_toRightOf="@+id/events_item_date"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/events_item_sport"-->
+    <!--tools:text="ti:me" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/events_item_total"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginRight="8dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:text="10"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintRight_toLeftOf="@+id/events_item_empty"-->
+    <!--app:layout_constraintTop_toTopOf="parent"-->
+    <!--app:layout_constraintVertical_bias="0.516"-->
+    <!--tools:text="10" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/events_item_empty"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:layout_marginEnd="16dp"-->
+    <!--android:layout_marginRight="16dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:text="10"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent"-->
+    <!--app:layout_constraintVertical_bias="0.516"-->
+    <!--tools:text="10" />-->
+
+    <!--<View-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:layout_marginEnd="16dp"-->
+    <!--android:layout_marginLeft="16dp"-->
+    <!--android:layout_marginRight="16dp"-->
+    <!--android:layout_marginStart="16dp"-->
+    <!--android:background="@color/colorPrimary"-->
+    <!--app:layout_constraintLeft_toRightOf="parent"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--tools:layout_editor_absoluteY="0dp" />-->
 
 </android.support.constraint.ConstraintLayout>

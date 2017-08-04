@@ -40,7 +40,7 @@ public class UtilesTime {
 
     public static String millisToDateTimeString(long millis) {
         if (millis <= 0) return "";
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MMMM/yy hh:mm", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM\thh:mm", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("GTM")); /* https://stackoverflow.com/a/14400005/4235666 */
         return sdf.format(new Date(millis));
     }

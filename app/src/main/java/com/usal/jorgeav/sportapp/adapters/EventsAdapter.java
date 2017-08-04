@@ -3,17 +3,21 @@ package com.usal.jorgeav.sportapp.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestManager;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
-
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,10 +31,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     private Cursor mDataset;
     private OnEventItemClickListener mClickListener;
+    // To use Glide with hosted Fragment Context (https://stackoverflow.com/a/32887693/4235666)
+    private final RequestManager mGlide;
 
-    public EventsAdapter(Cursor mDataset, OnEventItemClickListener clickListener) {
+    public EventsAdapter(Cursor mDataset, OnEventItemClickListener clickListener, RequestManager glide) {
         this.mDataset = mDataset;
         this.mClickListener = clickListener;
+        this.mGlide = glide;
     }
 
     @Override
@@ -45,17 +52,30 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
+            // Set icon
+            String sportId = mDataset.getString(SportteamContract.EventEntry.COLUMN_SPORT);
+            int sportIcon = MyApplication.getAppContext().getResources()
+                    .getIdentifier(sportId, "drawable", MyApplication.getAppContext().getPackageName());
+            mGlide.load(sportIcon).into(holder.imageViewEventSport);
+
+            // Set title
+            holder.textViewEventName.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_NAME));
+
+            // Set subtitle
+            String fieldName = UtilesContentProvider.getFieldNameFromContentProvider(
+                    mDataset.getString(SportteamContract.EventEntry.COLUMN_FIELD));
+            String city = mDataset.getString(SportteamContract.EventEntry.COLUMN_CITY);
+            if (fieldName == null) fieldName = "";
+            if (!TextUtils.isEmpty(fieldName)) fieldName = fieldName + ", ";
+            holder.textViewEventPlace.setText(fieldName +""+ city);
             long date = mDataset.getLong(SportteamContract.EventEntry.COLUMN_DATE);
+            holder.textViewEventDate.setText(UtilesTime.millisToDateTimeString(date));
+
+            // Set icon two
             int totalPl = mDataset.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
             int emptyPl = mDataset.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
-            holder.textViewEventId.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
-            holder.textViewEventSport.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_SPORT));
-            holder.textViewEventPlace.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_FIELD));
-            holder.textViewEventName.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_NAME));
-            holder.textViewEventDate.setText(UtilesTime.millisToDateTimeString(date));
-            holder.textViewEventOwner.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_OWNER));
-            holder.textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d",totalPl));
-            holder.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d",emptyPl));
+            int playerIcon = Utiles.getPlayerIconFromResource(emptyPl, totalPl);
+            if (playerIcon != -1) mGlide.load(playerIcon).into(holder.imageViewEventPlayer);
         }
     }
 
@@ -75,22 +95,16 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
-        @BindView(R.id.events_item_id)
-        TextView textViewEventId;
         @BindView(R.id.events_item_sport)
-        TextView textViewEventSport;
-        @BindView(R.id.events_item_place)
-        TextView textViewEventPlace;
+        ImageView imageViewEventSport;
         @BindView(R.id.events_item_name)
         TextView textViewEventName;
+        @BindView(R.id.events_item_place)
+        TextView textViewEventPlace;
         @BindView(R.id.events_item_date)
         TextView textViewEventDate;
-        @BindView(R.id.events_item_owner)
-        TextView textViewEventOwner;
-        @BindView(R.id.events_item_total)
-        TextView textViewEventTotal;
-        @BindView(R.id.events_item_empty)
-        TextView textViewEventEmpty;
+        @BindView(R.id.events_item_player)
+        ImageView imageViewEventPlayer;
 
         public ViewHolder(View itemView) {
             super(itemView);

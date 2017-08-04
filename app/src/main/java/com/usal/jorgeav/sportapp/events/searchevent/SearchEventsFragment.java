@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
@@ -59,7 +60,7 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         setHasOptionsMenu(true);
 
         mSearchEventsPresenter = new SearchEventsPresenter(this);
-        mEventsRecyclerAdapter = new EventsAdapter(null, this);
+        mEventsRecyclerAdapter = new EventsAdapter(null, this, Glide.with(this));
     }
 
     @Override
