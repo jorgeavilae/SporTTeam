@@ -56,8 +56,11 @@ public class MapMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
         ImageView imageViewFieldSport1 = (ImageView) view.findViewById(R.id.field_marker_sport1);
         imageViewFieldSport1.setVisibility(View.GONE);
         ImageView imageViewFieldSport2 = (ImageView) view.findViewById(R.id.field_marker_sport2);
-        imageViewFieldSport1.setVisibility(View.GONE);
+        imageViewFieldSport2.setVisibility(View.GONE);
+        ImageView imageViewFieldSport3 = (ImageView) view.findViewById(R.id.field_marker_sport3);
+        imageViewFieldSport3.setVisibility(View.GONE);
 
+        // Set first sport icon
         if (field.getSport() != null && field.getSport().size() > 0) {
             ArrayList<SportCourt> sports = new ArrayList<>(field.getSport().values());
 
@@ -66,14 +69,24 @@ public class MapMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
             imageViewFieldSport1.setImageResource(sport1Icon);
             imageViewFieldSport1.setVisibility(View.VISIBLE);
 
+            // Set second sport icon
             if (sports.size() > 1) {
                 int sport2Icon = MyApplication.getAppContext().getResources().getIdentifier(
                         sports.get(1).getSport_id() , "drawable", MyApplication.getAppContext().getPackageName());
                 imageViewFieldSport2.setImageResource(sport2Icon);
                 imageViewFieldSport2.setVisibility(View.VISIBLE);
-            }
 
-            if (sports.size() > 2) textViewSportMore.setVisibility(View.VISIBLE);
+                // Set third sport icon
+                if (sports.size() > 2) {
+                    int sport3Icon = MyApplication.getAppContext().getResources().getIdentifier(
+                            sports.get(2).getSport_id() , "drawable", MyApplication.getAppContext().getPackageName());
+                    imageViewFieldSport3.setImageResource(sport3Icon);
+                    imageViewFieldSport3.setVisibility(View.VISIBLE);
+
+                    // Set dots if there are more than 3
+                    if (sports.size() > 3) textViewSportMore.setVisibility(View.VISIBLE);
+                }
+            }
         }
 
     }

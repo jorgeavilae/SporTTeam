@@ -7,6 +7,11 @@
     <!-- Inside Spinner -->
     <dimen name="spinner_item_margin">8dp</dimen>
 
+    <!-- Map marker -->
+    <dimen name="marker_vertical_margin_inner">8dp</dimen>
+    <dimen name="marker_horizontal_margin_inner">8dp</dimen>
+    <dimen name="text_size_body1">14sp</dimen>
+
     <!-- EditText right Button -->
     <dimen name="edittext_icon_below">8dp</dimen>
     <dimen name="image_button_size">32dp</dimen>
