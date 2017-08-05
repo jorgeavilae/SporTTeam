@@ -9,6 +9,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
@@ -103,6 +104,11 @@ public class Utiles {
                 myUserDatabase.setEmail(fUserEmail);
             }
         }
+    }
+
+    public static int getSportIconFromResource(String sportId) {
+        return MyApplication.getAppContext().getResources()
+                .getIdentifier(sportId, "drawable", MyApplication.getAppContext().getPackageName());
     }
 
     public static int getPlayerIconFromResource(long empty_players, long total_players) {

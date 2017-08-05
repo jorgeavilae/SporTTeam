@@ -453,11 +453,27 @@ public final class SportteamLoader {
                 new String[]{userId},
                 null);
     }
+    public static Cursor simpleQueryUserIdPicture(Context context, String userId) {
+        return context.getContentResolver().query(
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                new String[]{SportteamContract.UserEntry.PHOTO_TABLE_PREFIX},
+                SportteamContract.UserEntry.USER_ID + " = ? ",
+                new String[]{userId},
+                null);
+    }
 
     public static Cursor simpleQueryEventId(Context context, String eventId) {
         return context.getContentResolver().query(
                 SportteamContract.EventEntry.CONTENT_EVENT_URI,
                 SportteamContract.EventEntry.EVENT_COLUMNS,
+                SportteamContract.EventEntry.EVENT_ID + " = ? ",
+                new String[]{eventId},
+                null);
+    }
+    public static Cursor simpleQueryEventIdSport(Context context, String eventId) {
+        return context.getContentResolver().query(
+                SportteamContract.EventEntry.CONTENT_EVENT_URI,
+                new String[]{SportteamContract.EventEntry.SPORT_TABLE_PREFIX},
                 SportteamContract.EventEntry.EVENT_ID + " = ? ",
                 new String[]{eventId},
                 null);
@@ -493,6 +509,14 @@ public final class SportteamLoader {
                 SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
                 SportteamContract.AlarmEntry.ALARM_COLUMNS,
                 SportteamContract.AlarmEntry.ALARM_ID + " = ?",
+                new String[]{alarmId},
+                null);
+    }
+    public static Cursor simpleQueryAlarmIdSport(Context context, String alarmId) {
+        return context.getContentResolver().query(
+                SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
+                new String[]{SportteamContract.AlarmEntry.SPORT_TABLE_PREFIX},
+                SportteamContract.AlarmEntry.ALARM_ID + " = ? ",
                 new String[]{alarmId},
                 null);
     }

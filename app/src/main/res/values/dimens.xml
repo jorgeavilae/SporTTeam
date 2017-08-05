@@ -27,6 +27,7 @@
     <dimen name="list_item_icon_two_size">24dp</dimen>
     <dimen name="list_item_vertical_margin">8dp</dimen>
     <dimen name="list_item_horizontal_margin">16dp</dimen>
+    <dimen name="list_item_three_lines_height">76dp</dimen>
 
 
     <!-- Navigation View metrics -->

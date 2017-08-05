@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.BaseFragment;
@@ -59,7 +60,7 @@ public class NotificationsFragment extends BaseFragment implements Notifications
         setHasOptionsMenu(true);
 
         mPresenter = new NotificationsPresenter(this);
-        myNotificationsAdapter = new MyNotificationsAdapter(null, this);
+        myNotificationsAdapter = new MyNotificationsAdapter(null, this, Glide.with(this));
     }
 
     @Override

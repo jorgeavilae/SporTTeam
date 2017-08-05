@@ -1,15 +1,27 @@
 package com.usal.jorgeav.sportapp.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.MyNotification;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -27,11 +39,13 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
 
     private LinkedHashMap<String, MyNotification> mDataset;
     private OnMyNotificationItemClickListener mClickListener;
+    private RequestManager mGlide;
 
-    public MyNotificationsAdapter(Map<String, MyNotification> mDataset, OnMyNotificationItemClickListener listener) {
+    public MyNotificationsAdapter(Map<String, MyNotification> mDataset, OnMyNotificationItemClickListener listener, RequestManager glide) {
         if (mDataset != null) this.mDataset = new LinkedHashMap<>(mDataset);
         else this.mDataset = null;
         this.mClickListener = listener;
+        this.mGlide = glide;
     }
 
     @Override
@@ -44,11 +58,63 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
     }
 
     @Override
-    public void onBindViewHolder(MyNotificationsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final MyNotificationsAdapter.ViewHolder holder, int position) {
         Map.Entry<String, MyNotification> entry = getEntry(position);
         if (entry != null) {
             MyNotification n = entry.getValue();
-            holder.textViewNotificationId.setText(entry.getKey());
+
+            // Set icon
+            switch (n.getData_type()) {
+                case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
+                    String alarmSportId = UtilesContentProvider.getAlarmSportFromContentProvider(n.getExtra_data_one());
+                    if (alarmSportId != null && !TextUtils.isEmpty(alarmSportId)) {
+                        int alarmSportIdResource = Utiles.getSportIconFromResource(alarmSportId);
+                        mGlide.load(alarmSportIdResource).into(holder.imageViewNotificationIcon);
+                    } else
+                        mGlide.load(R.drawable.ic_logo)
+                                .placeholder(R.drawable.ic_logo)
+                                .into(holder.imageViewNotificationIcon);
+                    break;
+                case FirebaseDBContract.NOTIFICATION_TYPE_ERROR:
+                    mGlide.load(R.drawable.ic_logo)
+                            .placeholder(R.drawable.ic_logo)
+                            .into(holder.imageViewNotificationIcon);
+                    break;
+                case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
+                    String eventSportId = UtilesContentProvider.getEventSportFromContentProvider(n.getExtra_data_one());
+                    if (eventSportId != null && !TextUtils.isEmpty(eventSportId)) {
+                        int eventSportIdResource = Utiles.getSportIconFromResource(eventSportId);
+                        mGlide.load(eventSportIdResource).into(holder.imageViewNotificationIcon);
+                    } else
+                        mGlide.load(R.drawable.ic_logo)
+                                .placeholder(R.drawable.ic_logo)
+                                .into(holder.imageViewNotificationIcon);
+                    break;
+                case FirebaseDBContract.NOTIFICATION_TYPE_NONE:
+                    mGlide.load(R.drawable.ic_logo)
+                            .placeholder(R.drawable.ic_logo)
+                            .into(holder.imageViewNotificationIcon);
+                    break;
+                case FirebaseDBContract.NOTIFICATION_TYPE_USER:
+                    String userPicture = UtilesContentProvider.getUserPictureFromContentProvider(n.getExtra_data_one());
+                    if (userPicture != null && !TextUtils.isEmpty(userPicture))
+                        mGlide.load(Uri.parse(userPicture)).asBitmap().into(new BitmapImageViewTarget(holder.imageViewNotificationIcon) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(MyApplication.getAppContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                holder.imageViewNotificationIcon.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+                    else
+                        mGlide.load(R.drawable.profile_picture_placeholder)
+                                .placeholder(R.drawable.profile_picture_placeholder)
+                                .into(holder.imageViewNotificationIcon);
+                    break;
+            }
+
+            // Set title and subtitle
             holder.textViewNotificationTitle.setText(n.getTitle());
             holder.textViewNotificationMessage.setText(n.getMessage());
         }
@@ -80,8 +146,8 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
-        @BindView(R.id.notification_item_id)
-        TextView textViewNotificationId;
+        @BindView(R.id.notification_item_icon)
+        ImageView imageViewNotificationIcon;
         @BindView(R.id.notification_item_title)
         TextView textViewNotificationTitle;
         @BindView(R.id.notification_item_message)

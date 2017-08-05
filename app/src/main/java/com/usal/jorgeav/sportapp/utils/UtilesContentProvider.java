@@ -136,6 +136,21 @@ public class UtilesContentProvider {
             Log.e(TAG, "getUserFromContentProvider: Error with user "+userId);
         return u;
     }
+    public static String getUserPictureFromContentProvider(@NonNull String userId) {
+        if (TextUtils.isEmpty(userId)) return null;
+        Cursor c = SportteamLoader.simpleQueryUserIdPicture(MyApplication.getAppContext(), userId);
+        if (c != null) {
+            if (c.getCount() == 1 && c.moveToFirst()) {
+                return c.getString(0);
+            } else if (c.getCount() == 0)
+                Log.e(TAG, "getUserPictureFromContentProvider: User with ID "+userId+" not found");
+            else
+                Log.e(TAG, "getUserPictureFromContentProvider: More than one user with ID "+userId+" ("+c.getCount()+")");
+            c.close();
+        } else
+            Log.e(TAG, "getUserPictureFromContentProvider: Error with user "+userId);
+        return null;
+    }
 
     static String getCurrentUserCityFromContentProvider() {
         String currentUserID = Utiles.getCurrentUserId();
@@ -203,6 +218,21 @@ public class UtilesContentProvider {
         } else
             Log.e(TAG, "getEventFromContentProvider: Error with event "+eventId);
         return e;
+    }
+    public static String getEventSportFromContentProvider(@NonNull String eventId) {
+        if (TextUtils.isEmpty(eventId)) return null;
+        Cursor c = SportteamLoader.simpleQueryEventIdSport(MyApplication.getAppContext(), eventId);
+        if (c != null) {
+            if (c.getCount() == 1 && c.moveToFirst()) {
+                return c.getString(0);
+            } else if (c.getCount() == 0)
+                Log.e(TAG, "getEventSportFromContentProvider: Event with ID "+eventId+" not found");
+            else
+                Log.e(TAG, "getEventSportFromContentProvider: More than one event with ID "+eventId+" ("+c.getCount()+")");
+            c.close();
+        } else
+            Log.e(TAG, "getEventSportFromContentProvider: Error with event "+eventId);
+        return null;
     }
 
     public static Field getFieldFromContentProvider(@NonNull String fieldId) {
@@ -281,6 +311,21 @@ public class UtilesContentProvider {
         } else
             Log.e(TAG, "getAlarmFromContentProvider: Error with alarm "+alarmId);
         return a;
+    }
+    public static String getAlarmSportFromContentProvider(@NonNull String alarmId) {
+        if (TextUtils.isEmpty(alarmId)) return null;
+        Cursor c = SportteamLoader.simpleQueryAlarmIdSport(MyApplication.getAppContext(), alarmId);
+        if (c != null) {
+            if (c.getCount() == 1 && c.moveToFirst()) {
+                return c.getString(0);
+            } else if (c.getCount() == 0)
+                Log.e(TAG, "getAlarmSportFromContentProvider: Alarm with ID "+alarmId+" not found");
+            else
+                Log.e(TAG, "getAlarmSportFromContentProvider: More than one alarm with ID "+alarmId+" ("+c.getCount()+")");
+            c.close();
+        } else
+            Log.e(TAG, "getAlarmSportFromContentProvider: Error with alarm "+alarmId);
+        return null;
     }
 
     public static ArrayList<Alarm> getAllAlarmsFromContentProvider(Context context) {
