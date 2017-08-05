@@ -18,7 +18,7 @@ import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -327,7 +327,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         final EditText emailEditText = (EditText) dialogView.findViewById(R.id.reauthenticate_dialog_email);
         final EditText passEditText = (EditText) dialogView.findViewById(R.id.reauthenticate_dialog_password);
-        ImageButton visibleButton = (ImageButton) dialogView.findViewById(R.id.reauthenticate_dialog_visible_pass);
+        ImageView visibleButton = (ImageView) dialogView.findViewById(R.id.reauthenticate_dialog_visible_pass);
         visibleButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -339,8 +339,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         });
 
-        builder.setTitle("Reauthenticate")
-                .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.reauthenticate)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String emailStr = emailEditText.getText().toString();
@@ -357,7 +357,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                                     //TODO prevent from logout
                                     // If fails, logout is automatic
                                     Log.d(TAG, "User re-authenticated fails.");
-                                    Toast.makeText(getActivity(), "Incorrect email/password", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), R.string.error_incorrect_password, Toast.LENGTH_SHORT).show();
 
                                     // onBackPressed to display LoginActivity again
                                     getActivity().onBackPressed();
@@ -366,7 +366,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                         }
                     }
                 })
-                .setNegativeButton("Cancel", null);
+                .setNegativeButton(android.R.string.cancel, null);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
