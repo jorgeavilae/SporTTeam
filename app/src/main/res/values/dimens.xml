@@ -30,10 +30,15 @@
 
 
     <!-- Navigation View metrics -->
+    <dimen name="nav_header_profile_picture_size">64dp</dimen>
+    <!--nav_header_profile_picture_background_size = nav_header_profile_picture_size + (nav_header_profile_picture_background_space*2)-->
+    <dimen name="nav_header_profile_picture_background_size">66dp</dimen>
     <dimen name="nav_header_profile_picture_below">2dp</dimen>
     <dimen name="nav_header_profile_picture_background_space">1dp</dimen>
     <dimen name="nav_header_horizontal_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
+    <dimen name="nav_header_text_container_down_to_bottom">8dp</dimen>
+    <dimen name="nav_header_text_container_up_to_bottom">64dp</dimen>
     <dimen name="status_bar_height">24dp</dimen>
 
 
