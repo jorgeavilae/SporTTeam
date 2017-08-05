@@ -72,6 +72,7 @@
     <string name="notification_title_event_edit">Event edited</string>
     <string name="notification_title_event_delete">Event cancelled</string>
     <string name="notification_title_alarm_event">Event coincidence</string>
+
     <string name="notification_msg_friend_request_received">You have a new friend request</string>
     <string name="notification_msg_friend_request_accepted">You have a new friend!!</string>
     <string name="notification_msg_event_invitation_received">You have a new event invitation</string>

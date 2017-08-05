@@ -48,7 +48,7 @@
         android:layout_marginStart="@dimen/list_item_horizontal_margin"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textAppearance="@style/ListItemSubtitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/events_item_sport"
         app:layout_constraintRight_toLeftOf="@+id/events_item_date"
@@ -63,7 +63,7 @@
         android:layout_marginRight="@dimen/list_item_horizontal_margin"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textAppearance="@style/ListItemSubtitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/events_item_player"
         tools:text="10 Agosto 13:00" />

@@ -8,7 +8,6 @@
 
     <TextView
         android:id="@+id/textView14"
-        style="@style/TextAppearance.AppCompat.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/dialog_horizontal_margin"
@@ -17,6 +16,7 @@
         android:layout_marginStart="@dimen/dialog_horizontal_margin"
         android:layout_marginTop="@dimen/dialog_vertical_margin_inner"
         android:text="@string/pick_sport"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_constraintLeft_creator="1"
@@ -40,7 +40,6 @@
 
     <TextView
         android:id="@+id/textView18"
-        style="@style/TextAppearance.AppCompat.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/dialog_horizontal_margin"
@@ -49,6 +48,7 @@
         android:layout_marginStart="@dimen/dialog_horizontal_margin"
         android:layout_marginTop="@dimen/dialog_vertical_margin_inner"
         android:text="@string/punctuation"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_sport_dialog_sport"
         tools:layout_constraintLeft_creator="1"
@@ -58,12 +58,12 @@
         android:id="@+id/add_sport_dialog_rate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dialog_vertical_margin"
         android:layout_marginEnd="@dimen/dialog_horizontal_margin"
         android:layout_marginLeft="@dimen/dialog_horizontal_margin"
         android:layout_marginRight="@dimen/dialog_horizontal_margin"
         android:layout_marginStart="@dimen/dialog_horizontal_margin"
         android:layout_marginTop="@dimen/label_margin"
-        android:layout_marginBottom="@dimen/dialog_vertical_margin"
         android:numStars="5"
         android:stepSize="0.5"
         app:layout_constraintLeft_toLeftOf="parent"

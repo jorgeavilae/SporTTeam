@@ -26,4 +26,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="Theme.AppCompat.Light" />
 
+    <!-- Text style for subtitle in list items -->
+    <style name="ListItemSubtitle" parent="TextAppearance.AppCompat.Caption" >
+        <item name="android:textSize">@dimen/text_size_body1</item>
+    </style>
+
 </resources>

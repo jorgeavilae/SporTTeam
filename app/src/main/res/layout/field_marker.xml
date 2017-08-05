@@ -10,7 +10,7 @@
         android:id="@+id/field_marker_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Name" />
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/marker_vertical_margin_inner"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textAppearance="@style/ListItemSubtitle"
         android:textSize="@dimen/text_size_body1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
