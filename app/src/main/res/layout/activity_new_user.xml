@@ -47,7 +47,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/new_user_toolbar_container" />
+            app:layout_constraintTop_toTopOf="@+id/new_user_toolbar_container"  />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.DrawerLayout>
