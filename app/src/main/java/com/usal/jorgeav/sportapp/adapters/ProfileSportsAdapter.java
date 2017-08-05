@@ -74,7 +74,7 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         for(mDataset.moveToFirst(); !mDataset.isAfterLast(); mDataset.moveToNext()) {
             String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
             float level = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);
-            result.add(new Sport(name, name, level, 0));
+            result.add(new Sport(name, level, 0));
         }
         return result;
     }
@@ -101,7 +101,7 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
             float punctuation = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);
 
             if (mListener != null)
-                mListener.onProfileSportClick(new Sport(name, name, punctuation, 1));
+                mListener.onProfileSportClick(new Sport(name, punctuation, 1));
         }
     }
 

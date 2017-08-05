@@ -10,23 +10,17 @@ import com.usal.jorgeav.sportapp.MyApplication;
  */
 
 public class Sport implements Parcelable {
-    String name;
     String sportID;
     int iconDrawableId;
     float punctuation;
     int votes;
 
-    public Sport(String name, String sportID, float punctuation, int votes) {
-        this.name = name;
+    public Sport(String sportID, float punctuation, int votes) {
         this.sportID = sportID;
         this.iconDrawableId = MyApplication.getAppContext().getResources()
-                .getIdentifier(name , "drawable", MyApplication.getAppContext().getPackageName());
+                .getIdentifier(sportID , "drawable", MyApplication.getAppContext().getPackageName());
         this.punctuation = punctuation;
         this.votes = votes;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getSportID() {
@@ -56,8 +50,7 @@ public class Sport implements Parcelable {
     @Override
     public String toString() {
         return "Sport{" +
-                "name='" + name + '\'' +
-                ", sportID='" + sportID + '\'' +
+                "sportID='" + sportID + '\'' +
                 ", iconDrawableId=" + iconDrawableId +
                 ", punctuation=" + punctuation +
                 ", votes=" + votes +
@@ -71,7 +64,6 @@ public class Sport implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.name);
         dest.writeString(this.sportID);
         dest.writeInt(this.iconDrawableId);
         dest.writeFloat(this.punctuation);
@@ -79,7 +71,6 @@ public class Sport implements Parcelable {
     }
 
     protected Sport(Parcel in) {
-        this.name = in.readString();
         this.sportID = in.readString();
         this.iconDrawableId = in.readInt();
         this.punctuation = in.readFloat();

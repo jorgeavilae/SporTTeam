@@ -569,7 +569,7 @@ public class NewUserActivity extends AppCompatActivity implements
     private Map<String,Double> sportsArrayToHashMap(List<Sport> sports) {
         HashMap<String, Double> result = new HashMap<>();
         for (Sport s : sports)
-            result.put(s.getName(), (double) s.getPunctuation());
+            result.put(s.getSportID(), (double) s.getPunctuation());
         return result;
     }
 

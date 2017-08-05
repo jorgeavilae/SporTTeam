@@ -67,7 +67,7 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
 
     @Override
     public void onSportClick(Sport sport) {
-        Fragment fragment = NewEventFragment.newInstance(null, sport.getName());
+        Fragment fragment = NewEventFragment.newInstance(null, sport.getSportID());
         initFragment(fragment, true);
     }
 

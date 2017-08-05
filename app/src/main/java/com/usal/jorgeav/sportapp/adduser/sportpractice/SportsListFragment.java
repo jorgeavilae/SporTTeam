@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.AddSportsAdapter;
@@ -86,7 +87,7 @@ public class SportsListFragment extends BaseFragment {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
 
-        mSportAdapter = new AddSportsAdapter(null);
+        mSportAdapter = new AddSportsAdapter(null, Glide.with(this));
         sportsRecyclerViewList.setAdapter(mSportAdapter);
         sportsRecyclerViewList.setHasFixedSize(true);
         sportsRecyclerViewList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -99,7 +100,7 @@ public class SportsListFragment extends BaseFragment {
 
         String[] sportsNameArray = getResources().getStringArray(R.array.sport_id_values);
         for (String aSportsNameArray : sportsNameArray) {
-            result.add(new Sport(aSportsNameArray, aSportsNameArray, 0f, 1));
+            result.add(new Sport(aSportsNameArray, 0f, 1));
         }
 
         if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_SPORT_LIST)) {
@@ -118,7 +119,7 @@ public class SportsListFragment extends BaseFragment {
     }
 
     private boolean isTheSameSport(Sport a, Sport b) {
-        return a.getName().equals(b.getName());
+        return a.getSportID().equals(b.getSportID());
     }
 
     @Override

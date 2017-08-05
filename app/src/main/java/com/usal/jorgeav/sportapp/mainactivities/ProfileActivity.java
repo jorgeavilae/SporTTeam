@@ -57,7 +57,7 @@ public class ProfileActivity extends BaseActivity implements SportsListFragment.
             HashMap<String, Float> sportsMap = new HashMap<>();
             if (sportsSelected != null)
                 for (Sport sport : sportsSelected)
-                    sportsMap.put(sport.getName(), sport.getPunctuation());
+                    sportsMap.put(sport.getSportID(), sport.getPunctuation());
             FirebaseActions.updateSports(myUserID, sportsMap);
         }
         onBackPressed();
