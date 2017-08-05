@@ -13,7 +13,7 @@ public abstract class SearchUsersContract {
 
     public interface Presenter {
         void loadNearbyUsers(LoaderManager loaderManager, Bundle b);
-        void loadNearbyUsersWithName(LoaderManager loaderManager, Bundle b);
+        void loadUsersWithName(LoaderManager loaderManager, Bundle b);
     }
 
     public interface View {

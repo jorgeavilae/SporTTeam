@@ -1304,7 +1304,7 @@ public class FirebaseSync {
 
         /* https://stackoverflow.com/a/40633692/4235666
          * https://firebase.google.com/docs/database/admin/retrieve-data */
-        usersRef.orderByChild(filter).startAt(username).endAt(username+"\uf8ff")
+        usersRef.orderByChild(filter).startAt(username).endAt(username+"\uf8ff").limitToFirst(40)
                 .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
                     @Override
                     public void onDataChangeExecutor(DataSnapshot dataSnapshot) {

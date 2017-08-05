@@ -34,7 +34,7 @@ public class SearchUsersPresenter implements SearchUsersContract.Presenter, Load
     }
 
     @Override
-    public void loadNearbyUsersWithName(LoaderManager loaderManager, Bundle b) {
+    public void loadUsersWithName(LoaderManager loaderManager, Bundle b) {
         String username = b.getString(SearchUsersFragment.BUNDLE_USERNAME);
         FirebaseSync.loadUsersWithName(username);
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_FROM_CITY);

@@ -1,13 +1,16 @@
 package com.usal.jorgeav.sportapp.friends.searchuser;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
@@ -29,7 +33,8 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 04/06/2017.
  */
 
-public class SearchUsersFragment extends BaseFragment implements SearchUsersContract.View, UsersAdapter.OnUserItemClickListener, UsernameDialog.UsernameDialogListener  {
+public class SearchUsersFragment extends BaseFragment implements SearchUsersContract.View,
+        UsersAdapter.OnUserItemClickListener {
     private static final String TAG = SearchUsersFragment.class.getSimpleName();
     public static final String BUNDLE_USERNAME = "BUNDLE_USERNAME";
 
@@ -87,12 +92,40 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
         searchUsersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UsernameDialog dialog = new UsernameDialog();
-                dialog.setTargetFragment(mThis, 1);
-                dialog.show(getActivity().getSupportFragmentManager(), null);
+                showDialogForSearchName();
             }
         });
         return root;
+    }
+
+    private void showDialogForSearchName() {
+        // Prepare View
+        final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edit_text_change_dialog, null);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.change_dialog_text);
+        editText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME|InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        editText.setHint(R.string.prompt_name);
+
+        // Create dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setView(dialogView);
+        builder.setTitle(getString(R.string.dialog_title_search_user))
+                .setPositiveButton(android.R.string.search_go, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mUsersRecyclerAdapter.replaceData(null);
+                        Bundle b = new Bundle();
+                        b.putString(BUNDLE_USERNAME, editText.getText().toString());
+                        mSearchUsersPresenter.loadUsersWithName(getLoaderManager(), b);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        hideSoftKeyboard();
+                    }
+                });
+        builder.create().show();
     }
 
     @Override
@@ -143,13 +176,5 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
     public void onUserClick(String uid) {
         Fragment newFragment = ProfileFragment.newInstance(uid);
         mFragmentManagementListener.initFragment(newFragment, true);
-    }
-
-    @Override
-    public void onDialogPositiveClick(String username) {
-        mUsersRecyclerAdapter.replaceData(null);
-        Bundle b = new Bundle();
-        b.putString(BUNDLE_USERNAME, username);
-        mSearchUsersPresenter.loadNearbyUsersWithName(getLoaderManager(), b);
     }
 }
