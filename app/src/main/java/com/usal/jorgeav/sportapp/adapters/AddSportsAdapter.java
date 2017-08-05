@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestManager;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Sport;
 
@@ -25,9 +27,11 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
     public static final String TAG = "AddSportsAdapter";
 
     private List<Sport> mDataset;
+    private RequestManager mGlide;
 
-    public AddSportsAdapter(List<Sport> mDataset) {
+    public AddSportsAdapter(List<Sport> mDataset, RequestManager glide) {
         this.mDataset = mDataset;
+        this.mGlide = glide;
     }
 
     @Override
@@ -41,11 +45,11 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
     public void onBindViewHolder(AddSportsAdapter.ViewHolder holder, int position) {
         Sport s = mDataset.get(position);
         if (s != null) {
-            String name = s.getName();
-            float level = s.getPunctuation();
-            holder.textViewSportName.setText(name);
-            holder.ratingBarSportLevel.setRating(level);
-            holder.imageViewSportIcon.setImageResource(s.getIconDrawableId());
+            mGlide.load(s.getIconDrawableId()).into(holder.imageViewSportIcon);
+            int nameResource = MyApplication.getAppContext().getResources()
+                    .getIdentifier(s.getSportID() , "string", MyApplication.getAppContext().getPackageName());
+            holder.textViewSportName.setText(nameResource);
+            holder.ratingBarSportLevel.setRating(s.getPunctuation());
         }
     }
 
