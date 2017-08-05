@@ -461,6 +461,14 @@ public final class SportteamLoader {
                 new String[]{userId},
                 null);
     }
+    public static Cursor simpleQueryUserIdName(Context context, String userId) {
+        return context.getContentResolver().query(
+                SportteamContract.UserEntry.CONTENT_USER_URI,
+                new String[]{SportteamContract.UserEntry.NAME_TABLE_PREFIX},
+                SportteamContract.UserEntry.USER_ID + " = ? ",
+                new String[]{userId},
+                null);
+    }
 
     public static Cursor simpleQueryEventId(Context context, String eventId) {
         return context.getContentResolver().query(

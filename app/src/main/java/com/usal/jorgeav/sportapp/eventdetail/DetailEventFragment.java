@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -163,7 +164,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         eventParticipantsList.setHasFixedSize(true);
         eventParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
 
-        simulatedUsersAdapter = new SimulatedUsersAdapter(null, this);
+        simulatedUsersAdapter = new SimulatedUsersAdapter(null, this, Glide.with(this));
         eventSimulatedParticipantsList.setAdapter(simulatedUsersAdapter);
         eventSimulatedParticipantsList.setHasFixedSize(true);
         eventSimulatedParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));

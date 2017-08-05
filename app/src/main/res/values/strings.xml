@@ -117,6 +117,7 @@
     <string name="dialog_title_change_name">Change name</string>
     <string name="dialog_title_change_age">Change age</string>
     <string name="dialog_title_search_user">What is the user\'s name?</string>
+    <string name="created_by">Created by %1$s</string>
 
 
 </resources>

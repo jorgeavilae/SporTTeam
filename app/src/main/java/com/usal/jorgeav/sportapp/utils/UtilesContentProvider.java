@@ -151,6 +151,21 @@ public class UtilesContentProvider {
             Log.e(TAG, "getUserPictureFromContentProvider: Error with user "+userId);
         return null;
     }
+    public static String getUserNameFromContentProvider(@NonNull String userId) {
+        if (TextUtils.isEmpty(userId)) return null;
+        Cursor c = SportteamLoader.simpleQueryUserIdName(MyApplication.getAppContext(), userId);
+        if (c != null) {
+            if (c.getCount() == 1 && c.moveToFirst()) {
+                return c.getString(0);
+            } else if (c.getCount() == 0)
+                Log.e(TAG, "getUserNameFromContentProvider: User with ID "+userId+" not found");
+            else
+                Log.e(TAG, "getUserNameFromContentProvider: More than one user with ID "+userId+" ("+c.getCount()+")");
+            c.close();
+        } else
+            Log.e(TAG, "getUserNameFromContentProvider: Error with user "+userId);
+        return null;
+    }
 
     static String getCurrentUserCityFromContentProvider() {
         String currentUserID = Utiles.getCurrentUserId();

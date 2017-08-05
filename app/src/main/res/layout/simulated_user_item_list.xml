@@ -1,56 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/simulated_user_item_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
+    <ImageView
+        android:id="@+id/simulated_user_item_photo"
+        android:layout_width="@dimen/list_item_icon_size"
+        android:layout_height="@dimen/list_item_icon_size"
+        android:layout_marginBottom="@dimen/list_item_vertical_margin"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginStart="@dimen/list_item_horizontal_margin"
+        android:layout_marginTop="@dimen/list_item_vertical_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        tools:src="@drawable/profile_picture_placeholder" />
 
     <TextView
         android:id="@+id/simulated_user_item_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBaseline_toBaselineOf="@+id/simulated_user_item_id"
-        app:layout_constraintLeft_toRightOf="@+id/simulated_user_item_id"
-        android:layout_marginLeft="8dp" />
-
-    <TextView
-        android:id="@+id/simulated_user_item_age"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintLeft_toRightOf="@+id/simulated_user_item_name"
-        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="@dimen/list_item_horizontal_margin"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
+        android:layout_marginStart="@dimen/list_item_horizontal_margin"
+        android:layout_marginTop="@dimen/list_item_vertical_margin"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        app:layout_constraintLeft_toRightOf="@+id/simulated_user_item_photo"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp" />
+        tools:text="Simulated User Name" />
 
     <TextView
         android:id="@+id/simulated_user_item_owner"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/simulated_user_item_id" />
-
-    <TextView
-        android:id="@+id/simulated_user_item_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintLeft_toRightOf="@+id/simulated_user_item_owner"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/simulated_user_item_owner" />
-
+        android:layout_marginBottom="@dimen/list_item_vertical_margin"
+        android:layout_marginEnd="@dimen/list_item_horizontal_margin"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
+        android:layout_marginStart="@dimen/list_item_horizontal_margin"
+        android:textAppearance="@style/ListItemSubtitle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/simulated_user_item_photo"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="Added by FirebaseUser" />
 </android.support.constraint.ConstraintLayout>
