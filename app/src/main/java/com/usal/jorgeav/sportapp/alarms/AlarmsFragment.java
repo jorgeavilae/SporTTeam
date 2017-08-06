@@ -8,9 +8,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
@@ -27,8 +29,6 @@ public class AlarmsFragment extends BaseFragment implements AlarmsContract.View,
 
     AlarmsContract.Presenter mAlarmsPresenter;
 
-    @BindView(R.id.alarm_create_button)
-    Button alarmCreateButton;
     AlarmAdapter mAlarmsRecyclerAdapter;
     @BindView(R.id.alarms_list)
     RecyclerView alarmsRecyclerList;
@@ -46,10 +46,28 @@ public class AlarmsFragment extends BaseFragment implements AlarmsContract.View,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mAlarmsPresenter = new AlarmsPresenter(this);
         mAlarmsRecyclerAdapter = new AlarmAdapter(null, this, Glide.with(this));
+    }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_add, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_add) {
+            Fragment fragment = SelectSportFragment.newInstance();
+            mFragmentManagementListener.initFragment(fragment, true);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -60,14 +78,6 @@ public class AlarmsFragment extends BaseFragment implements AlarmsContract.View,
         alarmsRecyclerList.setAdapter(mAlarmsRecyclerAdapter);
         alarmsRecyclerList.setHasFixedSize(true);
         alarmsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-
-        alarmCreateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = SelectSportFragment.newInstance();
-                mFragmentManagementListener.initFragment(fragment, true);
-            }
-        });
 
         return root;
     }

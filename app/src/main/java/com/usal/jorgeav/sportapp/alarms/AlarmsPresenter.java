@@ -13,7 +13,7 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
  */
 
 public class AlarmsPresenter implements AlarmsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String ALARMS_KEY = "ALARMS_KEY";
+    private static final String TAG = AlarmsPresenter.class.getSimpleName();
 
     AlarmsContract.View mAlarmsView;
 
