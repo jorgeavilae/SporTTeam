@@ -6,6 +6,7 @@
 
     <!-- Inside Spinner -->
     <dimen name="spinner_item_margin">8dp</dimen>
+    <dimen name="spinner_item_icon_size">20dp</dimen>
 
     <!-- Map marker -->
     <dimen name="marker_vertical_margin_inner">8dp</dimen>
