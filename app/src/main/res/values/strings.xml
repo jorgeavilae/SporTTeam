@@ -105,9 +105,10 @@
     <string name="toast_add_sport_success">Sport added</string>
     <string name="toast_should_select_place">You should select a place</string>
     <string name="toast_sport_invalid">Sport invalid</string>
+    <string name="created_by">Created by %1$s</string>
+    <string name="dialog_title_vote">Rate this court</string>
 
     <!-- Alarms -->
-
     <!-- https://stackoverflow.com/questions/1587056/how-to-keep-the-spaces-at-the-end-and-or-at-the-beginning-of-a-string#comment26178169_2206684 -->
     <string name="from">From:\u0020</string>
     <string name="until">Until:\u0020</string>
@@ -117,7 +118,6 @@
     <string name="dialog_title_change_name">Change name</string>
     <string name="dialog_title_change_age">Change age</string>
     <string name="dialog_title_search_user">What is the user\'s name?</string>
-    <string name="created_by">Created by %1$s</string>
 
 
 </resources>

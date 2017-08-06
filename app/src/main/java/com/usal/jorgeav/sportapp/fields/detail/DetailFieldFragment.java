@@ -137,16 +137,16 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 final View view = inflater.inflate(R.layout.vote_dialog, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                builder.setMessage("Selecciona puntuación")
+                builder.setTitle(R.string.dialog_title_vote)
                         .setView(view)
-                        .setPositiveButton("Votar", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.action_vote, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_for_vote);
                                 String sportId = s.getSportID();
                                 mPresenter.voteSportInField(mFieldId, sportId, ratingBar.getRating());
                             }
                         })
-                        .setNegativeButton("Cancelar", null);
+                        .setNegativeButton(android.R.string.cancel, null);
                 builder.create().show();
             }
         }, Glide.with(this));
