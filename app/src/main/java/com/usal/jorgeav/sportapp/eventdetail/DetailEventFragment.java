@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -159,10 +160,11 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
-        usersAdapter = new UsersAdapter(null, this);
+        usersAdapter = new UsersAdapter(null, this, Glide.with(this));
         eventParticipantsList.setAdapter(usersAdapter);
         eventParticipantsList.setHasFixedSize(true);
-        eventParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
+        eventParticipantsList.setLayoutManager(new GridLayoutManager(getActivityContext(),
+                Utiles.calculateNoOfColumns(getActivityContext())));
 
         simulatedUsersAdapter = new SimulatedUsersAdapter(null, this, Glide.with(this));
         eventSimulatedParticipantsList.setAdapter(simulatedUsersAdapter);

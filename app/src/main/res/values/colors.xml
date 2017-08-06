@@ -6,6 +6,7 @@
 
     <color name="colorPrimary">#0f3b68</color>
     <color name="colorPrimaryDark">#082543</color>
+    <color name="colorPrimaryDark_transparent">#00082543</color>
     <color name="colorPrimaryLight">#1b9fc6</color>
 
     <color name="colorLight">#9E9E9E</color>

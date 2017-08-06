@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -21,10 +22,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,7 +62,7 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
         setHasOptionsMenu(true);
 
         mSearchUsersPresenter = new SearchUsersPresenter(this);
-        mUsersRecyclerAdapter = new UsersAdapter(null, this);
+        mUsersRecyclerAdapter = new UsersAdapter(null, this, Glide.with(this));
     }
 
     @Override
@@ -88,7 +91,9 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
 
         searchUsersList.setAdapter(mUsersRecyclerAdapter);
         searchUsersList.setHasFixedSize(true);
-        searchUsersList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        searchUsersList.setLayoutManager(new GridLayoutManager(getActivityContext(),
+                Utiles.calculateNoOfColumns(getActivityContext())));
+
         searchUsersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

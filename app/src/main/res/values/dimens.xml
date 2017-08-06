@@ -33,6 +33,9 @@
     <dimen name="list_item_three_lines_height">76dp</dimen>
     <dimen name="list_item_one_line_height">56dp</dimen>
 
+    <!-- Grid item metrics -->
+    <dimen name="grid_item_container_padding">2dp</dimen>
+    <dimen name="grid_item_text_container_padding">16dp</dimen>
 
     <!-- Navigation View metrics -->
     <dimen name="nav_header_profile_picture_size">64dp</dimen>

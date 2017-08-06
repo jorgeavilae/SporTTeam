@@ -1,22 +1,28 @@
 package com.usal.jorgeav.sportapp.friends;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.friends.searchuser.SearchUsersFragment;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,7 +57,7 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
         super.onCreate(savedInstanceState);
 
         mFriendsPresenter = new FriendsPresenter(this);
-        mFriendsRecyclerAdapter = new UsersAdapter(null, this);
+        mFriendsRecyclerAdapter = new UsersAdapter(null, this, Glide.with(this));
     }
 
     @Override
@@ -62,7 +68,8 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
 
         friendsRecyclerList.setAdapter(mFriendsRecyclerAdapter);
         friendsRecyclerList.setHasFixedSize(true);
-        friendsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        friendsRecyclerList.setLayoutManager(new GridLayoutManager(getActivityContext(),
+                Utiles.calculateNoOfColumns(getActivityContext())));
 
         friendsSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override

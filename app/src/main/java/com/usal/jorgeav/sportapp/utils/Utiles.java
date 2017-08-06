@@ -1,7 +1,9 @@
 package com.usal.jorgeav.sportapp.utils;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -85,6 +87,13 @@ public class Utiles {
                 * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return (earthRadius * c);
+    }
+
+    /* http://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns */
+    public static int calculateNoOfColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        return (int) (dpWidth / 180);
     }
 
     public static boolean isNumeric(String str) {

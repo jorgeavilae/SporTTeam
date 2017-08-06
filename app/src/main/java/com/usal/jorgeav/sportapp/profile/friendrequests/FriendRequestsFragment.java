@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,10 +14,12 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,7 +50,7 @@ public class FriendRequestsFragment extends BaseFragment implements FriendReques
         setHasOptionsMenu(true);
 
         mFriendRequestsPresenter = new FriendRequestsPresenter(this);
-        mUsersRecyclerAdapter = new UsersAdapter(null, this);
+        mUsersRecyclerAdapter = new UsersAdapter(null, this, Glide.with(this));
     }
 
     @Override
@@ -64,7 +67,8 @@ public class FriendRequestsFragment extends BaseFragment implements FriendReques
 
         friendRequestsList.setAdapter(mUsersRecyclerAdapter);
         friendRequestsList.setHasFixedSize(true);
-        friendRequestsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        friendRequestsList.setLayoutManager(new GridLayoutManager(getActivityContext(),
+                Utiles.calculateNoOfColumns(getActivityContext())));
 
         return root;
     }

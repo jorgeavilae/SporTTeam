@@ -1,15 +1,25 @@
 package com.usal.jorgeav.sportapp.adapters;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 import java.util.Locale;
 
@@ -25,30 +35,37 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
     private Cursor mDataset;
     private OnUserItemClickListener mClickListener;
+    private RequestManager mGlide;
 
-    public UsersAdapter(Cursor mDataset, OnUserItemClickListener mClickListener) {
+    public UsersAdapter(Cursor mDataset, OnUserItemClickListener mClickListener, RequestManager glide) {
         this.mDataset = mDataset;
         this.mClickListener = mClickListener;
+        this.mGlide = glide;
     }
 
     @Override
     public UsersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.user_item_list, parent, false);
+        View view = inflater.inflate(R.layout.user_item_grid, parent, false);
 
         return new UsersAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(UsersAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final UsersAdapter.ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
-            int age = mDataset.getInt(SportteamContract.UserEntry.COLUMN_AGE);
-            holder.textViewUserId.setText(mDataset.getString(SportteamContract.UserEntry.COLUMN_USER_ID));
-            holder.textViewUserEmail.setText(mDataset.getString(SportteamContract.UserEntry.COLUMN_EMAIL));
+            // Set icon
+            String userPicture = mDataset.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
+            if (userPicture != null && !TextUtils.isEmpty(userPicture))
+                mGlide.load(Uri.parse(userPicture)).asBitmap().into(holder.imageViewUserPhoto);
+            else
+                holder.imageViewUserPhoto.setImageResource(R.drawable.profile_picture_placeholder);
+
+            // Set title
             holder.textViewUserName.setText(mDataset.getString(SportteamContract.UserEntry.COLUMN_NAME));
-            holder.textViewUserAge.setText(String.format(Locale.getDefault(), "%2d", age));
+
+            // Set subtitle
             holder.textViewUserCity.setText(mDataset.getString(SportteamContract.UserEntry.COLUMN_CITY));
-            holder.textViewUserPhoto.setText(mDataset.getString(SportteamContract.UserEntry.COLUMN_PHOTO));
         }
     }
 
@@ -68,18 +85,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
-        @BindView(R.id.user_item_id)
-        TextView textViewUserId;
-        @BindView(R.id.user_item_email)
-        TextView textViewUserEmail;
+        @BindView(R.id.user_item_photo)
+        ImageView imageViewUserPhoto;
         @BindView(R.id.user_item_name)
         TextView textViewUserName;
-        @BindView(R.id.user_item_age)
-        TextView textViewUserAge;
         @BindView(R.id.user_item_city)
         TextView textViewUserCity;
-        @BindView(R.id.user_item_photo)
-        TextView textViewUserPhoto;
 
         public ViewHolder(View itemView) {
             super(itemView);
