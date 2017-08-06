@@ -30,6 +30,7 @@
     <dimen name="list_item_horizontal_margin">16dp</dimen>
     <dimen name="list_item_horizontal_margin_dense">8dp</dimen>
     <dimen name="list_item_three_lines_height">76dp</dimen>
+    <dimen name="list_item_one_line_height">56dp</dimen>
 
 
     <!-- Navigation View metrics -->

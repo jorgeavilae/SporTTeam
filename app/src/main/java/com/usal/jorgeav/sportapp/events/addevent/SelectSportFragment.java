@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.SelectSportsAdapter;
@@ -64,7 +65,9 @@ public class SelectSportFragment extends BaseFragment {
             Log.e(TAG, "onCreateView: getActivity() should implement SelectSportsAdapter.OnSelectSportClickListener");
             getActivity().onBackPressed();
         }
-        mSportAdapter = new SelectSportsAdapter(null, ((SelectSportsAdapter.OnSelectSportClickListener)getActivity()));
+        mSportAdapter = new SelectSportsAdapter(null,
+                ((SelectSportsAdapter.OnSelectSportClickListener)getActivity()),
+                Glide.with(this));
         sportsRecyclerViewList.setAdapter(mSportAdapter);
         sportsRecyclerViewList.setHasFixedSize(true);
         sportsRecyclerViewList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));

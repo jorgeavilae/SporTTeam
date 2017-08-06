@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestManager;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Sport;
 
@@ -24,10 +26,12 @@ public class SelectSportsAdapter  extends RecyclerView.Adapter<SelectSportsAdapt
 
     private List<Sport> mDataset;
     private OnSelectSportClickListener mClickListener;
+    private RequestManager mGlide;
 
-    public SelectSportsAdapter(List<Sport> mDataset, OnSelectSportClickListener mClickListener) {
+    public SelectSportsAdapter(List<Sport> mDataset, OnSelectSportClickListener mClickListener, RequestManager glide) {
         this.mDataset = mDataset;
         this.mClickListener = mClickListener;
+        this.mGlide = glide;
     }
 
     @Override
@@ -41,8 +45,13 @@ public class SelectSportsAdapter  extends RecyclerView.Adapter<SelectSportsAdapt
     public void onBindViewHolder(SelectSportsAdapter.ViewHolder holder, int position) {
         Sport s = mDataset.get(position);
         if (s != null) {
-            holder.textViewSportName.setText(s.getSportID());
-            holder.imageViewSportIcon.setImageResource(s.getIconDrawableId());
+            // Set icon
+            mGlide.load(s.getIconDrawableId()).asBitmap().into(holder.imageViewSportIcon);
+
+            // Set title
+            int nameResource = MyApplication.getAppContext().getResources()
+                    .getIdentifier(s.getSportID() , "string", MyApplication.getAppContext().getPackageName());
+            holder.textViewSportName.setText(nameResource);
         }
     }
 
