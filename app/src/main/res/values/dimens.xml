@@ -3,6 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="label_margin">8dp</dimen>
+    <dimen name="fragment_map_indicator_height">200dp</dimen>
+    <dimen name="card_view_media_area">80dp</dimen>
 
     <!-- Inside Spinner -->
     <dimen name="spinner_item_margin">8dp</dimen>

@@ -90,9 +90,11 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     private void showAlarmDetails(Cursor data) {
         Alarm a = UtilesContentProvider.cursorToSingleAlarm(data);
         if (a != null) {
-            mView.showAlarmId(a.getId());
             mView.showAlarmSport(a.getSport_id());
-            mView.showAlarmPlace(a.getField_id());
+
+            String fieldName = UtilesContentProvider.getFieldNameFromContentProvider(a.getField_id());
+            mView.showAlarmPlace(a.getField_id(), fieldName, a.getCity());
+
             mView.showAlarmDate(a.getDate_from(), a.getDate_to());
             mView.showAlarmTotalPlayers(a.getTotal_players_from(), a.getTotal_players_to());
             mView.showAlarmEmptyPlayers(a.getEmpty_players_from(), a.getEmpty_players_to());
