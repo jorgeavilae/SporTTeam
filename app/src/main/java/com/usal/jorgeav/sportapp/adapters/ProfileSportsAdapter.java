@@ -6,15 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestManager;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,10 +28,12 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
 
     private Cursor mDataset;
     private OnProfileSportClickListener mListener;
+    private RequestManager mGlide;
 
-    public ProfileSportsAdapter(Cursor mDataset, OnProfileSportClickListener listener) {
+    public ProfileSportsAdapter(Cursor mDataset, OnProfileSportClickListener listener, RequestManager glide) {
         this.mDataset = mDataset;
         this.mListener = listener;
+        this.mGlide = glide;
     }
 
     @Override
@@ -44,12 +47,20 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
     public void onBindViewHolder(ProfileSportsAdapter.ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
             String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
-            float level = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);
+
+            // Set icon
             int iconDrawableId = MyApplication.getAppContext().getResources()
                     .getIdentifier(name , "drawable", MyApplication.getAppContext().getPackageName());
-            holder.textViewSportName.setText(name);
-            holder.textViewSportLevel.setText(String.format(Locale.getDefault(), "%.2f", level));
-            holder.imageViewSportIcon.setImageResource(iconDrawableId);
+            mGlide.load(iconDrawableId).asBitmap().into(holder.imageViewSportIcon);
+
+            // Set title
+            int nameResource = MyApplication.getAppContext().getResources()
+                    .getIdentifier(name, "string", MyApplication.getAppContext().getPackageName());
+            holder.textViewSportName.setText(nameResource);
+
+            // Set stars
+            float level = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);
+            holder.ratingBarSportLevel.setRating(level);
         }
     }
 
@@ -85,7 +96,7 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         @BindView(R.id.sport_profile_item_name)
         TextView textViewSportName;
         @BindView(R.id.sport_profile_item_level)
-        TextView textViewSportLevel;
+        RatingBar ratingBarSportLevel;
 
         public ViewHolder(View itemView) {
             super(itemView);

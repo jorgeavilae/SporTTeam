@@ -14,6 +14,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -126,10 +127,10 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
             mUserUid = getArguments().getString(BUNDLE_INSTANCE_UID);
 
-        sportsAdapter = new ProfileSportsAdapter(null, null);
+        sportsAdapter = new ProfileSportsAdapter(null, null, Glide.with(this));
         userSportList.setAdapter(sportsAdapter);
         userSportList.setHasFixedSize(true);
-        userSportList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.HORIZONTAL, false));
+        userSportList.setLayoutManager(new GridLayoutManager(getActivityContext(), 2, LinearLayoutManager.VERTICAL, false));
 
         String currentUserId = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(currentUserId)) throw new NullPointerException();

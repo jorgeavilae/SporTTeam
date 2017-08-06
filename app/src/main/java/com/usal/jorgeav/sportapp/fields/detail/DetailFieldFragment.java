@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -23,6 +24,7 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
@@ -132,7 +134,6 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         sportsAdapter = new ProfileSportsAdapter(null, new ProfileSportsAdapter.OnProfileSportClickListener() {
             @Override
             public void onProfileSportClick(final Sport s) {
-                Log.d(TAG, "onProfileSportClick: "+s);
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 final View view = inflater.inflate(R.layout.vote_dialog, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
@@ -148,10 +149,10 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
                         .setNegativeButton("Cancelar", null);
                 builder.create().show();
             }
-        });
+        }, Glide.with(this));
         fieldSportList.setAdapter(sportsAdapter);
         fieldSportList.setHasFixedSize(true);
-        fieldSportList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.HORIZONTAL, false));
+        fieldSportList.setLayoutManager(new GridLayoutManager(getActivityContext(), 2, LinearLayoutManager.VERTICAL, false));
 
         return root;
     }
