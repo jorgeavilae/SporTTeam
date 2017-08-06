@@ -1,20 +1,18 @@
 package com.usal.jorgeav.sportapp.friends;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
@@ -37,8 +35,6 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
     FriendsContract.Presenter mFriendsPresenter;
     UsersAdapter mFriendsRecyclerAdapter;
 
-    @BindView(R.id.friends_search)
-    Button friendsSearchButton;
     @BindView(R.id.friends_list)
     RecyclerView friendsRecyclerList;
     @BindView(R.id.friends_placeholder)
@@ -55,9 +51,28 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mFriendsPresenter = new FriendsPresenter(this);
         mFriendsRecyclerAdapter = new UsersAdapter(null, this, Glide.with(this));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_search_users, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_search_users) {
+            Fragment fragment = new SearchUsersFragment();
+            mFragmentManagementListener.initFragment(fragment, true);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -71,13 +86,6 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
         friendsRecyclerList.setLayoutManager(new GridLayoutManager(getActivityContext(),
                 Utiles.calculateNoOfColumns(getActivityContext())));
 
-        friendsSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new SearchUsersFragment();
-                mFragmentManagementListener.initFragment(fragment, true);
-            }
-        });
         return root;
     }
 

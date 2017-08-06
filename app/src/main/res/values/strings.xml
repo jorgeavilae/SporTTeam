@@ -20,6 +20,8 @@
     <string name="action_create_event">New Event</string>
     <string name="action_event_requests">Event Requests Sent</string>
     <string name="action_search_events">Search Events</string>
+    <string name="action_search_users">Search Users</string>
+
 
     <string name="add">Add</string>
 
@@ -125,6 +127,5 @@
     <string name="total_players">Total players</string>
     <string name="user_request">User requests</string>
     <string name="user_rejected">Users rejected</string>
-
 
 </resources>
