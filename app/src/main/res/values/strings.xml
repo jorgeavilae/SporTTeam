@@ -127,5 +127,6 @@
     <string name="total_players">Total players</string>
     <string name="user_request">User requests</string>
     <string name="user_rejected">Users rejected</string>
+    <string name="users_found">Users found</string>
 
 </resources>

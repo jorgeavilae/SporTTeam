@@ -5,11 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
-/**
- * Created by Jorge Avila on 04/06/2017.
- */
-
-public abstract class SearchUsersContract {
+abstract class SearchUsersContract {
 
     public interface Presenter {
         void loadNearbyUsers(LoaderManager loaderManager, Bundle b);

@@ -4,22 +4,22 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
-/**
- * Created by Jorge Avila on 04/06/2017.
- */
 
-public class SearchUsersPresenter implements SearchUsersContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class SearchUsersPresenter implements SearchUsersContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+
+    @SuppressWarnings("unused")
     private static final String TAG = SearchUsersPresenter.class.getSimpleName();
 
-    SearchUsersContract.View mSearchUsersView;
+    private SearchUsersContract.View mSearchUsersView;
 
-    public SearchUsersPresenter(SearchUsersContract.View mEventInvitationsView) {
+    SearchUsersPresenter(SearchUsersContract.View mEventInvitationsView) {
         this.mSearchUsersView = mEventInvitationsView;
     }
 
@@ -35,16 +35,18 @@ public class SearchUsersPresenter implements SearchUsersContract.Presenter, Load
 
     @Override
     public void loadUsersWithName(LoaderManager loaderManager, Bundle b) {
-        String username = b.getString(SearchUsersFragment.BUNDLE_USERNAME);
-        FirebaseSync.loadUsersWithName(username);
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_FROM_CITY);
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_WITH_NAME);
+
+        String username = b.getString(SearchUsersFragment.BUNDLE_USERNAME);
+        FirebaseSync.loadUsersWithName(username);
         loaderManager.restartLoader(SportteamLoader.LOADER_USERS_WITH_NAME, b, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(currentUserID)) return null;
         switch (id) {
             case SportteamLoader.LOADER_USERS_FROM_CITY:
                 String city = UtilesPreferences.getCurrentUserCity(mSearchUsersView.getActivityContext());

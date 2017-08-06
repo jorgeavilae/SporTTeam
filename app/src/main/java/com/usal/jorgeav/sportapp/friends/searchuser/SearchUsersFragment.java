@@ -1,26 +1,22 @@
 package com.usal.jorgeav.sportapp.friends.searchuser;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
@@ -32,25 +28,22 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 04/06/2017.
- */
-
 public class SearchUsersFragment extends BaseFragment implements SearchUsersContract.View,
         UsersAdapter.OnUserItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = SearchUsersFragment.class.getSimpleName();
+
     public static final String BUNDLE_USERNAME = "BUNDLE_USERNAME";
 
-    private SearchUsersFragment mThis;
-    SearchUsersContract.Presenter mSearchUsersPresenter;
+    private SearchUsersContract.Presenter mSearchUsersPresenter;
     UsersAdapter mUsersRecyclerAdapter;
 
     @BindView(R.id.search_users_list)
     RecyclerView searchUsersList;
     @BindView(R.id.search_users_placeholder)
     ConstraintLayout searchUsersPlaceholder;
-    @BindView(R.id.search_users_button)
-    Button searchUsersButton;
+    @BindView(R.id.search_users_edit)
+    EditText searchUsersEditText;
 
     public SearchUsersFragment() {
         // Required empty public constructor
@@ -76,8 +69,9 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_clear_filter) {
-            Log.d(TAG, "onOptionsItemSelected: Clear Filters");
+            searchUsersEditText.setText("");
             mSearchUsersPresenter.loadNearbyUsers(getLoaderManager(), getArguments());
+            hideSoftKeyboard();
             return true;
         }
         return false;
@@ -94,49 +88,27 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
         searchUsersList.setLayoutManager(new GridLayoutManager(getActivityContext(),
                 Utiles.calculateNoOfColumns(getActivityContext())));
 
-        searchUsersButton.setOnClickListener(new View.OnClickListener() {
+        searchUsersEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View view) {
-                showDialogForSearchName();
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.search_users_ime || id == EditorInfo.IME_ACTION_GO) {
+                    mUsersRecyclerAdapter.replaceData(null);
+                    Bundle b = new Bundle();
+                    b.putString(BUNDLE_USERNAME, searchUsersEditText.getText().toString());
+                    mSearchUsersPresenter.loadUsersWithName(getLoaderManager(), b);
+                    hideSoftKeyboard();
+                    return true;
+                }
+                return false;
             }
         });
         return root;
     }
 
-    private void showDialogForSearchName() {
-        // Prepare View
-        final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edit_text_change_dialog, null);
-        final EditText editText = (EditText) dialogView.findViewById(R.id.change_dialog_text);
-        editText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME|InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-        editText.setHint(R.string.prompt_name);
-
-        // Create dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        builder.setView(dialogView);
-        builder.setTitle(getString(R.string.dialog_title_search_user))
-                .setPositiveButton(android.R.string.search_go, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mUsersRecyclerAdapter.replaceData(null);
-                        Bundle b = new Bundle();
-                        b.putString(BUNDLE_USERNAME, editText.getText().toString());
-                        mSearchUsersPresenter.loadUsersWithName(getLoaderManager(), b);
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        hideSoftKeyboard();
-                    }
-                });
-        builder.create().show();
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Buscar usuarios", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.action_search_users), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -144,18 +116,6 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
     public void onStart() {
         super.onStart();
         mSearchUsersPresenter.loadNearbyUsers(getLoaderManager(), getArguments());
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mThis = this;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mThis = null;
     }
 
     @Override
