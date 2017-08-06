@@ -43,4 +43,5 @@
             android:textColor="@color/colorLighter"
             tools:text="City of user" />
     </LinearLayout>
+
 </FrameLayout>
