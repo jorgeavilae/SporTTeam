@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.events.searchevent;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,7 +9,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,26 +17,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
+import com.usal.jorgeav.sportapp.adapters.SportSpinnerAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
 
 public class SearchEventsFragment extends BaseFragment implements SearchEventsContract.View,
-        EventsAdapter.OnEventItemClickListener, SportDialog.SportDialogListener {
+        EventsAdapter.OnEventItemClickListener {
+
+    @SuppressWarnings("unused")
     private static final String TAG = SearchEventsFragment.class.getSimpleName();
     public static final String BUNDLE_SPORT = "BUNDLE_SPORT";
 
-    private SearchEventsFragment mThis;
+    String mSportIdSelected = "";
     SearchEventsContract.Presenter mSearchEventsPresenter;
     EventsAdapter mEventsRecyclerAdapter;
 
@@ -45,6 +51,10 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
     ConstraintLayout searchEventsPlaceholder;
     @BindView(R.id.search_events_button)
     Button searchEventsButton;
+    @BindView(R.id.search_events_icon)
+    ImageView searchEventsIcon;
+    @BindView(R.id.search_events_sport)
+    TextView searchEventsSportName;
 
     public SearchEventsFragment() {
         // Required empty public constructor
@@ -74,7 +84,7 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_clear_filter) {
-            Log.d(TAG, "onOptionsItemSelected: Clear Filter");
+            unsetSportSearched();
             mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
             return true;
         }
@@ -93,18 +103,64 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         searchEventsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SportDialog dialog = new SportDialog();
-                dialog.setTargetFragment(mThis, 1);
-                dialog.show(getActivity().getSupportFragmentManager(), null);
+                createPickSportDialog();
             }
         });
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SPORT))
+            setSportSearched(savedInstanceState.getString(BUNDLE_SPORT));
+
         return root;
+    }
+
+    private void createPickSportDialog() {
+        ArrayList<String> sportsResources = new ArrayList<>(
+                Arrays.asList(getResources().getStringArray(R.array.sport_id_values)));
+        final SportSpinnerAdapter listAdapter = new SportSpinnerAdapter(getActivityContext(),
+                R.layout.sport_spinner_item, sportsResources);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.pick_sport);
+        builder.setAdapter(listAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String sportId = (String) listAdapter.getItem(i);
+
+                setSportSearched(sportId);
+                mEventsRecyclerAdapter.replaceData(null);
+                Bundle b = new Bundle();
+                b.putString(BUNDLE_SPORT, sportId);
+                mSearchEventsPresenter.loadNearbyEventsWithSport(getLoaderManager(), b);
+            }
+        });
+        builder.create().show();
+    }
+
+    private void setSportSearched(String sportId) {
+        mSportIdSelected = sportId;
+
+        int sportStringResource = getResources()
+                .getIdentifier(sportId, "string", getActivityContext().getPackageName());
+        searchEventsSportName.setVisibility(View.VISIBLE);
+        searchEventsSportName.setText(getString(sportStringResource));
+
+        int sportDrawableResource = getResources()
+                .getIdentifier(sportId, "drawable", getActivityContext().getPackageName());
+        searchEventsIcon.setVisibility(View.VISIBLE);
+        searchEventsIcon.setImageResource(sportDrawableResource);
+    }
+
+    private void unsetSportSearched() {
+        mSportIdSelected = "";
+
+        searchEventsSportName.setVisibility(View.INVISIBLE);
+        searchEventsIcon.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Buscar eventos", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.action_search_events), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -112,18 +168,6 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
     public void onStart() {
         super.onStart();
         mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mThis = this;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mThis = null;
     }
 
     @Override
@@ -152,10 +196,9 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
     }
 
     @Override
-    public void onDialogSportClick(String sportId) {
-        mEventsRecyclerAdapter.replaceData(null);
-        Bundle b = new Bundle();
-        b.putString(BUNDLE_SPORT, sportId);
-        mSearchEventsPresenter.loadNearbyEventsWithSport(getLoaderManager(), b);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (!TextUtils.isEmpty(mSportIdSelected))
+            outState.putString(BUNDLE_SPORT, mSportIdSelected);
     }
 }

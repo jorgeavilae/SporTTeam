@@ -10,16 +10,15 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
 
-public class SearchEventsPresenter implements SearchEventsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class SearchEventsPresenter implements SearchEventsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+
+    @SuppressWarnings("unused")
     private static final String TAG = SearchEventsPresenter.class.getSimpleName();
 
-    SearchEventsContract.View mSearchEventsView;
+    private SearchEventsContract.View mSearchEventsView;
 
-    public SearchEventsPresenter(SearchEventsContract.View mSearchEventsView) {
+    SearchEventsPresenter(SearchEventsContract.View mSearchEventsView) {
         this.mSearchEventsView = mSearchEventsView;
     }
 
@@ -38,7 +37,6 @@ public class SearchEventsPresenter implements SearchEventsContract.Presenter, Lo
         loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_FROM_CITY);
         loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_WITH_SPORT);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_WITH_SPORT, b, this);
-
     }
 
     @Override
