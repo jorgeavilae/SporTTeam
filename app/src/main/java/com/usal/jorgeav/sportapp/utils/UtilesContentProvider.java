@@ -141,7 +141,9 @@ public class UtilesContentProvider {
         Cursor c = SportteamLoader.simpleQueryUserIdPicture(MyApplication.getAppContext(), userId);
         if (c != null) {
             if (c.getCount() == 1 && c.moveToFirst()) {
-                return c.getString(0);
+                String result = c.getString(0);
+                c.close();
+                return result;
             } else if (c.getCount() == 0)
                 Log.e(TAG, "getUserPictureFromContentProvider: User with ID "+userId+" not found");
             else
@@ -156,7 +158,9 @@ public class UtilesContentProvider {
         Cursor c = SportteamLoader.simpleQueryUserIdName(MyApplication.getAppContext(), userId);
         if (c != null) {
             if (c.getCount() == 1 && c.moveToFirst()) {
-                return c.getString(0);
+                String result = c.getString(0);
+                c.close();
+                return result;
             } else if (c.getCount() == 0)
                 Log.e(TAG, "getUserNameFromContentProvider: User with ID "+userId+" not found");
             else
@@ -239,7 +243,9 @@ public class UtilesContentProvider {
         Cursor c = SportteamLoader.simpleQueryEventIdSport(MyApplication.getAppContext(), eventId);
         if (c != null) {
             if (c.getCount() == 1 && c.moveToFirst()) {
-                return c.getString(0);
+                String result = c.getString(0);
+                c.close();
+                return result;
             } else if (c.getCount() == 0)
                 Log.e(TAG, "getEventSportFromContentProvider: Event with ID "+eventId+" not found");
             else
@@ -301,7 +307,9 @@ public class UtilesContentProvider {
         Cursor cursorField = SportteamLoader.simpleQueryFieldIdName(MyApplication.getAppContext(), fieldId);
         if (cursorField != null) {
             if (cursorField.getCount() == 1 && cursorField.moveToFirst()) {
-                return cursorField.getString(0);
+                String result = cursorField.getString(0);
+                cursorField.close();
+                return result;
             } else if (cursorField.getCount() == 0)
                 Log.e(TAG, "getFieldNameFromContentProvider: Field with ID "+fieldId+" not found");
             else
@@ -332,7 +340,9 @@ public class UtilesContentProvider {
         Cursor c = SportteamLoader.simpleQueryAlarmIdSport(MyApplication.getAppContext(), alarmId);
         if (c != null) {
             if (c.getCount() == 1 && c.moveToFirst()) {
-                return c.getString(0);
+                String result = c.getString(0);
+                c.close();
+                return result;
             } else if (c.getCount() == 0)
                 Log.e(TAG, "getAlarmSportFromContentProvider: Alarm with ID "+alarmId+" not found");
             else
