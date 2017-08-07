@@ -5,6 +5,7 @@
         android:id="@+id/action_new_event"
         android:orderInCategory="100"
         android:title="@string/action_create_event"
+        android:icon="@drawable/ic_action_add"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_event_requests"

@@ -76,18 +76,14 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_map, menu);
+        inflater.inflate(R.menu.menu_add, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         hideSoftKeyboard();
-        if (item.getItemId() == R.id.action_ok) {
-            Log.d(TAG, "onOptionsItemSelected: Ok");
-            return true;
-        } else if (item.getItemId() == R.id.action_new_field) {
-            Log.d(TAG, "onOptionsItemSelected: New Field");
+        if (item.getItemId() == R.id.action_add) {
             if (mFieldsList != null)
                 ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList, true);
             return true;
