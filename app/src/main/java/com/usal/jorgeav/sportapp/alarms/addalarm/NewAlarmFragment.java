@@ -189,7 +189,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                                 myCalendar.set(Calendar.YEAR, year);
                                 myCalendar.set(Calendar.MONTH, monthOfYear);
                                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                newAlarmDateFrom.setText(UtilesTime.millisToDateStringShort(myCalendar.getTimeInMillis()));
+                                newAlarmDateFrom.setText(UtilesTime.millisToDateString(myCalendar.getTimeInMillis()));
                                 newAlarmDateTo.setText("");
                             }
                         },
@@ -223,7 +223,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                                 c.set(Calendar.YEAR, year);
                                 c.set(Calendar.MONTH, monthOfYear);
                                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                newAlarmDateTo.setText(UtilesTime.millisToDateStringShort(c.getTimeInMillis()));
+                                newAlarmDateTo.setText(UtilesTime.millisToDateString(c.getTimeInMillis()));
                             }
                         },
                         myCalendar.get(Calendar.YEAR),
@@ -429,10 +429,10 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void showAlarmDate(Long dateFrom, Long dateTo) {
         if (dateFrom != null && dateFrom > 0)
-            newAlarmDateFrom.setText(UtilesTime.millisToDateStringShort(dateFrom));
+            newAlarmDateFrom.setText(UtilesTime.millisToDateString(dateFrom));
 
         if (dateTo != null && dateTo > 0)
-            newAlarmDateTo.setText(UtilesTime.millisToDateStringShort(dateTo));
+            newAlarmDateTo.setText(UtilesTime.millisToDateString(dateTo));
     }
 
     @Override

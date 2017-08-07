@@ -16,7 +16,7 @@ public class UtilesTime {
 
     public static Long stringDateToMillis(String dateStr) {
         if (dateStr == null || TextUtils.isEmpty(dateStr)) return null;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("GTM")); /* https://stackoverflow.com/a/14400005/4235666 */
         try {
             return sdf.parse(dateStr).getTime();
@@ -54,7 +54,7 @@ public class UtilesTime {
 
     public static String millisToDateString(long millis) {
         if (millis <= 0) return "";
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("GTM")); /* https://stackoverflow.com/a/14400005/4235666 */
         return sdf.format(new Date(millis));
     }

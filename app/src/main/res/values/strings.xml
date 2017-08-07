@@ -137,6 +137,11 @@
     <string name="date_period">Date period</string>
     <string name="empty_players">Empty players</string>
     <string name="new_alarm_title">New Alarm</string>
+    <string name="toast_place_invalid">Invalid place</string>
+    <string name="toast_date_period_invalid">Invalid date period</string>
+    <string name="toast_total_player_invalid">Invalid total players</string>
+    <string name="toast_empty_players_invalid">Invalid empty players</string>
+    <string name="toast_players_relation_invalid">Total players should be greater than empty players</string>
 
     <!-- Profile Fragment -->
     <string name="dialog_title_change_name">Change name</string>
@@ -153,9 +158,4 @@
     <!-- Simulated User -->
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
-    <string name="toast_place_invalid">Invalid place</string>
-    <string name="toast_date_period_invalid">Invalid date period</string>
-    <string name="toast_total_player_invalid">Invalid total players</string>
-    <string name="toast_empty_players_invalid">Invalid empty players</string>
-    <string name="toast_players_relation_invalid">Total players should be greater than empty players</string>
 </resources>
