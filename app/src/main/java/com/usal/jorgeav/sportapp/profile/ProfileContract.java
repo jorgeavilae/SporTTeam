@@ -16,7 +16,6 @@ public abstract class ProfileContract {
 
     public interface View {
         void croppedResult(Uri photoCroppedUri);
-        void startCropActivity(Uri uri);
 
         void showUserImage(String image);
         void showUserName(String name);

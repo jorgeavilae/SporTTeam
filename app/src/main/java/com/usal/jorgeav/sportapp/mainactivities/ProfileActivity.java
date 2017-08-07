@@ -17,6 +17,7 @@ import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.profile.ProfileContract;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -77,7 +78,7 @@ public class ProfileActivity extends BaseActivity implements SportsListFragment.
             @Override
             public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
                 if (mDisplayedFragment instanceof ProfileContract.View)
-                    ((ProfileContract.View) mDisplayedFragment).startCropActivity(Uri.fromFile(imageFile));
+                    Utiles.startCropActivity(Uri.fromFile(imageFile), ProfileActivity.this);
             }
         });
 
@@ -98,7 +99,7 @@ public class ProfileActivity extends BaseActivity implements SportsListFragment.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == ProfileFragment.RC_PERMISSIONS &&
+        if (requestCode == Utiles.RC_GALLERY_CAMERA_PERMISSIONS &&
                 permissions[0].equals(WRITE_EXTERNAL_STORAGE) && permissions[1].equals(CAMERA)) {
 
             if (grantResults[0] == PackageManager.PERMISSION_DENIED)

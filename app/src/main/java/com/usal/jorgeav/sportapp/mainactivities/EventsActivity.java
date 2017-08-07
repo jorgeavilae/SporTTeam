@@ -22,6 +22,7 @@ import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulatePartici
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventContract;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -154,8 +155,7 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
 
             @Override
             public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
-                if (mDisplayedFragment instanceof SimulateParticipantContract.View)
-                    ((SimulateParticipantContract.View) mDisplayedFragment).startCropActivity(Uri.fromFile(imageFile));
+                Utiles.startCropActivity(Uri.fromFile(imageFile), EventsActivity.this);
             }
         });
 
@@ -176,7 +176,7 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == SimulateParticipantFragment.RC_PERMISSIONS &&
+        if (requestCode == Utiles.RC_GALLERY_CAMERA_PERMISSIONS &&
                 permissions[0].equals(WRITE_EXTERNAL_STORAGE) && permissions[1].equals(CAMERA)) {
 
             if (grantResults[0] == PackageManager.PERMISSION_DENIED)

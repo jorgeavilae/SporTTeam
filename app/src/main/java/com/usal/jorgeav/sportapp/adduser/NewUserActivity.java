@@ -5,11 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -71,10 +69,10 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,11 +95,10 @@ public class NewUserActivity extends AppCompatActivity implements
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
     private static final String INSTANCE_NEW_USER_CITY_NAME = "INSTANCE_NEW_USER_CITY_NAME";
     private static final String INSTANCE_NEW_USER_CITY_COORD = "INSTANCE_NEW_USER_CITY_COORD";
-    private static final int RC_PERMISSIONS = 3;
+
     private static final int RC_PHOTO_PICKER = 2;
 
     Fragment mDisplayedFragment;
-    Uri selectedImageUri;
     Uri croppedImageUri;
     String newUserCitySelectedName = null;
     LatLng newUserCitySelectedCoord = null;
@@ -213,7 +210,7 @@ public class NewUserActivity extends AppCompatActivity implements
                 EasyImage.configuration(NewUserActivity.this)
                         .setImagesFolderName(Environment.DIRECTORY_PICTURES)
                         .saveInAppExternalFilesDir();
-                if (isStorageCameraPermissionGranted())
+                if (Utiles.isStorageCameraPermissionGranted(NewUserActivity.this))
                     EasyImage.openChooserWithGallery(NewUserActivity.this, "Elegir foto de...", RC_PHOTO_PICKER);
             }
         });
@@ -334,8 +331,7 @@ public class NewUserActivity extends AppCompatActivity implements
 
             @Override
             public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
-                selectedImageUri = Uri.fromFile(imageFile);
-                startCropActivity();
+                Utiles.startCropActivity(Uri.fromFile(imageFile), NewUserActivity.this);
             }
         });
 
@@ -356,56 +352,10 @@ public class NewUserActivity extends AppCompatActivity implements
             Log.e(TAG, "onActivityResult: error ", UCrop.getError(data));
     }
 
-    private void startCropActivity() {
-        long millis = System.currentTimeMillis();
-        if (selectedImageUri.getLastPathSegment().contains("."))
-            croppedImageUri = getAlbumStorageDir(selectedImageUri.getLastPathSegment().replace(".", "_cropped" + millis + "."));
-        else
-            croppedImageUri = getAlbumStorageDir(selectedImageUri.getLastPathSegment() + "_cropped" + millis);
-        UCrop.of(selectedImageUri, croppedImageUri)
-                .withAspectRatio(1, 1)
-                .withMaxResultSize(512, 512)
-                .start(this); // Start Activity with requestCode UCrop.REQUEST_CROP
-    }
-
-    private Uri getAlbumStorageDir(@NonNull String path) {
-        // Get the directory for the user's public pictures directory.
-        File f = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        Uri uri = Uri.fromFile(f).buildUpon().appendPath(path).build();
-        File file = new File(uri.getPath());
-        if (!file.exists()) {
-            try {
-                if (!file.createNewFile())
-                    Log.e(TAG, "getAlbumStorageDir: file not created");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return Uri.fromFile(file);
-    }
-
-    /* Checks if external storage is available for read and write */
-    private boolean isStorageCameraPermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG, "Permissions are granted");
-                return true;
-            } else {
-                Log.v(TAG, "Permissions are revoked");
-                ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, RC_PERMISSIONS);
-                return false;
-            }
-        } else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG, "Permissions are granted");
-            return true;
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == RC_PERMISSIONS &&
+        if (requestCode == Utiles.RC_GALLERY_CAMERA_PERMISSIONS &&
                 permissions[0].equals(WRITE_EXTERNAL_STORAGE) && permissions[1].equals(CAMERA)) {
 
             if (grantResults[0] == PackageManager.PERMISSION_DENIED)
@@ -551,6 +501,7 @@ public class NewUserActivity extends AppCompatActivity implements
                     }
                 });
 
+        //TODO validate data
         String photoUriStr = "";
         if (photoUri != null) photoUriStr = photoUri.toString();
         User user = new User(fUser.getUid(), fUser.getEmail(),

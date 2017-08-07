@@ -1,9 +1,17 @@
 package com.usal.jorgeav.sportapp.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -16,8 +24,14 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.yalantis.ucrop.UCrop;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * Created by Jorge Avila on 17/05/2017.
@@ -25,6 +39,9 @@ import java.util.List;
 
 public class Utiles {
     private static final String TAG = Utiles.class.getSimpleName();
+
+    /* Request code for ask permissions to gallery and camera */
+    public static final int RC_GALLERY_CAMERA_PERMISSIONS = 3;
 
     //TODO mover a settings
     public static final double DISTANCE_ALLOWED = 50;
@@ -135,5 +152,53 @@ public class Utiles {
                 return R.drawable.logo_empty;
         }
         return -1;
+    }
+
+
+    /* Checks if external storage is available for read and write */
+    public static boolean isStorageCameraPermissionGranted(Activity activityContext) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (activityContext.checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                    && activityContext.checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Permissions are granted");
+                return true;
+            } else {
+                Log.v(TAG, "Permissions are revoked");
+                ActivityCompat.requestPermissions(activityContext, new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, RC_GALLERY_CAMERA_PERMISSIONS);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG, "Permissions are granted");
+            return true;
+        }
+    }
+
+    /* Starts Crop Activity (UCrop), to crop given Uri photo, in the given Activity context */
+    public static void startCropActivity(Uri photoFilesystemUri, Activity activity) {
+        long millis = System.currentTimeMillis();
+        // Uri to store cropped photo in filesystem
+        Uri croppedPhotoFilesystemUri;
+        if (photoFilesystemUri.getLastPathSegment().contains("."))
+            croppedPhotoFilesystemUri = getAlbumStorageDir(photoFilesystemUri.getLastPathSegment().replace(".", "_cropped" + millis + "."));
+        else
+            croppedPhotoFilesystemUri = getAlbumStorageDir(photoFilesystemUri.getLastPathSegment() + "_cropped" + millis);
+        UCrop.of(photoFilesystemUri, croppedPhotoFilesystemUri)
+                .withAspectRatio(1, 1)
+                .withMaxResultSize(512, 512)
+                .start(activity);
+    }
+
+    /* Returns directory in filesystem to store cropped photo */
+    private static Uri getAlbumStorageDir(@NonNull String path) {
+        // Get the directory for the user's public pictures directory.
+        File f = MyApplication.getAppContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        Uri uri = Uri.fromFile(f).buildUpon().appendPath(path).build();
+        File file = new File(uri.getPath());
+        if (!file.exists()) {
+            try { if (!file.createNewFile())
+                Log.e(TAG, "getAlbumStorageDir: file not created");
+            } catch (IOException e) { e.printStackTrace(); }
+        }
+        return Uri.fromFile(file);
     }
 }
