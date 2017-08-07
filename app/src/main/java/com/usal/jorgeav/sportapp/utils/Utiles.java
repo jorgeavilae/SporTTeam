@@ -1,7 +1,9 @@
 package com.usal.jorgeav.sportapp.utils;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -23,6 +25,7 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.yalantis.ucrop.UCrop;
 
@@ -200,5 +203,16 @@ public class Utiles {
             } catch (IOException e) { e.printStackTrace(); }
         }
         return Uri.fromFile(file);
+    }
+
+    public static void startFieldsActivityAndNewField(Activity activity) {
+        /* https://stackoverflow.com/a/24927301/4235666 */
+        Intent startActivityIntent = Intent.makeRestartActivityTask(
+                new ComponentName(activity, FieldsActivity.class));
+
+        startActivityIntent.putExtra(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "dummy");
+        startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        activity.startActivity(startActivityIntent);
+        activity.finish();
     }
 }

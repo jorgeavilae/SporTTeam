@@ -3,9 +3,7 @@ package com.usal.jorgeav.sportapp.events.addevent;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,7 +33,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
-import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
@@ -360,7 +358,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         builder.setMessage("Quieres crear un campo nuevo?")
                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        startFieldsActivityAndNewField();
+                        Utiles.startFieldsActivityAndNewField(getActivity());
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -371,17 +369,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                 })
                 .setCancelable(false);
         builder.create().show();
-    }
-
-    @Override
-    public void startFieldsActivityAndNewField() {
-        /* https://stackoverflow.com/a/24927301/4235666 */
-        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(getActivityContext(), FieldsActivity.class));
-
-        startActivityIntent.putExtra(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "dummy");
-        startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(startActivityIntent);
-        getActivity().finish();
     }
 
     @Override

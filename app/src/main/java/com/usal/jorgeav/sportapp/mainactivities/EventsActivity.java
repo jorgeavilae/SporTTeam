@@ -134,8 +134,7 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
                     mCoord = myPlace.getCoordinates();
                     Log.d(TAG, "onActivityResult: "+myPlace);
                 } else if (data.hasExtra(MapsActivity.ADD_FIELD_SELECTED_EXTRA)) {
-                    if (mDisplayedFragment instanceof NewEventContract.View)
-                        ((NewEventContract.View) mDisplayedFragment).startFieldsActivityAndNewField();
+                    Utiles.startFieldsActivityAndNewField(this);
                     Log.d(TAG, "onActivityResult: ADD_FIELD_SELECTED_EXTRA");
                 }
                 if (mDisplayedFragment instanceof NewEventContract.View)
