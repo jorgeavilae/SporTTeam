@@ -1,13 +1,10 @@
 package com.usal.jorgeav.sportapp.eventdetail.simulateparticipant;
 
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -23,34 +19,24 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.yalantis.ucrop.UCrop;
-
-import java.io.File;
-import java.io.IOException;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
-import static android.Manifest.permission.CAMERA;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-/**
- * Created by Jorge Avila on 12/07/2017.
- */
-
 public class SimulateParticipantFragment extends BaseFragment implements SimulateParticipantContract.View {
     public static final String TAG = SimulateParticipantFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
-    public static final int RC_PERMISSIONS = 3;
+
     public static final int RC_PHOTO_PICKER = 2;
 
-
     SimulateParticipantContract.Presenter mPresenter;
+
     @BindView(R.id.new_simulated_user_photo)
     ImageView simulatedUserPhoto;
     @BindView(R.id.new_simulated_user_photo_button)
-    Button simulatedUserPhotoButton;
+    ImageView simulatedUserPhotoButton;
     Uri photoUri = null;
     @BindView(R.id.new_simulated_user_name)
     EditText simulatedUserName;
@@ -72,6 +58,7 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
         mPresenter = new SimulateParticipantPresenter(this);
     }
 
@@ -87,8 +74,6 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
         super.onOptionsItemSelected(item);
         hideSoftKeyboard();
         if (item.getItemId() == R.id.action_ok) {
-            Log.d(TAG, "onOptionsItemSelected: Ok");
-
             String eventId = "";
             if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
                 eventId = getArguments().getString(BUNDLE_EVENT_ID);
@@ -108,42 +93,25 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
         View root = inflater.inflate(R.layout.fragment_new_simulated_user, container, false);
         ButterKnife.bind(this, root);
 
-
         simulatedUserPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EasyImage.configuration(getActivity())
                         .setImagesFolderName(Environment.DIRECTORY_PICTURES)
                         .saveInAppExternalFilesDir();
-                if (isStorageCameraPermissionGranted())
-                    EasyImage.openChooserWithGallery(getActivity(), "Elegir foto de...", RC_PHOTO_PICKER);
+                if (Utiles.isStorageCameraPermissionGranted(getActivity()))
+                    EasyImage.openChooserWithGallery(getActivity(),
+                            getString(R.string.pick_photo_from), RC_PHOTO_PICKER);
             }
         });
         return root;
     }
 
-    /* Checks if external storage is available for read and write */
-    private  boolean isStorageCameraPermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (getActivity().checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                    && getActivity().checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permissions are granted");
-                return true;
-            } else {
-                Log.v(TAG,"Permissions are revoked");
-                ActivityCompat.requestPermissions(getActivity(), new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, RC_PERMISSIONS);
-                return false;
-            }
-        } else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permissions are granted");
-            return true;
-        }
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Simular participante", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.new_simulated_user), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -152,37 +120,6 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
         super.onResume();
         mFragmentManagementListener.showContent();
     }
-
-    @Override
-    public void startCropActivity(Uri imageFileUri) {
-        long millis = System.currentTimeMillis();
-        // Uri to store cropped photo in filesystem
-        if (imageFileUri.getLastPathSegment().contains("."))
-            photoUri = getAlbumStorageDir(imageFileUri.getLastPathSegment().replace(".","_cropped" + millis + "."));
-        else
-            photoUri = getAlbumStorageDir(imageFileUri.getLastPathSegment() + "_cropped" + millis);
-        UCrop.of(imageFileUri, photoUri)
-                .withAspectRatio(1, 1)
-                .withMaxResultSize(512, 512)
-                .start(getActivity());
-    }
-
-    private Uri getAlbumStorageDir(@NonNull String path) {
-        // Get the directory for the user's public pictures directory.
-        File f = getActivity().getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        Uri uri = Uri.fromFile(f).buildUpon().appendPath(path).build();
-        File file = new File(uri.getPath());
-        if (!file.exists()) {
-            try {
-                if (!file.createNewFile())
-                    Log.e(TAG, "getAlbumStorageDir: file not created");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return Uri.fromFile(file);
-    }
-
 
     @Override
     public void croppedResult(Uri photoCroppedUri) {
@@ -198,8 +135,10 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
 
     @Override
     public void showResult(final String msg) {
-        Log.d(TAG, "showResult: "+msg);
-        /* https://stackoverflow.com/a/3875204/4235666
+        Log.d(TAG, "showResult: " + msg);
+
+        /* Perform UI actions (like display a Toast or press back) need to happen in UI thread
+         * https://stackoverflow.com/a/3875204/4235666
          * https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)
          */
         getActivity().runOnUiThread(new Runnable() {
@@ -210,5 +149,10 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
                 getActivity().onBackPressed();
             }
         });
+    }
+
+    @Override
+    public void showError(int msgResource) {
+        Toast.makeText(getActivity(), msgResource, Toast.LENGTH_SHORT).show();
     }
 }

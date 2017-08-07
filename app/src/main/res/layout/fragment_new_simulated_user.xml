@@ -1,95 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?android:attr/actionBarSize"
-    tools:context="com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment">
+    tools:context="com.usal.jorgeav.sportapp.mainactivities.EventsActivity">
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Foto"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
-
-    <ImageView
-        android:id="@+id/new_simulated_user_photo"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:srcCompat="@drawable/profile_picture_placeholder"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/new_simulated_user_photo_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:text="Pick Photo"
-        app:layout_constraintBottom_toBottomOf="@+id/new_simulated_user_photo"
-        app:layout_constraintLeft_toRightOf="@+id/new_simulated_user_photo" />
+        <ImageView
+            android:id="@+id/new_simulated_user_photo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/profile_picture_placeholder" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Alias"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/new_simulated_user_photo"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        <ImageView
+            android:id="@+id/new_simulated_user_photo_button"
+            android:layout_width="@dimen/image_button_size"
+            android:layout_height="@dimen/image_button_size"
+            android:layout_margin="@dimen/image_button_margin"
+            android:cropToPadding="true"
+            android:src="@drawable/ic_action_edit_dark"
+            app:layout_constraintBottom_toBottomOf="@+id/new_simulated_user_photo"
+            app:layout_constraintLeft_toRightOf="@+id/new_simulated_user_photo" />
 
-    <EditText
-        android:id="@+id/new_simulated_user_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="alias"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent" />
+        <EditText
+            android:id="@+id/new_simulated_user_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:hint="@string/prompt_name"
+            android:inputType="textPersonName|textCapWords"
+            android:maxLines="1"
+            android:padding="@dimen/activity_horizontal_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/guideline8"
+            app:layout_constraintTop_toBottomOf="@+id/new_simulated_user_photo" />
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Edad"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/new_simulated_user_name"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        <EditText
+            android:id="@+id/new_simulated_user_age"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:hint="@string/prompt_age"
+            android:inputType="number"
+            android:maxLines="1"
+            android:padding="@dimen/activity_horizontal_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/guideline8"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/new_simulated_user_photo" />
 
-    <EditText
-        android:id="@+id/new_simulated_user_age"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="number"
-        android:text="20"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent" />
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.65" />
 
-
-</android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

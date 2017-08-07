@@ -5,22 +5,20 @@ import android.text.TextUtils;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.UploadTask;
+import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
-/**
- * Created by Jorge Avila on 12/07/2017.
- */
-
-public class SimulateParticipantPresenter implements SimulateParticipantContract.Presenter {
+class SimulateParticipantPresenter implements SimulateParticipantContract.Presenter {
     public static final String TAG = SimulateParticipantPresenter.class.getSimpleName();
-    SimulateParticipantContract.View mView;
-    String mEventId;
-    String mName;
-    Long mAge;
 
-    public SimulateParticipantPresenter(SimulateParticipantContract.View view){
+    private SimulateParticipantContract.View mView;
+    private String mEventId;
+    private String mName;
+    private Long mAge;
+
+    SimulateParticipantPresenter(SimulateParticipantContract.View view) {
         this.mView = view;
         mEventId = "";
         mName = "";
@@ -29,21 +27,35 @@ public class SimulateParticipantPresenter implements SimulateParticipantContract
 
     @Override
     public void addSimulatedParticipant(String eventId, String name, Uri photo, String age) {
-        if(eventId != null && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(name)
+        if (eventId != null && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(name)
                 && !TextUtils.isEmpty(age)) { //Validate arguments
+
+            try {
+                mAge = Long.parseLong(age);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                mView.showError(R.string.new_simulated_user_invalid_arg);
+                return;
+            }
+
+            if (mAge <= 12 || mAge >= 100) {
+                mView.showError(R.string.error_incorrect_age);
+                return;
+            }
+
             mEventId = eventId;
             mName = name;
-            mAge = Long.parseLong(age);
             if (photo != null)
                 storePhotoOnFirebase(photo);
             else {
                 String myUserID = Utiles.getCurrentUserId();
-                if(TextUtils.isEmpty(myUserID)) return;
+                if (TextUtils.isEmpty(myUserID)) return;
                 SimulatedUser su = new SimulatedUser(mName, null, mAge, myUserID);
                 FirebaseActions.addSimulatedParticipant(mView.getThis(), mEventId, su);
             }
-        }
-        mView.hideContent();
+            mView.hideContent();
+        } else
+            mView.showError(R.string.new_simulated_user_invalid_arg);
     }
 
     private void storePhotoOnFirebase(Uri photo) {
@@ -54,8 +66,8 @@ public class SimulateParticipantPresenter implements SimulateParticipantContract
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
                 String myUserID = Utiles.getCurrentUserId();
-                if(TextUtils.isEmpty(myUserID)) return;
-                String photo = downloadUrl!=null?downloadUrl.toString():null;
+                if (TextUtils.isEmpty(myUserID)) return;
+                String photo = downloadUrl != null ? downloadUrl.toString() : null;
                 SimulatedUser su = new SimulatedUser(mName, photo, mAge, myUserID);
                 FirebaseActions.addSimulatedParticipant(mView.getThis(), mEventId, su);
             }
