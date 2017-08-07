@@ -232,8 +232,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
                     newFieldOpenTime.setEnabled(false); newFieldOpenTime.setText(" ");
                     newFieldCloseTime.setEnabled(false); newFieldCloseTime.setText(" ");
                 } else {
-                    newFieldOpenTime.setEnabled(true);
-                    newFieldCloseTime.setEnabled(true);
+                    newFieldOpenTime.setEnabled(true); newFieldOpenTime.setText("");
+                    newFieldCloseTime.setEnabled(true); newFieldCloseTime.setText("");
                 }
             }
         });

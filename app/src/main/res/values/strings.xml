@@ -25,6 +25,7 @@
     <string name="pick_photo_from">Pick photo from…</string>
 
     <string name="add">Add</string>
+    <string name="delete">Delete</string>
 
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_maps">Map</string>
@@ -111,10 +112,20 @@
     <string name="created_by">Created by %1$s</string>
     <string name="dialog_title_vote">Rate this court</string>
     <string name="select_place">Select a place</string>
+    <string name="select_field">Select field</string>
     <string name="open_24h">Open 24h</string>
     <string name="opening_time">Opening time</string>
     <string name="closing_time">Closing time</string>
     <string name="toast_new_field_invalid_arg">No valid data</string>
+    <string name="toast_no_field_for_sport">There isn\'t Fields for this sport</string>
+    <string name="dialog_title_you_must_select_place">You must select a field</string>
+    <string name="dialog_msg_you_must_select_place">A field is needed in order to look up for sports events.
+        You can also create a new Field by click in the icon add above.</string>
+    <string name="dialog_title_create_new_field">Create new Field</string>
+    <string name="dialog_msg_create_new_field">There isn\'t Fields for this sport and isn\'t needed in
+         order to create a new Alarms. Anyway… Do you want to create a new Field now?</string>
+    <string name="new_field_title">New Field</string>
+    <string name="no_field_selection">You didn\'t select anything</string>
 
     <!-- Alarms -->
     <!-- https://stackoverflow.com/questions/1587056/how-to-keep-the-spaces-at-the-end-and-or-at-the-beginning-of-a-string#comment26178169_2206684 -->
@@ -125,6 +136,7 @@
     <string name="unspecified">Unspecified</string>
     <string name="date_period">Date period</string>
     <string name="empty_players">Empty players</string>
+    <string name="new_alarm_title">New Alarm</string>
 
     <!-- Profile Fragment -->
     <string name="dialog_title_change_name">Change name</string>
@@ -141,6 +153,9 @@
     <!-- Simulated User -->
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
-    <string name="new_field_title">New Field</string>
-
+    <string name="toast_place_invalid">Invalid place</string>
+    <string name="toast_date_period_invalid">Invalid date period</string>
+    <string name="toast_total_player_invalid">Invalid total players</string>
+    <string name="toast_empty_players_invalid">Invalid empty players</string>
+    <string name="toast_players_relation_invalid">Total players should be greater than empty players</string>
 </resources>

@@ -8,10 +8,6 @@ import com.usal.jorgeav.sportapp.data.Field;
 
 import java.util.ArrayList;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
-
 public abstract class NewAlarmContract {
 
     public interface Presenter {
@@ -33,10 +29,9 @@ public abstract class NewAlarmContract {
         void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo);
         void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo);
         void clearUI();
+
         Context getActivityContext();
 
         void retrieveFields(ArrayList<Field> dataList);
-
-        void startFieldsActivityAndNewField();
     }
 }

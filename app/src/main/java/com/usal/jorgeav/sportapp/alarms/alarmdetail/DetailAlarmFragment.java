@@ -63,6 +63,8 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     ImageView imageViewAlarmSport;
     @BindView(R.id.alarm_detail_place)
     TextView textViewAlarmPlace;
+    @BindView(R.id.alarm_detail_place_icon)
+    ImageView textViewAlarmPlaceIcon;
     @BindView(R.id.alarm_detail_date_from)
     TextView textViewAlarmDateFrom;
     @BindView(R.id.alarm_detail_date_to)
@@ -221,7 +223,8 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
                 mFragmentManagementListener.initFragment(newFragment, true);
                 }
             });
-        }
+        } else textViewAlarmPlaceIcon.setVisibility(View.INVISIBLE);
+
     }
 
     @Override

@@ -2,9 +2,7 @@ package com.usal.jorgeav.sportapp.alarms.addalarm;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,15 +17,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -36,12 +34,13 @@ import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
-import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -52,12 +51,9 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
-
 public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.View  {
     private static final String TAG = NewAlarmFragment.class.getSimpleName();
+
     public static final String BUNDLE_ALARM_ID = "BUNDLE_ALARM_ID";
     public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
 
@@ -66,14 +62,13 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     PlaceAutocompleteAdapter mAdapter;
     public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
     ArrayList<Field> mFieldList;
-    public static final String INSTANCE_ADDRESS_TEXT_VIEW_ID = "INSTANCE_ADDRESS_TEXT_VIEW_ID";
 
     NewAlarmContract.Presenter mNewAlarmPresenter;
     private static boolean sInitialize;
 
-    ArrayAdapter<CharSequence> sportsAdapter;
     @BindView(R.id.new_alarm_sport)
-    Spinner newAlarmSport;
+    ImageView newAlarmSport;
+    String mSportId = "";
     @BindView(R.id.new_alarm_field)
     TextView newAlarmField;
     @BindView(R.id.new_alarm_field_button)
@@ -146,15 +141,13 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         super.onOptionsItemSelected(item);
         hideSoftKeyboard();
         if (item.getItemId() == R.id.action_ok) {
-            Log.d(TAG, "onOptionsItemSelected: Ok");
-
             String alarmId = "";
             if (getArguments() != null && getArguments().containsKey(BUNDLE_ALARM_ID))
                 alarmId = getArguments().getString(BUNDLE_ALARM_ID);
 
             mNewAlarmPresenter.addAlarm(
                     alarmId,
-                    newAlarmSport.getSelectedItem().toString(),
+                    mSportId,
                     ((AlarmsActivity)getActivity()).mFieldId,
                     ((AlarmsActivity)getActivity()).mCity,
                     newAlarmDateFrom.getText().toString(),
@@ -173,12 +166,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         View root = inflater.inflate(R.layout.fragment_new_alarm, container, false);
         ButterKnife.bind(this, root);
 
-        myCalendar = Calendar.getInstance();
-
-        sportsAdapter = ArrayAdapter.createFromResource(
-                getActivityContext(), R.array.sport_id_values, android.R.layout.simple_spinner_item);
-        sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        newAlarmSport.setAdapter(sportsAdapter);
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
 
         newAlarmFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,6 +177,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             }
         });
 
+        myCalendar = Calendar.getInstance();
         newAlarmDateFrom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -199,9 +189,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                                 myCalendar.set(Calendar.YEAR, year);
                                 myCalendar.set(Calendar.MONTH, monthOfYear);
                                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                newAlarmDateFrom.setText(UtilesTime.millisToDateString(myCalendar.getTimeInMillis()));
+                                newAlarmDateFrom.setText(UtilesTime.millisToDateStringShort(myCalendar.getTimeInMillis()));
                                 newAlarmDateTo.setText("");
-                                newAlarmDateTo.setEnabled(true);
                             }
                         },
                         myCalendar.get(Calendar.YEAR),
@@ -210,20 +199,18 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
                 datePickerDialogFrom.getDatePicker().setMinDate(System.currentTimeMillis());
                 datePickerDialogFrom.setCanceledOnTouchOutside(true);
-                datePickerDialogFrom.setButton(DialogInterface.BUTTON_NEUTRAL, "Borrar", new DialogInterface.OnClickListener() {
+                datePickerDialogFrom.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.delete), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         myCalendar.setTimeInMillis(System.currentTimeMillis());
                         newAlarmDateFrom.setText("");
                         newAlarmDateTo.setText("");
-                        newAlarmDateTo.setEnabled(false);
                     }
                 });
                 datePickerDialogFrom.show();
             }
         });
 
-        newAlarmDateTo.setEnabled(false);
         newAlarmDateTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -236,7 +223,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                                 c.set(Calendar.YEAR, year);
                                 c.set(Calendar.MONTH, monthOfYear);
                                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                newAlarmDateTo.setText(UtilesTime.millisToDateString(c.getTimeInMillis()));
+                                newAlarmDateTo.setText(UtilesTime.millisToDateStringShort(c.getTimeInMillis()));
                             }
                         },
                         myCalendar.get(Calendar.YEAR),
@@ -245,10 +232,10 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
                 datePickerDialogTo.getDatePicker().setMinDate(myCalendar.getTimeInMillis() + 1000*60*60*24);
                 datePickerDialogTo.setCanceledOnTouchOutside(true);
-                datePickerDialogTo.setButton(DialogInterface.BUTTON_NEUTRAL, "Borrar", new DialogInterface.OnClickListener() {
+                datePickerDialogTo.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.delete), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if (!TextUtils.isEmpty(newAlarmDateTo.getText())) // myCalendar has been updated
+                        if (!TextUtils.isEmpty(newAlarmDateTo.getText())) // myCalendar has been set
                             myCalendar.setTimeInMillis(datePickerDialogTo.getDatePicker().getMinDate() - 1000*60*60*24);
                         newAlarmDateTo.setText("");
                     }
@@ -260,11 +247,9 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
             mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_ADDRESS_TEXT_VIEW_ID))
-            newAlarmField.setText(savedInstanceState.getString(INSTANCE_ADDRESS_TEXT_VIEW_ID));
-
-        //Show newField dialog on rotation if needed, after retrieveFields are called
-        if (mFieldList != null && mFieldList.size() == 0) startNewFieldTask();
+        // Show place selected previously
+        showAlarmField(((AlarmsActivity)getActivity()).mFieldId,
+                ((AlarmsActivity)getActivity()).mCity);
 
         return root;
     }
@@ -318,6 +303,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                                         Place myPlace = places.get(0);
                                         ((AlarmsActivity)getActivity()).mFieldId = null;
                                         ((AlarmsActivity)getActivity()).mCity = myPlace.getName().toString();
+                                        ((AlarmsActivity)getActivity()).mCoord = myPlace.getLatLng();
                                         Log.i(TAG, "Place found: Name - " + myPlace.getName()
                                                 + " LatLng - " + myPlace.getLatLng());
                                     } else {
@@ -334,16 +320,14 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Nueva alarma", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.new_alarm_title), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
-            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
-        else showContent();
+        showContent();
 
         if (sInitialize) return;
         mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
@@ -351,7 +335,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     }
 
     private void setSportLayout(String sportId) {
-        //Set sport in Spinner
+
+        //Set sport selected
         showAlarmSport(sportId);
 
         // Check if the sport doesn't need a field
@@ -379,7 +364,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         showContent();
         if (mFieldList != null)
             if (mFieldList.size() == 0) {
-                Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivityContext(), R.string.toast_no_field_for_sport, Toast.LENGTH_SHORT).show();
                 startNewFieldTask();
             } /* else startMapForPickAField();
                * Not necessary since isn't needed a Field to create a new Alarm
@@ -391,31 +376,15 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
     private void startNewFieldTask() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        builder.setMessage("Quieres crear un campo nuevo?")
-                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.dialog_title_create_new_field)
+                .setMessage(R.string.dialog_msg_create_new_field)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        startFieldsActivityAndNewField();
+                        Utiles.startFieldsActivityAndNewField(getActivity());
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        getActivity().onBackPressed();
-                    }
-                })
-                .setCancelable(false);
+                .setNegativeButton(android.R.string.no, null); //No need to go back since an alarm can be created without a field
         builder.create().show();
-    }
-
-    @Override
-    public void startFieldsActivityAndNewField() {
-        /* https://stackoverflow.com/a/24927301/4235666 */
-        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(getActivityContext(), FieldsActivity.class));
-
-        startActivityIntent.putExtra(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "dummy");
-        startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(startActivityIntent);
-        getActivity().finish();
     }
 
     @Override
@@ -432,43 +401,38 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     }
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-
-        if (!TextUtils.isEmpty(newAlarmDateFrom.getText().toString()))
-            newAlarmDateTo.setEnabled(true);
-    }
-
-    @Override
     public void showAlarmSport(String sport) {
-        if (sport != null && !TextUtils.isEmpty(sport))
-            newAlarmSport.setSelection(sportsAdapter.getPosition(sport));
+        if (sport != null && !TextUtils.isEmpty(sport)) {
+            mSportId = sport;
+            int sportResource = Utiles.getSportIconFromResource(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
+            Glide.with(this).load(sportResource).into(newAlarmSport);
+        }
     }
 
     @Override
     public void showAlarmField(String fieldId, String city) {
         if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof AlarmsActivity) {
-            //Coordinates aren't needed in alarms
             Field f = UtilesContentProvider.getFieldFromContentProvider(fieldId);
-            newAlarmField.setText(f.getName());
-            ((AlarmsActivity) getActivity()).mFieldId = fieldId;
-        }
+            newAlarmField.setText(f.getName() + ", " + f.getCity());
 
-        if (city != null && !TextUtils.isEmpty(city) && getActivity() instanceof AlarmsActivity) {
+            ((AlarmsActivity) getActivity()).mFieldId = fieldId;
+            ((AlarmsActivity) getActivity()).mCity = f.getCity();
+            ((AlarmsActivity) getActivity()).mCoord = new LatLng(f.getCoord_latitude(), f.getCoord_longitude());
+        } else if (city != null && !TextUtils.isEmpty(city) && getActivity() instanceof AlarmsActivity) {
             newAlarmCity.setText(city);
             ((AlarmsActivity) getActivity()).mCity = city;
+            ((AlarmsActivity) getActivity()).mFieldId = null;
+            ((AlarmsActivity) getActivity()).mCoord = null;
         }
     }
 
     @Override
     public void showAlarmDate(Long dateFrom, Long dateTo) {
-        if (dateFrom != null && dateFrom > 0) {
-            newAlarmDateFrom.setText(UtilesTime.millisToDateString(dateFrom));
-            newAlarmDateTo.setEnabled(true);
-        }
-        if (dateTo != null && dateTo > 0)
-            newAlarmDateTo.setText(UtilesTime.millisToDateString(dateTo));
+        if (dateFrom != null && dateFrom > 0)
+            newAlarmDateFrom.setText(UtilesTime.millisToDateStringShort(dateFrom));
 
+        if (dateTo != null && dateTo > 0)
+            newAlarmDateTo.setText(UtilesTime.millisToDateStringShort(dateTo));
     }
 
     @Override
@@ -491,13 +455,13 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
     @Override
     public void clearUI() {
-        newAlarmSport.setSelection(0);
+        mSportId = "";
         ((AlarmsActivity)getActivity()).mFieldId = null;
         ((AlarmsActivity)getActivity()).mCity = null;
+        ((AlarmsActivity)getActivity()).mCoord = null;
         newAlarmField.setText("");
         newAlarmCity.setText("");
         newAlarmDateFrom.setText("");
-        newAlarmDateTo.setEnabled(false);
         newAlarmDateTo.setText("");
         newAlarmTotalFrom.setText("");
         newAlarmTotalTo.setText("");
@@ -508,9 +472,9 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void onDetach() {
         super.onDetach();
+        // If user go back and pick other sport, we need to clear this variables
         ((AlarmsActivity)getActivity()).mFieldId = null;
         ((AlarmsActivity)getActivity()).mCity = null;
-
     }
 
     @Override
@@ -518,7 +482,5 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         super.onSaveInstanceState(outState);
         if (mFieldList != null)
             outState.putParcelableArrayList(INSTANCE_FIELD_LIST_ID, mFieldList);
-        if (!TextUtils.isEmpty(newAlarmField.getText().toString()))
-            outState.putString(INSTANCE_ADDRESS_TEXT_VIEW_ID, newAlarmField.getText().toString());
     }
 }

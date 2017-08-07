@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.SelectSportsAdapter;
 import com.usal.jorgeav.sportapp.alarms.AlarmsFragment;
@@ -16,6 +18,7 @@ import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Sport;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.ArrayList;
 
@@ -34,6 +37,8 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
     public String mFieldId;
     private static final String INSTANCE_CITY_SELECTED = "INSTANCE_CITY_SELECTED";
     public String mCity;
+    private static final String INSTANCE_COORD_SELECTED = "INSTANCE_COORD_SELECTED";
+    public LatLng mCoord;
 
     @Override
     public void startMainFragment() {
@@ -41,9 +46,11 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
         String alarmId = getIntent().getStringExtra(ALARMID_PENDING_INTENT_EXTRA);
 
         initFragment(AlarmsFragment.newInstance(), false);
-        if (alarmId != null) {
+
+        // Open an alarm detail right after alarm list because this Activity is due to a notification
+        if (alarmId != null)
             initFragment(DetailAlarmFragment.newInstance(alarmId), true);
-        }
+
         mNavigationView.setCheckedItem(R.id.nav_alarms);
     }
 
@@ -59,6 +66,8 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
             outState.putString(INSTANCE_FIELD_ID_SELECTED, mFieldId);
         if (mCity != null)
             outState.putString(INSTANCE_CITY_SELECTED, mCity);
+        if (mCoord != null)
+            outState.putParcelable(INSTANCE_COORD_SELECTED, mCoord);
     }
 
     @Override
@@ -68,6 +77,8 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
             mFieldId = savedInstanceState.getString(INSTANCE_FIELD_ID_SELECTED);
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_CITY_SELECTED))
             mCity = savedInstanceState.getString(INSTANCE_CITY_SELECTED);
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_COORD_SELECTED))
+            mCoord = savedInstanceState.getParcelable(INSTANCE_COORD_SELECTED);
     }
 
     @Override
@@ -93,18 +104,21 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
                     Field field = data.getParcelableExtra(MapsActivity.FIELD_SELECTED_EXTRA);
                     mFieldId = field.getId();
                     mCity = field.getCity();
+                    mCoord = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
                     Log.d(TAG, "onActivityResult: " + field);
                 } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
-                    Toast.makeText(this, "You should select a Field", Toast.LENGTH_SHORT).show();
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.dialog_title_you_must_select_place)
+                            .setMessage(R.string.dialog_msg_you_must_select_place)
+                            .create().show();
                 } else if (data.hasExtra(MapsActivity.ADD_FIELD_SELECTED_EXTRA)) {
-                    if (mDisplayedFragment instanceof NewAlarmContract.View)
-                        ((NewAlarmContract.View) mDisplayedFragment).startFieldsActivityAndNewField();
+                    Utiles.startFieldsActivityAndNewField(this);
                     Log.d(TAG, "onActivityResult: ADD_FIELD_SELECTED_EXTRA");
                 }
 
                 if (mDisplayedFragment instanceof NewAlarmContract.View)
                     ((NewAlarmContract.View) mDisplayedFragment).showAlarmField(mFieldId, mCity);
             } else
-                Toast.makeText(this, "You didn't select anything", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.no_field_selection, Toast.LENGTH_SHORT).show();
     }
 }

@@ -24,16 +24,12 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
-
-public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = NewAlarmPresenter.class.getSimpleName();
 
-    NewAlarmContract.View mNewAlarmView;
+    private NewAlarmContract.View mNewAlarmView;
 
-    public NewAlarmPresenter(NewAlarmContract.View view){
+    NewAlarmPresenter(NewAlarmContract.View view){
         this.mNewAlarmView = view;
     }
 
@@ -47,20 +43,19 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
         if (isValidSport(sport))
             a.setSport_id(sport);
         else {
-            String toastMsg = mNewAlarmView.getActivityContext().getString(R.string.toast_sport_invalid);
-            Toast.makeText(mNewAlarmView.getActivityContext(), toastMsg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_sport_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
         // field could be null, but not city
-        if (city == null || !TextUtils.isEmpty(city))
+        if (city == null || TextUtils.isEmpty(city))
             city = UtilesPreferences.getCurrentUserCity(mNewAlarmView.getActivityContext());
 
         if (isValidField(city, field, sport)) {
             a.setField_id(field);
             a.setCity(city);
         } else {
-            Toast.makeText(mNewAlarmView.getActivityContext(), "Error en el lugar", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_place_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -69,7 +64,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
             a.setDate_from(UtilesTime.stringDateToMillis(dateFrom));
             a.setDate_to(UtilesTime.stringDateToMillis(dateTo));
         } else {
-            Toast.makeText(mNewAlarmView.getActivityContext(), "Error en las fechas", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_date_period_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -78,23 +73,24 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
             if (!TextUtils.isEmpty(totalFrom)) a.setTotal_players_from(Long.valueOf(totalFrom)); else a.setTotal_players_from(null);
             if (!TextUtils.isEmpty(totalTo)) a.setTotal_players_to(Long.valueOf(totalTo)); else a.setTotal_players_to(null);
         } else {
-            Toast.makeText(mNewAlarmView.getActivityContext(), "Error en los puestos totales", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_total_player_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
         // emptyFrom must be at least 1 and emptyTo should be greater than emptyFrom or null
+        if (emptyFrom == null || TextUtils.isEmpty(emptyFrom)) emptyFrom = "1";
         if (isEmptyPlayersCorrect(emptyFrom, emptyTo)) {
             a.setEmpty_players_from(Long.valueOf(emptyFrom));
             if (!TextUtils.isEmpty(emptyTo)) a.setEmpty_players_to(Long.valueOf(emptyTo)); else a.setEmpty_players_to(null);
         } else {
-            Toast.makeText(mNewAlarmView.getActivityContext(), "Error en los puestos restantes", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_empty_players_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
         long totalPlayersFrom = (a.getTotal_players_from()!=null ? a.getTotal_players_from():-1);
         long emptyPlayersTo = (a.getEmpty_players_to()!=null ? a.getEmpty_players_to():-1);
         if (totalPlayersFrom < emptyPlayersTo) {
-            Toast.makeText(mNewAlarmView.getActivityContext(), "Error en los puestos totales/restantes", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_players_relation_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -104,6 +100,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
         FirebaseActions.addAlarm(a, myUserId);
         ((AlarmsActivity)mNewAlarmView.getActivityContext()).mFieldId = null;
         ((AlarmsActivity)mNewAlarmView.getActivityContext()).mCity = null;
+        ((AlarmsActivity)mNewAlarmView.getActivityContext()).mCoord = null;
         ((BaseFragment)mNewAlarmView).resetBackStack();
     }
 
@@ -197,7 +194,6 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
             case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
                 String city = UtilesPreferences.getCurrentUserCity(mNewAlarmView.getActivityContext());
                 String sportId = args.getString(NewAlarmFragment.BUNDLE_SPORT_SELECTED_ID);
-                Log.d(TAG, "onCreateLoader: "+city+sportId);
                 return SportteamLoader
                         .cursorLoaderFieldsFromCityWithSport(mNewAlarmView.getActivityContext(), city, sportId);
         }
@@ -207,7 +203,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
-            case SportteamLoader.LOADER_EVENT_ID:
+            case SportteamLoader.LOADER_ALARM_ID:
                 showAlarmDetails(data);
                 break;
             case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
@@ -220,7 +216,7 @@ public class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderMana
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
-            case SportteamLoader.LOADER_EVENT_ID:
+            case SportteamLoader.LOADER_ALARM_ID:
                 showAlarmDetails(null);
                 break;
             case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
