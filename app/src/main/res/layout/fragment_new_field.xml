@@ -1,144 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?android:attr/actionBarSize"
-    tools:context="com.usal.jorgeav.sportapp.events.addevent.NewEventFragment">
+    tools:context="com.usal.jorgeav.sportapp.mainactivities.FieldsActivity">
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/new_field_map"
-            app:cameraZoom="13"
-            app:mapType="normal"
-            app:liteMode="true"
             android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginTop="0dp"
+            android:layout_height="@dimen/fragment_map_indicator_height"
+            android:layout_margin="0dp"
+            android:background="@color/colorLight"
+            app:cameraZoom="15"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:context=".NewFieldFragment" />
-
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:text="Lugar"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/new_field_map" />
+            app:liteMode="true"
+            app:mapType="hybrid"
+            tools:context=".mainactivities.FieldsActivity" />
 
         <TextView
             android:id="@+id/new_field_address"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="9dp"
-            android:hint="Selecciona en el mapa..."
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="?attr/editTextColor"
-            android:maxLines="1"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textSize="20sp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView15"
-            android:layout_marginRight="8dp"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/new_field_map"
+            tools:text="Fake Street, nº 123, Springfield, EEUU" />
 
         <Button
             android:id="@+id/new_field_map_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select in map"
-            android:layout_marginRight="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/label_margin"
+            android:text="@string/select_place"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/new_field_address" />
-
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:text="Nombre"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginStart="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/new_field_map_button" />
 
         <EditText
             android:id="@+id/new_field_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:ems="10"
-            android:inputType="textPersonName"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:hint="@string/prompt_name"
+            android:inputType="textPersonName|textCapWords"
+            android:maxLines="1"
+            android:padding="@dimen/activity_horizontal_margin"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView10" />
-
-        <TextView
-            android:id="@+id/textView16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:text="Hora apertura"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/new_field_name" />
+            app:layout_constraintTop_toBottomOf="@+id/new_field_map_button" />
 
         <EditText
             android:id="@+id/new_field_open_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:ems="10"
+            android:layout_margin="@dimen/activity_horizontal_margin"
             android:focusable="false"
+            android:hint="@string/opening_time"
             android:inputType="date"
-            app:layout_constraintHorizontal_bias="0.0"
+            android:maxLines="1"
+            android:padding="@dimen/activity_horizontal_margin"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/textView16" />
-
-        <TextView
-            android:id="@+id/textView17"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:text="Hora cierre"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textView16"
-            app:layout_constraintLeft_toLeftOf="@+id/guideline2" />
+            app:layout_constraintTop_toBottomOf="@+id/new_field_name" />
 
         <EditText
             android:id="@+id/new_field_close_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:ems="10"
+            android:layout_margin="@dimen/activity_vertical_margin"
             android:focusable="false"
-            android:inputType="time"
+            android:hint="@string/closing_time"
+            android:inputType="date"
+            android:maxLines="1"
+            android:padding="@dimen/activity_horizontal_margin"
             app:layout_constraintBaseline_toBaselineOf="@+id/new_field_open_time"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/guideline2"
             app:layout_constraintRight_toRightOf="parent" />
 
@@ -146,22 +101,24 @@
             android:id="@+id/new_field_all_day_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Todo el dia"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/new_field_close_time"
-            android:layout_marginRight="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/label_margin"
+            android:text="@string/open_24h"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="8dp" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/new_field_close_time" />
 
         <android.support.constraint.Guideline
+            android:id="@+id/guideline2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/guideline2"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5"
-            tools:layout_editor_absoluteY="112dp"
-            tools:layout_editor_absoluteX="180dp" />
+            app:layout_constraintGuide_percent="0.5" />
 
-    </android.support.constraint.ConstraintLayout></ScrollView>
+    </android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

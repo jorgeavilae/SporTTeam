@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -23,16 +24,12 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
-
-public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = NewFieldPresenter.class.getSimpleName();
 
-    NewFieldContract.View mNewFieldView;
+    private NewFieldContract.View mNewFieldView;
 
-    public NewFieldPresenter(NewFieldContract.View view){
+    NewFieldPresenter(NewFieldContract.View view){
         this.mNewFieldView = view;
     }
 
@@ -62,7 +59,7 @@ public class NewFieldPresenter implements NewFieldContract.Presenter, LoaderMana
             ((FieldsActivity)mNewFieldView.getActivityContext()).mCoord = null;
             mNewFieldView.getThis().resetBackStack();
         } else
-            Toast.makeText(mNewFieldView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mNewFieldView.getActivityContext(), R.string.toast_new_field_invalid_arg, Toast.LENGTH_SHORT).show();
     }
 
     private boolean isValidAddress(String address, String city) {

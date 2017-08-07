@@ -47,12 +47,9 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
-
 public class NewFieldFragment extends BaseFragment implements NewFieldContract.View {
     public static final String TAG = NewFieldFragment.class.getSimpleName();
+
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
 
     NewFieldContract.Presenter mNewFieldPresenter;
@@ -148,8 +145,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         super.onOptionsItemSelected(item);
         hideSoftKeyboard();
         if (item.getItemId() == R.id.action_ok) {
-            Log.d(TAG, "onOptionsItemSelected: Ok");
-
             String fieldId = "";
             if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID))
                 fieldId = getArguments().getString(BUNDLE_FIELD_ID);
@@ -180,7 +175,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
 
         //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
         newFieldMap.onCreate(savedInstanceState);
-        newFieldMap.onResume(); // needed to get the map to display immediately
         try { MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) { e.printStackTrace(); }
         newFieldMap.getMapAsync(new OnMapReadyCallback() {
@@ -188,6 +182,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
 
+                // Coordinates selected previously
                 LatLng coords = ((FieldsActivity)getActivity()).mCoord;
                 if (mMap != null && coords != null) {
                     // Add a marker, and move the camera.
@@ -205,7 +200,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         newFieldMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mFieldList != null)
+                if (mFieldList != null) // Wait till all Fields from city are loaded
                     ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldList, false);
             }
         });
@@ -234,8 +229,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    newFieldOpenTime.setEnabled(false); newFieldOpenTime.setText("");
-                    newFieldCloseTime.setEnabled(false); newFieldCloseTime.setText("");
+                    newFieldOpenTime.setEnabled(false); newFieldOpenTime.setText(" ");
+                    newFieldCloseTime.setEnabled(false); newFieldCloseTime.setText(" ");
                 } else {
                     newFieldOpenTime.setEnabled(true);
                     newFieldCloseTime.setEnabled(true);
@@ -243,6 +238,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             }
         });
 
+        // Show map if with place selected previously
         showFieldPlace(((FieldsActivity)getActivity()).mAddress,
                 ((FieldsActivity)getActivity()).mCity,
                 ((FieldsActivity)getActivity()).mCoord);
@@ -253,13 +249,14 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Nuevo Campo", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.new_field_title), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        newFieldMap.onStart();
         //Do always to have Fields to populate Map
         mNewFieldPresenter.loadNearbyFields(getLoaderManager(), getArguments());
 
@@ -352,6 +349,12 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     public void onDestroy() {
         super.onDestroy();
         newFieldMap.onDestroy();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        newFieldMap.onStop();
     }
 
     @Override

@@ -12,9 +12,6 @@ import com.usal.jorgeav.sportapp.data.SportCourt;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
 
 public abstract class NewFieldContract {
 

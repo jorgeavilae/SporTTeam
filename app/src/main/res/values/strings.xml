@@ -22,6 +22,7 @@
     <string name="action_search_events">Search Events</string>
     <string name="action_search_users">Search Users</string>
 
+    <string name="pick_photo_from">Pick photo from…</string>
 
     <string name="add">Add</string>
 
@@ -109,6 +110,11 @@
     <string name="toast_sport_invalid">Sport invalid</string>
     <string name="created_by">Created by %1$s</string>
     <string name="dialog_title_vote">Rate this court</string>
+    <string name="select_place">Select a place</string>
+    <string name="open_24h">Open 24h</string>
+    <string name="opening_time">Opening time</string>
+    <string name="closing_time">Closing time</string>
+    <string name="toast_new_field_invalid_arg">No valid data</string>
 
     <!-- Alarms -->
     <!-- https://stackoverflow.com/questions/1587056/how-to-keep-the-spaces-at-the-end-and-or-at-the-beginning-of-a-string#comment26178169_2206684 -->
@@ -131,8 +137,10 @@
     <!-- Strings for searches -->
     <string name="users_found">Users found</string>
     <string name="events_found">Events found</string>
-    <string name="pick_photo_from">Pick photo from...</string>
+
+    <!-- Simulated User -->
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
+    <string name="new_field_title">New Field</string>
 
 </resources>
