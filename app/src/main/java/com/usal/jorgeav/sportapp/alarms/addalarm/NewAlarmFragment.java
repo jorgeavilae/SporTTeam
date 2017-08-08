@@ -23,7 +23,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
@@ -335,7 +334,6 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     }
 
     private void setSportLayout(String sportId) {
-
         //Set sport selected
         showAlarmSport(sportId);
 
@@ -363,20 +361,19 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         mFieldList = fieldList;
         showContent();
         if (mFieldList != null)
-            if (mFieldList.size() == 0) {
-                Toast.makeText(getActivityContext(), R.string.toast_no_field_for_sport, Toast.LENGTH_SHORT).show();
-                startNewFieldTask();
-            } /* else startMapForPickAField();
-               * Not necessary since isn't needed a Field to create a new Alarm
-               */
+            if (mFieldList.size() == 0)
+                startNewFieldDialog();
+            /* else startMapForPickAField();
+             * Not necessary since isn't needed a Field to create a new Alarm
+             */
 
         //Since mFieldList are retain in savedInstance no need to load again
         mNewAlarmPresenter.stopLoadFields(getLoaderManager());
     }
 
-    private void startNewFieldTask() {
+    private void startNewFieldDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        builder.setTitle(R.string.dialog_title_create_new_field)
+        builder.setTitle(R.string.toast_no_field_for_sport)
                 .setMessage(R.string.dialog_msg_create_new_field)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

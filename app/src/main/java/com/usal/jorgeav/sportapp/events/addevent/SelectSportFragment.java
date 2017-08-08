@@ -23,10 +23,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 20/07/2017.
- */
-
 public class SelectSportFragment extends BaseFragment {
     private final static String TAG = SelectSportFragment.class.getSimpleName();
 
@@ -39,8 +35,7 @@ public class SelectSportFragment extends BaseFragment {
     }
 
     public static SelectSportFragment newInstance() {
-        SelectSportFragment fragment = new SelectSportFragment();
-        return fragment;
+        return new SelectSportFragment();
     }
 
     @Override
@@ -90,7 +85,7 @@ public class SelectSportFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         hideSoftKeyboard();
-        mFragmentManagementListener.setCurrentDisplayedFragment("Selecciona deporte", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_sport), this);
         if (mActionBarIconManagementListener != null) mActionBarIconManagementListener.setToolbarAsUp();
         mSportAdapter.replaceData(loadSports());
         showContent();

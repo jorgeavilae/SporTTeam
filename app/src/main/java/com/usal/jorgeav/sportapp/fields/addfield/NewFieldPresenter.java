@@ -59,7 +59,7 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
             ((FieldsActivity)mNewFieldView.getActivityContext()).mCoord = null;
             mNewFieldView.getThis().resetBackStack();
         } else
-            Toast.makeText(mNewFieldView.getActivityContext(), R.string.toast_new_field_invalid_arg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mNewFieldView.getActivityContext(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
     }
 
     private boolean isValidAddress(String address, String city) {

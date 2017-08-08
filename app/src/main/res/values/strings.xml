@@ -116,14 +116,16 @@
     <string name="open_24h">Open 24h</string>
     <string name="opening_time">Opening time</string>
     <string name="closing_time">Closing time</string>
-    <string name="toast_new_field_invalid_arg">No valid data</string>
+    <string name="toast_invalid_arg">No valid data</string>
     <string name="toast_no_field_for_sport">There isn\'t Fields for this sport</string>
     <string name="dialog_title_you_must_select_place">You must select a field</string>
     <string name="dialog_msg_you_must_select_place">A field is needed in order to look up for sports events.
         You can also create a new Field by click in the icon add above.</string>
     <string name="dialog_title_create_new_field">Create new Field</string>
-    <string name="dialog_msg_create_new_field">There isn\'t Fields for this sport and isn\'t needed in
-         order to create a new Alarms. Anyway… Do you want to create a new Field now?</string>
+    <string name="dialog_msg_create_new_field_for_alarm">There isn\'t Fields for this sport but isn\'t needed in
+         order to create a new Alarm. Anyway… Do you want to create a new Field now?</string>
+    <string name="dialog_msg_create_new_field_for_event">There isn\'t Fields for this sport and it is needed in
+         order to create a new Event. Do you want to create a new Field now?</string>
     <string name="new_field_title">New Field</string>
     <string name="no_field_selection">You didn\'t select anything</string>
 
