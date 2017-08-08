@@ -88,7 +88,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:srcCompat="@drawable/logo_half" />
-        
+
         <TextView
             android:id="@+id/textView10"
             android:layout_width="wrap_content"
@@ -192,43 +192,32 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/event_detail_participants_list"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="0dp"
+            android:layout_margin="0dp"
             android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/guideline9"
             app:layout_constraintTop_toTopOf="@+id/guideline"
-            tools:listitem="@layout/user_item_grid"
-            tools:orientation="vertical" />
+            tools:listitem="@layout/user_item_grid" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/event_detail_simulated_participants_list"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_margin="0dp"
             android:orientation="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/guideline9"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/event_detail_participants_list"
-            tools:listitem="@layout/simulated_user_item_list"
-            tools:orientation="vertical" />
+            app:layout_constraintTop_toTopOf="@+id/guideline"
+            tools:listitem="@layout/simulated_user_item_list" />
 
         <include
             android:id="@+id/event_detail_participants_placeholder"
             layout="@layout/list_placeholder"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_margin="0dp"
             android:visibility="invisible"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -240,6 +229,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="302dp" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

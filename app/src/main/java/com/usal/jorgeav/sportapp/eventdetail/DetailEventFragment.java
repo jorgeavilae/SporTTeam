@@ -168,8 +168,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         usersAdapter = new UsersAdapter(null, this, Glide.with(this));
         eventParticipantsList.setAdapter(usersAdapter);
         eventParticipantsList.setHasFixedSize(true);
-        eventParticipantsList.setLayoutManager(new GridLayoutManager(getActivityContext(),
-                Utiles.calculateNoOfColumns(getActivityContext())));
+        eventParticipantsList.setLayoutManager(new GridLayoutManager(getActivityContext(), 1));
 
         simulatedUsersAdapter = new SimulatedUsersAdapter(null, this, Glide.with(this));
         eventSimulatedParticipantsList.setAdapter(simulatedUsersAdapter);
