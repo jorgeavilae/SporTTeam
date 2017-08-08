@@ -215,4 +215,19 @@ public class Utiles {
         activity.startActivity(startActivityIntent);
         activity.finish();
     }
+
+    // Check if the sport doesn't need a field
+    public static boolean sportNeedsField(String sportId) {
+        if (sportId == null || TextUtils.isEmpty(sportId)) try {
+            throw new Exception("Invalid sportId value: " + sportId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        String[] arraySports = MyApplication.getAppContext().getResources().getStringArray(R.array.sport_id_values);
+
+        // Not Running and Not Biking
+        return !sportId.equals(arraySports[0]) && !sportId.equals(arraySports[1]);
+    }
 }

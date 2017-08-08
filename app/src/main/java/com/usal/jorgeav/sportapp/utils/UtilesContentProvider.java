@@ -11,6 +11,7 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Field;
+import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEvent;
@@ -18,6 +19,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UtilesContentProvider {
     private static final String TAG = UtilesContentProvider.class.getSimpleName();
@@ -111,6 +113,33 @@ public class UtilesContentProvider {
             }
         }
         return result;
+    }
+
+    public static HashMap<String, Boolean> cursorToMultipleParticipants(Cursor data) {
+        HashMap<String, Boolean> map = new HashMap<>();
+        //Loader reuses Cursor so move to first position
+        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+            String userId = data.getString(SportteamContract.EventsParticipationEntry.COLUMN_USER_ID);
+            Boolean participates = data.getInt(SportteamContract.EventsParticipationEntry.COLUMN_PARTICIPATES) == 1;
+            map.put(userId, participates);
+        }
+        return map;
+    }
+    public static HashMap<String, SimulatedUser> cursorToMultipleSimulatedParticipants(Cursor data) {
+        HashMap<String, SimulatedUser> simulatedUserHashMap = new HashMap<>();
+        //Loader reuses Cursor so move to first position
+        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+            String key = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_SIMULATED_USER_ID);
+
+            String alias = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_ALIAS);
+            String profile_picture = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_PROFILE_PICTURE);
+            Long age = data.getLong(SportteamContract.SimulatedParticipantEntry.COLUMN_AGE);
+            String owner = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_OWNER);
+            SimulatedUser simulatedUser = new SimulatedUser(alias, profile_picture, age, owner);
+
+            simulatedUserHashMap.put(key, simulatedUser);
+        }
+        return simulatedUserHashMap;
     }
 
     public static User getUserFromContentProvider(@NonNull String userId) {
