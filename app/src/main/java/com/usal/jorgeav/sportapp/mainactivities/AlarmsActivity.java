@@ -79,6 +79,10 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
             mCity = savedInstanceState.getString(INSTANCE_CITY_SELECTED);
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_COORD_SELECTED))
             mCoord = savedInstanceState.getParcelable(INSTANCE_COORD_SELECTED);
+
+        if (mFieldId != null || mCity != null || mCoord != null)
+            if (mDisplayedFragment instanceof NewAlarmContract.View)
+                ((NewAlarmContract.View) mDisplayedFragment).showAlarmField(mFieldId, mCity);
     }
 
     @Override

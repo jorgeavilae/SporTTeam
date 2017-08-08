@@ -109,6 +109,10 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
             mCity = savedInstanceState.getString(INSTANCE_CITY_SELECTED);
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_COORD_SELECTED))
             mCoord = savedInstanceState.getParcelable(INSTANCE_COORD_SELECTED);
+
+        if (mFieldId != null || mAddress != null || mCity != null || mCoord != null)
+            if (mDisplayedFragment instanceof NewEventContract.View)
+                ((NewEventContract.View) mDisplayedFragment).showEventField(mFieldId, mAddress, mCity, mCoord);
     }
 
     @Override

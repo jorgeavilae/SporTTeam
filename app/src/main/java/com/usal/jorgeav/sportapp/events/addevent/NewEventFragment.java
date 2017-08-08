@@ -18,9 +18,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Places;
@@ -61,12 +63,12 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     ArrayList<Field> mFieldList;
 
     @BindView(R.id.new_event_sport)
-    TextView newEventSport;
+    ImageView newEventSport;
     String mSportId = "";
-    @BindView(R.id.new_event_field)
-    Button newEventFieldButton;
     @BindView(R.id.new_event_address)
     TextView newEventAddress;
+    @BindView(R.id.new_event_field_button)
+    Button newEventFieldButton;
     @BindView(R.id.new_event_name)
     EditText newEventName;
     @BindView(R.id.new_event_date)
@@ -157,7 +159,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
             mNewEventPresenter.addEvent(
                     eventId,
-                    newEventSport.getText().toString(),
+                    mSportId,
                     ((EventsActivity) getActivity()).mFieldId,
                     ((EventsActivity) getActivity()).mAddress,
                     ((EventsActivity) getActivity()).mCoord,
@@ -218,11 +220,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
             mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
 
-        showEventField(((EventsActivity) getActivity()).mFieldId,
-                ((EventsActivity) getActivity()).mAddress,
-                ((EventsActivity) getActivity()).mCity,
-                ((EventsActivity) getActivity()).mCoord);
-
         //Show newField dialog on rotation if needed, after retrieveFields are called
         if (mFieldList != null && mFieldList.size() == 0) startNewFieldDialog();
 
@@ -270,7 +267,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public void showEventSport(String sport) {
         mSportId = sport;
         if (sport != null && !TextUtils.isEmpty(sport))
-            newEventSport.setText(sport);
+            Glide.with(this).load(Utiles.getSportIconFromResource(sport)).into(newEventSport);
     }
 
     @Override
@@ -367,7 +364,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     @Override
     public void clearUI() {
-        newEventSport.setText("");
+        newEventSport.setVisibility(View.INVISIBLE);
         ((EventsActivity) getActivity()).mFieldId = null;
         ((EventsActivity) getActivity()).mAddress = null;
         ((EventsActivity) getActivity()).mCity = null;
@@ -390,6 +387,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public void onDetach() {
         super.onDetach();
+        // If user go back and pick other sport, we need to clear this variables
         ((EventsActivity) getActivity()).mFieldId = null;
         ((EventsActivity) getActivity()).mAddress = null;
         ((EventsActivity) getActivity()).mCity = null;

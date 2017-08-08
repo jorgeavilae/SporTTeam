@@ -246,10 +246,6 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
             mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
 
-        // Show place selected previously
-        showAlarmField(((AlarmsActivity)getActivity()).mFieldId,
-                ((AlarmsActivity)getActivity()).mCity);
-
         return root;
     }
 
