@@ -1063,6 +1063,7 @@ public class FirebaseSync {
                 });
     }
     public static void loadAField(String fieldId) {
+        if (fieldId == null || TextUtils.isEmpty(fieldId)) return;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
 

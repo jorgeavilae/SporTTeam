@@ -434,8 +434,7 @@ public class UtilesContentProvider {
 
                 Event event = new Event(eventId, sport, fieldId, address, coord, name, city, date, owner, totalPl, emptyPl, null, null);
 
-                if (field != null)
-                    result.add(MyCalendarEvent.Builder.newInstance(event, field, color));
+                result.add(MyCalendarEvent.Builder.newInstance(event, field, color));
             }
         }
         Log.d(TAG, "cursorToMultipleCalendarEvent: "+result);

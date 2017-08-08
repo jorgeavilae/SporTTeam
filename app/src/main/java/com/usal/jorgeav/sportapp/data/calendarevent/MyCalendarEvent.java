@@ -138,6 +138,12 @@ public class MyCalendarEvent extends BaseCalendarEvent {
 
     public static class Builder {
         public static MyCalendarEvent newInstance(Event event, Field field, int color) {
+
+            // Set field name or event address
+            String place = "";
+            if (field == null) place = event.getAddress();
+            else place = field.getName();
+
             Calendar startTime = Calendar.getInstance();
             startTime.setTimeInMillis(event.getDate());
 
@@ -146,11 +152,11 @@ public class MyCalendarEvent extends BaseCalendarEvent {
             endTime.setTimeInMillis(event.getDate() + twoHoursInMillis);
 
             MyCalendarEvent myCalendarEvent = new MyCalendarEvent(-1, color, event.getName(),
-                    event.getAddress(), field.getName(), startTime.getTimeInMillis(), endTime.getTimeInMillis(), 0, "");
+                    event.getAddress(), place, startTime.getTimeInMillis(), endTime.getTimeInMillis(), 0, "");
 
             myCalendarEvent.setEvent_id(event.getEvent_id());
             myCalendarEvent.setSport_id(event.getSport_id());
-            myCalendarEvent.setField_name(field.getName());
+            myCalendarEvent.setField_name(place);
             myCalendarEvent.setCity(event.getCity());
             myCalendarEvent.setCoord_latitude(event.getCoord_latitude());
             myCalendarEvent.setCoord_longitude(event.getCoord_longitude());

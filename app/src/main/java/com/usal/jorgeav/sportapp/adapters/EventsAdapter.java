@@ -65,9 +65,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             String fieldName = UtilesContentProvider.getFieldNameFromContentProvider(
                     mDataset.getString(SportteamContract.EventEntry.COLUMN_FIELD));
             String city = mDataset.getString(SportteamContract.EventEntry.COLUMN_CITY);
-            if (fieldName == null) fieldName = "";
-            if (!TextUtils.isEmpty(fieldName)) fieldName = fieldName + ", ";
-            holder.textViewEventPlace.setText(fieldName +""+ city);
+            String address = mDataset.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
+            if (fieldName == null)
+                holder.textViewEventPlace.setText(address);
+            else {
+                if (!TextUtils.isEmpty(fieldName)) fieldName = fieldName + ", ";
+                holder.textViewEventPlace.setText(fieldName + "" + city);
+            }
             long date = mDataset.getLong(SportteamContract.EventEntry.COLUMN_DATE);
             holder.textViewEventDate.setText(UtilesTime.millisToDateTimeString(date));
 
