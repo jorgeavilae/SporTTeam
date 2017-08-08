@@ -16,7 +16,12 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -229,5 +234,32 @@ public class Utiles {
 
         // Not Running and Not Biking
         return !sportId.equals(arraySports[0]) && !sportId.equals(arraySports[1]);
+    }
+
+    public static void setCoordinatesInMap(Context context, GoogleMap map, LatLng coords) {
+        // Prevent null coords
+        boolean coordsAreCurrentCity = false;
+        if (coords == null) {
+            coordsAreCurrentCity = true;
+            coords = UtilesPreferences.getCurrentUserCityCoords(context);
+        }
+
+        if (map != null && coords != null) {
+            // Add a marker if coords aren't current city
+            if (!coordsAreCurrentCity) {
+                Resources res = context.getResources();
+                float hue = Utiles.getFloatFromResources(res, R.dimen.hue_of_colorSportteam_logo);
+                map.addMarker(new MarkerOptions().position(coords)
+                        .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+            }
+
+            // Move the camera
+            double bound = 0.00135;
+            if (coordsAreCurrentCity) bound += 0.002;
+            LatLng southwest = new LatLng(coords.latitude - bound, coords.longitude - bound);
+            LatLng northeast = new LatLng(coords.latitude + bound, coords.longitude + bound);
+            LatLngBounds llb = new LatLngBounds(southwest, northeast);
+            map.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
+        }
     }
 }

@@ -22,15 +22,11 @@ import android.widget.TimePicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
@@ -183,17 +179,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
                 mMap = googleMap;
 
                 // Coordinates selected previously
-                LatLng coords = ((FieldsActivity)getActivity()).mCoord;
-                if (mMap != null && coords != null) {
-                    // Add a marker, and move the camera.
-                    float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
-                    mMap.addMarker(new MarkerOptions().position(coords)
-                            .icon(BitmapDescriptorFactory.defaultMarker(hue)));
-                    LatLng southwest = new LatLng(coords.latitude - 0.00135, coords.longitude - 0.00135);
-                    LatLng northeast = new LatLng(coords.latitude + 0.00135, coords.longitude + 0.00135);
-                    LatLngBounds llb = new LatLngBounds(southwest, northeast);
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
-                }
+                Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((FieldsActivity)getActivity()).mCoord);
             }
         });
 
@@ -237,11 +223,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
                 }
             }
         });
-
-        // Show map if with place selected previously
-        showFieldPlace(((FieldsActivity)getActivity()).mAddress,
-                ((FieldsActivity)getActivity()).mCity,
-                ((FieldsActivity)getActivity()).mCoord);
 
         return root;
     }
@@ -304,16 +285,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     public void showFieldPlace(String address, String city, LatLng coords) {
         newFieldAddress.setText(address);
 
-        if (mMap != null) {
-            // Add a marker, and move the camera.
-            float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
-            mMap.addMarker(new MarkerOptions().position(coords)
-                    .icon(BitmapDescriptorFactory.defaultMarker(hue)));
-            LatLng southwest = new LatLng(coords.latitude - 0.00135, coords.longitude - 0.00135);
-            LatLng northeast = new LatLng(coords.latitude + 0.00135, coords.longitude + 0.00135);
-            LatLngBounds llb = new LatLngBounds(southwest, northeast);
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
-        }
+        Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords);
     }
 
     @Override
