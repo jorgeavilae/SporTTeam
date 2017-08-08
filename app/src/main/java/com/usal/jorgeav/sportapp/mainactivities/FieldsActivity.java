@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RatingBar;
@@ -59,7 +58,6 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
 
         boolean createNewField = false;
         if (getIntent().hasExtra(INTENT_EXTRA_CREATE_NEW_FIELD)) createNewField = true;
-        Log.d(TAG, "startMainFragment: "+createNewField);
         initFragment(FieldsMapFragment.newInstance(createNewField), false, FieldsMapFragment.FRAGMENT_TAG);
 
         mNavigationView.setCheckedItem(R.id.nav_fields);

@@ -34,10 +34,6 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-/**
- * Created by Jorge Avila on 26/06/2017.
- */
-
 public class EventsActivity extends BaseActivity implements SelectSportsAdapter.OnSelectSportClickListener {
     private final static String TAG = EventsActivity.class.getSimpleName();
 
@@ -129,22 +125,19 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
                     mAddress = field.getAddress();
                     mCity = field.getCity();
                     mCoord = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
-                    Log.d(TAG, "onActivityResult: "+field);
                 } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
                     MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
                     mFieldId = null;
                     mAddress = myPlace.getAddress();
                     mCity = myPlace.getShortNameLocality();
                     mCoord = myPlace.getCoordinates();
-                    Log.d(TAG, "onActivityResult: "+myPlace);
                 } else if (data.hasExtra(MapsActivity.ADD_FIELD_SELECTED_EXTRA)) {
                     Utiles.startFieldsActivityAndNewField(this);
-                    Log.d(TAG, "onActivityResult: ADD_FIELD_SELECTED_EXTRA");
                 }
                 if (mDisplayedFragment instanceof NewEventContract.View)
                     ((NewEventContract.View) mDisplayedFragment).showEventField(mFieldId, mAddress, mCity, mCoord);
             } else {
-                Toast.makeText(this, "You should select a place", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.toast_should_select_place, Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -184,13 +177,13 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
 
             if (grantResults[0] == PackageManager.PERMISSION_DENIED)
                 //Without WRITE_EXTERNAL_STORAGE it can't save cropped photo
-                Toast.makeText(this, "Se necesita guardar la imagen", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.toast_need_write_permission, Toast.LENGTH_SHORT).show();
             else if (grantResults[1] == PackageManager.PERMISSION_DENIED)
                 //The user can't take pictures
                 EasyImage.openGallery(this, SimulateParticipantFragment.RC_PHOTO_PICKER);
             else if (grantResults[1] == PackageManager.PERMISSION_GRANTED)
                 //The user can take pictures or pick an image
-                EasyImage.openChooserWithGallery(this, "Elegir foto de...", SimulateParticipantFragment.RC_PHOTO_PICKER);
+                EasyImage.openChooserWithGallery(this, getString(R.string.pick_photo_from), SimulateParticipantFragment.RC_PHOTO_PICKER);
         }
     }
 }
