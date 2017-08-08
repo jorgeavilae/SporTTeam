@@ -16,12 +16,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.MyApplication;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -134,20 +136,20 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
 
     private void showEventDetails(Cursor data) {
         if (data != null && data.moveToFirst()) {
-            mView.showEventId(data.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
             mView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
-            String fieldId = data.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+            Field field = UtilesContentProvider.getFieldFromContentProvider(
+                    data.getString(SportteamContract.EventEntry.COLUMN_FIELD));
             String address = data.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
             double latitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
             double longitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
             LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
-            mView.showEventField(fieldId, address, coord);
+            mView.showEventField(field, address, coord);
             mView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));
             ownerUid = data.getString(SportteamContract.EventEntry.COLUMN_OWNER);
             mView.showEventOwner(ownerUid);
-            mView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
-            mView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
+            mView.showEventPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS),
+                    data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
         } else {
             ownerUid = null;
             mInvitation = null;

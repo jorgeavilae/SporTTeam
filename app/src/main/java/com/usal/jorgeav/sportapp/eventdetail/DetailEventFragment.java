@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -31,6 +32,7 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.SimulatedUsersAdapter;
 import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
@@ -41,6 +43,7 @@ import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Locale;
@@ -63,28 +66,27 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     private DetailEventContract.Presenter mPresenter;
 
     Menu mMenu;
-    @BindView(R.id.event_detail_id)
-    TextView textViewEventId;
     @BindView(R.id.event_detail_sport)
-    TextView textViewEventSport;
+    ImageView detailEventSport;
     @BindView(R.id.event_detail_place)
-    Button buttonEventPlace;
-    @BindView(R.id.event_detail_name)
-    TextView textViewEventName;
+    TextView detailEventPlace;
+    @BindView(R.id.event_detail_place_icon)
+    ImageView detailEventPlaceIcon;
     @BindView(R.id.event_detail_date)
-    TextView textViewEventDate;
-    @BindView(R.id.event_detail_owner)
-    TextView textViewEventOwner;
+    TextView detailEventDate;
+    @BindView(R.id.event_detail_players_proportion)
+    ImageView detailEventProportion;
     @BindView(R.id.event_detail_total)
-    TextView textViewEventTotal;
+    TextView detailEventTotal;
     @BindView(R.id.event_detail_empty)
-    TextView textViewEventEmpty;
+    TextView detailEventEmpty;
+    @BindView(R.id.event_detail_owner)
+    TextView detailEventOwner;
+
     @BindView(R.id.event_detail_user_requests)
     Button buttonUserRequests;
     @BindView(R.id.event_detail_send_invitation)
     Button buttonSendInvitation;
-    @BindView(R.id.event_detail_unanswered_invitations)
-    Button buttonUnansweredInvitations;
     @BindView(R.id.event_detail_send_request)
     Button buttonSendRequest;
     @BindView(R.id.event_detail_simulate_participant)
@@ -129,12 +131,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit) {
-            Log.d(TAG, "onOptionsItemSelected: Edit");
             Fragment fragment = NewEventFragment.newInstance(mEventId, mSportId);
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
-            Log.d(TAG, "onOptionsItemSelected: Delete");
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
             builder.setTitle("Borrar evento")
                     .setMessage("Seguro que desea borrarlo?")
@@ -146,6 +146,11 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                     .setNegativeButton("No", null);
             builder.create().show();
             return true;
+        } else if (item.getItemId() == R.id.action_unanswered_invitations) {
+            if(mEventId != null) {
+                Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
+                mFragmentManagementListener.initFragment(fragment, true);
+            }
         }
         return false;
     }
@@ -179,12 +184,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @Override
     public void uiSetupForEventRelation(@DetailEventPresenter.EventRelationType int relation) {
         mRelation = relation;
+
+        // If event is in the past no action is allowed
         if (isPast) {
             buttonSendRequest.setVisibility(View.GONE);
             buttonSimulateParticipant.setVisibility(View.GONE);
             buttonUserRequests.setVisibility(View.GONE);
             buttonSendInvitation.setVisibility(View.GONE);
-            buttonUnansweredInvitations.setVisibility(View.GONE);
             return;
         }
         switch (relation) {
@@ -220,7 +226,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         buttonSimulateParticipant.setVisibility(View.INVISIBLE);
         buttonUserRequests.setVisibility(View.INVISIBLE);
         buttonSendInvitation.setVisibility(View.INVISIBLE);
-        buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
     }
 
     private void setupForBlocked() {
@@ -231,11 +236,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         buttonSimulateParticipant.setVisibility(View.INVISIBLE);
         buttonUserRequests.setVisibility(View.INVISIBLE);
         buttonSendInvitation.setVisibility(View.INVISIBLE);
-        buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
     }
 
     private void setupForParticipant() {
-        if (mMenu != null) mMenu.clear();
+        if (mMenu != null) {
+            mMenu.clear();
+            getActivity().getMenuInflater().inflate(R.menu.menu_detail_event, mMenu);
+        }
         buttonSendRequest.setVisibility(View.VISIBLE);
         buttonSendRequest.setText("Abandonar partido");
         buttonSendRequest.setEnabled(true);
@@ -264,17 +271,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                         })
                         .setNegativeButton("No", null);
                 builder.create().show();
-            }
-        });
-        buttonUnansweredInvitations.setVisibility(View.VISIBLE);
-        buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //DONE ver invitaciones enviadas y no contestadas
-                if(mEventId != null) {
-                    Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
-                    mFragmentManagementListener.initFragment(fragment, true);
-                }
             }
         });
         buttonSendInvitation.setVisibility(View.VISIBLE);
@@ -340,7 +336,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         buttonSimulateParticipant.setVisibility(View.INVISIBLE);
         buttonUserRequests.setVisibility(View.INVISIBLE);
         buttonSendInvitation.setVisibility(View.INVISIBLE);
-        buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
     }
 
     private void setupForRequestSent() {
@@ -366,7 +361,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         buttonSimulateParticipant.setVisibility(View.INVISIBLE);
         buttonUserRequests.setVisibility(View.INVISIBLE);
         buttonSendInvitation.setVisibility(View.INVISIBLE);
-        buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
     }
 
     private void setupForNone() {
@@ -388,13 +382,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         buttonSimulateParticipant.setVisibility(View.INVISIBLE);
         buttonUserRequests.setVisibility(View.INVISIBLE);
         buttonSendInvitation.setVisibility(View.INVISIBLE);
-        buttonUnansweredInvitations.setVisibility(View.INVISIBLE);
     }
 
     private void setupForOwner() {
         if (mMenu != null) {
             mMenu.clear();
             getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
+            getActivity().getMenuInflater().inflate(R.menu.menu_detail_event, mMenu);
         }
         buttonUserRequests.setVisibility(View.VISIBLE);
         buttonUserRequests.setOnClickListener(new View.OnClickListener() {
@@ -403,17 +397,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 //DONE ver peticiones para entrar en este evento
                 if(mEventId != null) {
                     Fragment fragment = UsersRequestsFragment.newInstance(mEventId);
-                    mFragmentManagementListener.initFragment(fragment, true);
-                }
-            }
-        });
-        buttonUnansweredInvitations.setVisibility(View.VISIBLE);
-        buttonUnansweredInvitations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //DONE ver invitaciones enviadas y no contestadas
-                if(mEventId != null) {
-                    Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             }
@@ -466,43 +449,46 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     }
 
     @Override
-    public void showEventId(String id) {
-        ((BaseActivity)getActivity()).showContent();
-        this.textViewEventId.setText(id);
-    }
-
-    @Override
     public void showEventSport(String sport) {
         ((BaseActivity)getActivity()).showContent();
-        this.textViewEventSport.setText(sport);
+        if (sport != null && !TextUtils.isEmpty(sport))
+            Glide.with(this).load(Utiles.getSportIconFromResource(sport)).into(this.detailEventSport);
         mSportId = sport;
     }
 
     @Override
-    public void showEventField(final String fieldId, String address, LatLng coord) {
+    public void showEventField(Field field, String address, LatLng coord) {
         //TODO mostrar datos mejor
         ((BaseActivity)getActivity()).showContent();
-        this.buttonEventPlace.setText(fieldId);
-        buttonEventPlace.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment newFragment = DetailFieldFragment.newInstance(fieldId, true);
-                mFragmentManagementListener.initFragment(newFragment, true);
-            }
-        });
+        if (field != null) {
+            this.detailEventPlace.setText(field.getName() + ", " + field.getCity());
+            this.detailEventPlaceIcon.setVisibility(View.VISIBLE);
+            final String fieldId = field.getId();
+            detailEventPlace.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Fragment newFragment = DetailFieldFragment.newInstance(fieldId, true);
+                    mFragmentManagementListener.initFragment(newFragment, true);
+                }
+            });
+        } else if (address != null && !TextUtils.isEmpty(address)) {
+            this.detailEventPlace.setText(address);
+            this.detailEventPlaceIcon.setVisibility(View.INVISIBLE);
+            detailEventPlace.setOnClickListener(null);
+        }
     }
 
     @Override
     public void showEventName(String name) {
         ((BaseActivity)getActivity()).showContent();
-        this.textViewEventName.setText(name);
-        mActionBarIconManagementListener.setActionBarTitle(name);
+        if (name != null && !TextUtils.isEmpty(name))
+            mActionBarIconManagementListener.setActionBarTitle(name);
     }
 
     @Override
     public void showEventDate(long date) {
         ((BaseActivity)getActivity()).showContent();
-        this.textViewEventDate.setText(UtilesTime.millisToDateTimeString(date));
+        this.detailEventDate.setText(UtilesTime.millisToDateTimeString(date));
 
         //Change UI if event it's already happen.
         isPast = System.currentTimeMillis() > date;
@@ -511,30 +497,28 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showEventOwner(String owner) {
-        mOwnerId = owner;
         ((BaseActivity)getActivity()).showContent();
-        this.textViewEventOwner.setText(owner);
-        mPresenter.loadParticipants(getLoaderManager(), getArguments());
+        if (owner != null && !TextUtils.isEmpty(owner)) {
+            mOwnerId = owner;
 
-    }
+            String ownerName = UtilesContentProvider.getUserNameFromContentProvider(owner);
+            String unformattedString = getString(R.string.created_by);
+            this.detailEventOwner.setText(String.format(unformattedString, ownerName));
 
-    @Override
-    public void showEventTotalPlayers(int totalPlayers) {
-        if(totalPlayers > -1) {
-            ((BaseActivity) getActivity()).showContent();
-            this.textViewEventTotal.setText(String.format(Locale.getDefault(), "%2d", totalPlayers));
+            mPresenter.loadParticipants(getLoaderManager(), getArguments());
         }
 
     }
 
     @Override
-    public void showEventEmptyPlayers(int emptyPlayers) {
-        if(emptyPlayers > -1) {
+    public void showEventPlayers(int emptyPlayers, int totalPlayers) {
+        if(emptyPlayers > -1 && totalPlayers > -1) {
             ((BaseActivity) getActivity()).showContent();
-            this.textViewEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));
+            this.detailEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));
+            this.detailEventTotal.setText(String.format(Locale.getDefault(), "%2d", totalPlayers));
 
-            //Change UI if emptyPlayer is 0 or not.
-            isFull = emptyPlayers <= 0;
+            //Change UI if emptyPlayer is 0 and doesn't need teams.
+            isFull = emptyPlayers == 0 && Utiles.sportNeedsTeams(mSportId);
             uiSetupForEventRelation(mRelation);
         }
     }
@@ -560,16 +544,14 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void clearUI() {
-        this.textViewEventId.setText("");
-        this.textViewEventSport.setText("");
-        this.buttonEventPlace.setText("");
-        this.buttonEventPlace.setOnClickListener(null);
-        this.textViewEventName.setText("");
+        this.detailEventSport.setVisibility(View.INVISIBLE);
+        this.detailEventPlace.setText("");
+        this.detailEventPlace.setOnClickListener(null);
         this.mActionBarIconManagementListener.setActionBarTitle("");
-        this.textViewEventDate.setText("");
-        this.textViewEventOwner.setText("");
-        this.textViewEventTotal.setText("");
-        this.textViewEventEmpty.setText("");
+        this.detailEventDate.setText("");
+        this.detailEventOwner.setText("");
+        this.detailEventTotal.setText("");
+        this.detailEventEmpty.setText("");
     }
 
     @Override

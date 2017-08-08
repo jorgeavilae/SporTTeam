@@ -4,8 +4,8 @@
     <string-array name="sport_id_values">
         <item>running</item>
         <item>biking</item>
-        <item>basketball</item>
         <item>skating</item>
+        <item>basketball</item>
         <item>football_5</item>
         <item>football_7</item>
         <item>football_11</item>

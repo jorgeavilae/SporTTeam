@@ -111,7 +111,7 @@
     <string name="toast_add_sport_success">Sport added</string>
     <string name="toast_should_select_place">You should select a place</string>
     <string name="toast_sport_invalid">Sport invalid</string>
-    <string name="created_by">Created by %1$s</string>
+    <string name="created_by">Created by: %1$s</string>
     <string name="dialog_title_vote">Rate this court</string>
     <string name="select_place">Select a place</string>
     <string name="select_field">Select field</string>
@@ -139,6 +139,9 @@
     <string name="unspecified">Unspecified</string>
     <string name="date_period">Date period</string>
     <string name="empty_players">Empty players</string>
+    <string name="empty_players_label">Empty players:\u0020</string>
+    <string name="total_players">Total players</string>
+    <string name="total_players_label">Total players:\u0020</string>
     <string name="new_alarm_title">New Alarm</string>
     <string name="toast_place_invalid">Invalid place</string>
     <string name="toast_date_period_invalid">Invalid date period</string>
@@ -152,7 +155,6 @@
     <string name="dialog_title_change_name">Change name</string>
     <string name="dialog_title_change_age">Change age</string>
     <string name="dialog_title_search_user">What is the user\'s name?</string>
-    <string name="total_players">Total players</string>
     <string name="user_request">User requests</string>
     <string name="user_rejected">Users rejected</string>
     <string name="prompt_date">Date</string>
@@ -165,4 +167,5 @@
     <!-- Simulated User -->
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
+    <string name="action_unanswered_invitations">Unanswered invitations</string>
 </resources>

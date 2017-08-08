@@ -236,6 +236,21 @@ public class Utiles {
         return !sportId.equals(arraySports[0]) && !sportId.equals(arraySports[1]);
     }
 
+    // Check if the sport doesn't need teams (infinite participants allowed)
+    public static boolean sportNeedsTeams(String sportId) {
+        if (sportId == null || TextUtils.isEmpty(sportId)) try {
+            throw new Exception("Invalid sportId value: " + sportId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        String[] arraySports = MyApplication.getAppContext().getResources().getStringArray(R.array.sport_id_values);
+
+        // Not Running and Not Biking and Not Skating
+        return !sportId.equals(arraySports[0]) && !sportId.equals(arraySports[1]) && !sportId.equals(arraySports[2]);
+    }
+
     public static void setCoordinatesInMap(Context context, GoogleMap map, LatLng coords) {
         // Prevent null coords
         boolean coordsAreCurrentCity = false;
