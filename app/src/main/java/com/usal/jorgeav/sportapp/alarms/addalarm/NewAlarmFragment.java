@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,6 +35,10 @@ import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
@@ -65,6 +71,9 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     NewAlarmContract.Presenter mNewAlarmPresenter;
     private static boolean sInitialize;
 
+    @BindView(R.id.new_alarm_map)
+    MapView newAlarmMap;
+    private GoogleMap mMap;
     @BindView(R.id.new_alarm_sport)
     ImageView newAlarmSport;
     String mSportId = "";
@@ -86,6 +95,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     EditText newAlarmEmptyFrom;
     @BindView(R.id.new_alarm_empty_to)
     EditText newAlarmEmptyTo;
+    @BindView(R.id.new_alarm_infinite_players)
+    CheckBox newAlarmInfinitePlayers;
 
     Calendar myCalendar;
     DatePickerDialog datePickerDialogFrom;
@@ -165,6 +176,20 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         View root = inflater.inflate(R.layout.fragment_new_alarm, container, false);
         ButterKnife.bind(this, root);
 
+        //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
+        newAlarmMap.onCreate(savedInstanceState);
+        try { MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) { e.printStackTrace(); }
+        newAlarmMap.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+
+                // Coordinates selected previously
+                Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity)getActivity()).mCoord);
+            }
+        });
+
         if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
             setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
 
@@ -242,6 +267,24 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                 datePickerDialogTo.show();
             }
         });
+
+        newAlarmInfinitePlayers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if(isChecked) {
+                    newAlarmEmptyFrom.setEnabled(false);
+                    newAlarmEmptyFrom.setText(R.string.infinite);
+                    newAlarmEmptyTo.setEnabled(false);
+                    newAlarmEmptyTo.setText(R.string.infinite);
+                } else {
+                    newAlarmEmptyFrom.setEnabled(true);
+                    newAlarmEmptyFrom.setText("");
+                    newAlarmEmptyTo.setEnabled(true);
+                    newAlarmEmptyTo.setText("");
+                }
+            }
+        });
+
 
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
             mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
@@ -322,6 +365,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void onStart() {
         super.onStart();
+        newAlarmMap.onStart();
         showContent();
 
         if (sInitialize) return;
@@ -334,19 +378,24 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         showAlarmSport(sportId);
 
         // Check if the sport doesn't need a field
-        String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id_values);
-        if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
+        if (!Utiles.sportNeedsField(sportId)) {
             showContent();
 
-            //Set AutocompleteTextView for cities
             newAlarmCity.setVisibility(View.VISIBLE);
+            newAlarmInfinitePlayers.setVisibility(View.VISIBLE);
+
             newAlarmField.setVisibility(View.INVISIBLE);
             newAlarmFieldButton.setVisibility(View.INVISIBLE);
+
+            //Set AutocompleteTextView for cities
             setAutocompleteTextView();
         } else {
+            newAlarmInfinitePlayers.setVisibility(View.INVISIBLE);
             newAlarmCity.setVisibility(View.INVISIBLE);
+
             newAlarmField.setVisibility(View.VISIBLE);
             newAlarmFieldButton.setVisibility(View.VISIBLE);
+
             // Sport needs a Field so load from ContentProvider and store it in retrieveFields()
             mNewAlarmPresenter.loadFields(getLoaderManager(), getArguments());
         }
@@ -383,12 +432,14 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void onResume() {
         super.onResume();
+        newAlarmMap.onResume();
         mFragmentManagementListener.showContent();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        newAlarmMap.onPause();
         if (datePickerDialogFrom != null && datePickerDialogFrom.isShowing()) datePickerDialogFrom.dismiss();
         if (datePickerDialogTo != null && datePickerDialogTo.isShowing()) datePickerDialogTo.dismiss();
     }
@@ -417,6 +468,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             ((AlarmsActivity) getActivity()).mFieldId = null;
             ((AlarmsActivity) getActivity()).mCoord = null;
         }
+
+        Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity) getActivity()).mCoord);
     }
 
     @Override
@@ -475,5 +528,23 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         super.onSaveInstanceState(outState);
         if (mFieldList != null)
             outState.putParcelableArrayList(INSTANCE_FIELD_LIST_ID, mFieldList);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        newAlarmMap.onDestroy();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        newAlarmMap.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        newAlarmMap.onLowMemory();
     }
 }

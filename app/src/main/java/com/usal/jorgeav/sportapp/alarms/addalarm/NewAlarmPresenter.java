@@ -36,6 +36,13 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
     @Override
     public void addAlarm(String alarmId, String sport, String field, String city, String dateFrom, String dateTo,
                          String totalFrom, String totalTo, String emptyFrom, String emptyTo) {
+
+        // Parse emptyPlayers string if needed (empty == "Infinite")
+        if (mNewAlarmView.getActivityContext().getString(R.string.infinite).equals(emptyFrom))
+            emptyFrom = "0";
+        if (mNewAlarmView.getActivityContext().getString(R.string.infinite).equals(emptyTo))
+            emptyTo = "0";
+
         Alarm a = new Alarm();
         a.setId(alarmId);
 
@@ -89,7 +96,7 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
 
         long totalPlayersFrom = (a.getTotal_players_from()!=null ? a.getTotal_players_from():-1);
         long emptyPlayersTo = (a.getEmpty_players_to()!=null ? a.getEmpty_players_to():-1);
-        if (totalPlayersFrom < emptyPlayersTo) {
+        if (totalPlayersFrom < emptyPlayersTo && emptyPlayersTo > 0) {
             Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_players_relation_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -161,7 +168,7 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
     }
 
     private boolean isEmptyPlayersCorrect(String emptyFrom, String emptyTo) {
-        return !TextUtils.isEmpty(emptyFrom) && Integer.valueOf(emptyFrom) > 0 &&
+        return !TextUtils.isEmpty(emptyFrom) && Integer.valueOf(emptyFrom) >= 0 &&
                 (TextUtils.isEmpty(emptyTo) || Integer.valueOf(emptyFrom) <= Integer.valueOf(emptyTo));
 
     }
