@@ -8,34 +8,36 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
-/**
- * Created by Jorge Avila on 26/04/2017.
- */
-
-public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class DetailAlarmPresenter implements DetailAlarmContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    @SuppressWarnings("unused")
     private static final String TAG = DetailAlarmPresenter.class.getSimpleName();
 
-    DetailAlarmContract.View mView;
+    private DetailAlarmContract.View mView;
 
-    public DetailAlarmPresenter(@NonNull DetailAlarmContract.View view) {
+    DetailAlarmPresenter(@NonNull DetailAlarmContract.View view) {
         this.mView = view;
     }
 
     @Override
     public void openAlarm(LoaderManager loaderManager, Bundle b) {
-        // The only fragment initializing this one is AlarmsFragment
-        // in which this method it's already invoked
-        // FirebaseSync.loadAnAlarm(alarmId);
-        loaderManager.initLoader(SportteamLoader.LOADER_ALARM_ID, b, this);
-        loaderManager.initLoader(SportteamLoader.LOADER_ALARM_EVENTS_COINCIDENCE_ID, b, this);
+        if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_ALARM_ID)) {
+            String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
+            if (alarmId != null) {
+                FirebaseSync.loadAnAlarm(alarmId);
+                loaderManager.initLoader(SportteamLoader.LOADER_ALARM_ID, b, this);
+                loaderManager.initLoader(SportteamLoader.LOADER_ALARM_EVENTS_COINCIDENCE_ID, b, this);
+            }
+        }
     }
 
     @Override
@@ -43,7 +45,7 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
         String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
         String userId = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(userId)) {
-            Toast.makeText(mView.getActivityContext(), "No se ha podido completar la accion", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mView.getActivityContext(), R.string.action_not_done, Toast.LENGTH_SHORT).show();
             return;
         }
         FirebaseActions.deleteAlarm(userId, alarmId);
@@ -52,12 +54,13 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String alarmId = args.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
+        String myUserId = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserId)) return null;
         switch (id) {
             case SportteamLoader.LOADER_ALARM_ID:
                 return SportteamLoader
                         .cursorLoaderOneAlarm(mView.getActivityContext(), alarmId);
             case SportteamLoader.LOADER_ALARM_EVENTS_COINCIDENCE_ID:
-                String myUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 return SportteamLoader
                         .cursorLoaderAlarmCoincidence(mView.getActivityContext(), alarmId, myUserId);
         }

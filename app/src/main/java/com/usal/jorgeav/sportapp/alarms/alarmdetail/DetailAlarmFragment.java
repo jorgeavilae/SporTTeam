@@ -51,6 +51,8 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     private static String mAlarmId = "";
     private static String mSportId = "";
     private DetailAlarmContract.Presenter mPresenter;
+
+    // Store Field's coordinates for rotations
     public static final String INSTANCE_COORDS = "INSTANCE_COORDS";
     LatLng mCoords;
 
@@ -136,11 +138,16 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_COORDS))
             mCoords = savedInstanceState.getParcelable(INSTANCE_COORDS);
 
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_ALARM_ID))
+            mAlarmId = getArguments().getString(BUNDLE_ALARM_ID);
+
         //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
         alarmMap.onCreate(savedInstanceState);
-        alarmMap.onResume(); // needed to get the map to display immediately
-        try { MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         alarmMap.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -149,9 +156,6 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
                 Utiles.setCoordinatesInMap(getActivityContext(), mMap, mCoords);
             }
         });
-
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_ALARM_ID))
-            mAlarmId = getArguments().getString(BUNDLE_ALARM_ID);
 
         eventsAdapter = new EventsAdapter(null, this, Glide.with(this));
         eventsCoincidenceList.setAdapter(eventsAdapter);
@@ -200,8 +204,8 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
             this.textViewAlarmPlace.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                Fragment newFragment = DetailFieldFragment.newInstance(fieldId, true);
-                mFragmentManagementListener.initFragment(newFragment, true);
+                    Fragment newFragment = DetailFieldFragment.newInstance(fieldId, true);
+                    mFragmentManagementListener.initFragment(newFragment, true);
                 }
             });
             mCoords = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
@@ -277,6 +281,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         this.textViewAlarmPlace.setText("");
         this.textViewAlarmPlace.setClickable(false);
         this.textViewAlarmPlace.setOnClickListener(null);
+        this.mCoords = null;
         this.textViewAlarmDateFrom.setText("");
         this.textViewAlarmDateTo.setText("");
         this.textViewAlarmTotalFrom.setText("");

@@ -23,9 +23,11 @@
     <string name="action_search_users">Search Users</string>
 
     <string name="pick_photo_from">Pick photo from…</string>
+    <string name="toast_need_write_permission">Need permission to store image</string>
 
     <string name="add">Add</string>
     <string name="delete">Delete</string>
+    <string name="infinite">Infinite</string>
 
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_maps">Map</string>
@@ -143,6 +145,8 @@
     <string name="toast_total_player_invalid">Invalid total players</string>
     <string name="toast_empty_players_invalid">Invalid empty players</string>
     <string name="toast_players_relation_invalid">Total players should be greater than empty players</string>
+    <string name="alarm_detail_title">Alarm details</string>
+    <string name="action_not_done">Action couldn\'t be done</string>
 
     <!-- Profile Fragment -->
     <string name="dialog_title_change_name">Change name</string>
@@ -161,7 +165,4 @@
     <!-- Simulated User -->
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
-    <string name="infinite">Infinite</string>
-    <string name="toast_need_write_permission">Need permission to store image</string>
-    <string name="alarm_detail_title">Alarm details</string>
 </resources>

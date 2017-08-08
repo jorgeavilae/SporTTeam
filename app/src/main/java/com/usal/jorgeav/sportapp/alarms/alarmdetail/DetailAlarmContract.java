@@ -8,11 +8,7 @@ import android.support.v4.app.LoaderManager;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 
-/**
- * Created by Jorge Avila on 26/04/2017.
- */
-
-public abstract class DetailAlarmContract {
+abstract class DetailAlarmContract {
 
     public interface View {
         void showAlarmSport(String sport);
