@@ -151,6 +151,8 @@
     <string name="total_players">Total players</string>
     <string name="user_request">User requests</string>
     <string name="user_rejected">Users rejected</string>
+    <string name="prompt_date">Date</string>
+    <string name="prompt_time">Time</string>
 
     <!-- Strings for searches -->
     <string name="users_found">Users found</string>
@@ -159,4 +161,6 @@
     <!-- Simulated User -->
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
+    <string name="infinite">Infinite</string>
+    <string name="toast_need_write_permission">Need permission to store image</string>
 </resources>

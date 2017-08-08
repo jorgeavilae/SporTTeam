@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,6 +28,10 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
@@ -44,10 +50,6 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
-
 public class NewEventFragment extends BaseFragment implements NewEventContract.View {
     public static final String TAG = NewEventFragment.class.getSimpleName();
 
@@ -62,6 +64,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
     ArrayList<Field> mFieldList;
 
+    @BindView(R.id.new_event_map)
+    MapView newEventMap;
+    private GoogleMap mMap;
     @BindView(R.id.new_event_sport)
     ImageView newEventSport;
     String mSportId = "";
@@ -79,6 +84,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     EditText newEventTotal;
     @BindView(R.id.new_event_empty)
     EditText newEventEmpty;
+    @BindView(R.id.new_event_infinite_players)
+    CheckBox newEventInfinitePlayers;
     HashMap<String, Boolean> mParticipants;
     HashMap<String, SimulatedUser> mSimulatedParticipants;
 
@@ -180,6 +187,20 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         View root = inflater.inflate(R.layout.fragment_new_event, container, false);
         ButterKnife.bind(this, root);
 
+        //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
+        newEventMap.onCreate(savedInstanceState);
+        try { MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) { e.printStackTrace(); }
+        newEventMap.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+
+                // Coordinates selected previously
+                Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((EventsActivity)getActivity()).mCoord);
+            }
+        });
+
         if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
             setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
 
@@ -215,13 +236,27 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             }
         });
 
+        newEventInfinitePlayers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if(isChecked) {
+                    newEventEmpty.setEnabled(false);
+                    newEventEmpty.setText(R.string.infinite);
+                } else {
+                    newEventEmpty.setEnabled(true);
+                    newEventEmpty.setText("");
+                }
+            }
+        });
+
         hideContent();
 
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
             mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
 
         //Show newField dialog on rotation if needed, after retrieveFields are called
-        if (mFieldList != null && mFieldList.size() == 0) startNewFieldDialog();
+        if (mFieldList != null && mFieldList.size() == 0 && Utiles.sportNeedsField(mSportId))
+            startNewFieldDialog();
 
         return root;
     }
@@ -236,6 +271,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public void onStart() {
         super.onStart();
+        newEventMap.onStart();
         if (!sInitialize) {
             mNewEventPresenter.openEvent(getLoaderManager(), getArguments());
 
@@ -252,6 +288,11 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     private void setSportLayout(String sportId) {
         // Show sport
         showEventSport(sportId);
+
+        if (Utiles.sportNeedsField(sportId))
+            newEventInfinitePlayers.setVisibility(View.INVISIBLE);
+        else
+            newEventInfinitePlayers.setVisibility(View.VISIBLE);
     }
 
 
@@ -259,6 +300,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public void onPause() {
         super.onPause();
+        newEventMap.onPause();
         if (datePickerDialog != null && datePickerDialog.isShowing()) datePickerDialog.dismiss();
         if (timePickerDialog != null && timePickerDialog.isShowing()) timePickerDialog.dismiss();
     }
@@ -272,10 +314,10 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     @Override
     public void showEventField(String fieldId, String address, String city, LatLng coordinates) {
-        //TODO mostrar datos mejor
-        if (city != null && !TextUtils.isEmpty(city)) {
+        if (address != null && !TextUtils.isEmpty(address))
             newEventAddress.setText(address);
-        }
+
+        Utiles.setCoordinatesInMap(getActivityContext(), mMap, coordinates);
 
         ((EventsActivity) getActivity()).mFieldId = fieldId;
         ((EventsActivity) getActivity()).mAddress = address;
@@ -392,5 +434,29 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         ((EventsActivity) getActivity()).mAddress = null;
         ((EventsActivity) getActivity()).mCity = null;
         ((EventsActivity) getActivity()).mCoord = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        newEventMap.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        newEventMap.onDestroy();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        newEventMap.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        newEventMap.onLowMemory();
     }
 }

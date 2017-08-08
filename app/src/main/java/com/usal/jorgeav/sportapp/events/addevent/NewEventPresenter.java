@@ -39,12 +39,20 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
                          String date, String time, String total, String empty,
                          HashMap<String, Boolean> participants,
                          HashMap<String, SimulatedUser> simulatedParticipants) {
+
+        // Get owner
         String myUid = Utiles.getCurrentUserId();
+
+        // Parse date & time
         Long dateMillis = UtilesTime.stringDateToMillis(date);
         Long timeMillis = UtilesTime.stringTimeToMillis(time);
 
+        // Parse emptyPlayers string if needed (empty == "Infinite")
+        if (mNewEventView.getActivityContext().getString(R.string.infinite).equals(empty))
+            empty = "0";
+
         if (isValidSport(sport) && isValidField(field, address, sport, city, coord) && isValidName(name)
-                && isValidOwner(myUid) && isDateTimeCorrect(dateMillis, timeMillis) && isPlayersCorrect(total, empty)) {
+                && isValidOwner(myUid) && isDateTimeCorrect(dateMillis, timeMillis) && isPlayersCorrect(total, empty, sport)) {
 
             Event event = new Event(id, sport, field, address, coord, name, city,
                     dateMillis + timeMillis, myUid, Long.valueOf(total), Long.valueOf(empty),
@@ -75,8 +83,9 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
     }
 
     private boolean isValidField(String fieldId, String address, String sportId, String city, LatLng coordinates) {
-        // Check if the sport doesn't need a field
-        if (!Utiles.sportNeedsField(sportId)) return true;
+        // Check if the sport doesn't need a field and address is valid
+        if (!Utiles.sportNeedsField(sportId) && address != null && !TextUtils.isEmpty(address))
+            return true;
 
         // Query database for the fieldId and checks if this sport exists
         Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId);
@@ -112,9 +121,10 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
         return false;
     }
 
-    private boolean isPlayersCorrect(String total, String empty) {
+    private boolean isPlayersCorrect(String total, String empty, String sportId) {
         if (!TextUtils.isEmpty(total) && !TextUtils.isEmpty(empty))
-            if (Integer.valueOf(total) >= Integer.valueOf(empty))
+            if (Integer.valueOf(total) >= Integer.valueOf(empty) // Total player must be grater than empty
+                    || (!Utiles.sportNeedsField(sportId) && empty.equals("0"))) // OR the sport doesn't need a field and infinite is marked
                 return true;
         Log.e(TAG, "isPlayersCorrect: incorrect");
         return false;

@@ -12,10 +12,6 @@ import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
-
 public abstract class NewEventContract {
 
     public interface Presenter {

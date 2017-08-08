@@ -12,6 +12,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/new_event_map"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/fragment_map_indicator_height"
+            android:layout_margin="0dp"
+            android:background="@color/colorLight"
+            app:cameraZoom="15"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:liteMode="true"
+            app:mapType="hybrid"
+            tools:context=".mainactivities.EventsActivity" />
+
         <ImageView
             android:id="@+id/new_event_sport"
             android:layout_width="@dimen/list_item_one_line_height"
@@ -20,7 +34,7 @@
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/new_event_map"
             tools:src="@drawable/basketball" />
 
         <TextView
@@ -34,8 +48,8 @@
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="0dp"
             android:ellipsize="end"
-            android:maxLines="2"
             android:hint="@string/select_place"
+            android:maxLines="2"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintBottom_toBottomOf="@+id/new_event_sport"
             app:layout_constraintLeft_toRightOf="@+id/new_event_sport"
@@ -50,210 +64,89 @@
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:text="@string/select_place"
-            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/new_event_sport"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/new_event_sport" />
-
-        <!--<TextView-->
-            <!--android:id="@+id/textView14"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="8dp"-->
-            <!--android:layout_marginStart="8dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--android:text="Deporte"-->
-            <!--app:layout_constraintLeft_toLeftOf="parent"-->
-            <!--app:layout_constraintTop_toTopOf="parent" />-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/new_event_sport"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginEnd="8dp"-->
-            <!--android:layout_marginLeft="8dp"-->
-            <!--android:layout_marginRight="8dp"-->
-            <!--android:layout_marginStart="8dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--android:textAppearance="@style/TextAppearance.AppCompat.Subhead"-->
-            <!--app:layout_constraintHorizontal_bias="0.0"-->
-            <!--app:layout_constraintLeft_toLeftOf="parent"-->
-            <!--app:layout_constraintRight_toRightOf="parent"-->
-            <!--app:layout_constraintTop_toBottomOf="@+id/textView14" />-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/textView15"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="8dp"-->
-            <!--android:layout_marginStart="8dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--android:text="Lugar"-->
-            <!--app:layout_constraintLeft_toLeftOf="parent"-->
-            <!--app:layout_constraintTop_toBottomOf="@+id/new_event_sport" />-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/new_event_address"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="8dp"-->
-            <!--android:layout_marginRight="8dp"-->
-            <!--android:maxLines="1"-->
-            <!--android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-            <!--app:layout_constraintBaseline_toBaselineOf="@+id/new_event_field"-->
-            <!--app:layout_constraintHorizontal_bias="0.503"-->
-            <!--app:layout_constraintLeft_toLeftOf="parent"-->
-            <!--app:layout_constraintRight_toLeftOf="@+id/new_event_field" />-->
-
-        <!--<Button-->
-            <!--android:id="@+id/new_event_field"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginEnd="8dp"-->
-            <!--android:layout_marginRight="8dp"-->
-            <!--android:layout_marginTop="7dp"-->
-            <!--android:text="Select Field"-->
-            <!--app:layout_constraintRight_toRightOf="parent"-->
-            <!--app:layout_constraintTop_toBottomOf="@+id/textView15" />-->
-
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Nombre"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/new_event_field_button" />
 
         <EditText
             android:id="@+id/new_event_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:ems="10"
-            android:inputType="textPersonName"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:hint="@string/prompt_name"
+            android:inputType="textPersonName|textCapWords"
+            android:maxLines="1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView10" />
-
-        <TextView
-            android:id="@+id/textView16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:text="Fecha"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/new_event_name" />
+            app:layout_constraintTop_toBottomOf="@+id/new_event_sport" />
 
         <EditText
             android:id="@+id/new_event_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:ems="10"
+            android:layout_margin="@dimen/activity_horizontal_margin"
             android:focusable="false"
+            android:hint="@string/prompt_date"
             android:inputType="date"
-            app:layout_constraintHorizontal_bias="0.0"
+            android:maxLines="1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/textView16" />
-
-        <TextView
-            android:id="@+id/textView17"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:text="Hora"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textView16"
-            app:layout_constraintLeft_toLeftOf="@+id/guideline2" />
+            app:layout_constraintTop_toBottomOf="@+id/new_event_name" />
 
         <EditText
             android:id="@+id/new_event_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:ems="10"
+            android:layout_margin="@dimen/activity_horizontal_margin"
             android:focusable="false"
+            android:hint="@string/prompt_time"
             android:inputType="time"
+            android:maxLines="1"
             app:layout_constraintBaseline_toBaselineOf="@+id/new_event_date"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/guideline2"
             app:layout_constraintRight_toRightOf="parent" />
-
-        <TextView
-            android:id="@+id/textView18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Jugadores Totales"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/new_event_time" />
 
         <EditText
             android:id="@+id/new_event_total"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:ems="10"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:hint="@string/total_players"
             android:inputType="number"
-            app:layout_constraintHorizontal_bias="0.0"
+            android:maxLines="1"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/textView18" />
-
-        <TextView
-            android:id="@+id/textView19"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:text="Jugadores Necesarios"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textView18"
-            app:layout_constraintLeft_toLeftOf="@+id/guideline2" />
+            app:layout_constraintTop_toBottomOf="@+id/new_event_date"
+            app:layout_constraintVertical_bias="0.0" />
 
         <EditText
             android:id="@+id/new_event_empty"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:ems="10"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:hint="@string/empty_players"
             android:inputType="number"
+            android:maxLines="1"
             app:layout_constraintBaseline_toBaselineOf="@+id/new_event_total"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/guideline2"
             app:layout_constraintRight_toRightOf="parent" />
+
+        <CheckBox
+            android:id="@+id/new_event_infinite_players"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:text="@string/infinite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/new_event_empty" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5"
-            tools:layout_editor_absoluteX="180dp"
-            tools:layout_editor_absoluteY="112dp" />
-
+            app:layout_constraintGuide_percent="0.5" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>
