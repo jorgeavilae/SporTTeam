@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RatingBar;
@@ -58,7 +59,8 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
 
         boolean createNewField = false;
         if (getIntent().hasExtra(INTENT_EXTRA_CREATE_NEW_FIELD)) createNewField = true;
-        initFragment(FieldsMapFragment.newInstance(createNewField), false);
+        Log.d(TAG, "startMainFragment: "+createNewField);
+        initFragment(FieldsMapFragment.newInstance(createNewField), false, FieldsMapFragment.FRAGMENT_TAG);
 
         mNavigationView.setCheckedItem(R.id.nav_fields);
     }
@@ -133,21 +135,20 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
 
         // Prepare dialog
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.dialog_title_add_sport_to_field));
-        dialog.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String sportId = sportSpinner.getSelectedItem().toString();
-                float punctuation = ratingBar.getRating();
-                FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double)punctuation, 1L));
-                Toast.makeText(FieldsActivity.this, getString(R.string.toast_add_sport_success), Toast.LENGTH_SHORT).show();
-                if (mDisplayedFragment != null) mDisplayedFragment.resetBackStack();
-            }
-        });
-        dialog.setNegativeButton(android.R.string.cancel, null);
-        dialog.setView(view);
-
-        dialog.show();
+        dialog.setTitle(getString(R.string.dialog_title_add_sport_to_field))
+                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String sportId = sportSpinner.getSelectedItem().toString();
+                        float punctuation = ratingBar.getRating();
+                        FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double)punctuation, 1L));
+                        Toast.makeText(FieldsActivity.this, getString(R.string.toast_add_sport_success), Toast.LENGTH_SHORT).show();
+                        if (mDisplayedFragment != null) mDisplayedFragment.resetBackStack();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .setView(view);
+        dialog.create().show();
     }
 
 

@@ -33,6 +33,7 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
+import com.usal.jorgeav.sportapp.fields.FieldsMapFragment;
 import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.preferences.SettingsActivity;
@@ -100,7 +101,11 @@ public class BaseActivity extends AppCompatActivity
                     setUserInfoInNavigationDrawer();
                     // Initialization is cases when user is already logged.
                     SportteamSyncUtils.initialize(BaseActivity.this);
-                    if(mDisplayedFragment == null)
+
+                    // Diplayed fragment is null on Initialization OR when FieldsMapFragment is
+                    // displayed since FieldsMapFragment is not a BaseFragment.
+                    if(mDisplayedFragment == null && getSupportFragmentManager()
+                            .findFragmentByTag(FieldsMapFragment.FRAGMENT_TAG) == null)
                         startMainFragment();
                 } else {
                     // User is signed out
@@ -220,7 +225,8 @@ public class BaseActivity extends AppCompatActivity
         Log.d(TAG, "onNavigationItemSelected: "+item.getTitle());
 
         if (id == R.id.nav_sign_out) {
-            if (mDisplayedFragment != null) {
+            if (mDisplayedFragment != null || getSupportFragmentManager()
+                    .findFragmentByTag(FieldsMapFragment.FRAGMENT_TAG) != null) {
                 getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
                 mDisplayedFragment = null;
             }
@@ -275,6 +281,15 @@ public class BaseActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.contentFrame, fragment);
+        if (isOnBackStack) transaction.addToBackStack(null);
+        transaction.commitAllowingStateLoss();
+    }
+    @Override
+    public void initFragment(@NonNull Fragment fragment, boolean isOnBackStack, String tag) {
+        hideContent();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.contentFrame, fragment, tag);
         if (isOnBackStack) transaction.addToBackStack(null);
         transaction.commitAllowingStateLoss();
     }

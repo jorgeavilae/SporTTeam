@@ -40,6 +40,7 @@ import java.util.ArrayList;
 
 public class FieldsMapFragment extends SupportMapFragment implements FieldsContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener {
     private static final String TAG = FieldsMapFragment.class.getSimpleName();
+    public static final String FRAGMENT_TAG = FieldsMapFragment.class.getSimpleName();
 
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
     protected ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
@@ -61,6 +62,7 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
             b.putString(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "");
         FieldsMapFragment fragment = new FieldsMapFragment();
         fragment.setArguments(b);
+        Log.d(TAG, "newInstance: ");
         sInitialize = false;
         return fragment;
     }
@@ -114,6 +116,7 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
         mMarkersList = new ArrayList<>();
 
 
+        Log.d(TAG, "showFields: "+sInitialize);
         //If is necessary to init NewField programmatically
         if (!sInitialize && getArguments() != null && getArguments().containsKey(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD)) {
             if (mFieldsList != null)

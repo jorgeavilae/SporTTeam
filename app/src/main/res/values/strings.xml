@@ -117,7 +117,6 @@
     <string name="opening_time">Opening time</string>
     <string name="closing_time">Closing time</string>
     <string name="toast_invalid_arg">No valid data</string>
-    <string name="toast_no_field_for_sport">There isn\'t Fields for this sport</string>
     <string name="dialog_title_you_must_select_place">You must select a field</string>
     <string name="dialog_msg_you_must_select_place">A field is needed in order to look up for sports events.
         You can also create a new Field by click in the icon add above.</string>

@@ -15,6 +15,7 @@ public abstract class ActivityContracts {
     public interface FragmentManagement {
         void startMainFragment();
         void initFragment(@NotNull Fragment fragment, boolean isOnBackStack);
+        void initFragment(@NotNull Fragment fragment, boolean isOnBackStack, String tag);
         void setCurrentDisplayedFragment(String title, BaseFragment fragment);
         void showContent();
         void hideContent();

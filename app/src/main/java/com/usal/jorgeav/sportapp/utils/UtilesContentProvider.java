@@ -287,6 +287,7 @@ public class UtilesContentProvider {
 
     public static Field getFieldFromContentProvider(@NonNull String fieldId) {
         Field f = null;
+        if (TextUtils.isEmpty(fieldId)) return null;
         Cursor cursorField = SportteamLoader.simpleQueryFieldId(MyApplication.getAppContext(), fieldId);
         if (cursorField != null) {
             if (cursorField.getCount() == 1 && cursorField.moveToFirst()) {
@@ -433,7 +434,8 @@ public class UtilesContentProvider {
 
                 Event event = new Event(eventId, sport, fieldId, address, coord, name, city, date, owner, totalPl, emptyPl, null, null);
 
-                result.add(MyCalendarEvent.Builder.newInstance(event, field, color));
+                if (field != null)
+                    result.add(MyCalendarEvent.Builder.newInstance(event, field, color));
             }
         }
         Log.d(TAG, "cursorToMultipleCalendarEvent: "+result);

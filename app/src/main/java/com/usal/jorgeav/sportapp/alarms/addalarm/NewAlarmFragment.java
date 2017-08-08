@@ -373,8 +373,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
     private void startNewFieldDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        builder.setTitle(R.string.toast_no_field_for_sport)
-                .setMessage(R.string.dialog_msg_create_new_field)
+        builder.setTitle(R.string.dialog_title_create_new_field)
+                .setMessage(R.string.dialog_msg_create_new_field_for_alarm)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Utiles.startFieldsActivityAndNewField(getActivity());
