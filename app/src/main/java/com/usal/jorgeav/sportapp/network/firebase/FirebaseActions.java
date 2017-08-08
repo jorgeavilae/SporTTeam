@@ -522,7 +522,10 @@ public class FirebaseActions {
                 if (e == null) return Transaction.success(mutableData);
                 e.setEvent_id(eventId);
 
-                if (e.getEmpty_players() > 0) {
+                // If no teams needed, empty players doesn't count
+                if (!Utiles.sportNeedsTeams(e.getSport_id())) {
+                    e.addToParticipants(myUid, true);
+                } else if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToParticipants(myUid, true);
                     if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
@@ -678,9 +681,12 @@ public class FirebaseActions {
                 usersLeaving++;
                 e.deleteParticipant(uid);
 
-                // The event isn't complete because this quits
-                e.setEmpty_players(e.getEmpty_players() + usersLeaving);
-                if (e.getEmpty_players() == usersLeaving) eventCompleteNotifications(false, e);
+                // If teams needed, empty players must be restored
+                if (Utiles.sportNeedsTeams(e.getSport_id())) {
+                    e.setEmpty_players(e.getEmpty_players() + usersLeaving);
+                    // The event isn't complete because this quits
+                    if (e.getEmpty_players() == usersLeaving) eventCompleteNotifications(false, e);
+                }
 
                 // Set ID to null to not store ID under data in Event's tree in Firebase.
                 e.setEvent_id(null);
@@ -772,7 +778,10 @@ public class FirebaseActions {
                 if (e == null) return Transaction.success(mutableData);
                 e.setEvent_id(eventId);
 
-                if (e.getEmpty_players() > 0) {
+                // If no teams needed, empty players doesn't count
+                if (!Utiles.sportNeedsTeams(e.getSport_id())) {
+                    e.addToParticipants(otherUid, true);
+                } else if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToParticipants(otherUid, true);
                     if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
@@ -1220,7 +1229,17 @@ public class FirebaseActions {
 
                 String simulatedParticipantKey = eventRef
                         .child(FirebaseDBContract.Event.SIMULATED_PARTICIPANTS).push().getKey();
-                if (e.getEmpty_players() > 0) {
+
+
+                // If no teams needed, empty players doesn't count
+                if (!Utiles.sportNeedsTeams(e.getSport_id())) {
+                    e.addToSimulatedParticipants(simulatedParticipantKey, su);
+                    if (fragment != null && fragment instanceof SimulateParticipantContract.View)
+                        ((SimulateParticipantContract.View) fragment).showResult(null);
+                    else
+                        Log.e(TAG, "addSimulatedParticipant: doTransaction: " +
+                                "fragment not instanceof SimulateParticipantContract.View");
+                } else if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToSimulatedParticipants(simulatedParticipantKey, su);
                     if (e.getEmpty_players() == 0) eventCompleteNotifications(true, e);
@@ -1266,10 +1285,14 @@ public class FirebaseActions {
                 if (e == null) return Transaction.success(mutableData);
                 e.setEvent_id(eventId);
 
-                e.setEmpty_players(e.getEmpty_players() + 1);
                 e.deleteSimulatedParticipant(simulatedUid);
-                // The event isn't complete because this quit
-                if (e.getEmpty_players() == 1) eventCompleteNotifications(false, e);
+
+                // If teams needed, empty players must be restored
+                if (Utiles.sportNeedsTeams(e.getSport_id())) {
+                    e.setEmpty_players(e.getEmpty_players() + 1);
+                    // The event isn't complete because this quit
+                    if (e.getEmpty_players() == 1) eventCompleteNotifications(false, e);
+                }
 
                 // Set ID to null to not store ID under data in Event's tree in Firebase.
                 e.setEvent_id(null);
