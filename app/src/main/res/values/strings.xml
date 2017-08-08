@@ -163,4 +163,5 @@
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
     <string name="infinite">Infinite</string>
     <string name="toast_need_write_permission">Need permission to store image</string>
+    <string name="alarm_detail_title">Alarm details</string>
 </resources>

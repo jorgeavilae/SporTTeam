@@ -20,27 +20,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.BaseFragment;
-import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
-import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.Locale;
@@ -49,12 +44,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DetailAlarmFragment extends BaseFragment implements DetailAlarmContract.View, EventsAdapter.OnEventItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = DetailAlarmFragment.class.getSimpleName();
     public static final String BUNDLE_ALARM_ID = "BUNDLE_ALARM_ID";
 
     private static String mAlarmId = "";
     private static String mSportId = "";
     private DetailAlarmContract.Presenter mPresenter;
+    public static final String INSTANCE_COORDS = "INSTANCE_COORDS";
+    LatLng mCoords;
 
     @BindView(R.id.alarm_detail_map)
     MapView alarmMap;
@@ -134,6 +132,10 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         View root = inflater.inflate(R.layout.fragment_detail_alarm, container, false);
         ButterKnife.bind(this, root);
 
+        mCoords = null;
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_COORDS))
+            mCoords = savedInstanceState.getParcelable(INSTANCE_COORDS);
+
         //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
         alarmMap.onCreate(savedInstanceState);
         alarmMap.onResume(); // needed to get the map to display immediately
@@ -144,19 +146,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
 
-                //TODO set true coordinates
-//                LatLng coords = ((FieldsActivity)getActivity()).mCoord;
-                LatLng coords = new LatLng(UtilesPreferences.CACERES_LATITUDE, UtilesPreferences.CACERES_LONGITUDE);
-                if (mMap != null && coords != null) {
-                    // Add a marker, and move the camera.
-                    float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
-                    mMap.addMarker(new MarkerOptions().position(coords)
-                            .icon(BitmapDescriptorFactory.defaultMarker(hue)));
-                    LatLng southwest = new LatLng(coords.latitude - 0.00135, coords.longitude - 0.00135);
-                    LatLng northeast = new LatLng(coords.latitude + 0.00135, coords.longitude + 0.00135);
-                    LatLngBounds llb = new LatLngBounds(southwest, northeast);
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
-                }
+                Utiles.setCoordinatesInMap(getActivityContext(), mMap, mCoords);
             }
         });
 
@@ -174,7 +164,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Detalles de alarma", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.alarm_detail_title), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -193,11 +183,8 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     @Override
     public void showAlarmSport(String sport) {
         if (sport != null) {
-            ((BaseActivity) getActivity()).showContent();
-            int sportDrawableResource = getResources()
-                    .getIdentifier(sport , "drawable", MyApplication.getAppContext().getPackageName());
             Glide.with(this)
-                    .load(sportDrawableResource)
+                    .load(Utiles.getSportIconFromResource(sport))
                     .into(imageViewAlarmSport);
             mSportId = sport;
         }
@@ -205,26 +192,25 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     }
 
     @Override
-    public void showAlarmPlace(final String fieldId, String fieldName, String city) {
-
-        if (city != null && !TextUtils.isEmpty(city)) {
-            ((BaseActivity) getActivity()).showContent();
-            if (fieldName == null) fieldName = "";
-            if (!TextUtils.isEmpty(fieldName)) fieldName = fieldName + ", ";
-            this.textViewAlarmPlace.setText(fieldName + city);
-        }
-
-        if (fieldId != null && !TextUtils.isEmpty(fieldId)) {
-            textViewAlarmPlace.setClickable(true);
-            textViewAlarmPlace.setOnClickListener(new View.OnClickListener() {
+    public void showAlarmPlace(Field field, String city) {
+        if (field != null) {
+            final String fieldId = field.getId();
+            this.textViewAlarmPlace.setText(field.getName() + ", " + field.getCity());
+            this.textViewAlarmPlace.setClickable(true);
+            this.textViewAlarmPlace.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                 Fragment newFragment = DetailFieldFragment.newInstance(fieldId, true);
                 mFragmentManagementListener.initFragment(newFragment, true);
                 }
             });
-        } else textViewAlarmPlaceIcon.setVisibility(View.INVISIBLE);
-
+            mCoords = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
+            Utiles.setCoordinatesInMap(getActivityContext(), mMap, mCoords);
+        } else if (city != null && !TextUtils.isEmpty(city)) {
+            this.textViewAlarmPlace.setText(city);
+            this.textViewAlarmPlaceIcon.setVisibility(View.INVISIBLE);
+            mCoords = null;
+        }
     }
 
     @Override
@@ -303,5 +289,12 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     public void onEventClick(String eventId) {
         Fragment newFragment = DetailEventFragment.newInstance(eventId);
         mFragmentManagementListener.initFragment(newFragment, true);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mCoords != null)
+            outState.putParcelable(INSTANCE_COORDS, mCoords);
     }
 }

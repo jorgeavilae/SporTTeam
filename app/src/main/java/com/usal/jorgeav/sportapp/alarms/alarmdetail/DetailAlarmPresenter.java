@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.Alarm;
+import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -92,8 +93,8 @@ public class DetailAlarmPresenter implements DetailAlarmContract.Presenter, Load
         if (a != null) {
             mView.showAlarmSport(a.getSport_id());
 
-            String fieldName = UtilesContentProvider.getFieldNameFromContentProvider(a.getField_id());
-            mView.showAlarmPlace(a.getField_id(), fieldName, a.getCity());
+            Field field = UtilesContentProvider.getFieldFromContentProvider(a.getField_id());
+            mView.showAlarmPlace(field, a.getCity());
 
             mView.showAlarmDate(a.getDate_from(), a.getDate_to());
             mView.showAlarmTotalPlayers(a.getTotal_players_from(), a.getTotal_players_to());

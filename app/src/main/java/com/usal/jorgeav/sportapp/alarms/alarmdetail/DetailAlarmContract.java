@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
+import com.usal.jorgeav.sportapp.data.Field;
 
 /**
  * Created by Jorge Avila on 26/04/2017.
@@ -15,7 +16,7 @@ public abstract class DetailAlarmContract {
 
     public interface View {
         void showAlarmSport(String sport);
-        void showAlarmPlace(String fieldId, String fieldName, String city);
+        void showAlarmPlace(Field field, String city);
         void showAlarmDate(Long dateFrom, Long dateTo);
         void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo);
         void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo);
