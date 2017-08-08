@@ -15,14 +15,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -49,8 +46,9 @@ import butterknife.ButterKnife;
  * Created by Jorge Avila on 06/06/2017.
  */
 
-public class NewEventFragment extends BaseFragment implements NewEventContract.View  {
+public class NewEventFragment extends BaseFragment implements NewEventContract.View {
     public static final String TAG = NewEventFragment.class.getSimpleName();
+
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
     public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
 
@@ -61,11 +59,10 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     private static GoogleApiClient mGoogleApiClient;
     public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
     ArrayList<Field> mFieldList;
-    public static final String INSTANCE_ADDRESS_TEXT_VIEW_ID = "INSTANCE_ADDRESS_TEXT_VIEW_ID";
 
-    ArrayAdapter<CharSequence> sportsAdapter;
     @BindView(R.id.new_event_sport)
-    Spinner newEventSport;
+    TextView newEventSport;
+    String mSportId = "";
     @BindView(R.id.new_event_field)
     Button newEventFieldButton;
     @BindView(R.id.new_event_address)
@@ -154,20 +151,18 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         super.onOptionsItemSelected(item);
         hideSoftKeyboard();
         if (item.getItemId() == R.id.action_ok) {
-            Log.d(TAG, "onOptionsItemSelected: Ok");
-
             String eventId = "";
             if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
                 eventId = getArguments().getString(BUNDLE_EVENT_ID);
 
             mNewEventPresenter.addEvent(
                     eventId,
-                    newEventSport.getSelectedItem().toString(),
-                    ((EventsActivity)getActivity()).mFieldId,
-                    ((EventsActivity)getActivity()).mAddress,
-                    ((EventsActivity)getActivity()).mCoord,
+                    newEventSport.getText().toString(),
+                    ((EventsActivity) getActivity()).mFieldId,
+                    ((EventsActivity) getActivity()).mAddress,
+                    ((EventsActivity) getActivity()).mCoord,
                     newEventName.getText().toString(),
-                    ((EventsActivity)getActivity()).mCity,
+                    ((EventsActivity) getActivity()).mCity,
                     newEventDate.getText().toString(),
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
@@ -183,17 +178,16 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         View root = inflater.inflate(R.layout.fragment_new_event, container, false);
         ButterKnife.bind(this, root);
 
-        myCalendar = Calendar.getInstance();
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
 
-        sportsAdapter = ArrayAdapter.createFromResource(getActivityContext(), R.array.sport_id_values, android.R.layout.simple_spinner_item);
-        sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        newEventSport.setAdapter(sportsAdapter);
+        myCalendar = Calendar.getInstance();
 
         newEventFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 boolean onlyFields = true;
-                if (mFieldList == null) onlyFields = false;
+                if (!Utiles.sportNeedsField(mSportId)) onlyFields = false;
                 ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList, onlyFields);
             }
         });
@@ -224,11 +218,13 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
             mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_ADDRESS_TEXT_VIEW_ID))
-            newEventAddress.setText(savedInstanceState.getString(INSTANCE_ADDRESS_TEXT_VIEW_ID));
+        showEventField(((EventsActivity) getActivity()).mFieldId,
+                ((EventsActivity) getActivity()).mAddress,
+                ((EventsActivity) getActivity()).mCity,
+                ((EventsActivity) getActivity()).mCoord);
 
         //Show newField dialog on rotation if needed, after retrieveFields are called
-        if (mFieldList != null && mFieldList.size() == 0) startNewFieldTask();
+        if (mFieldList != null && mFieldList.size() == 0) startNewFieldDialog();
 
         return root;
     }
@@ -236,7 +232,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Nuevo evento", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.action_create_event), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -246,10 +242,10 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         if (!sInitialize) {
             mNewEventPresenter.openEvent(getLoaderManager(), getArguments());
 
-            //Only need to show MapActivity on init once, not on rotation
-            if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
-                setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
-            else showContent();
+            // Only need to show MapActivity on init once, not on rotation
+            // Load Fields from ContentProvider and start MapActivity in retrieveFields()
+            mNewEventPresenter.loadFields(getLoaderManager(), getArguments());
+
             sInitialize = true;
         } else {
             showContent();
@@ -257,20 +253,11 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     }
 
     private void setSportLayout(String sportId) {
-        //Set sport in Spinner
+        // Show sport
         showEventSport(sportId);
-
-        // Check if the sport doesn't need a field
-        String[] arraySports = getActivityContext().getResources().getStringArray(R.array.sport_id_values);
-        if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) { // Running & Biking
-            showContent();
-            if (!getArguments().containsKey(BUNDLE_EVENT_ID))
-                ((EventsActivity)getActivity()).startMapActivityForResult(null, false);
-        } else {
-            // Sport needs a Field so load from ContentProvider and start MapActivity in retrieveFields()
-            mNewEventPresenter.loadFields(getLoaderManager(), getArguments());
-        }
     }
+
+
 
     @Override
     public void onPause() {
@@ -281,8 +268,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     @Override
     public void showEventSport(String sport) {
+        mSportId = sport;
         if (sport != null && !TextUtils.isEmpty(sport))
-            newEventSport.setSelection(sportsAdapter.getPosition(sport));
+            newEventSport.setText(sport);
     }
 
     @Override
@@ -291,20 +279,19 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         if (city != null && !TextUtils.isEmpty(city)) {
             newEventAddress.setText(address);
         }
-    }
 
-    @Override
-    public void setPlaceFieldInActivity(String fieldId, String address, String city, LatLng coordinates) {
-        ((EventsActivity)getActivity()).mFieldId = fieldId;
-        ((EventsActivity)getActivity()).mAddress = address;
-        ((EventsActivity)getActivity()).mCity = city;
-        ((EventsActivity)getActivity()).mCoord = coordinates;
+        ((EventsActivity) getActivity()).mFieldId = fieldId;
+        ((EventsActivity) getActivity()).mAddress = address;
+        ((EventsActivity) getActivity()).mCity = city;
+        ((EventsActivity) getActivity()).mCoord = coordinates;
     }
 
     @Override
     public void showEventName(String name) {
-        if (name != null && !TextUtils.isEmpty(name))
-        newEventName.setText(name);
+        if (name != null && !TextUtils.isEmpty(name)) {
+            newEventName.setText(name);
+            mActionBarIconManagementListener.setActionBarTitle(name);
+        }
     }
 
     @Override
@@ -327,10 +314,12 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             newEventEmpty.setText(String.format(Locale.getDefault(), "%d", emptyPlayers));
     }
 
+    // To not lose participants list on Event edits
     @Override
     public void setParticipants(HashMap<String, Boolean> map) {
         mParticipants = map;
     }
+
     @Override
     public void setSimulatedParticipants(HashMap<String, SimulatedUser> map) {
         mSimulatedParticipants = map;
@@ -341,27 +330,32 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         mFieldList = fieldList;
         showContent();
         if (mFieldList != null) {
-            if (mFieldList.size() == 0) {
-                Toast.makeText(getActivityContext(), "There isn't fields for this sport", Toast.LENGTH_SHORT).show();
-                startNewFieldTask();
-            } else
-                if (!getArguments().containsKey(BUNDLE_EVENT_ID))
-                    ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList, true);
+            if (!getArguments().containsKey(BUNDLE_EVENT_ID)) {// If not an edit
+                if (Utiles.sportNeedsField(mSportId)) { // If new Event need a Field
+                    if (mFieldList.size() == 0)
+                        // Sport needs a Field so create a new one or cancel Event creation
+                        startNewFieldDialog();
+                    else
+                        ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList, true);
+                } else
+                    ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList, false);
+            }
         }
 
-        //Since mFieldList are retain in savedInstance no need to load again
+        //Since mFieldList are going to be retained in savedInstance there isn't need to be loaded again
         mNewEventPresenter.stopLoadFields(getLoaderManager());
     }
 
-    private void startNewFieldTask() {
+    private void startNewFieldDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        builder.setMessage("Quieres crear un campo nuevo?")
-                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.dialog_title_create_new_field)
+                .setMessage(R.string.dialog_msg_create_new_field_for_event)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Utiles.startFieldsActivityAndNewField(getActivity());
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         getActivity().onBackPressed();
@@ -373,11 +367,11 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     @Override
     public void clearUI() {
-        newEventSport.setSelection(0);
-        ((EventsActivity)getActivity()).mFieldId = null;
-        ((EventsActivity)getActivity()).mAddress = null;
-        ((EventsActivity)getActivity()).mCity = null;
-        ((EventsActivity)getActivity()).mCoord = null;
+        newEventSport.setText("");
+        ((EventsActivity) getActivity()).mFieldId = null;
+        ((EventsActivity) getActivity()).mAddress = null;
+        ((EventsActivity) getActivity()).mCity = null;
+        ((EventsActivity) getActivity()).mCoord = null;
         newEventName.setText("");
         newEventDate.setText("");
         newEventTime.setText("");
@@ -391,16 +385,14 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         super.onSaveInstanceState(outState);
         if (mFieldList != null)
             outState.putParcelableArrayList(INSTANCE_FIELD_LIST_ID, mFieldList);
-        if (!TextUtils.isEmpty(newEventAddress.getText().toString()))
-            outState.putString(INSTANCE_ADDRESS_TEXT_VIEW_ID, newEventAddress.getText().toString());
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        ((EventsActivity)getActivity()).mFieldId = null;
-        ((EventsActivity)getActivity()).mAddress = null;
-        ((EventsActivity)getActivity()).mCity = null;
-        ((EventsActivity)getActivity()).mCoord = null;
+        ((EventsActivity) getActivity()).mFieldId = null;
+        ((EventsActivity) getActivity()).mAddress = null;
+        ((EventsActivity) getActivity()).mCity = null;
+        ((EventsActivity) getActivity()).mCoord = null;
     }
 }

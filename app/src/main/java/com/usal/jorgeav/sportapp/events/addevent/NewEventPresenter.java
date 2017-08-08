@@ -25,16 +25,12 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Jorge Avila on 06/06/2017.
- */
-
-public class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = NewEventPresenter.class.getSimpleName();
 
-    NewEventContract.View mNewEventView;
+    private NewEventContract.View mNewEventView;
 
-    public NewEventPresenter(NewEventContract.View view){
+    NewEventPresenter(NewEventContract.View view){
         this.mNewEventView = view;
     }
 
@@ -49,9 +45,10 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
 
         if (isValidSport(sport) && isValidField(field, address, sport, city, coord) && isValidName(name)
                 && isValidOwner(myUid) && isDateTimeCorrect(dateMillis, timeMillis) && isPlayersCorrect(total, empty)) {
-            Event event = new Event(
-                    id, sport, field, address, coord, name, city, dateMillis + timeMillis, myUid,
-                    Long.valueOf(total), Long.valueOf(empty), participants, simulatedParticipants);
+
+            Event event = new Event(id, sport, field, address, coord, name, city,
+                    dateMillis + timeMillis, myUid, Long.valueOf(total), Long.valueOf(empty),
+                    participants, simulatedParticipants);
 
             Log.d(TAG, "addEvent: "+event);
             if(TextUtils.isEmpty(event.getEvent_id()))
@@ -65,7 +62,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             ((EventsActivity)mNewEventView.getActivityContext()).mCoord = null;
             mNewEventView.getThis().resetBackStack();
         } else
-            Toast.makeText(mNewEventView.getActivityContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mNewEventView.getActivityContext(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
     }
 
     private boolean isValidSport(String sport) {
@@ -79,8 +76,7 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
 
     private boolean isValidField(String fieldId, String address, String sportId, String city, LatLng coordinates) {
         // Check if the sport doesn't need a field
-        String[] arraySports = mNewEventView.getActivityContext().getResources().getStringArray(R.array.sport_id_values);
-        if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1])) return true;
+        if (!Utiles.sportNeedsField(sportId)) return true;
 
         // Query database for the fieldId and checks if this sport exists
         Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId);
@@ -176,30 +172,10 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
                 showEventDetails(data);
                 break;
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
-                HashMap<String, Boolean> map = new HashMap<>();
-                //Loader reuses Cursor so move to first position
-                for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-                    String userId = data.getString(SportteamContract.EventsParticipationEntry.COLUMN_USER_ID);
-                    Boolean participates = data.getInt(SportteamContract.EventsParticipationEntry.COLUMN_PARTICIPATES) == 1;
-                    map.put(userId, participates);
-                }
-                mNewEventView.setParticipants(map);
+                mNewEventView.setParticipants(UtilesContentProvider.cursorToMultipleParticipants(data));
                 break;
             case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
-                HashMap<String, SimulatedUser> simulatedUserHashMap = new HashMap<>();
-                //Loader reuses Cursor so move to first position
-                for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-                    String key = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_SIMULATED_USER_ID);
-
-                    String alias = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_ALIAS);
-                    String profile_picture = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_PROFILE_PICTURE);
-                    Long age = data.getLong(SportteamContract.SimulatedParticipantEntry.COLUMN_AGE);
-                    String owner = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_OWNER);
-                    SimulatedUser simulatedUser = new SimulatedUser(alias, profile_picture, age, owner);
-
-                    simulatedUserHashMap.put(key, simulatedUser);
-                }
-                mNewEventView.setSimulatedParticipants(simulatedUserHashMap);
+                mNewEventView.setSimulatedParticipants(UtilesContentProvider.cursorToMultipleSimulatedParticipants(data));
                 break;
             case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
                 ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
@@ -225,7 +201,6 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
 
     private void showEventDetails(Cursor data) {
         if (data != null && data.moveToFirst()) {
-            mNewEventView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             String fieldId = data.getString(SportteamContract.EventEntry.COLUMN_FIELD);
             String address = data.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
             String city = data.getString(SportteamContract.EventEntry.COLUMN_CITY);
@@ -233,7 +208,8 @@ public class NewEventPresenter implements NewEventContract.Presenter, LoaderMana
             double longitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
             LatLng coordinates = null; if (latitude != 0 && longitude != 0) coordinates = new LatLng(latitude, longitude);
             mNewEventView.showEventField(fieldId, address, city, coordinates);
-            mNewEventView.setPlaceFieldInActivity(fieldId, address, city, coordinates);
+
+            mNewEventView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
             mNewEventView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
             mNewEventView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));
             mNewEventView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
