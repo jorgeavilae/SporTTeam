@@ -1,10 +1,7 @@
 package com.usal.jorgeav.sportapp.adapters;
 
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,13 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
-import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
-
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,7 +76,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         else return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener, AdapterView.OnLongClickListener {
         @BindView(R.id.user_item_photo)
         ImageView imageViewUserPhoto;
         @BindView(R.id.user_item_name)
@@ -96,6 +88,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
@@ -104,9 +97,17 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             if (mDataset.moveToPosition(position))
                 mClickListener.onUserClick(mDataset.getString(SportteamContract.UserEntry.COLUMN_USER_ID));
         }
+
+        @Override
+        public boolean onLongClick(View view) {
+            int position = getAdapterPosition();
+            return mDataset.moveToPosition(position)
+                    && mClickListener.onUserLongClick(mDataset.getString(SportteamContract.UserEntry.COLUMN_USER_ID));
+        }
     }
 
     public interface OnUserItemClickListener {
         void onUserClick(String uid);
+        boolean onUserLongClick(String uid);
     }
 }

@@ -91,6 +91,11 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
                         });
                 builder.create().show();
             }
+
+            @Override
+            public boolean onUserLongClick(String uid) {
+                return false;
+            }
         }, Glide.with(this));
         mUsersRejectedRecyclerAdapter = new UsersAdapter(null, new UsersAdapter.OnUserItemClickListener() {
             @Override
@@ -110,6 +115,12 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
                             }
                         });
                 builder.create().show();
+            }
+
+
+            @Override
+            public boolean onUserLongClick(String uid) {
+                return false;
             }
         }, Glide.with(this));
     }

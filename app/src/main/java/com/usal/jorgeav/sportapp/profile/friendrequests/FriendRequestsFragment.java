@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -96,6 +95,11 @@ public class FriendRequestsFragment extends BaseFragment implements FriendReques
     public void onUserClick(String uid) {
         Fragment newFragment = ProfileFragment.newInstance(uid);
         mFragmentManagementListener.initFragment(newFragment, true);
+    }
+
+    @Override
+    public boolean onUserLongClick(String uid) {
+        return false;
     }
 
     @Override

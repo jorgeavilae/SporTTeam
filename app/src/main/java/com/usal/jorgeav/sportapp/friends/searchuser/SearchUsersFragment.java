@@ -142,4 +142,9 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
         Fragment newFragment = ProfileFragment.newInstance(uid);
         mFragmentManagementListener.initFragment(newFragment, true);
     }
+
+    @Override
+    public boolean onUserLongClick(String uid) {
+        return false;
+    }
 }

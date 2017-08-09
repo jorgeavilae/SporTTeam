@@ -47,7 +47,6 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
     public static final String BUNDLE_IS_FULL = "BUNDLE_IS_FULL";
 
     private static String mEventId = "";
-    private static String mOwnerId = "";
     @DetailEventPresenter.EventRelationType
     private static int mRelation = -1;
     private static Boolean isPast = null;
@@ -109,8 +108,7 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
 
         if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_OWNER_ID))
-            mOwnerId = getArguments().getString(BUNDLE_OWNER_ID);
+        // OwnerID is accessed in the Presenter
         if (getArguments() != null && getArguments().containsKey(BUNDLE_RELATION_TYPE))
             mRelation = parseRelation(getArguments().getInt(BUNDLE_RELATION_TYPE));
         if (getArguments() != null && getArguments().containsKey(BUNDLE_IS_PAST))
@@ -118,20 +116,28 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
         if (getArguments() != null && getArguments().containsKey(BUNDLE_IS_FULL))
             isFull = getArguments().getBoolean(BUNDLE_IS_FULL);
 
+        // Set participants list
         participantsList.setAdapter(mParticipantsAdapter);
         participantsList.setHasFixedSize(true);
         participantsList.setLayoutManager(new GridLayoutManager(getActivityContext(),
                 Utiles.calculateNoOfColumns(getActivityContext())));
 
+        // Set simulated participants list
         simulatedParticipantsList.setAdapter(mSimulatedParticipantsAdapter);
         simulatedParticipantsList.setHasFixedSize(true);
         simulatedParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(),
                 LinearLayoutManager.VERTICAL, false));
 
         //Allow add simulated participant if isn't Past and isn't Full and if I am owner or participant
-        if (isPast != null && !isPast && isFull != null && !isFull &&
-                (mRelation == DetailEventPresenter.RELATION_TYPE_ASSISTANT
-                        || mRelation == DetailEventPresenter.RELATION_TYPE_OWNER)) {
+        setLayoutToAllowAddSimulatedParticipants(isPast != null && !isPast && isFull != null && !isFull
+                &&(mRelation == DetailEventPresenter.RELATION_TYPE_ASSISTANT
+                || mRelation == DetailEventPresenter.RELATION_TYPE_OWNER));
+
+        return root;
+    }
+
+    private void setLayoutToAllowAddSimulatedParticipants(boolean allow) {
+        if(allow) {
             addSimulatedParticipant.setVisibility(View.VISIBLE);
             addSimulatedParticipant.setEnabled(true);
             addSimulatedParticipant.setOnClickListener(new View.OnClickListener() {
@@ -141,9 +147,8 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
                         Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
                         mFragmentManagementListener.initFragment(fragment, true);
                     } else
-                        Log.e(TAG, "addSimulateParticipant: onClick: "
-                                + "eventId " + mEventId + "\ngetActivity is EventsActivity? "
-                                + (getActivity() instanceof EventsActivity));
+                        Log.e(TAG, "addSimulateParticipant: onClick: eventId " + mEventId
+                                + "\ngetActivity is EventsActivity? " + (getActivity() instanceof EventsActivity));
                 }
             });
         } else {
@@ -151,8 +156,6 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
             addSimulatedParticipant.setEnabled(false);
             addSimulatedParticipant.setOnClickListener(null);
         }
-
-        return root;
     }
 
     private
@@ -217,46 +220,52 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
     }
 
     @Override
-    public void onUserClick(final String uid) {
+    public void onUserClick(String uid) {
         String myUid = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUid)) return;
 
         if (!myUid.equals(uid)) {
-            if (mRelation == DetailEventPresenter.RELATION_TYPE_OWNER) {
-                if (!isPast) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                    builder.setMessage("Quieres expulsarlo del evento?")
-                            .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                                    builder.setMessage("Quieres que se borren los usuarios simulados por este usuario?")
-                                            .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    mParticipantsPresenter.quitEvent(uid, mEventId, true);
-                                                }
-                                            })
-                                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    mParticipantsPresenter.quitEvent(uid, mEventId, false);
-                                                }
-                                            });
-                                    builder.create().show();
-                                }
-                            })
-                            .setNegativeButton("No", null)
-                            .setNeutralButton("See details", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    Fragment newFragment = ProfileFragment.newInstance(uid);
-                                    mFragmentManagementListener.initFragment(newFragment, true);
-                                }
-                            });
-                    builder.create().show();
-                }
-            } else {
-                Fragment newFragment = ProfileFragment.newInstance(uid);
-                mFragmentManagementListener.initFragment(newFragment, true);
-            }
+            Fragment newFragment = ProfileFragment.newInstance(uid);
+            mFragmentManagementListener.initFragment(newFragment, true);
         }
+    }
+
+    @Override
+    public boolean onUserLongClick(final String uid) {
+        String myUid = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUid)) return false;
+
+        if (!myUid.equals(uid) && mRelation == DetailEventPresenter.RELATION_TYPE_OWNER && !isPast) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+            builder.setMessage(R.string.dialog_title_quit_user_from_event)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+                            builder.setMessage(R.string.dialog_title_quit_user_from_event_sim_user)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            mParticipantsPresenter.quitEvent(uid, mEventId, true);
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            mParticipantsPresenter.quitEvent(uid, mEventId, false);
+                                        }
+                                    });
+                            builder.create().show();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .setNeutralButton(R.string.see_details, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Fragment newFragment = ProfileFragment.newInstance(uid);
+                            mFragmentManagementListener.initFragment(newFragment, true);
+                        }
+                    });
+            builder.create().show();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -266,13 +275,13 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
 
         if ((myUid.equals(simulatedUserCreator) || mRelation == DetailEventPresenter.RELATION_TYPE_OWNER) && !isPast) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-            builder.setMessage("Quieres borrar este participante simulado?")
-                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            builder.setMessage(R.string.dialog_title_quit_sim_user_from_event)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             mParticipantsPresenter.deleteSimulatedUser(simulatedUserId, mEventId);
                         }
                     })
-                    .setNegativeButton("No", null);
+                    .setNegativeButton(android.R.string.no, null);
             builder.create().show();
         }
     }

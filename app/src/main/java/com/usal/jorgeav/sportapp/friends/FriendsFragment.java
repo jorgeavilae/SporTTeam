@@ -126,4 +126,9 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
         Fragment newFragment = ProfileFragment.newInstance(uid);
         mFragmentManagementListener.initFragment(newFragment, true);
     }
+
+    @Override
+    public boolean onUserLongClick(String uid) {
+        return false;
+    }
 }

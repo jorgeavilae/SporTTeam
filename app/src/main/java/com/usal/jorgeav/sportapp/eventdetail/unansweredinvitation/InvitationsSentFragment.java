@@ -9,7 +9,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -135,6 +134,10 @@ public class InvitationsSentFragment extends BaseFragment implements Invitations
                     }
                 });
         builder.create().show();
+    }
 
+    @Override
+    public boolean onUserLongClick(String uid) {
+        return false;
     }
 }
