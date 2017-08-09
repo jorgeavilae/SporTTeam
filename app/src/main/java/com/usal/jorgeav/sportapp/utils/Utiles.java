@@ -118,7 +118,12 @@ public class Utiles {
     public static int calculateNoOfColumns(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        return (int) (dpWidth / 180);
+
+        /* https://stackoverflow.com/a/16276351/4235666 */
+        int image_size = (int) (context.getResources().getDimension(R.dimen.grid_item_image_size)
+                / context.getResources().getDisplayMetrics().density);
+
+        return (int) (dpWidth / image_size);
     }
 
     public static boolean isNumeric(String str) {

@@ -9,6 +9,7 @@
         android:id="@+id/user_item_photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:minHeight="@dimen/grid_item_image_size"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         tools:src="@drawable/profile_picture_placeholder" />
