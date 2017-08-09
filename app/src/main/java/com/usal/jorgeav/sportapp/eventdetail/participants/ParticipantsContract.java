@@ -5,11 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
-/**
- * Created by Jorge Avila on 29/05/2017.
- */
-
-public abstract class ParticipantsContract {
+abstract class ParticipantsContract {
 
     public interface Presenter {
         void loadParticipants(LoaderManager loaderManager, Bundle b);

@@ -669,13 +669,15 @@ public class FirebaseActions {
 
                 int usersLeaving = 0;
                 // Delete simulated participants added by User UID
-                if (deleteSimulatedUsers)
-                    for (Map.Entry<String, SimulatedUser> entry : e.getSimulated_participants().entrySet()) {
+                if (deleteSimulatedUsers) {
+                    Map<String, SimulatedUser> map = new HashMap<>(e.getSimulated_participants());
+                    for (Map.Entry<String, SimulatedUser> entry : map.entrySet()) {
                         if (entry.getValue().getOwner().equals(uid)) {
                             usersLeaving++;
                             e.deleteSimulatedParticipant(entry.getKey());
                         }
                     }
+                }
 
                 // Delete participant
                 usersLeaving++;
@@ -699,6 +701,7 @@ public class FirebaseActions {
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
+                FirebaseSync.loadAnEvent(eventId);
             }
         });
     }

@@ -13,17 +13,14 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
-/**
- * Created by Jorge Avila on 29/05/2017.
- */
-
-public class ParticipantsPresenter implements ParticipantsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class ParticipantsPresenter implements ParticipantsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    @SuppressWarnings("unused")
     private static final String TAG = ParticipantsPresenter.class.getSimpleName();
 
-    ParticipantsContract.View mParticipantsView;
-    String mOwnerUid = "";
+    private ParticipantsContract.View mParticipantsView;
+    private String mOwnerUid = "";
 
-    public ParticipantsPresenter(ParticipantsContract.View mParticipantsView) {
+    ParticipantsPresenter(ParticipantsContract.View mParticipantsView) {
         this.mParticipantsView = mParticipantsView;
     }
 
@@ -37,8 +34,8 @@ public class ParticipantsPresenter implements ParticipantsContract.Presenter, Lo
     public void deleteSimulatedUser(String simulatedUserId, String eventId) {
         if (!TextUtils.isEmpty(simulatedUserId) && !TextUtils.isEmpty(eventId))
             FirebaseActions.deleteSimulatedParticipant(simulatedUserId, eventId);
-
     }
+
     @Override
     public void loadParticipants(LoaderManager loaderManager, Bundle b) {
         if (b != null && b.containsKey(ParticipantsFragment.BUNDLE_OWNER_ID))
@@ -48,8 +45,8 @@ public class ParticipantsPresenter implements ParticipantsContract.Presenter, Lo
 
     @Override
     public void loadSimulatedParticipants(LoaderManager loaderManager, Bundle b) {
-        // Load Event to insert Simulated Participants into
-        // ContentProvider and display recently added ones
+        // Load Event to insert  into ContentProvider and
+        // display Simulated Participants recently added
         if (b != null && b.containsKey(ParticipantsFragment.BUNDLE_EVENT_ID)) {
             String eventId = b.getString(ParticipantsFragment.BUNDLE_EVENT_ID);
             if (eventId != null) FirebaseSync.loadAnEvent(eventId);
@@ -77,9 +74,6 @@ public class ParticipantsPresenter implements ParticipantsContract.Presenter, Lo
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
             case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
-                /* ownerUid should have a value because this loader
-                 * is initialized after this value was set in UI
-                 */
                 if (mOwnerUid != null && !TextUtils.isEmpty(mOwnerUid)) {
                     Cursor c = addParticipantToCursor(data, mOwnerUid);
                     mParticipantsView.showParticipants(c);
@@ -99,7 +93,7 @@ public class ParticipantsPresenter implements ParticipantsContract.Presenter, Lo
                 SportteamContract.UserEntry.USER_ID + " = ? ",
                 new String[]{uid},
                 null);
-        return new MergeCursor(new Cursor[] {uidCursor, data});
+        return new MergeCursor(new Cursor[]{uidCursor, data});
     }
 
     @Override

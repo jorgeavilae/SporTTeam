@@ -168,8 +168,14 @@
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
     <string name="action_unanswered_invitations">Unanswered invitations</string>
+
+    <!-- Events Strings-->
     <string name="simulated_participants">Simulated Participants</string>
     <string name="participants">Participants</string>
     <string name="event_participants">Event\'s participants</string>
     <string name="event_details">Event\'s Details</string>
+    <string name="dialog_title_quit_user_from_event">Do you want to expel the User from the Event?</string>
+    <string name="dialog_title_quit_sim_user_from_event">Do you want to expel the Simulated participant from the Event?</string>
+    <string name="see_details">See details</string>
+    <string name="dialog_title_quit_user_from_event_sim_user">Do you want to expel his Simulated participants too?</string>
 </resources>
