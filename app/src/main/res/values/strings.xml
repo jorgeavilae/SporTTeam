@@ -128,7 +128,7 @@
     <string name="dialog_msg_create_new_field_for_event">There isn\'t Fields for this sport and it is needed in
          order to create a new Event. Do you want to create a new Field now?</string>
     <string name="new_field_title">New Field</string>
-    <string name="no_field_selection">You didn\'t select anything</string>
+    <string name="no_field_selection">You did not select anything</string>
 
     <!-- Alarms -->
     <!-- https://stackoverflow.com/questions/1587056/how-to-keep-the-spaces-at-the-end-and-or-at-the-beginning-of-a-string#comment26178169_2206684 -->
@@ -149,7 +149,7 @@
     <string name="toast_empty_players_invalid">Invalid empty players</string>
     <string name="toast_players_relation_invalid">Total players should be greater than empty players</string>
     <string name="alarm_detail_title">Alarm details</string>
-    <string name="action_not_done">Action couldn\'t be done</string>
+    <string name="action_not_done">Action can not be done</string>
 
     <!-- Profile Fragment -->
     <string name="dialog_title_change_name">Change name</string>
@@ -168,4 +168,8 @@
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
     <string name="action_unanswered_invitations">Unanswered invitations</string>
+    <string name="simulated_participants">Simulated Participants</string>
+    <string name="participants">Participants</string>
+    <string name="event_participants">Event\'s participants</string>
+    <string name="event_details">Event\'s Details</string>
 </resources>

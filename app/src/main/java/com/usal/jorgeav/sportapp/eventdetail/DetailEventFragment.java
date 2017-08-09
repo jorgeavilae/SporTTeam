@@ -2,18 +2,12 @@ package com.usal.jorgeav.sportapp.eventdetail;
 
 
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,22 +20,16 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.SimulatedUsersAdapter;
-import com.usal.jorgeav.sportapp.adapters.UsersAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.eventdetail.inviteuser.InviteUserFragment;
-import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
+import com.usal.jorgeav.sportapp.eventdetail.participants.ParticipantsFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
 import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
-import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
-import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
@@ -51,18 +39,17 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailEventFragment extends BaseFragment implements DetailEventContract.View,
-        UsersAdapter.OnUserItemClickListener,
-        SimulatedUsersAdapter.OnSimulatedUserItemClickListener {
+public class DetailEventFragment extends BaseFragment implements DetailEventContract.View {
     private static final String TAG = DetailEventFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
     private String mEventId = "";
     private String mSportId = "";
     private String mOwnerId = "";
-    private boolean isFull = false;
-    private boolean isPast = false;
-    @DetailEventPresenter.EventRelationType int mRelation;
+    private Boolean isFull = null;
+    private Boolean isPast = null;
+    @DetailEventPresenter.EventRelationType int mRelation = -1;
+
     private DetailEventContract.Presenter mPresenter;
 
     Menu mMenu;
@@ -91,14 +78,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     Button buttonSendRequest;
     @BindView(R.id.event_detail_simulate_participant)
     Button buttonSimulateParticipant;
-    @BindView(R.id.event_detail_participants_list)
-    RecyclerView eventParticipantsList;
-    UsersAdapter usersAdapter;
-    @BindView(R.id.event_detail_simulated_participants_list)
-    RecyclerView eventSimulatedParticipantsList;
-    SimulatedUsersAdapter simulatedUsersAdapter;
-    @BindView(R.id.event_detail_participants_placeholder)
-    ConstraintLayout eventParticipantsPlaceholder;
 
     public DetailEventFragment() {
         // Required empty public constructor
@@ -165,17 +144,19 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
 
-        usersAdapter = new UsersAdapter(null, this, Glide.with(this));
-        eventParticipantsList.setAdapter(usersAdapter);
-        eventParticipantsList.setHasFixedSize(true);
-        eventParticipantsList.setLayoutManager(new GridLayoutManager(getActivityContext(), 1));
-
-        simulatedUsersAdapter = new SimulatedUsersAdapter(null, this, Glide.with(this));
-        eventSimulatedParticipantsList.setAdapter(simulatedUsersAdapter);
-        eventSimulatedParticipantsList.setHasFixedSize(true);
-        eventSimulatedParticipantsList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
-
         mPresenter.getRelationTypeBetweenThisEventAndI();
+
+        buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!TextUtils.isEmpty(mEventId) && !TextUtils.isEmpty(mOwnerId)
+                        && mRelation != DetailEventPresenter.RELATION_TYPE_ERROR
+                        && isPast != null && isFull != null) {
+                    Fragment fragment = ParticipantsFragment.newInstance(mEventId, mOwnerId, mRelation, isPast, isFull);
+                    mFragmentManagementListener.initFragment(fragment, true);
+                }
+            }
+        });
 
         return root;
     }
@@ -185,9 +166,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         mRelation = relation;
 
         // If event is in the past no action is allowed
-        if (isPast) {
+        if (isPast == null || isPast) {
             buttonSendRequest.setVisibility(View.GONE);
-            buttonSimulateParticipant.setVisibility(View.GONE);
             buttonUserRequests.setVisibility(View.GONE);
             buttonSendInvitation.setVisibility(View.GONE);
             return;
@@ -222,7 +202,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         buttonSendRequest.setVisibility(View.VISIBLE);
         buttonSendRequest.setText("Error");
         buttonSendRequest.setEnabled(false);
-        buttonSimulateParticipant.setVisibility(View.INVISIBLE);
         buttonUserRequests.setVisibility(View.INVISIBLE);
         buttonSendInvitation.setVisibility(View.INVISIBLE);
     }
@@ -232,7 +211,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         buttonSendRequest.setVisibility(View.VISIBLE);
         buttonSendRequest.setText("No puedes asistir");
         buttonSendRequest.setEnabled(false);
-        buttonSimulateParticipant.setVisibility(View.INVISIBLE);
         buttonUserRequests.setVisibility(View.INVISIBLE);
         buttonSendInvitation.setVisibility(View.INVISIBLE);
     }
@@ -273,7 +251,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             }
         });
         buttonSendInvitation.setVisibility(View.VISIBLE);
-        buttonSimulateParticipant.setVisibility(View.VISIBLE);
         if (!isFull) {
             buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -283,23 +260,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });
-            buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //DONE añadir participante que no es usuario de la app
-                    if (mEventId != null
-                            && getActivity() instanceof EventsActivity) { //Necessary for photo picker
-                        Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
-                        mFragmentManagementListener.initFragment(fragment, true);
-                    } else
-                        Log.e(TAG, "uiSetupForEventRelation: buttonSimulateParticipant: onClick: "
-                                + "eventId " + mEventId + "\ngetActivity is EventsActivity? "
-                                + (getActivity() instanceof EventsActivity));
-                }
-            });
         } else {
             buttonSendInvitation.setEnabled(false);
-            buttonSimulateParticipant.setEnabled(false);
         }
     }
 
@@ -307,7 +269,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         if (mMenu != null) mMenu.clear();
         buttonSendRequest.setVisibility(View.VISIBLE);
         buttonSendRequest.setText("Contestar invitacion");
-        if (!isFull) {
+        if (isFull == null || !isFull) {
             buttonSendRequest.setEnabled(true);
             buttonSendRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -332,7 +294,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         } else {
             buttonSendRequest.setEnabled(false);
         }
-        buttonSimulateParticipant.setVisibility(View.INVISIBLE);
         buttonUserRequests.setVisibility(View.INVISIBLE);
         buttonSendInvitation.setVisibility(View.INVISIBLE);
     }
@@ -357,7 +318,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 builder.create().show();
             }
         });
-        buttonSimulateParticipant.setVisibility(View.INVISIBLE);
         buttonUserRequests.setVisibility(View.INVISIBLE);
         buttonSendInvitation.setVisibility(View.INVISIBLE);
     }
@@ -366,7 +326,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         if (mMenu != null) mMenu.clear();
         buttonSendRequest.setVisibility(View.VISIBLE);
         buttonSendRequest.setText("Enviar peticion de entrada");
-        if (!isFull) {
+        if (isFull == null || !isFull) {
             buttonSendRequest.setEnabled(true);
             buttonSendRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -378,7 +338,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         } else {
             buttonSendRequest.setEnabled(false);
         }
-        buttonSimulateParticipant.setVisibility(View.INVISIBLE);
         buttonUserRequests.setVisibility(View.INVISIBLE);
         buttonSendInvitation.setVisibility(View.INVISIBLE);
     }
@@ -402,9 +361,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         });
         buttonSendInvitation.setVisibility(View.VISIBLE);
         buttonSimulateParticipant.setVisibility(View.VISIBLE);
-        if (!isFull) {
+        if (isFull == null || !isFull) {
             buttonSendInvitation.setEnabled(true);
-            buttonSimulateParticipant.setEnabled(true);
             buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -413,23 +371,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });
-            buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //DONE añadir participante que no es usuario de la app
-                    if (mEventId != null
-                            && getActivity() instanceof EventsActivity) { //Necessary for photo picker
-                        Fragment fragment = SimulateParticipantFragment.newInstance(mEventId);
-                        mFragmentManagementListener.initFragment(fragment, true);
-                    } else
-                        Log.e(TAG, "uiSetupForEventRelation: buttonSimulateParticipant: onClick: "
-                                + "eventId " + mEventId + "\ngetActivity is EventsActivity? "
-                                + (getActivity() instanceof EventsActivity));
-                }
-            });
         } else {
             buttonSendInvitation.setEnabled(false);
-            buttonSimulateParticipant.setEnabled(false);
         }
         buttonSendRequest.setVisibility(View.INVISIBLE);
     }
@@ -437,7 +380,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Detalles de evento", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.event_details), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -503,8 +446,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             String ownerName = UtilesContentProvider.getUserNameFromContentProvider(owner);
             String unformattedString = getString(R.string.created_by);
             this.detailEventOwner.setText(String.format(unformattedString, ownerName));
-
-            mPresenter.loadParticipants(getLoaderManager(), getArguments());
         }
 
     }
@@ -520,25 +461,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             isFull = emptyPlayers == 0 && Utiles.sportNeedsTeams(mSportId);
             uiSetupForEventRelation(mRelation);
         }
-    }
-
-    @Override
-    public void showParticipants(Cursor cursor) {
-        usersAdapter.replaceData(cursor);
-        if (cursor != null && cursor.getCount() > 0) {
-            eventParticipantsList.setVisibility(View.VISIBLE);
-            eventParticipantsPlaceholder.setVisibility(View.INVISIBLE);
-        } else {
-            eventParticipantsList.setVisibility(View.INVISIBLE);
-            eventParticipantsPlaceholder.setVisibility(View.VISIBLE);
-        }
-        mFragmentManagementListener.showContent();
-    }
-
-    @Override
-    public void showSimulatedParticipants(Cursor cursor) {
-        simulatedUsersAdapter.replaceData(cursor);
-        mFragmentManagementListener.showContent();
     }
 
     @Override
@@ -570,67 +492,5 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public void onPause() {
         super.onPause();
         mPresenter.unregisterUserRelationObserver();
-        usersAdapter.replaceData(null);
-        simulatedUsersAdapter.replaceData(null);
-    }
-
-    @Override
-    public void onUserClick(final String uid) {
-        String myUid = Utiles.getCurrentUserId();
-        if (TextUtils.isEmpty(myUid)) return;
-
-        if (!myUid.equals(uid)) {
-            if (myUid.equals(mOwnerId)) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                builder.setMessage("Quieres expulsarlo del evento?")
-                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                                builder.setMessage("Quieres que se borren los usuarios simulados por este usuario?")
-                                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                mPresenter.quitEvent(uid, mEventId, true);
-                                            }
-                                        })
-                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                mPresenter.quitEvent(uid, mEventId, false);
-                                            }
-                                        });
-                                builder.create().show();
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .setNeutralButton("See details", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Fragment newFragment = ProfileFragment.newInstance(uid);
-                                mFragmentManagementListener.initFragment(newFragment, true);
-                            }
-                        });
-                builder.create().show();
-            } else {
-                Fragment newFragment = ProfileFragment.newInstance(uid);
-                mFragmentManagementListener.initFragment(newFragment, true);
-            }
-        }
-    }
-
-    @Override
-    public void onSimulatedUserClick(String ownerId, final String simulatedUserId) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
-        if (TextUtils.isEmpty(myUid)) return;
-
-        if (myUid.equals(ownerId) || myUid.equals(mOwnerId)) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-            builder.setMessage("Quieres borrar este participante simulado?")
-                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            mPresenter.deleteSimulatedUser(simulatedUserId, mEventId);
-                        }
-                    })
-                    .setNegativeButton("No", null);
-            builder.create().show();
-        }
     }
 }

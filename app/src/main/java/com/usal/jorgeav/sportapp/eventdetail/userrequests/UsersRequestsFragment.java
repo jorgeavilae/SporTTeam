@@ -9,7 +9,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,6 +42,7 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
     RecyclerView usersRequestsList;
     @BindView(R.id.user_requests_placeholder)
     ConstraintLayout userRequestPlaceholder;
+
     UsersAdapter mUsersRejectedRecyclerAdapter;
     @BindView(R.id.user_rejected_list)
     RecyclerView usersRejectedList;

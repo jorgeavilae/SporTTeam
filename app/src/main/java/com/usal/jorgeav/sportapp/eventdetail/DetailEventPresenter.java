@@ -2,7 +2,6 @@ package com.usal.jorgeav.sportapp.eventdetail;
 
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.database.MergeCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,7 +14,6 @@ import android.text.TextUtils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -54,14 +52,9 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     @Override
     public void openEvent(LoaderManager loaderManager, Bundle b) {
         String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
-        FirebaseSync.loadAnEvent(eventId);
+        if (eventId != null)
+            FirebaseSync.loadAnEvent(eventId);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENT_ID, b, this);
-        loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID, b, this);
-    }
-
-    @Override
-    public void loadParticipants(LoaderManager loaderManager, Bundle b) {
-        loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
     }
 
     @Override
@@ -77,12 +70,6 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             case SportteamLoader.LOADER_EVENT_ID:
                 return SportteamLoader
                         .cursorLoaderOneEvent(mView.getActivityContext(), eventId);
-            case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
-                return SportteamLoader
-                        .cursorLoaderEventParticipants(mView.getActivityContext(), eventId, true);
-            case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
-                return SportteamLoader
-                        .cursorLoaderEventSimulatedParticipants(mView.getActivityContext(), eventId);
         }
         return null;
     }
@@ -93,30 +80,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             case SportteamLoader.LOADER_EVENT_ID:
                 showEventDetails(data);
                 break;
-            case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
-                /* ownerUid should have a value because this loader
-                 * is initialized after this value was set in UI
-                 */
-                if (ownerUid != null && !TextUtils.isEmpty(ownerUid)) {
-                    Cursor c = addParticipantToCursor(data, ownerUid);
-                    mView.showParticipants(c);
-                }
-                break;
-            case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
-                mView.showSimulatedParticipants(data);
-                break;
         }
-    }
-
-    /* https://stackoverflow.com/a/16440093/4235666 */
-    private Cursor addParticipantToCursor(Cursor data, String uid) {
-        Cursor uidCursor = MyApplication.getAppContext().getContentResolver().query(
-                SportteamContract.UserEntry.CONTENT_USER_URI,
-                SportteamContract.UserEntry.USER_COLUMNS,
-                SportteamContract.UserEntry.USER_ID + " = ? ",
-                new String[]{uid},
-                null);
-        return new MergeCursor(new Cursor[] {uidCursor, data});
     }
 
     @Override
@@ -124,12 +88,6 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         switch (loader.getId()) {
             case SportteamLoader.LOADER_EVENT_ID:
                 showEventDetails(null);
-                break;
-            case SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID:
-                mView.showParticipants(null);
-                break;
-            case SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID:
-                mView.showSimulatedParticipants(null);
                 break;
         }
     }
@@ -168,14 +126,14 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_OWNER,
             RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_INVITATION,
             RELATION_TYPE_ASSISTANT, RELATION_TYPE_BLOCKED})
-    @interface EventRelationType {}
-    static final int RELATION_TYPE_ERROR = -1;
-    static final int RELATION_TYPE_NONE = 0;
-    static final int RELATION_TYPE_OWNER = 1; //Event.owner = me
-    static final int RELATION_TYPE_I_SEND_REQUEST = 2; //Request.sender = me
-    static final int RELATION_TYPE_I_RECEIVE_INVITATION = 3; //Invitation.receiver = me
-    static final int RELATION_TYPE_ASSISTANT = 4; //Participation true
-    static final int RELATION_TYPE_BLOCKED = 5; //Participation false
+    public @interface EventRelationType {}
+    public static final int RELATION_TYPE_ERROR = -1;
+    public static final int RELATION_TYPE_NONE = 0;
+    public static final int RELATION_TYPE_OWNER = 1; //Event.owner = me
+    public static final int RELATION_TYPE_I_SEND_REQUEST = 2; //Request.sender = me
+    public static final int RELATION_TYPE_I_RECEIVE_INVITATION = 3; //Invitation.receiver = me
+    public static final int RELATION_TYPE_ASSISTANT = 4; //Participation true
+    public static final int RELATION_TYPE_BLOCKED = 5; //Participation false
     @Override
     public void getRelationTypeBetweenThisEventAndI() {
         AsyncTask<Void, Void, Integer> task = new AsyncTask<Void, Void, Integer>(){
@@ -328,19 +286,6 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId))
             FirebaseActions.quitEvent(myUid, eventId, deleteSimulatedParticipant);
-    }
-
-    @Override
-    public void quitEvent(String userId, String eventId, boolean deleteSimulatedParticipant) {
-        if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(eventId))
-            FirebaseActions.quitEvent(userId, eventId, deleteSimulatedParticipant);
-    }
-
-    @Override
-    public void deleteSimulatedUser(String simulatedUserId, String eventId) {
-        if (!TextUtils.isEmpty(simulatedUserId) && !TextUtils.isEmpty(eventId))
-            FirebaseActions.deleteSimulatedParticipant(simulatedUserId, eventId);
-
     }
 
     @Override

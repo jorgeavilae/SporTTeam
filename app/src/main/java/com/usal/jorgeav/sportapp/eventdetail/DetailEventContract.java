@@ -1,7 +1,6 @@
 package com.usal.jorgeav.sportapp.eventdetail;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
@@ -23,8 +22,6 @@ public abstract class DetailEventContract {
         void showEventDate(long date);
         void showEventOwner(String city);
         void showEventPlayers(int emptyPlayers, int totalPlayers);
-        void showParticipants(Cursor cursor);
-        void showSimulatedParticipants(Cursor cursor);
         void clearUI();
         Context getActivityContext();
         BaseFragment getThis();
@@ -35,7 +32,6 @@ public abstract class DetailEventContract {
 
     public interface Presenter {
         void openEvent(LoaderManager loaderManager, Bundle b);
-        void loadParticipants(LoaderManager loaderManager, Bundle b);
         void deleteEvent(Bundle b);
         void getRelationTypeBetweenThisEventAndI();
 
@@ -45,8 +41,6 @@ public abstract class DetailEventContract {
         Invitation getEventInvitation();
         void declineEventInvitation(String eventId, String sender);
         void quitEvent(String eventId, boolean deleteSimulatedParticipants);
-        void quitEvent(String userId, String eventId, boolean deleteSimulatedParticipant);
-        void deleteSimulatedUser(String simulatedUserId, String eventId);
 
         void registerUserRelationObserver();
         void unregisterUserRelationObserver();
