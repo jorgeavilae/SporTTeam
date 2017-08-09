@@ -13,8 +13,8 @@
 
         <ImageView
             android:id="@+id/event_detail_sport"
-            android:layout_width="@dimen/list_item_one_line_height"
-            android:layout_height="@dimen/list_item_one_line_height"
+            android:layout_width="@dimen/list_item_three_lines_height"
+            android:layout_height="@dimen/list_item_three_lines_height"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -24,134 +24,146 @@
 
         <TextView
             android:id="@+id/event_detail_place"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/label_margin"
             android:ellipsize="end"
             android:gravity="end"
-            android:maxLines="1"
-            android:paddingBottom="@dimen/edittext_icon_below"
+            android:maxLines="2"
             android:paddingEnd="@dimen/edittext_icon_size_plus_margin"
             android:paddingLeft="0dp"
             android:paddingRight="@dimen/edittext_icon_size_plus_margin"
             android:paddingStart="0dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/event_detail_sport"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/event_detail_sport"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/event_detail_sport"
-            tools:text="Name of field, City" />
+            tools:text="Fake Street, 123, Springfield, EEUU" />
 
         <ImageView
             android:id="@+id/event_detail_place_icon"
-            android:layout_width="@dimen/edittext_icon_size"
+            android:layout_width="24dp"
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
             android:src="@drawable/ic_arrow_right"
             app:layout_constraintBottom_toBottomOf="@+id/event_detail_place"
             app:layout_constraintRight_toRightOf="@+id/event_detail_place"
-            app:layout_constraintTop_toTopOf="@+id/event_detail_place"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="@+id/event_detail_place" />
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="@dimen/edittext_icon_size"
-            android:layout_height="@dimen/edittext_icon_size"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/event_detail_sport"
+            android:layout_width="@dimen/list_item_icon_indicator_size"
+            android:layout_height="@dimen/list_item_icon_indicator_size"
+            android:layout_margin="@dimen/label_margin"
+            app:layout_constraintBottom_toBottomOf="@+id/event_detail_sport"
+            app:layout_constraintRight_toLeftOf="@+id/event_detail_date"
+            app:layout_constraintTop_toBottomOf="@+id/event_detail_place"
             app:srcCompat="@drawable/ic_nav_events" />
 
         <TextView
             android:id="@+id/event_detail_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_marginEnd="@dimen/label_margin"
+            android:layout_marginRight="@dimen/label_margin"
+            android:textAppearance="@style/ListItemSubtitle"
             app:layout_constraintBottom_toBottomOf="@+id/imageView"
-            app:layout_constraintLeft_toRightOf="@+id/imageView"
+            app:layout_constraintRight_toLeftOf="@+id/event_detail_place_icon"
             app:layout_constraintTop_toTopOf="@+id/imageView"
             tools:text="10 agosto 1992 12:00" />
 
-        <ImageView
-            android:id="@+id/event_detail_players_proportion"
-            android:layout_width="@dimen/edittext_icon_size"
-            android:layout_height="@dimen/edittext_icon_size"
+        <android.support.v7.widget.CardView
+            android:id="@+id/event_detail_participants_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_vertical_margin"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
-            app:srcCompat="@drawable/logo_half" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_detail_sport">
 
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:text="@string/empty_players_label"
-            android:textAppearance="@style/ListItemSubtitle"
-            app:layout_constraintBaseline_toBaselineOf="@+id/event_detail_empty"
-            app:layout_constraintLeft_toRightOf="@+id/event_detail_players_proportion" />
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/event_detail_empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginStart="0dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            app:layout_constraintBottom_toBottomOf="@+id/event_detail_players_proportion"
-            app:layout_constraintLeft_toRightOf="@+id/textView10"
-            app:layout_constraintTop_toTopOf="@+id/event_detail_players_proportion"
-            tools:text="5" />
+                <ImageView
+                    android:id="@+id/event_detail_players_proportion"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="@dimen/activity_vertical_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/logo_half" />
 
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:text="@string/total_players_label"
-            android:textAppearance="@style/ListItemSubtitle"
-            app:layout_constraintBaseline_toBaselineOf="@+id/event_detail_total"
-            app:layout_constraintLeft_toRightOf="@+id/event_detail_empty" />
+                <TextView
+                    android:id="@+id/textView10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:text="@string/empty_players_label"
+                    android:textAppearance="@style/ListItemSubtitle"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/event_detail_empty"
+                    app:layout_constraintLeft_toRightOf="@+id/event_detail_players_proportion" />
 
-        <TextView
-            android:id="@+id/event_detail_total"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginStart="0dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            app:layout_constraintBottom_toBottomOf="@+id/event_detail_players_proportion"
-            app:layout_constraintLeft_toRightOf="@+id/textView15"
-            app:layout_constraintTop_toTopOf="@+id/event_detail_players_proportion"
-            tools:text="10" />
+                <TextView
+                    android:id="@+id/event_detail_empty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    app:layout_constraintBottom_toBottomOf="@+id/event_detail_players_proportion"
+                    app:layout_constraintLeft_toRightOf="@+id/textView10"
+                    app:layout_constraintTop_toTopOf="@+id/event_detail_players_proportion"
+                    tools:text="5" />
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:text="@string/total_players_label"
+                    android:textAppearance="@style/ListItemSubtitle"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/event_detail_total"
+                    app:layout_constraintLeft_toRightOf="@+id/event_detail_empty" />
+
+                <TextView
+                    android:id="@+id/event_detail_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    app:layout_constraintBottom_toBottomOf="@+id/event_detail_players_proportion"
+                    app:layout_constraintLeft_toRightOf="@+id/textView15"
+                    app:layout_constraintTop_toTopOf="@+id/event_detail_players_proportion"
+                    tools:text="10" />
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
 
         <TextView
             android:id="@+id/event_detail_owner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
             android:textAppearance="@style/ListItemSubtitle"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/event_detail_players_proportion"
+            app:layout_constraintTop_toBottomOf="@+id/event_detail_participants_container"
             tools:text="Created by: Name of User" />
 
         <Button
             android:id="@+id/event_detail_user_requests"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="0dp"
             android:text="User Requests"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_detail_owner" />
@@ -173,28 +185,18 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="0dp"
             android:text="Send Request"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_detail_owner" />
-
-        <Button
-            android:id="@+id/event_detail_simulate_participant"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Simulate Participant"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/event_detail_send_request" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="302dp" />
+            app:layout_constraintGuide_begin="302dp"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="414dp" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -76,8 +77,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     Button buttonSendInvitation;
     @BindView(R.id.event_detail_send_request)
     Button buttonSendRequest;
-    @BindView(R.id.event_detail_simulate_participant)
-    Button buttonSimulateParticipant;
+    @BindView(R.id.event_detail_participants_container)
+    CardView detailEventParticipantsContainer;
 
     public DetailEventFragment() {
         // Required empty public constructor
@@ -146,7 +147,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
         mPresenter.getRelationTypeBetweenThisEventAndI();
 
-        buttonSimulateParticipant.setOnClickListener(new View.OnClickListener() {
+        detailEventParticipantsContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!TextUtils.isEmpty(mEventId) && !TextUtils.isEmpty(mOwnerId)
@@ -360,7 +361,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             }
         });
         buttonSendInvitation.setVisibility(View.VISIBLE);
-        buttonSimulateParticipant.setVisibility(View.VISIBLE);
         if (isFull == null || !isFull) {
             buttonSendInvitation.setEnabled(true);
             buttonSendInvitation.setOnClickListener(new View.OnClickListener() {

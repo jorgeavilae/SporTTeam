@@ -31,6 +31,7 @@
     <!-- List item metrics -->
     <dimen name="list_item_icon_size">40dp</dimen>
     <dimen name="list_item_icon_two_size">24dp</dimen>
+    <dimen name="list_item_icon_indicator_size">16dp</dimen>
     <dimen name="list_item_vertical_margin">8dp</dimen>
     <dimen name="list_item_horizontal_margin">16dp</dimen>
     <dimen name="list_item_horizontal_margin_dense">8dp</dimen>
