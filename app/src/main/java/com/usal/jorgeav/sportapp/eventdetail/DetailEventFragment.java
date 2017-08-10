@@ -21,6 +21,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
@@ -55,6 +59,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     private DetailEventContract.Presenter mPresenter;
 
     Menu mMenu;
+
+    @BindView(R.id.event_detail_map)
+    MapView detailEventMap;
+    private GoogleMap mMap;
     @BindView(R.id.event_detail_sport)
     ImageView detailEventSport;
     @BindView(R.id.event_detail_place)
@@ -147,6 +155,19 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
         if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
             mEventId = getArguments().getString(BUNDLE_EVENT_ID);
+
+        //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
+        detailEventMap.onCreate(savedInstanceState);
+        try { MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) { e.printStackTrace(); }
+        detailEventMap.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+
+                Utiles.setCoordinatesInMap(getActivityContext(), mMap, null);
+            }
+        });
 
         mPresenter.getRelationTypeBetweenThisEventAndI();
 
@@ -421,6 +442,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @Override
     public void onStart() {
         super.onStart();
+        detailEventMap.onStart();
         mPresenter.openEvent(getLoaderManager(), getArguments());
     }
 
@@ -434,7 +456,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showEventField(Field field, String address, LatLng coord) {
-        //TODO mostrar datos mejor
         ((BaseActivity)getActivity()).showContent();
         if (field != null) {
             this.detailEventPlace.setText(field.getName() + ", " + field.getCity());
@@ -452,6 +473,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             this.detailEventPlaceIcon.setVisibility(View.INVISIBLE);
             detailEventPlace.setOnClickListener(null);
         }
+
+        Utiles.setCoordinatesInMap(getActivityContext(), mMap, coord);
     }
 
     @Override
@@ -517,6 +540,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @Override
     public void onResume() {
         super.onResume();
+        detailEventMap.onResume();
         mPresenter.registerUserRelationObserver();
         /* https://stackoverflow.com/a/17063800/4235666 */
         setMenuVisibility(true);
@@ -525,6 +549,25 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @Override
     public void onPause() {
         super.onPause();
+        detailEventMap.onPause();
         mPresenter.unregisterUserRelationObserver();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        detailEventMap.onDestroy();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        detailEventMap.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        detailEventMap.onLowMemory();
     }
 }

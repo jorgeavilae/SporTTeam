@@ -175,12 +175,20 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     @Override
     public void onStart() {
         super.onStart();
+        alarmMap.onStart();
         mPresenter.openAlarm(getLoaderManager(), getArguments());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        alarmMap.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        alarmMap.onPause();
         eventsAdapter.replaceData(null);
     }
 
@@ -301,5 +309,23 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         super.onSaveInstanceState(outState);
         if (mCoords != null)
             outState.putParcelable(INSTANCE_COORDS, mCoords);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        alarmMap.onDestroy();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        alarmMap.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        alarmMap.onLowMemory();
     }
 }
