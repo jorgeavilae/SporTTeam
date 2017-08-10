@@ -223,8 +223,13 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void showFieldTimes(long openTime, long closeTime) {
         ((BaseActivity)getActivity()).showContent();
-        this.detailFieldOpening.setText(UtilesTime.millisToTimeString(openTime));
-        this.detailFieldClosing.setText(UtilesTime.millisToTimeString(closeTime));
+        if (openTime == closeTime) {
+            this.detailFieldOpening.setText(getString(R.string.open_24h));
+            this.detailFieldClosing.setText("");
+        } else {
+            this.detailFieldOpening.setText(UtilesTime.millisToTimeString(openTime));
+            this.detailFieldClosing.setText(UtilesTime.millisToTimeString(closeTime));
+        }
     }
 
     @Override
