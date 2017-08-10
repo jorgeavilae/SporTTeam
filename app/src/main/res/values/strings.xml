@@ -189,4 +189,5 @@
     <string name="event_state_request_rejected">Request rejected</string>
     <string name="dialog_msg_answer_invitation">Do you want to participate?</string>
     <string name="send_invitation">Send invitation</string>
+    <string name="dialog_msg_delete_event">The event will be deleted and participants will be notified.</string>
 </resources>

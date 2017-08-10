@@ -46,6 +46,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DetailEventFragment extends BaseFragment implements DetailEventContract.View {
+    @SuppressWarnings("unused")
     private static final String TAG = DetailEventFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
@@ -126,15 +127,17 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-            builder.setTitle("Borrar evento")
-                    .setMessage("Seguro que desea borrarlo?")
-                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    mPresenter.deleteEvent(getArguments());
-                    ((BaseActivity)getActivity()).hideContent();
-                }})
-                    .setNegativeButton("No", null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                    .setTitle(R.string.dialog_msg_are_you_sure)
+                    .setMessage(R.string.dialog_msg_delete_event)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mPresenter.deleteEvent(getArguments());
+                            ((BaseActivity)getActivity()).hideContent();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.yes, null);
             builder.create().show();
             return true;
         } else if (item.getItemId() == R.id.action_unanswered_invitations) {
@@ -149,7 +152,6 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View root = inflater.inflate(R.layout.fragment_detail_event, container, false);
         ButterKnife.bind(this, root);
 
@@ -448,7 +450,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showEventSport(String sport) {
-        ((BaseActivity)getActivity()).showContent();
+        showContent();
         if (sport != null && !TextUtils.isEmpty(sport))
             Glide.with(this).load(Utiles.getSportIconFromResource(sport)).into(this.detailEventSport);
         mSportId = sport;
@@ -456,12 +458,12 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showEventField(Field field, String address, LatLng coord) {
-        ((BaseActivity)getActivity()).showContent();
+        showContent();
         if (field != null) {
             this.detailEventPlace.setText(field.getName() + ", " + field.getCity());
             this.detailEventPlaceIcon.setVisibility(View.VISIBLE);
             final String fieldId = field.getId();
-            detailEventPlace.setOnClickListener(new View.OnClickListener() {
+            this.detailEventPlace.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Fragment newFragment = DetailFieldFragment.newInstance(fieldId, true);
@@ -471,7 +473,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         } else if (address != null && !TextUtils.isEmpty(address)) {
             this.detailEventPlace.setText(address);
             this.detailEventPlaceIcon.setVisibility(View.INVISIBLE);
-            detailEventPlace.setOnClickListener(null);
+            this.detailEventPlace.setOnClickListener(null);
         }
 
         Utiles.setCoordinatesInMap(getActivityContext(), mMap, coord);
@@ -479,14 +481,14 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showEventName(String name) {
-        ((BaseActivity)getActivity()).showContent();
+        showContent();
         if (name != null && !TextUtils.isEmpty(name))
             mActionBarIconManagementListener.setActionBarTitle(name);
     }
 
     @Override
     public void showEventDate(long date) {
-        ((BaseActivity)getActivity()).showContent();
+        showContent();
         this.detailEventDate.setText(UtilesTime.millisToDateTimeString(date));
 
         //Change UI if event it's already happen.
@@ -496,7 +498,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showEventOwner(String owner) {
-        ((BaseActivity)getActivity()).showContent();
+        showContent();
         if (owner != null && !TextUtils.isEmpty(owner)) {
             mOwnerId = owner;
 
@@ -509,8 +511,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void showEventPlayers(int emptyPlayers, int totalPlayers) {
+        showContent();
         if(emptyPlayers > -1 && totalPlayers > -1) {
-            ((BaseActivity) getActivity()).showContent();
             this.detailEventEmpty.setText(String.format(Locale.getDefault(), "%2d", emptyPlayers));
             this.detailEventTotal.setText(String.format(Locale.getDefault(), "%2d", totalPlayers));
 
@@ -524,6 +526,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public void clearUI() {
         this.detailEventSport.setVisibility(View.INVISIBLE);
         this.detailEventPlace.setText("");
+        this.detailEventPlaceIcon.setVisibility(View.INVISIBLE);
         this.detailEventPlace.setOnClickListener(null);
         this.mActionBarIconManagementListener.setActionBarTitle("");
         this.detailEventDate.setText("");
