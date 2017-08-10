@@ -24,10 +24,12 @@
 
     <string name="pick_photo_from">Pick photo from…</string>
     <string name="toast_need_write_permission">Need permission to store image</string>
+    <string name="dialog_msg_are_you_sure">Are you sure?</string>
 
     <string name="add">Add</string>
     <string name="delete">Delete</string>
     <string name="infinite">Infinite</string>
+    <string name="error">Error</string>
 
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_maps">Map</string>
@@ -174,8 +176,16 @@
     <string name="participants">Participants</string>
     <string name="event_participants">Event\'s participants</string>
     <string name="event_details">Event\'s Details</string>
-    <string name="dialog_title_quit_user_from_event">Do you want to expel the User from the Event?</string>
-    <string name="dialog_title_quit_sim_user_from_event">Do you want to expel the Simulated participant from the Event?</string>
+    <string name="dialog_msg_quit_user_from_event">Do you want to expel the User from the Event?</string>
+    <string name="dialog_msg_quit_myself_from_event">Do you want to quit from the Event?</string>
+    <string name="dialog_msg_quit_sim_user_from_event">Do you want to expel his Simulated participants from the Event?</string>
+    <string name="dialog_msg_quit_my_sim_user_from_event">Do you want to expel your Simulated participants from the Event?</string>
     <string name="see_details">See details</string>
-    <string name="dialog_title_quit_user_from_event_sim_user">Do you want to expel his Simulated participants too?</string>
+    <string name="dialog_msg_quit_user_from_event_sim_user">Do you want to expel his Simulated participants too?</string>
+    <string name="event_state_none">Send Request</string>
+    <string name="event_state_participant">Quit event</string>
+    <string name="event_state_request_sent">Cancel request</string>
+    <string name="event_state_invitation_received">Answer invitation</string>
+    <string name="event_state_request_rejected">Request rejected</string>
+    <string name="dialog_msg_answer_invitation">Do you want to participate?</string>
 </resources>

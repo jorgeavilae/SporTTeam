@@ -236,12 +236,12 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
         if (TextUtils.isEmpty(myUid)) return false;
 
         if (!myUid.equals(uid) && mRelation == DetailEventPresenter.RELATION_TYPE_OWNER && !isPast) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-            builder.setMessage(R.string.dialog_title_quit_user_from_event)
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                    .setMessage(R.string.dialog_msg_quit_user_from_event)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                            builder.setMessage(R.string.dialog_title_quit_user_from_event_sim_user)
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                                    .setMessage(R.string.dialog_msg_quit_user_from_event_sim_user)
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             mParticipantsPresenter.quitEvent(uid, mEventId, true);
@@ -274,8 +274,8 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
         if (TextUtils.isEmpty(myUid)) return;
 
         if ((myUid.equals(simulatedUserCreator) || mRelation == DetailEventPresenter.RELATION_TYPE_OWNER) && !isPast) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-            builder.setMessage(R.string.dialog_title_quit_sim_user_from_event)
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                    .setMessage(R.string.dialog_msg_quit_sim_user_from_event)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             mParticipantsPresenter.deleteSimulatedUser(simulatedUserId, mEventId);

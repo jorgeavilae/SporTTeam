@@ -87,18 +87,39 @@
             app:layout_constraintTop_toBottomOf="@+id/event_detail_sport">
 
             <android.support.constraint.ConstraintLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/event_detail_players_proportion"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/edittext_icon_size"
+                    android:layout_height="@dimen/edittext_icon_size"
                     android:layout_margin="@dimen/activity_vertical_margin"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/logo_half" />
+
+                <TextView
+                    android:id="@+id/textView30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:text="@string/event_participants"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    app:layout_constraintBottom_toBottomOf="@+id/event_detail_players_proportion"
+                    app:layout_constraintLeft_toRightOf="@+id/event_detail_players_proportion"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/event_detail_players_proportion" />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="@dimen/edittext_icon_size"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView30"
+                    app:layout_constraintLeft_toRightOf="@+id/textView30"
+                    app:layout_constraintTop_toTopOf="@+id/textView30" />
 
                 <TextView
                     android:id="@+id/textView10"
@@ -115,10 +136,10 @@
                     android:id="@+id/event_detail_empty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    app:layout_constraintBottom_toBottomOf="@+id/event_detail_players_proportion"
                     app:layout_constraintLeft_toRightOf="@+id/textView10"
-                    app:layout_constraintTop_toTopOf="@+id/event_detail_players_proportion"
+                    app:layout_constraintTop_toBottomOf="@+id/event_detail_players_proportion"
                     tools:text="5" />
 
                 <TextView
@@ -130,29 +151,43 @@
                     android:text="@string/total_players_label"
                     android:textAppearance="@style/ListItemSubtitle"
                     app:layout_constraintBaseline_toBaselineOf="@+id/event_detail_total"
-                    app:layout_constraintLeft_toRightOf="@+id/event_detail_empty" />
+                    app:layout_constraintLeft_toRightOf="@+id/event_detail_players_proportion" />
 
                 <TextView
                     android:id="@+id/event_detail_total"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    app:layout_constraintBottom_toBottomOf="@+id/event_detail_players_proportion"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toRightOf="@+id/textView15"
-                    app:layout_constraintTop_toTopOf="@+id/event_detail_players_proportion"
+                    app:layout_constraintTop_toBottomOf="@+id/textView10"
                     tools:text="10" />
+
+                <Button
+                    android:id="@+id/event_detail_state"
+                    style="@style/ColoredButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_vertical_margin"
+                    android:lines="2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintLeft_toRightOf="@+id/event_detail_total"
+                    app:layout_constraintRight_toRightOf="parent"
+                    tools:text="@string/event_state_invitation_received" />
+
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
-
 
         <TextView
             android:id="@+id/event_detail_owner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_horizontal_margin"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp"
             android:textAppearance="@style/ListItemSubtitle"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_detail_participants_container"
@@ -178,16 +213,6 @@
             android:text="Send Invitation"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_detail_user_requests" />
-
-        <Button
-            android:id="@+id/event_detail_send_request"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:text="Send Request"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/event_detail_owner" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline"
