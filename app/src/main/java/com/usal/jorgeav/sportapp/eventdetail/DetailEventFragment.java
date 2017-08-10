@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -62,23 +63,25 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     ImageView detailEventPlaceIcon;
     @BindView(R.id.event_detail_date)
     TextView detailEventDate;
+
+    @BindView(R.id.event_detail_participants_container)
+    CardView detailEventParticipantsContainer;
     @BindView(R.id.event_detail_players_proportion)
     ImageView detailEventProportion;
     @BindView(R.id.event_detail_total)
     TextView detailEventTotal;
     @BindView(R.id.event_detail_empty)
     TextView detailEventEmpty;
-    @BindView(R.id.event_detail_participants_container)
-    CardView detailEventParticipantsContainer;
+    @BindView(R.id.event_detail_state)
+    Button detailEventStateButton;
+
     @BindView(R.id.event_detail_owner)
     TextView detailEventOwner;
 
     @BindView(R.id.event_detail_user_requests)
-    Button buttonUserRequests;
+    LinearLayout detailEventRequests;
     @BindView(R.id.event_detail_send_invitation)
-    Button buttonSendInvitation;
-    @BindView(R.id.event_detail_state)
-    Button detailEventStateButton;
+    LinearLayout detailEventInvitation;
 
     public DetailEventFragment() {
         // Required empty public constructor
@@ -168,9 +171,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
         // If event is in the past no action is allowed
         if (isPast == null || isPast) {
-            detailEventStateButton.setVisibility(View.GONE);
-            buttonUserRequests.setVisibility(View.GONE);
-            buttonSendInvitation.setVisibility(View.GONE);
+            detailEventStateButton.setVisibility(View.INVISIBLE);
+            detailEventStateButton.setClickable(false);
+            detailEventRequests.setVisibility(View.GONE);
+            detailEventInvitation.setVisibility(View.GONE);
             return;
         }
         switch (relation) {
@@ -217,8 +221,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             detailEventStateButton.setEnabled(false);
 
         // Hide other buttons
-        buttonUserRequests.setVisibility(View.INVISIBLE);
-        buttonSendInvitation.setVisibility(View.INVISIBLE);
+        detailEventRequests.setVisibility(View.GONE);
+        detailEventInvitation.setVisibility(View.GONE);
     }
 
     private void setupForOwner() {
@@ -230,8 +234,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         }
 
         // Set user requests button
-        buttonUserRequests.setVisibility(View.VISIBLE);
-        buttonUserRequests.setOnClickListener(new View.OnClickListener() {
+        detailEventRequests.setVisibility(View.VISIBLE);
+        detailEventRequests.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mEventId != null) {
@@ -242,10 +246,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         });
 
         // Set send invitation button
-        buttonSendInvitation.setVisibility(View.VISIBLE);
+        detailEventInvitation.setVisibility(View.VISIBLE);
         if (isFull == null || !isFull) {
-            buttonSendInvitation.setEnabled(true);
-            buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
+            detailEventInvitation.setEnabled(true);
+            detailEventInvitation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Fragment fragment = InviteUserFragment.newInstance(mEventId);
@@ -253,10 +257,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 }
             });
         } else
-            buttonSendInvitation.setEnabled(false);
+            detailEventInvitation.setEnabled(false);
 
         // Hide other buttons
-        detailEventStateButton.setVisibility(View.INVISIBLE);
+        detailEventStateButton.setVisibility(View.GONE);
     }
 
     private void setupForParticipant() {
@@ -298,10 +302,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         });
 
         // Set send invitation button
-        buttonSendInvitation.setVisibility(View.VISIBLE);
+        detailEventInvitation.setVisibility(View.VISIBLE);
         if (isFull == null || !isFull) {
-            buttonSendInvitation.setEnabled(true);
-            buttonSendInvitation.setOnClickListener(new View.OnClickListener() {
+            detailEventInvitation.setEnabled(true);
+            detailEventInvitation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Fragment fragment = InviteUserFragment.newInstance(mEventId);
@@ -309,10 +313,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 }
             });
         } else
-            buttonSendInvitation.setEnabled(false);
+            detailEventInvitation.setEnabled(false);
 
         // Hide other buttons
-        buttonUserRequests.setVisibility(View.INVISIBLE);
+        detailEventRequests.setVisibility(View.GONE);
     }
 
     private void setupForRequestSent() {
@@ -339,8 +343,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         });
 
         // Hide other buttons
-        buttonUserRequests.setVisibility(View.INVISIBLE);
-        buttonSendInvitation.setVisibility(View.INVISIBLE);
+        detailEventRequests.setVisibility(View.GONE);
+        detailEventInvitation.setVisibility(View.GONE);
     }
 
     private void setupForInvitationReceived() {
@@ -375,8 +379,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             detailEventStateButton.setEnabled(false);
 
         // Hide other buttons
-        buttonUserRequests.setVisibility(View.INVISIBLE);
-        buttonSendInvitation.setVisibility(View.INVISIBLE);
+        detailEventRequests.setVisibility(View.GONE);
+        detailEventInvitation.setVisibility(View.GONE);
     }
 
     private void setupForBlocked() {
@@ -389,8 +393,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         detailEventStateButton.setEnabled(false);
 
         // Hide other buttons
-        buttonUserRequests.setVisibility(View.INVISIBLE);
-        buttonSendInvitation.setVisibility(View.INVISIBLE);
+        detailEventRequests.setVisibility(View.GONE);
+        detailEventInvitation.setVisibility(View.GONE);
     }
 
     private void setupForError() {
@@ -403,8 +407,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         detailEventStateButton.setEnabled(false);
 
         // Hide other buttons
-        buttonUserRequests.setVisibility(View.INVISIBLE);
-        buttonSendInvitation.setVisibility(View.INVISIBLE);
+        detailEventRequests.setVisibility(View.GONE);
+        detailEventInvitation.setVisibility(View.GONE);
     }
 
     @Override

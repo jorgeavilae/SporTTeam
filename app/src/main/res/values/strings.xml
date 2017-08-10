@@ -188,4 +188,5 @@
     <string name="event_state_invitation_received">Answer invitation</string>
     <string name="event_state_request_rejected">Request rejected</string>
     <string name="dialog_msg_answer_invitation">Do you want to participate?</string>
+    <string name="send_invitation">Send invitation</string>
 </resources>

@@ -31,9 +31,4 @@
         <item name="android:textSize">@dimen/text_size_body1</item>
     </style>
 
-    <!-- Button style for colored buttons -->
-    <style name="ColoredButton" parent="Widget.AppCompat.Button.Colored" >
-        <item name="colorAccent">@color/colorSportteam_logo</item>
-    </style>
-
 </resources>
