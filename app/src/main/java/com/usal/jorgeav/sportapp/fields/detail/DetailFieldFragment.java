@@ -44,31 +44,34 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DetailFieldFragment extends BaseFragment implements DetailFieldContract.View{
+    @SuppressWarnings("unused")
     private static final String TAG = DetailFieldFragment.class.getSimpleName();
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
     public static final String BUNDLE_IS_INFO = "BUNDLE_IS_INFO";
 
-    private DetailFieldContract.Presenter mPresenter;
     private String mFieldId = "";
+
+    private DetailFieldContract.Presenter mPresenter;
+
     private Menu mMenu = null;
 
     @BindView(R.id.field_detail_map)
     MapView detailFieldMap;
     private GoogleMap mMap;
     @BindView(R.id.field_detail_address)
-    TextView textViewFieldAddress;
+    TextView detailFieldAddress;
     @BindView(R.id.field_detail_opening)
-    TextView textViewFieldOpening;
+    TextView detailFieldOpening;
     @BindView(R.id.field_detail_closing)
-    TextView textViewFieldClosing;
+    TextView detailFieldClosing;
     @BindView(R.id.field_detail_creator)
-    TextView textViewFieldCreator;
+    TextView detailFieldCreator;
 
     @BindView(R.id.field_detail_sport_list)
-    RecyclerView fieldSportList;
+    RecyclerView detailFieldSportList;
     ProfileSportsAdapter sportsAdapter;
     @BindView(R.id.field_detail_sport_placeholder)
-    ConstraintLayout fieldSportPlaceholder;
+    ConstraintLayout detailFieldSportPlaceholder;
 
 
     public DetailFieldFragment() {
@@ -108,14 +111,14 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-            builder.setTitle("Borrar campo")
-                    .setMessage("Seguro que desea borrarlo?")
-                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                    .setTitle(R.string.dialog_msg_are_you_sure)
+                    .setMessage(R.string.dialog_msg_delete_field)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             mPresenter.deleteField(mFieldId);
                         }})
-                    .setNegativeButton("No", null);
+                    .setNegativeButton(android.R.string.no, null);
             builder.create().show();
             return true;
         } else if (item.getItemId() == R.id.action_add) {
@@ -151,27 +154,31 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         sportsAdapter = new ProfileSportsAdapter(null, new ProfileSportsAdapter.OnProfileSportClickListener() {
             @Override
             public void onProfileSportClick(final Sport s) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                final View view = inflater.inflate(R.layout.vote_dialog, null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                builder.setTitle(R.string.dialog_title_vote)
-                        .setView(view)
-                        .setPositiveButton(R.string.action_vote, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_for_vote);
-                                String sportId = s.getSportID();
-                                mPresenter.voteSportInField(mFieldId, sportId, ratingBar.getRating());
-                            }
-                        })
-                        .setNegativeButton(android.R.string.cancel, null);
-                builder.create().show();
+                displayVoteCourtDialog(s);
             }
         }, Glide.with(this));
-        fieldSportList.setAdapter(sportsAdapter);
-        fieldSportList.setHasFixedSize(true);
-        fieldSportList.setLayoutManager(new GridLayoutManager(getActivityContext(), 2, LinearLayoutManager.VERTICAL, false));
+        detailFieldSportList.setAdapter(sportsAdapter);
+        detailFieldSportList.setHasFixedSize(true);
+        detailFieldSportList.setLayoutManager(new GridLayoutManager(getActivityContext(), 2, LinearLayoutManager.VERTICAL, false));
 
         return root;
+    }
+
+    private void displayVoteCourtDialog(final Sport s) {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View view = inflater.inflate(R.layout.vote_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setTitle(R.string.dialog_title_vote)
+                .setView(view)
+                .setPositiveButton(R.string.action_vote, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_for_vote);
+                        String sportId = s.getSportID();
+                        mPresenter.voteSportInField(mFieldId, sportId, ratingBar.getRating());
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null);
+        builder.create().show();
     }
 
     @Override
@@ -202,7 +209,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void showFieldPlace(String address, String city, LatLng coordinates) {
         ((BaseActivity)getActivity()).showContent();
-        this.textViewFieldAddress.setText(address);
+        this.detailFieldAddress.setText(address);
 
         if (getActivity() instanceof FieldsActivity) {
             ((FieldsActivity) getActivity()).mAddress = address;
@@ -216,19 +223,19 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void showFieldTimes(long openTime, long closeTime) {
         ((BaseActivity)getActivity()).showContent();
-        this.textViewFieldOpening.setText(UtilesTime.millisToTimeString(openTime));
-        this.textViewFieldClosing.setText(UtilesTime.millisToTimeString(closeTime));
+        this.detailFieldOpening.setText(UtilesTime.millisToTimeString(openTime));
+        this.detailFieldClosing.setText(UtilesTime.millisToTimeString(closeTime));
     }
 
     @Override
     public void showSportCourts(Cursor cursor) {
         sportsAdapter.replaceData(cursor);
         if (cursor != null && cursor.getCount() > 0) {
-            fieldSportList.setVisibility(View.VISIBLE);
-            fieldSportPlaceholder.setVisibility(View.INVISIBLE);
+            detailFieldSportList.setVisibility(View.VISIBLE);
+            detailFieldSportPlaceholder.setVisibility(View.INVISIBLE);
         } else {
-            fieldSportList.setVisibility(View.INVISIBLE);
-            fieldSportPlaceholder.setVisibility(View.VISIBLE);
+            detailFieldSportList.setVisibility(View.INVISIBLE);
+            detailFieldSportPlaceholder.setVisibility(View.VISIBLE);
         }
     }
 
@@ -237,12 +244,13 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         String name = UtilesContentProvider.getUserNameFromContentProvider(userId);
         if (name != null && !TextUtils.isEmpty(name)) {
             String created = getString(R.string.created_by);
-            this.textViewFieldCreator.setText(String.format(created, name));
+            this.detailFieldCreator.setText(String.format(created, name));
         }
 
         String myUid = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUid)) return;
 
+        // If current user is creator and is not info detail fragment: allow edit/delete
         if (myUid.equals(userId)
                 && getArguments() != null && getArguments().containsKey(BUNDLE_IS_INFO)
                 && !getArguments().getBoolean(BUNDLE_IS_INFO) && mMenu != null) {
@@ -254,11 +262,11 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
     @Override
     public void clearUI() {
-        this.textViewFieldCreator.setText("");
         this.mActionBarIconManagementListener.setActionBarTitle(getString(R.string.field_detail_title));
-        this.textViewFieldAddress.setText("");
-        this.textViewFieldOpening.setText("");
-        this.textViewFieldClosing.setText("");
+        this.detailFieldAddress.setText("");
+        this.detailFieldOpening.setText("");
+        this.detailFieldClosing.setText("");
+        this.detailFieldCreator.setText("");
     }
 
     @Override

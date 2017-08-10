@@ -131,6 +131,9 @@
          order to create a new Event. Do you want to create a new Field now?</string>
     <string name="new_field_title">New Field</string>
     <string name="no_field_selection">You did not select anything</string>
+    <string name="court_list">Court list</string>
+    <string name="field_detail_title">Field details</string>
+    <string name="dialog_msg_delete_field">The field will be deleted only if there is not next event in any of his courts.</string>
 
     <!-- Alarms -->
     <!-- https://stackoverflow.com/questions/1587056/how-to-keep-the-spaces-at-the-end-and-or-at-the-beginning-of-a-string#comment26178169_2206684 -->
@@ -190,6 +193,5 @@
     <string name="dialog_msg_answer_invitation">Do you want to participate?</string>
     <string name="send_invitation">Send invitation</string>
     <string name="dialog_msg_delete_event">The event will be deleted and participants will be notified.</string>
-    <string name="court_list">Court list</string>
-    <string name="field_detail_title">Field details</string>
+    <string name="toast_msg_error_there_is_next_events">Sorry. there is next events</string>
 </resources>

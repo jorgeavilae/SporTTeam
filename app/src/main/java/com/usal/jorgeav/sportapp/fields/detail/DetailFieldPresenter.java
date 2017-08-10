@@ -13,20 +13,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.BaseFragment;
+import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
-/**
- * Created by Jorge Avila on 26/04/2017.
- */
-
-public class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = DetailFieldPresenter.class.getSimpleName();
     private DetailFieldContract.View mView;
 
-    public DetailFieldPresenter(@NonNull DetailFieldContract.View view) {
+    DetailFieldPresenter(@NonNull DetailFieldContract.View view) {
         this.mView = view;
     }
 
@@ -48,13 +45,12 @@ public class DetailFieldPresenter implements DetailFieldContract.Presenter, Load
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
                                 Toast.makeText(mView.getActivityContext(),
-                                        "Lo siento. Hay eventos proximos que se perderian",
+                                        R.string.toast_msg_error_there_is_next_events,
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 FirebaseActions.deleteField(fieldId);
                                 ((BaseFragment)mView).resetBackStack();
                             }
-
                         }
 
                         @Override
@@ -67,7 +63,7 @@ public class DetailFieldPresenter implements DetailFieldContract.Presenter, Load
     @Override
     public void openField(LoaderManager loaderManager, Bundle b) {
         String fieldId = b.getString(DetailFieldFragment.BUNDLE_FIELD_ID);
-        FirebaseSync.loadAField(fieldId);
+        if (fieldId != null) FirebaseSync.loadAField(fieldId);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELD_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELD_SPORTS_ID, b, this);
     }

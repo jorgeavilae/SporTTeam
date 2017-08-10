@@ -7,11 +7,7 @@ import android.support.v4.app.LoaderManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
-/**
- * Created by Jorge Avila on 26/04/2017.
- */
-
-public abstract class DetailFieldContract {
+abstract class DetailFieldContract {
 
     public interface View {
         void showFieldId(String id);
@@ -21,13 +17,14 @@ public abstract class DetailFieldContract {
         void showFieldCreator(String creator);
         void showSportCourts(Cursor cursor);
         void clearUI();
+
         Context getActivityContext();
     }
 
     public interface Presenter {
         void openField(LoaderManager loaderManager, Bundle b);
-        void voteSportInField(String fieldId, String sportId, float rating);
 
+        void voteSportInField(String fieldId, String sportId, float rating);
         void deleteField(String mFieldId);
     }
 
