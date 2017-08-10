@@ -528,7 +528,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         this.detailEventPlace.setText("");
         this.detailEventPlaceIcon.setVisibility(View.INVISIBLE);
         this.detailEventPlace.setOnClickListener(null);
-        this.mActionBarIconManagementListener.setActionBarTitle("");
+        this.mActionBarIconManagementListener.setActionBarTitle(getString(R.string.event_details));
         this.detailEventDate.setText("");
         this.detailEventOwner.setText("");
         this.detailEventTotal.setText("");

@@ -13,18 +13,20 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
@@ -35,6 +37,7 @@ import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import butterknife.BindView;
@@ -49,24 +52,23 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     private String mFieldId = "";
     private Menu mMenu = null;
 
-    @BindView(R.id.field_detail_creator)
-    TextView textViewFieldCreator;
-    @BindView(R.id.field_detail_name)
-    TextView textViewFieldName;
+    @BindView(R.id.field_detail_map)
+    MapView detailFieldMap;
+    private GoogleMap mMap;
     @BindView(R.id.field_detail_address)
     TextView textViewFieldAddress;
     @BindView(R.id.field_detail_opening)
     TextView textViewFieldOpening;
     @BindView(R.id.field_detail_closing)
     TextView textViewFieldClosing;
+    @BindView(R.id.field_detail_creator)
+    TextView textViewFieldCreator;
 
     @BindView(R.id.field_detail_sport_list)
     RecyclerView fieldSportList;
     ProfileSportsAdapter sportsAdapter;
     @BindView(R.id.field_detail_sport_placeholder)
     ConstraintLayout fieldSportPlaceholder;
-    @BindView(R.id.field_detail_edit_sport)
-    Button fieldEditSportListButton;
 
 
     public DetailFieldFragment() {
@@ -102,12 +104,10 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         super.onOptionsItemSelected(item);
 
         if (item.getItemId() == R.id.action_edit) {
-            Log.d(TAG, "onOptionsItemSelected: Edit");
             Fragment fragment = NewFieldFragment.newInstance(mFieldId);
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
-            Log.d(TAG, "onOptionsItemSelected: Delete");
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
             builder.setTitle("Borrar campo")
                     .setMessage("Seguro que desea borrarlo?")
@@ -117,6 +117,10 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
                         }})
                     .setNegativeButton("No", null);
             builder.create().show();
+            return true;
+        } else if (item.getItemId() == R.id.action_add) {
+            Fragment fragment = SportsListFragment.newInstance(mFieldId, sportsAdapter.getDataAsArrayList());
+            mFragmentManagementListener.initFragment(fragment, true);
             return true;
         }
         return false;
@@ -130,6 +134,19 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
         if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID))
             mFieldId = getArguments().getString(BUNDLE_FIELD_ID);
+
+        //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
+        detailFieldMap.onCreate(savedInstanceState);
+        try { MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) { e.printStackTrace(); }
+        detailFieldMap.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+
+                Utiles.setCoordinatesInMap(getActivityContext(), mMap, null);
+            }
+        });
 
         sportsAdapter = new ProfileSportsAdapter(null, new ProfileSportsAdapter.OnProfileSportClickListener() {
             @Override
@@ -160,13 +177,14 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Detalles de pista", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.field_detail_title), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        detailFieldMap.onStart();
         mPresenter.openField(getLoaderManager(), getArguments());
     }
 
@@ -178,7 +196,6 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void showFieldName(String name) {
         ((BaseActivity)getActivity()).showContent();
-        this.textViewFieldName.setText(name);
         mActionBarIconManagementListener.setActionBarTitle(name);
     }
 
@@ -192,6 +209,8 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
             ((FieldsActivity) getActivity()).mCity = city;
             ((FieldsActivity) getActivity()).mCoord = coordinates;
         }
+
+        Utiles.setCoordinatesInMap(getActivityContext(), mMap, coordinates);
     }
 
     @Override
@@ -215,35 +234,28 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
     @Override
     public void showFieldCreator(String userId) {
-        this.textViewFieldCreator.setText(userId);
+        String name = UtilesContentProvider.getUserNameFromContentProvider(userId);
+        if (name != null && !TextUtils.isEmpty(name)) {
+            String created = getString(R.string.created_by);
+            this.textViewFieldCreator.setText(String.format(created, name));
+        }
 
         String myUid = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUid)) return;
-        if (myUid.equals(userId)) {
-            //Update menu
-            if (getArguments() != null && getArguments().containsKey(BUNDLE_IS_INFO))
-                if (!getArguments().getBoolean(BUNDLE_IS_INFO) && mMenu != null) {
-                    mMenu.clear();
-                    getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
-                }
 
-            //Update UI
-            fieldEditSportListButton.setVisibility(View.VISIBLE);
-            fieldEditSportListButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Fragment fragment = SportsListFragment.newInstance(mFieldId, sportsAdapter.getDataAsArrayList());
-                    mFragmentManagementListener.initFragment(fragment, true);
-                }
-            });
+        if (myUid.equals(userId)
+                && getArguments() != null && getArguments().containsKey(BUNDLE_IS_INFO)
+                && !getArguments().getBoolean(BUNDLE_IS_INFO) && mMenu != null) {
+            mMenu.clear();
+            getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
+            getActivity().getMenuInflater().inflate(R.menu.menu_add, mMenu);
         }
     }
 
     @Override
     public void clearUI() {
         this.textViewFieldCreator.setText("");
-        this.textViewFieldName.setText("");
-        this.mActionBarIconManagementListener.setActionBarTitle("");
+        this.mActionBarIconManagementListener.setActionBarTitle(getString(R.string.field_detail_title));
         this.textViewFieldAddress.setText("");
         this.textViewFieldOpening.setText("");
         this.textViewFieldClosing.setText("");
@@ -252,9 +264,9 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void onPause() {
         super.onPause();
+        detailFieldMap.onPause();
         sportsAdapter.replaceData(null);
     }
-
     @Override
     public void onDetach() {
         super.onDetach();
@@ -264,5 +276,29 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
             ((FieldsActivity) getActivity()).mCity = null;
             ((FieldsActivity) getActivity()).mCoord = null;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        detailFieldMap.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        detailFieldMap.onDestroy();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        detailFieldMap.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        detailFieldMap.onLowMemory();
     }
 }

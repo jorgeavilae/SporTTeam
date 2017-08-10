@@ -190,4 +190,6 @@
     <string name="dialog_msg_answer_invitation">Do you want to participate?</string>
     <string name="send_invitation">Send invitation</string>
     <string name="dialog_msg_delete_event">The event will be deleted and participants will be notified.</string>
+    <string name="court_list">Court list</string>
+    <string name="field_detail_title">Field details</string>
 </resources>
