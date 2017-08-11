@@ -164,6 +164,7 @@
     <string name="user_rejected">Users rejected</string>
     <string name="prompt_date">Date</string>
     <string name="prompt_time">Time</string>
+    <string name="age_arg">Age %1$s</string>
 
     <!-- Strings for searches -->
     <string name="users_found">Users found</string>
@@ -194,4 +195,8 @@
     <string name="send_invitation">Send invitation</string>
     <string name="dialog_msg_delete_event">The event will be deleted and participants will be notified.</string>
     <string name="toast_msg_error_there_is_next_events">Sorry. there is next events</string>
+    <string name="edit_sports">Edit sports</string>
+    <string name="action_change_image">Change image</string>
+    <string name="action_change_name">Change name</string>
+    <string name="action_change_age">Change age</string>
 </resources>

@@ -145,6 +145,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
                 mFragmentManagementListener.initFragment(fragment, true);
             }
+            return true;
         }
         return false;
     }

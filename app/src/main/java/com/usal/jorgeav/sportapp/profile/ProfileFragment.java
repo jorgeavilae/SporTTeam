@@ -8,18 +8,14 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,11 +30,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
-import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
-import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.Locale;
@@ -56,29 +49,31 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     private ProfileContract.Presenter mProfilePresenter;
 
     Menu mMenu;
-    @BindView(R.id.user_send_invitation)
-    Button userSendInvitationButton;
-    @BindView(R.id.user_add_friend)
-    Button userAddFriendButton;
+//    @BindView(R.id.user_send_invitation)
+//    Button userSendInvitationButton;
+//    @BindView(R.id.user_add_friend)
+//    Button userAddFriendButton;
     @BindView(R.id.user_image)
     ImageView userImage;
     @BindView(R.id.user_name)
     TextView userName;
-    @BindView(R.id.user_city)
-    TextView userCity;
     @BindView(R.id.user_age)
     TextView userAge;
-    @BindView(R.id.user_sport_list)
-    RecyclerView userSportList;
-    ProfileSportsAdapter sportsAdapter;
-    @BindView(R.id.user_sport_placeholder)
-    ConstraintLayout userSportPlaceholder;
-    @BindView(R.id.user_edit_sport)
-    Button userEditSportListButton;
+    @BindView(R.id.user_city)
+    TextView userCity;
+
     @BindView(R.id.user_event_invitations)
     Button userEventInvitationsButton;
     @BindView(R.id.user_friend_requests)
     Button userFriendRequestsButton;
+
+//    @BindView(R.id.user_sport_list)
+//    RecyclerView userSportList;
+//    ProfileSportsAdapter sportsAdapter;
+//    @BindView(R.id.user_sport_placeholder)
+//    ConstraintLayout userSportPlaceholder;
+//    @BindView(R.id.user_edit_sport)
+//    Button userEditSportListButton;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -107,6 +102,30 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_edit_sports) {
+//            Fragment fragment = SportsListFragment.newInstance(mUserUid, sportsAdapter.getDataAsArrayList());
+//            mFragmentManagementListener.initFragment(fragment, true);
+            return true;
+        } else if (item.getItemId() == R.id.action_change_image) {
+            EasyImage.configuration(getActivity())
+                    .setImagesFolderName(Environment.DIRECTORY_PICTURES)
+                    .saveInAppExternalFilesDir();
+            if (Utiles.isStorageCameraPermissionGranted(getActivity()))
+                EasyImage.openChooserWithGallery(getActivity(), getString(R.string.pick_photo_from), RC_PHOTO_PICKER);
+            return true;
+        } else if (item.getItemId() == R.id.action_change_name) {
+            showDialogForEditName();
+            return true;
+        } else if (item.getItemId() == R.id.action_change_age) {
+            showDialogForEditAge();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -117,26 +136,26 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
             mUserUid = getArguments().getString(BUNDLE_INSTANCE_UID);
 
-        sportsAdapter = new ProfileSportsAdapter(null, null, Glide.with(this));
-        userSportList.setAdapter(sportsAdapter);
-        userSportList.setHasFixedSize(true);
-        userSportList.setLayoutManager(new GridLayoutManager(getActivityContext(), 2, LinearLayoutManager.VERTICAL, false));
+//        sportsAdapter = new ProfileSportsAdapter(null, null, Glide.with(this));
+//        userSportList.setAdapter(sportsAdapter);
+//        userSportList.setHasFixedSize(true);
+//        userSportList.setLayoutManager(new GridLayoutManager(getActivityContext(), 2, LinearLayoutManager.VERTICAL, false));
 
         String currentUserId = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(currentUserId)) throw new NullPointerException();
         if (mUserUid.equals(currentUserId)) {
             setLayoutAsMyUser();
         } else {
-            userSendInvitationButton.setVisibility(View.VISIBLE);
-            userSendInvitationButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Fragment fragment = SendInvitationFragment.newInstance(mUserUid);
-                    mFragmentManagementListener.initFragment(fragment, true);
-                }
-            });
-            userAddFriendButton.setVisibility(View.VISIBLE);
-            mProfilePresenter.getRelationTypeBetweenThisUserAndI();
+//            userSendInvitationButton.setVisibility(View.VISIBLE);
+//            userSendInvitationButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Fragment fragment = SendInvitationFragment.newInstance(mUserUid);
+//                    mFragmentManagementListener.initFragment(fragment, true);
+//                }
+//            });
+//            userAddFriendButton.setVisibility(View.VISIBLE);
+//            mProfilePresenter.getRelationTypeBetweenThisUserAndI();
         }
 
 
@@ -144,6 +163,9 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     }
 
     private void setLayoutAsMyUser() {
+        if (mMenu != null)
+            getActivity().getMenuInflater().inflate(R.menu.menu_my_profile, mMenu);
+
         userEventInvitationsButton.setVisibility(View.VISIBLE);
         userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,38 +182,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 mFragmentManagementListener.initFragment(fragment, true);
             }
         });
-        userEditSportListButton.setVisibility(View.VISIBLE);
-        userEditSportListButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = SportsListFragment.newInstance(mUserUid, sportsAdapter.getDataAsArrayList());
-                mFragmentManagementListener.initFragment(fragment, true);
-            }
-        });
-
-        userName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialogForEditName();
-            }
-        });
-        userAge.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialogForEditAge();
-            }
-        });
-        userImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EasyImage.configuration(getActivity())
-                        .setImagesFolderName(Environment.DIRECTORY_PICTURES)
-                        .saveInAppExternalFilesDir();
-                if (Utiles.isStorageCameraPermissionGranted(getActivity()))
-                    EasyImage.openChooserWithGallery(getActivity(), "Elegir foto de...", RC_PHOTO_PICKER);
-            }
-        });
-
     }
 
     private void showDialogForEditName() {
@@ -300,92 +290,92 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
     @Override
     public void uiSetupForUserRelation(@ProfilePresenter.UserRelationType int relation) {
-        /* AMISTAD
-         * Si this y yo somos amigos: Icono de amigos -> onClick: borrar amigo
-         * Si this ha pedido ser amigo de mi: Icono de responder peticion -> onClick: aceptar o rechazar
-         * Si yo he pedido ser amigo de this: Icono de peticion enviada -> onClick: borrar peticion
-         * En otro caso: Icono de enviar peticion -> onClick: enviar peticion
-         *
-         * SEGUIR
-         * Si this y yo nos seguimos: Icono de siguiendo -> onClick: dejar de seguir
-         * Si this sigue a mi: Icono de seguir? -> onClick: seguir
-         * Si yo sigo a this: Icono de siguiendo -> onClick: dejar de seguir
-         * En otro caso: Icono de seguir? -> onClick: seguir
-         */
-        if (relation != ProfilePresenter.RELATION_TYPE_ME) {
-            if (mMenu != null) mMenu.clear();
-            Log.d(TAG, "uiSetupForUserRelation: relation " + relation);
-            switch (relation) {
-                case ProfilePresenter.RELATION_TYPE_FRIENDS:
-                    userAddFriendButton.setText("Borrar Amigo");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                        /*borrar amigos*/
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                            builder.setMessage("Estas seguro de que quieres borrar amigo?")
-                                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            mProfilePresenter.deleteFriend(mUserUid);
-                                        }
-                                    })
-                                    .setNegativeButton("No", null);
-                            builder.create().show();
-                        }
-                    });
-                    userSendInvitationButton.setVisibility(View.VISIBLE);
-                    break;
-                case ProfilePresenter.RELATION_TYPE_I_RECEIVE_REQUEST:
-                    userAddFriendButton.setText("Responder peticion");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                        /*aceptar o rechazar*/
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                            builder.setMessage("Aceptar como amigo?")
-                                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            mProfilePresenter.acceptFriendRequest(mUserUid);
-                                        }
-                                    })
-                                    .setNegativeButton("Rechazar", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            mProfilePresenter.declineFriendRequest(mUserUid);
-                                        }
-                                    });
-                            builder.create().show();
-                        }
-                    });
-                    userSendInvitationButton.setVisibility(View.INVISIBLE);
-                    break;
-                case ProfilePresenter.RELATION_TYPE_I_SEND_REQUEST:
-                    userAddFriendButton.setText("Peticion Enviada");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                        /*borrar peticion*/
-                            mProfilePresenter.cancelFriendRequest(mUserUid);
-                        }
-                    });
-                    userSendInvitationButton.setVisibility(View.INVISIBLE);
-                    break;
-                case ProfilePresenter.RELATION_TYPE_NONE:
-                    userAddFriendButton.setText("Enviar peticion");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                        /*enviar peticion*/
-                            mProfilePresenter.sendFriendRequest(mUserUid);
-                        }
-                    });
-                    userSendInvitationButton.setVisibility(View.INVISIBLE);
-                    break;
-                case ProfilePresenter.RELATION_TYPE_ERROR:
-                    userAddFriendButton.setText("Error");
-                    userSendInvitationButton.setVisibility(View.INVISIBLE);
-                    break;
-            }
-        }
+//        /* AMISTAD
+//         * Si this y yo somos amigos: Icono de amigos -> onClick: borrar amigo
+//         * Si this ha pedido ser amigo de mi: Icono de responder peticion -> onClick: aceptar o rechazar
+//         * Si yo he pedido ser amigo de this: Icono de peticion enviada -> onClick: borrar peticion
+//         * En otro caso: Icono de enviar peticion -> onClick: enviar peticion
+//         *
+//         * SEGUIR
+//         * Si this y yo nos seguimos: Icono de siguiendo -> onClick: dejar de seguir
+//         * Si this sigue a mi: Icono de seguir? -> onClick: seguir
+//         * Si yo sigo a this: Icono de siguiendo -> onClick: dejar de seguir
+//         * En otro caso: Icono de seguir? -> onClick: seguir
+//         */
+//        if (relation != ProfilePresenter.RELATION_TYPE_ME) {
+//            if (mMenu != null) mMenu.clear();
+//            Log.d(TAG, "uiSetupForUserRelation: relation " + relation);
+//            switch (relation) {
+//                case ProfilePresenter.RELATION_TYPE_FRIENDS:
+//                    userAddFriendButton.setText("Borrar Amigo");
+//                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                        /*borrar amigos*/
+//                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+//                            builder.setMessage("Estas seguro de que quieres borrar amigo?")
+//                                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+//                                        public void onClick(DialogInterface dialog, int id) {
+//                                            mProfilePresenter.deleteFriend(mUserUid);
+//                                        }
+//                                    })
+//                                    .setNegativeButton("No", null);
+//                            builder.create().show();
+//                        }
+//                    });
+//                    userSendInvitationButton.setVisibility(View.VISIBLE);
+//                    break;
+//                case ProfilePresenter.RELATION_TYPE_I_RECEIVE_REQUEST:
+//                    userAddFriendButton.setText("Responder peticion");
+//                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                        /*aceptar o rechazar*/
+//                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+//                            builder.setMessage("Aceptar como amigo?")
+//                                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+//                                        public void onClick(DialogInterface dialog, int id) {
+//                                            mProfilePresenter.acceptFriendRequest(mUserUid);
+//                                        }
+//                                    })
+//                                    .setNegativeButton("Rechazar", new DialogInterface.OnClickListener() {
+//                                        public void onClick(DialogInterface dialog, int id) {
+//                                            mProfilePresenter.declineFriendRequest(mUserUid);
+//                                        }
+//                                    });
+//                            builder.create().show();
+//                        }
+//                    });
+//                    userSendInvitationButton.setVisibility(View.INVISIBLE);
+//                    break;
+//                case ProfilePresenter.RELATION_TYPE_I_SEND_REQUEST:
+//                    userAddFriendButton.setText("Peticion Enviada");
+//                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                        /*borrar peticion*/
+//                            mProfilePresenter.cancelFriendRequest(mUserUid);
+//                        }
+//                    });
+//                    userSendInvitationButton.setVisibility(View.INVISIBLE);
+//                    break;
+//                case ProfilePresenter.RELATION_TYPE_NONE:
+//                    userAddFriendButton.setText("Enviar peticion");
+//                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                        /*enviar peticion*/
+//                            mProfilePresenter.sendFriendRequest(mUserUid);
+//                        }
+//                    });
+//                    userSendInvitationButton.setVisibility(View.INVISIBLE);
+//                    break;
+//                case ProfilePresenter.RELATION_TYPE_ERROR:
+//                    userAddFriendButton.setText("Error");
+//                    userSendInvitationButton.setVisibility(View.INVISIBLE);
+//                    break;
+//            }
+//        }
     }
 
     @Override
@@ -411,7 +401,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 .load(imageUrl)
                 .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)
-                .centerCrop()
                 .into(userImage);
     }
 
@@ -429,20 +418,22 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void showUserAge(int age) {
         if (age > -1) {
-            userAge.setText(String.format(Locale.getDefault(), "%2d", age));
+            String ageRes = getString(R.string.age_arg);
+            String ageStr = String.format(Locale.getDefault(), "%2d", age);
+            userAge.setText(String.format(ageRes, ageStr));
         }
     }
 
     @Override
     public void showSports(Cursor cursor) {
-        sportsAdapter.replaceData(cursor);
-        if (cursor != null && cursor.getCount() > 0) {
-            userSportList.setVisibility(View.VISIBLE);
-            userSportPlaceholder.setVisibility(View.INVISIBLE);
-        } else {
-            userSportList.setVisibility(View.INVISIBLE);
-            userSportPlaceholder.setVisibility(View.VISIBLE);
-        }
+//        sportsAdapter.replaceData(cursor);
+//        if (cursor != null && cursor.getCount() > 0) {
+//            userSportList.setVisibility(View.VISIBLE);
+//            userSportPlaceholder.setVisibility(View.INVISIBLE);
+//        } else {
+//            userSportList.setVisibility(View.INVISIBLE);
+//            userSportPlaceholder.setVisibility(View.VISIBLE);
+//        }
     }
 
     @Override
@@ -471,6 +462,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     public void onPause() {
         super.onPause();
         mProfilePresenter.unregisterUserRelationObserver();
-        sportsAdapter.replaceData(null);
+//        sportsAdapter.replaceData(null);
     }
 }
