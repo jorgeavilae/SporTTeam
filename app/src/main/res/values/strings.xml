@@ -201,4 +201,9 @@
     <string name="send_invitation">Send invitation</string>
     <string name="dialog_msg_delete_event">The event will be deleted and participants will be notified.</string>
     <string name="toast_msg_error_there_is_next_events">Sorry. there is next events</string>
+    <string name="delete_friend">Delete friend</string>
+    <string name="answer_request">Accept friend?</string>
+    <string name="dialog_msg_accept_friend">Accept as friend?</string>
+    <string name="user_request_sent">Request sent</string>
+    <string name="send_user_request">Send request</string>
 </resources>

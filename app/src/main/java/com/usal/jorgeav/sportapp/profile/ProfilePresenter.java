@@ -27,17 +27,14 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/**
- * Created by Jorge Avila on 23/04/2017.
- */
-
-public class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    @SuppressWarnings("unused")
     private static final String TAG = ProfilePresenter.class.getSimpleName();
 
     private ProfileContract.View mUserView;
-    ContentObserver mContentObserver;
+    private ContentObserver mContentObserver;
 
-    public ProfilePresenter(ProfileContract.View userView) {
+    ProfilePresenter(ProfileContract.View userView) {
         mUserView = userView;
         mContentObserver = new ContentObserver(new Handler()) {
             @Override
@@ -51,7 +48,7 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
     @Override
     public void openUser(LoaderManager loaderManager, Bundle b) {
         String userId = b.getString(ProfileFragment.BUNDLE_INSTANCE_UID);
-        FirebaseSync.loadAProfile(userId, false);
+        if (userId != null) FirebaseSync.loadAProfile(userId, false);
         FirebaseSync.loadUsersFromFriendsRequestsSent();
         loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_SPORTS_ID, b, this);
@@ -97,14 +94,10 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     private void showUser(Cursor data) {
         if(data != null && data.moveToFirst()) {
-            String photoUrl = data.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
-            String name = data.getString(SportteamContract.UserEntry.COLUMN_NAME);
-            String city = data.getString(SportteamContract.UserEntry.COLUMN_CITY);
-            int age = data.getInt(SportteamContract.UserEntry.COLUMN_AGE);
-            mUserView.showUserImage(photoUrl);
-            mUserView.showUserName(name);
-            mUserView.showUserCity(city);
-            mUserView.showUserAge(age);
+            mUserView.showUserImage(data.getString(SportteamContract.UserEntry.COLUMN_PHOTO));
+            mUserView.showUserName(data.getString(SportteamContract.UserEntry.COLUMN_NAME));
+            mUserView.showUserCity(data.getString(SportteamContract.UserEntry.COLUMN_CITY));
+            mUserView.showUserAge(data.getInt(SportteamContract.UserEntry.COLUMN_AGE));
             mUserView.showContent();
         } else {
             mUserView.clearUI();
@@ -127,7 +120,8 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
             @Override
             protected Integer doInBackground(Void... voids) {
                 try {
-                    String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    String myUid = Utiles.getCurrentUserId();
+                    if (TextUtils.isEmpty(myUid)) return RELATION_TYPE_ERROR;
 
                     //Me?
                     if (myUid.equals(mUserView.getUserID())) return RELATION_TYPE_ME;
@@ -135,8 +129,9 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
                     //Friends?
                     Cursor cursorFriends = mUserView.getActivityContext().getContentResolver().query(
                             SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI,
-                            SportteamContract.FriendsEntry.FRIENDS_COLUMNS,
-                            SportteamContract.FriendsEntry.MY_USER_ID + " = ? AND " + SportteamContract.FriendsEntry.USER_ID + " = ?",
+                            new String[]{SportteamContract.FriendsEntry.USER_ID_TABLE_PREFIX},
+                            SportteamContract.FriendsEntry.MY_USER_ID + " = ? AND "
+                                    + SportteamContract.FriendsEntry.USER_ID + " = ?",
                             new String[]{myUid, mUserView.getUserID()},
                             null);
                     if (cursorFriends != null) {
@@ -150,8 +145,9 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
                     //I have received a FriendRequest?
                     Cursor cursorReceiver = mUserView.getActivityContext().getContentResolver().query(
                             SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
-                            SportteamContract.FriendRequestEntry.FRIEND_REQUESTS_COLUMNS,
-                            SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND " + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
+                            new String[]{SportteamContract.FriendRequestEntry.SENDER_ID_TABLE_PREFIX},
+                            SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND "
+                                    + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
                             new String[]{mUserView.getUserID(), myUid},
                             null);
                     if (cursorReceiver != null) {
@@ -165,8 +161,9 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
                     //I have sent a FriendRequest?
                     Cursor cursorSender = mUserView.getActivityContext().getContentResolver().query(
                             SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
-                            SportteamContract.FriendRequestEntry.FRIEND_REQUESTS_COLUMNS,
-                            SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND " + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
+                            new String[]{SportteamContract.FriendRequestEntry.RECEIVER_ID_TABLE_PREFIX},
+                            SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND "
+                                    + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
                             new String[]{myUid, mUserView.getUserID()},
                             null);
                     if (cursorSender != null) {
@@ -197,16 +194,16 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void sendFriendRequest(String uid) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(uid)) {
+        String myUid = Utiles.getCurrentUserId();
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(uid)) {
             FirebaseActions.sendFriendRequest(myUid, uid);
         }
     }
 
     @Override
     public void cancelFriendRequest(String uid) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(uid)) {
+        String myUid = Utiles.getCurrentUserId();
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(uid)) {
             FirebaseActions.cancelFriendRequest(myUid, uid);
         }
 
@@ -214,8 +211,8 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void acceptFriendRequest(String uid) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(uid)) {
+        String myUid = Utiles.getCurrentUserId();
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(uid)) {
             FirebaseActions.acceptFriendRequest(myUid, uid);
         }
 
@@ -223,8 +220,8 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void declineFriendRequest(String uid) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(uid)) {
+        String myUid = Utiles.getCurrentUserId();
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(uid)) {
             FirebaseActions.declineFriendRequest(myUid, uid);
         }
 
@@ -232,8 +229,8 @@ public class ProfilePresenter implements ProfileContract.Presenter, LoaderManage
 
     @Override
     public void deleteFriend(String uid) {
-        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!TextUtils.isEmpty(uid)) {
+        String myUid = Utiles.getCurrentUserId();
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(uid)) {
             FirebaseActions.deleteFriend(myUid, uid);
         }
     }

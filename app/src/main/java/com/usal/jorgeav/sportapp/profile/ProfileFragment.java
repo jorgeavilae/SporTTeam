@@ -38,6 +38,7 @@ import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
+import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.Locale;
@@ -111,7 +112,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mMenu = menu;
         super.onCreateOptionsMenu(mMenu, inflater);
-        getActivity().getMenuInflater().inflate(R.menu.menu_my_profile, mMenu);
     }
 
     @Override
@@ -159,13 +159,14 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
         setLayoutAsMyUser(mUserUid.equals(currentUserId));
 
+        mProfilePresenter.getRelationTypeBetweenThisUserAndI();
+
         return root;
     }
 
     private void setLayoutAsMyUser(boolean isMyProfile) {
         if (isMyProfile) {
-            userEventInvitationsButton.image;
-            userEventInvitationsButton.text;
+            userEventInvitationsButtonText.setText(R.string.event_invitations);
             userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -174,8 +175,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 }
             });
 
-            userFriendRequestsButton.image;
-            userFriendRequestsButton.text;
+            userFriendRequestsButtonText.setText(R.string.friend_requests);
             userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -185,18 +185,16 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             });
         } else {
             userEventInvitationsButton.setVisibility(View.INVISIBLE);
-//            userEventInvitationsButton.text;
-//            userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Fragment fragment = SendInvitationFragment.newInstance(mUserUid);
-//                    mFragmentManagementListener.initFragment(fragment, true);
-//                }
-//            });
-            userFriendRequestsButton.setVisibility(View.INVISIBLE);
-//            userFriendRequestsButton.text;
-//            userFriendRequestsButton.click;
+            userEventInvitationsButtonText.setText(R.string.send_invitation);
+            userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Fragment fragment = SendInvitationFragment.newInstance(mUserUid);
+                    mFragmentManagementListener.initFragment(fragment, true);
+                }
+            });
 
+            userFriendRequestsButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -306,55 +304,46 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
     @Override
     public void uiSetupForUserRelation(@ProfilePresenter.UserRelationType int relation) {
-//        /* AMISTAD
-//         * Si this y yo somos amigos: Icono de amigos -> onClick: borrar amigo
-//         * Si this ha pedido ser amigo de mi: Icono de responder peticion -> onClick: aceptar o rechazar
-//         * Si yo he pedido ser amigo de this: Icono de peticion enviada -> onClick: borrar peticion
-//         * En otro caso: Icono de enviar peticion -> onClick: enviar peticion
-//         *
-//         * SEGUIR
-//         * Si this y yo nos seguimos: Icono de siguiendo -> onClick: dejar de seguir
-//         * Si this sigue a mi: Icono de seguir? -> onClick: seguir
-//         * Si yo sigo a this: Icono de siguiendo -> onClick: dejar de seguir
-//         * En otro caso: Icono de seguir? -> onClick: seguir
-//         */
-        if (relation != ProfilePresenter.RELATION_TYPE_ME) {
+        if (relation == ProfilePresenter.RELATION_TYPE_ME) {
+            if (mMenu != null) getActivity().getMenuInflater().inflate(R.menu.menu_my_profile, mMenu);
+        } else {
             if (mMenu != null) mMenu.clear();
 
             switch (relation) {
                 case ProfilePresenter.RELATION_TYPE_FRIENDS:
-                    userAddFriendButton.setText("Borrar Amigo");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+                    userEventInvitationsButton.setVisibility(View.VISIBLE);
+                    userFriendRequestsButton.setVisibility(View.VISIBLE);
+                    userFriendRequestsButtonText.setText(R.string.delete_friend);
+                    userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                        /*borrar amigos*/
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                            builder.setMessage("Estas seguro de que quieres borrar amigo?")
-                                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                                    .setTitle(R.string.dialog_msg_are_you_sure)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             mProfilePresenter.deleteFriend(mUserUid);
                                         }
                                     })
-                                    .setNegativeButton("No", null);
+                                    .setNegativeButton(android.R.string.no, null);
                             builder.create().show();
                         }
                     });
-                    userSendInvitationButton.setVisibility(View.VISIBLE);
                     break;
                 case ProfilePresenter.RELATION_TYPE_I_RECEIVE_REQUEST:
-                    userAddFriendButton.setText("Responder peticion");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+                    userEventInvitationsButton.setVisibility(View.INVISIBLE);
+                    userFriendRequestsButton.setVisibility(View.VISIBLE);
+                    userFriendRequestsButtonText.setText(R.string.answer_request);
+                    userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                        /*aceptar o rechazar*/
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                            builder.setMessage("Aceptar como amigo?")
-                                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                            builder.setMessage(R.string.dialog_msg_accept_friend)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             mProfilePresenter.acceptFriendRequest(mUserUid);
                                         }
                                     })
-                                    .setNegativeButton("Rechazar", new DialogInterface.OnClickListener() {
+                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             mProfilePresenter.declineFriendRequest(mUserUid);
                                         }
@@ -362,33 +351,34 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                             builder.create().show();
                         }
                     });
-                    userSendInvitationButton.setVisibility(View.INVISIBLE);
                     break;
                 case ProfilePresenter.RELATION_TYPE_I_SEND_REQUEST:
-                    userAddFriendButton.setText("Peticion Enviada");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+                    userEventInvitationsButton.setVisibility(View.INVISIBLE);
+                    userFriendRequestsButton.setVisibility(View.VISIBLE);
+                    userFriendRequestsButtonText.setText(R.string.user_request_sent);
+                    userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                        /*borrar peticion*/
                             mProfilePresenter.cancelFriendRequest(mUserUid);
                         }
                     });
-                    userSendInvitationButton.setVisibility(View.INVISIBLE);
                     break;
                 case ProfilePresenter.RELATION_TYPE_NONE:
-                    userAddFriendButton.setText("Enviar peticion");
-                    userAddFriendButton.setOnClickListener(new View.OnClickListener() {
+                    userEventInvitationsButton.setVisibility(View.INVISIBLE);
+                    userFriendRequestsButton.setVisibility(View.VISIBLE);
+                    userFriendRequestsButtonText.setText(R.string.send_user_request);
+                    userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                        /*enviar peticion*/
                             mProfilePresenter.sendFriendRequest(mUserUid);
                         }
                     });
-                    userSendInvitationButton.setVisibility(View.INVISIBLE);
                     break;
                 case ProfilePresenter.RELATION_TYPE_ERROR:
-                    userAddFriendButton.setText("Error");
-                    userSendInvitationButton.setVisibility(View.INVISIBLE);
+                    userEventInvitationsButton.setVisibility(View.INVISIBLE);
+                    userFriendRequestsButton.setVisibility(View.VISIBLE);
+                    userFriendRequestsButton.setOnClickListener(null);
+                    userFriendRequestsButtonText.setText(R.string.error);
                     break;
             }
         }
