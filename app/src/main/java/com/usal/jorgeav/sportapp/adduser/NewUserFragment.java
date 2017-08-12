@@ -33,6 +33,7 @@ import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
@@ -50,6 +51,8 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     private NewUserContract.Presenter mPresenter;
 
     Uri croppedImageUri;
+    String newUserCitySelectedName;
+    LatLng newUserCitySelectedCoord;
 
     // Static prevent double initialization with same ID
     static GoogleApiClient mGoogleApiClient;
@@ -120,8 +123,8 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                     && !TextUtils.isEmpty(newUserName.getText())
                     && TextUtils.isEmpty(newUserName.getError())
                     && !TextUtils.isEmpty(newUserAge.getText())
-                    && ((NewUserActivity) getActivity()).newUserCitySelectedName != null
-                    && ((NewUserActivity) getActivity()).newUserCitySelectedCoord != null) {
+                    && newUserCitySelectedName != null
+                    && newUserCitySelectedCoord != null) {
                 SportsListFragment slf = SportsListFragment.newInstance("", ((NewUserActivity) getActivity()).sports);
                 mFragmentManagementListener.initFragment(slf, true);
             } else {
@@ -137,25 +140,6 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_new_user, container, false);
         ButterKnife.bind(this, root);
-
-        if (((NewUserActivity)getActivity()).sports != null && ((NewUserActivity)getActivity()).sportsInitialize) {
-            hideContent();
-            mPresenter.createAuthUser(
-                    newUserEmail.getText().toString(),
-                    newUserPassword.getText().toString(),
-                    newUserName.getText().toString(),
-                    croppedImageUri,
-                    ((NewUserActivity) getActivity()).newUserCitySelectedName,
-                    ((NewUserActivity) getActivity()).newUserCitySelectedCoord,
-                    Long.parseLong(newUserAge.getText().toString()),
-                    ((NewUserActivity) getActivity()).sports);
-        }
-
-        setEmailEditText();
-        setPasswordEditText();
-        setPhotoButton();
-        setNameEditText();
-        setAutocompleteTextView();
 
         return root;
     }
@@ -195,6 +179,9 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     }
 
     private void setPhotoButton() {
+        if (croppedImageUri != null)
+            Glide.with(this).load(croppedImageUri).into(newUserPhoto);
+
         newUserPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -231,7 +218,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         mAdapter = new PlaceAutocompleteAdapter(getActivityContext(), mGoogleApiClient, null, typeFilter);
         newUserAutocompleteCity.setAdapter(mAdapter);
 
-        newUserAutocompleteCity.addTextChangedListener(new TextWatcher() {
+        TextWatcher tw = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -244,10 +231,11 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
 
             @Override
             public void afterTextChanged(Editable editable) {
-                ((NewUserActivity) getActivity()).newUserCitySelectedName = null;
-                ((NewUserActivity) getActivity()).newUserCitySelectedCoord = null;
+                    newUserCitySelectedName = null;
+                    newUserCitySelectedCoord = null;
             }
-        });
+        };
+        newUserAutocompleteCity.addTextChangedListener(tw);
 
         newUserAutocompleteCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -266,8 +254,8 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                                 public void onResult(@NonNull PlaceBuffer places) {
                                     if (places.getStatus().isSuccess() && places.getCount() > 0) {
                                         Place myPlace = places.get(0);
-                                        ((NewUserActivity) getActivity()).newUserCitySelectedName = myPlace.getName().toString();
-                                        ((NewUserActivity) getActivity()).newUserCitySelectedCoord = myPlace.getLatLng();
+                                        newUserCitySelectedName = myPlace.getName().toString();
+                                        newUserCitySelectedCoord = myPlace.getLatLng();
                                         Log.i(TAG, "Place found: Name - " + myPlace.getName()
                                                 + " LatLng - " + myPlace.getLatLng());
                                     } else {
@@ -285,6 +273,44 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.new_user_title), this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        setEmailEditText();
+        setPasswordEditText();
+        setPhotoButton();
+        setNameEditText();
+        setAutocompleteTextView();
+
+        if (((NewUserActivity)getActivity()).sports != null && ((NewUserActivity)getActivity()).sportsInitialize) {
+            hideContent();
+
+            if (!TextUtils.isEmpty(newUserEmail.getText())
+                    && TextUtils.isEmpty(newUserEmail.getError())
+                    && !TextUtils.isEmpty(newUserPassword.getText())
+                    && TextUtils.isEmpty(newUserPassword.getError())
+                    && !TextUtils.isEmpty(newUserName.getText())
+                    && TextUtils.isEmpty(newUserName.getError())
+                    && !TextUtils.isEmpty(newUserAge.getText())
+                    && newUserCitySelectedName != null
+                    && newUserCitySelectedCoord != null) {
+
+                mPresenter.createAuthUser(
+                        newUserEmail.getText().toString(),
+                        newUserPassword.getText().toString(),
+                        newUserName.getText().toString(),
+                        croppedImageUri,
+                        newUserCitySelectedName,
+                        newUserCitySelectedCoord,
+                        Long.parseLong(newUserAge.getText().toString()),
+                        ((NewUserActivity) getActivity()).sports);
+            } else {
+                Toast.makeText(getActivity(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override

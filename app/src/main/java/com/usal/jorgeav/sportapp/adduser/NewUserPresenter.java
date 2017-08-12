@@ -31,6 +31,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,73 +97,136 @@ class NewUserPresenter implements NewUserContract.Presenter {
     public void createAuthUser(final String email, String pass, final String name,
                                final Uri croppedImageFileSystemUri, final String city,
                                final LatLng coords, final Long age, final ArrayList<Sport> sportsList) {
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
-                .addOnCompleteListener(mView.getHostActivity(), new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(mView.getActivityContext(), R.string.toast_login_success, Toast.LENGTH_SHORT).show();
+        if (validateArguments(email, pass, name, croppedImageFileSystemUri, city, coords, age, sportsList)) {
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
+                    .addOnCompleteListener(mView.getHostActivity(), new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(mView.getActivityContext(), R.string.toast_login_success, Toast.LENGTH_SHORT).show();
 
-                    //Add email to emails logged table
-                    ContentValues cv = new ContentValues();
-                    cv.put(SportteamContract.EmailLoggedEntry.EMAIL, email);
-                    mView.getActivityContext().getContentResolver()
-                            .insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
+                                //Add email to emails logged table
+                                ContentValues cv = new ContentValues();
+                                cv.put(SportteamContract.EmailLoggedEntry.EMAIL, email);
+                                mView.getActivityContext().getContentResolver()
+                                        .insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
 
-                    if (croppedImageFileSystemUri != null) {
-                        // Get a reference to store file at chat_photos/<FILENAME>
-                        StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()
-                                .child(FirebaseDBContract.Storage.PROFILE_PICTURES);
-                        StorageReference photoRef = mChatPhotosStorageReference
-                                .child(croppedImageFileSystemUri.getLastPathSegment());
+                                if (croppedImageFileSystemUri != null) {
+                                    // Get a reference to store file at chat_photos/<FILENAME>
+                                    StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()
+                                            .child(FirebaseDBContract.Storage.PROFILE_PICTURES);
+                                    StorageReference photoRef = mChatPhotosStorageReference
+                                            .child(croppedImageFileSystemUri.getLastPathSegment());
 
-                        // Create the file metadata
-                        StorageMetadata metadata = new StorageMetadata.Builder()
-                                .setContentType("image/jpeg")
-                                .build();
+                                    // Create the file metadata
+                                    StorageMetadata metadata = new StorageMetadata.Builder()
+                                            .setContentType("image/jpeg")
+                                            .build();
 
-                        // Upload file and metadata to the path 'images/name.jpg' into Firebase Storage
-                        UploadTask uploadTask = photoRef.putFile(croppedImageFileSystemUri, metadata);
+                                    // Upload file and metadata to the path 'images/name.jpg' into Firebase Storage
+                                    UploadTask uploadTask = photoRef.putFile(croppedImageFileSystemUri, metadata);
 
-                        // Listen for errors, and completion of the upload.
-                        uploadTask.addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                // Handle unsuccessful uploads
-                                Log.e(TAG, "createAuthUser:putFile:onFailure: ", exception);
-                            }
-                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                // Handle successful uploads on complete
+                                    // Listen for errors, and completion of the upload.
+                                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception exception) {
+                                            // Handle unsuccessful uploads
+                                            Log.e(TAG, "createAuthUser:putFile:onFailure: ", exception);
+                                        }
+                                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            // Handle successful uploads on complete
                                 /* https://stackoverflow.com/a/42616488/4235666 */
-                                @SuppressWarnings("VisibleForTests")
-                                StorageMetadata metadata = taskSnapshot.getMetadata();
-                                if (metadata != null) {
-                                    final Uri downloadUrl = metadata.getDownloadUrl();
-                                    if (downloadUrl != null)
-                                        setUserDataAndFinish(downloadUrl, name, city, coords, age, sportsList);
-                                    else setUserDataAndFinish(null, name, city, coords, age, sportsList);
-                                } else setUserDataAndFinish(null, name, city, coords, age, sportsList);
+                                            @SuppressWarnings("VisibleForTests")
+                                            StorageMetadata metadata = taskSnapshot.getMetadata();
+                                            if (metadata != null) {
+                                                final Uri downloadUrl = metadata.getDownloadUrl();
+                                                if (downloadUrl != null)
+                                                    storeUserDataAndFinish(downloadUrl, name, city, coords, age, sportsList);
+                                                else
+                                                    storeUserDataAndFinish(null, name, city, coords, age, sportsList);
+                                            } else
+                                                storeUserDataAndFinish(null, name, city, coords, age, sportsList);
+                                        }
+                                    });
+                                } else {
+                                    storeUserDataAndFinish(null, name, city, coords, age, sportsList);
+                                }
+                            } else {
+                                mView.showContent();
+                                Toast.makeText(mView.getActivityContext(), R.string.toast_login_failure, Toast.LENGTH_SHORT).show();
                             }
-                        });
-                    } else {
-                        setUserDataAndFinish(null, name, city, coords, age, sportsList);
-                    }
-                } else {
-                    mView.showContent();
-                    Toast.makeText(mView.getActivityContext(), R.string.toast_login_failure, Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(mView.getHostActivity(), new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(mView.getActivityContext(), R.string.toast_create_user_fail, Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
-            }
-        }).addOnFailureListener(mView.getHostActivity(), new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(mView.getActivityContext(), R.string.toast_create_user_fail, Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
+        }
     }
 
-    private void setUserDataAndFinish(Uri photoUri, String name, String city, LatLng coords,
+    private boolean validateArguments(String email, String pass, String name,
+                                      Uri croppedImageFileSystemUri, String city, LatLng coords,
+                                      Long age, ArrayList<Sport> sportsList) {
+
+        if (email == null || TextUtils.isEmpty(email)) {
+            Toast.makeText(mView.getActivityContext(), R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "validateArguments: Email error "+email);
+            return false;
+        }
+
+        if (pass == null || TextUtils.isEmpty(pass) || pass.length() < 6) {
+            Toast.makeText(mView.getActivityContext(), R.string.error_invalid_password, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "validateArguments: Password error "+pass);
+            return false;
+        }
+
+        if (name == null || TextUtils.isEmpty(name)) {
+            Toast.makeText(mView.getActivityContext(), R.string.error_invalid_name, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "validateArguments: Name error "+name);
+            return false;
+        }
+
+        if (croppedImageFileSystemUri != null) {
+            File file = new File(croppedImageFileSystemUri.getPath());
+            if (!file.exists()) {
+                Toast.makeText(mView.getActivityContext(), R.string.error_invalid_photo, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "validateArguments: Photo error "+croppedImageFileSystemUri);
+                return false;
+            }
+        }
+
+        if (city == null || TextUtils.isEmpty(city)) {
+            Toast.makeText(mView.getActivityContext(), R.string.error_invalid_city, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "validateArguments: City error "+city);
+            return false;
+        }
+
+        if (coords == null || (coords.latitude == 0 && coords.longitude == 0)) {
+            Toast.makeText(mView.getActivityContext(), R.string.error_invalid_city, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "validateArguments: Coordinates error "+coords);
+            return false;
+        }
+
+        if (age == null || age <= 12 || age >= 100) {
+            Toast.makeText(mView.getActivityContext(), R.string.error_incorrect_age, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "validateArguments: Age error "+age);
+            return false;
+        }
+
+        if (sportsList == null || sportsList.size() <= 0) {
+            Toast.makeText(mView.getActivityContext(), R.string.error_invalid_sport_list, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "validateArguments: Sport list error "+sportsList);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void storeUserDataAndFinish(Uri photoUri, String name, String city, LatLng coords,
                                       Long age, ArrayList<Sport> sportsList) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         if (fUser == null) return;
@@ -182,7 +246,6 @@ class NewUserPresenter implements NewUserContract.Presenter {
                     }
                 });
 
-        //TODO validate data
         String photoUriStr = "";
         if (photoUri != null) photoUriStr = photoUri.toString();
         User user = new User(fUser.getUid(), fUser.getEmail(),

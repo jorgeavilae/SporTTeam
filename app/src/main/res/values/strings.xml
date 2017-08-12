@@ -67,6 +67,14 @@
     <string name="error_not_unique_name">This name is already in use</string>
     <string name="error_incorrect_age">Age should be greater than 12 and less than 100</string>
     <string name="error_invalid_age">Not a valid number</string>
+    <string name="toast_login_success">Log in successful</string>
+    <string name="toast_create_user_fail">User creation fails</string>
+    <string name="toast_login_failure">Log in failure</string>
+    <string name="error_invalid_name">Name is invalid</string>
+    <string name="error_invalid_photo">Photo is invalid</string>
+    <string name="error_invalid_city">City is invalid</string>
+    <string name="error_invalid_sport_list">Sport list is invalid</string>
+
 
     <!--Strings for notification messages-->
     <string name="notification_title_friend_request_received">New friend request</string>
@@ -209,8 +217,4 @@
     <string name="dialog_msg_accept_friend">Accept as friend?</string>
     <string name="user_request_sent">Request sent</string>
     <string name="send_user_request">Send request</string>
-
-    <string name="toast_login_success">Log in successful</string>
-    <string name="toast_create_user_fail">User creation fails</string>
-    <string name="toast_login_failure">Log in failure</string>
 </resources>

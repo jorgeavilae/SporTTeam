@@ -18,7 +18,6 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
@@ -39,20 +38,15 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-//TODO validar datos
 public class NewUserActivity extends AppCompatActivity implements
         ActivityContracts.FragmentManagement,
         SportsListFragment.OnSportsSelected {
     private final static String TAG = NewUserActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
-    private static final String INSTANCE_NEW_USER_CITY_NAME = "INSTANCE_NEW_USER_CITY_NAME";
-    private static final String INSTANCE_NEW_USER_CITY_COORD = "INSTANCE_NEW_USER_CITY_COORD";
 
     Fragment mDisplayedFragment;
 
-    String newUserCitySelectedName = null;
-    LatLng newUserCitySelectedCoord = null;
-    ArrayList<Sport> sports = null;
+    ArrayList<Sport> sports;
 
     @BindView(R.id.new_user_toolbar)
     Toolbar newUserToolbar;
@@ -197,21 +191,11 @@ public class NewUserActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
         if (mDisplayedFragment != null && getSupportFragmentManager() != null)
             getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
-        if (newUserCitySelectedName != null)
-            outState.putString(INSTANCE_NEW_USER_CITY_NAME, newUserCitySelectedName);
-        if (newUserCitySelectedCoord != null)
-            outState.putParcelable(INSTANCE_NEW_USER_CITY_COORD, newUserCitySelectedCoord);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_USER_CITY_NAME))
-            newUserCitySelectedName = savedInstanceState.getString(INSTANCE_NEW_USER_CITY_NAME);
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_NEW_USER_CITY_COORD))
-            newUserCitySelectedCoord = savedInstanceState.getParcelable(INSTANCE_NEW_USER_CITY_COORD);
-
         mDisplayedFragment = null;
         if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
             try {
