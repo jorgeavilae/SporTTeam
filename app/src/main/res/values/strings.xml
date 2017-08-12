@@ -63,6 +63,7 @@
     <string name="prompt_name">Name</string>
     <string name="prompt_age">Age</string>
     <string name="prompt_city">City</string>
+    <string name="error_not_unique_email">This email address already exists</string>
     <string name="error_not_unique_name">This name is already in use</string>
     <string name="error_incorrect_age">Age should be greater than 12 and less than 100</string>
     <string name="error_invalid_age">Not a valid number</string>
@@ -171,6 +172,8 @@
     <string name="event_invitations">Event invitations</string>
     <string name="friend_requests">Friend requests</string>
     <string name="sports_practiced">Sports practiced</string>
+    <string name="pick_sports_practiced">Pick sports practiced</string>
+    <string name="toast_error_autocomplete_city">Error looking for cities</string>
 
     <!-- Strings for searches -->
     <string name="users_found">Users found</string>
@@ -206,5 +209,8 @@
     <string name="dialog_msg_accept_friend">Accept as friend?</string>
     <string name="user_request_sent">Request sent</string>
     <string name="send_user_request">Send request</string>
-    <string name="toast_error_autocomplete_city">Error looking for cities</string>
+
+    <string name="toast_login_success">Log in successful</string>
+    <string name="toast_create_user_fail">User creation fails</string>
+    <string name="toast_login_failure">Log in failure</string>
 </resources>

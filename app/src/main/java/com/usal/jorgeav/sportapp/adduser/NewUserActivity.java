@@ -1,82 +1,35 @@
 package com.usal.jorgeav.sportapp.adduser;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Patterns;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnPausedListener;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
-import com.usal.jorgeav.sportapp.data.User;
-import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -85,9 +38,8 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-//TODO dividir en activity y frament
+
 //TODO validar datos
-//TODO poner errors de strings.xml
 public class NewUserActivity extends AppCompatActivity implements
         ActivityContracts.FragmentManagement,
         SportsListFragment.OnSportsSelected {
@@ -96,58 +48,24 @@ public class NewUserActivity extends AppCompatActivity implements
     private static final String INSTANCE_NEW_USER_CITY_NAME = "INSTANCE_NEW_USER_CITY_NAME";
     private static final String INSTANCE_NEW_USER_CITY_COORD = "INSTANCE_NEW_USER_CITY_COORD";
 
-    private static final int RC_PHOTO_PICKER = 2;
-
     Fragment mDisplayedFragment;
-    Uri croppedImageUri;
+
     String newUserCitySelectedName = null;
     LatLng newUserCitySelectedCoord = null;
-    // Static prevent double initialization with same ID
-    static GoogleApiClient mGoogleApiClient;
-    PlaceAutocompleteAdapter mAdapter;
+    ArrayList<Sport> sports = null;
 
     @BindView(R.id.new_user_toolbar)
     Toolbar newUserToolbar;
     @BindView(R.id.new_user_progressbar)
     ProgressBar newUserProgressbar;
-
     @BindView(R.id.new_user_content)
     FrameLayout newUserContent;
-    @BindView(R.id.new_user_email)
-    EditText newUserEmail;
-    @BindView(R.id.new_user_password)
-    EditText newUserPassword;
-    @BindView(R.id.new_user_name)
-    EditText newUserName;
-    @BindView(R.id.new_user_age)
-    EditText newUserAge;
-    @BindView(R.id.new_user_city)
-    AutoCompleteTextView newUserAutocompleteCity;
-    @BindView(R.id.new_user_photo)
-    ImageView newUserPhoto;
-    @BindView(R.id.new_user_photo_button)
-    ImageView newUserPhotoButton;
 
     boolean sportsInitialize;
-    ArrayList<Sport> sports;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (mGoogleApiClient == null)
-            mGoogleApiClient = new GoogleApiClient
-                    .Builder(this)
-                    .addApi(Places.GEO_DATA_API)
-                    .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                            Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
-                        }
-                    })
-                    .build();
-        else mGoogleApiClient.connect();
-
         setContentView(R.layout.activity_new_user);
         ButterKnife.bind(this);
 
@@ -167,156 +85,7 @@ public class NewUserActivity extends AppCompatActivity implements
         sportsInitialize = false;
         sports = new ArrayList<>();
 
-        checkUserEmailExists(newUserEmail.getText().toString());
-        checkUserNameExists(newUserName.getText().toString());
-        newUserEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus)
-                    checkUserEmailExists(newUserEmail.getText().toString());
-            }
-        });
-        newUserPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus)
-                    if (newUserPassword.getText().toString().length() < 6)
-                        newUserPassword.setError("Necesita al menos 6 caracteres");
-            }
-        });
-        ImageView visibleButton = (ImageView) findViewById(R.id.new_user_visible_pass);
-        visibleButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN)
-                    newUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                else if (event.getAction() == MotionEvent.ACTION_UP)
-                    newUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                return true;
-            }
-        });
-        newUserName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus)
-                    checkUserNameExists(newUserName.getText().toString());
-            }
-        });
-
-        newUserPhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hideSoftKeyboard();
-                EasyImage.configuration(NewUserActivity.this)
-                        .setImagesFolderName(Environment.DIRECTORY_PICTURES)
-                        .saveInAppExternalFilesDir();
-                if (Utiles.isStorageCameraPermissionGranted(NewUserActivity.this))
-                    EasyImage.openChooserWithGallery(NewUserActivity.this, "Elegir foto de...", RC_PHOTO_PICKER);
-            }
-        });
-
-        setAutocompleteTextView();
-
-        showContent();
-    }
-
-    private void setAutocompleteTextView() {
-        // Set up the adapter that will retrieve suggestions from
-        // the Places Geo Data API that cover Spain
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
-                /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
-                .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
-                .build();
-
-        mAdapter = new PlaceAutocompleteAdapter(this, mGoogleApiClient, null, typeFilter);
-        newUserAutocompleteCity.setAdapter(mAdapter);
-
-        newUserAutocompleteCity.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                newUserCitySelectedName = null;
-                newUserCitySelectedCoord = null;
-            }
-        });
-
-        newUserAutocompleteCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                /*
-                 Retrieve the place ID of the selected item from the Adapter.
-                 The adapter stores each Place suggestion in a AutocompletePrediction from which we
-                 read the place ID and title.
-                  */
-                AutocompletePrediction item = mAdapter.getItem(position);
-                if (item != null) {
-                    Log.i(TAG, "Autocomplete item selected: " + item.getPlaceId());
-                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, item.getPlaceId())
-                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                                @Override
-                                public void onResult(@NonNull PlaceBuffer places) {
-                                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                                        Place myPlace = places.get(0);
-                                        newUserCitySelectedName = myPlace.getName().toString();
-                                        newUserCitySelectedCoord = myPlace.getLatLng();
-                                        Log.i(TAG, "Place found: Name - " + myPlace.getName()
-                                                + " LatLng - " + myPlace.getLatLng());
-                                    } else {
-                                        Log.e(TAG, "Place not found");
-                                    }
-                                    places.release();
-                                }
-                            });
-                }
-            }
-        });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_ok, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-
-        // Check if there is another fragment with onOptionsItemSelected implemented
-        /* https://stackoverflow.com/a/17767406/4235666 */
-        if (mDisplayedFragment != null) return false;
-
-        if (item.getItemId() == R.id.action_ok) {
-            Log.d(TAG, "onOptionsItemSelected: Ok");
-            hideSoftKeyboard();
-
-            if (!TextUtils.isEmpty(newUserEmail.getText())
-                    && TextUtils.isEmpty(newUserEmail.getError())
-                    && !TextUtils.isEmpty(newUserPassword.getText())
-                    && TextUtils.isEmpty(newUserPassword.getError())
-                    && !TextUtils.isEmpty(newUserName.getText())
-                    && TextUtils.isEmpty(newUserName.getError())
-                    && !TextUtils.isEmpty(newUserAge.getText())
-                    && newUserCitySelectedName != null
-                    && newUserCitySelectedCoord != null) {
-                SportsListFragment slf = SportsListFragment.newInstance("", sports);
-                initFragment(slf, true);
-            } else {
-                Toast.makeText(getApplicationContext(), "Error: algun campo vacio", Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        }
-        return false;
+        startMainFragment();
     }
 
     @Override
@@ -337,16 +106,12 @@ public class NewUserActivity extends AppCompatActivity implements
 
         if (requestCode == UCrop.REQUEST_CROP) {
             if (resultCode == RESULT_OK) {
-                croppedImageUri = UCrop.getOutput(data);
-                Glide.with(this)
-                        .load(croppedImageUri)
-                        .placeholder(R.drawable.profile_picture_placeholder)
-                        .centerCrop()
-                        .into(newUserPhoto);
-
+                if (mDisplayedFragment instanceof NewUserContract.View)
+                    ((NewUserContract.View) mDisplayedFragment).croppedResult(UCrop.getOutput(data));
             } else {
                 // Cancel after pick image and before crop
-                croppedImageUri = null;
+                if (mDisplayedFragment instanceof NewUserContract.View)
+                    ((NewUserContract.View) mDisplayedFragment).croppedResult(null);
             }
         } else if (resultCode == UCrop.RESULT_ERROR)
             Log.e(TAG, "onActivityResult: error ", UCrop.getError(data));
@@ -360,168 +125,14 @@ public class NewUserActivity extends AppCompatActivity implements
 
             if (grantResults[0] == PackageManager.PERMISSION_DENIED)
                 //Without WRITE_EXTERNAL_STORAGE it can't save cropped photo
-                Toast.makeText(this, "Se necesita guardar la imagen", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.toast_need_write_permission, Toast.LENGTH_SHORT).show();
             else if (grantResults[1] == PackageManager.PERMISSION_DENIED)
                 //The user can't take pictures
-                EasyImage.openGallery(this, RC_PHOTO_PICKER);
+                EasyImage.openGallery(this, NewUserFragment.RC_PHOTO_PICKER);
             else if (grantResults[1] == PackageManager.PERMISSION_GRANTED)
                 //The user can take pictures or pick an image
-                EasyImage.openChooserWithGallery(this, "Elegir foto de...", RC_PHOTO_PICKER);
+                EasyImage.openChooserWithGallery(this, getString(R.string.pick_photo_from), NewUserFragment.RC_PHOTO_PICKER);
         }
-    }
-
-    private void checkUserEmailExists(String email) {
-        if (email != null && !TextUtils.isEmpty(email) && isEmailValid(email))
-            FirebaseActions.getUserEmailReferenceEqualTo(email)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                newUserEmail.setError("Email already exist");
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
-    }
-
-    private boolean isEmailValid(@NonNull String email) {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
-    private void checkUserNameExists(String name) {
-        if (name != null && !TextUtils.isEmpty(name))
-            FirebaseActions.getUserNameReferenceEqualTo(name)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                newUserName.setError("Name already exist");
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
-    }
-
-    private void createAuthUser(final String email, String pass) {
-        final OnCompleteListener<AuthResult> onCompleteListener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Log in is Successful", Toast.LENGTH_SHORT).show();
-
-                    //Add email to emails logged table
-                    ContentValues cv = new ContentValues();
-                    cv.put(SportteamContract.EmailLoggedEntry.EMAIL, email);
-                    getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
-
-                    if (croppedImageUri != null) {
-                        // Get a reference to store file at chat_photos/<FILENAME>
-                        StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()
-                                .child(FirebaseDBContract.Storage.PROFILE_PICTURES);
-                        StorageReference photoRef = mChatPhotosStorageReference.child(croppedImageUri.getLastPathSegment());
-
-                        // Upload file to Firebase Storage
-                        // Create the file metadata
-                        StorageMetadata metadata = new StorageMetadata.Builder()
-                                .setContentType("image/jpeg")
-                                .build();
-
-                        // Upload file and metadata to the path 'images/mountains.jpg'
-                        UploadTask uploadTask = photoRef.putFile(croppedImageUri, metadata);
-
-                        // Listen for state changes, errors, and completion of the upload.
-                        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            /* https://stackoverflow.com/a/42616488/4235666 */
-                                @SuppressWarnings("VisibleForTests")
-                                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                                Log.i(TAG, "createAuthUser:putFile:onProgress: Upload is " + progress + "% done");
-                            }
-                        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                                Log.i(TAG, "createAuthUser:putFile:onPaused: Upload is paused");
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                // Handle unsuccessful uploads
-                                Log.e(TAG, "createAuthUser:putFile:onFailure: ", exception);
-                            }
-                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                // Handle successful uploads on complete
-                            /* https://stackoverflow.com/a/42616488/4235666 */
-                                @SuppressWarnings("VisibleForTests")
-                                StorageMetadata metadata = taskSnapshot.getMetadata();
-                                if (metadata == null) return;
-                                final Uri downloadUrl = metadata.getDownloadUrl();
-                                if (downloadUrl == null) return;
-
-                                setUserDataAndFinish(downloadUrl);
-                            }
-                        });
-                    } else {
-                        setUserDataAndFinish(null);
-                    }
-                } else {
-                    showContent();
-                    Toast.makeText(getApplicationContext(), "Error Login in", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
-                .addOnCompleteListener(this, onCompleteListener);
-    }
-
-    private void setUserDataAndFinish(Uri photoUri) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (fUser == null) return;
-
-        UserProfileChangeRequest.Builder profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(newUserName.getText().toString());
-        if(photoUri != null) profileUpdates = profileUpdates.setPhotoUri(photoUri);
-        fUser.updateProfile(profileUpdates.build());
-
-        fUser.sendEmailVerification()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "Email sent.");
-                        }
-                    }
-                });
-
-        //TODO validate data
-        String photoUriStr = "";
-        if (photoUri != null) photoUriStr = photoUri.toString();
-        User user = new User(fUser.getUid(), fUser.getEmail(),
-                newUserName.getText().toString(), newUserCitySelectedName,
-                newUserCitySelectedCoord.latitude, newUserCitySelectedCoord.longitude,
-                Long.parseLong(newUserAge.getText().toString()), photoUriStr,
-                sportsArrayToHashMap(sports));
-        FirebaseActions.addUser(user);
-
-        // Return to LoginActivity
-        setResult(RESULT_OK);
-        finish();
-    }
-
-
-    private Map<String,Double> sportsArrayToHashMap(List<Sport> sports) {
-        HashMap<String, Double> result = new HashMap<>();
-        for (Sport s : sports)
-            result.put(s.getSportID(), (double) s.getPunctuation());
-        return result;
     }
 
     @Override
@@ -534,7 +145,7 @@ public class NewUserActivity extends AppCompatActivity implements
 
     @Override
     public void startMainFragment() {
-
+        initFragment(NewUserFragment.newInstance(), false);
     }
 
     @Override
@@ -562,7 +173,7 @@ public class NewUserActivity extends AppCompatActivity implements
         mDisplayedFragment = fragment;
     }
 
-    public void setActionBarTitle(String title) {
+    private void setActionBarTitle(String title) {
         if (getSupportActionBar() != null && title != null)
             getSupportActionBar().setTitle(title);
     }
@@ -610,19 +221,6 @@ public class NewUserActivity extends AppCompatActivity implements
             }
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        newUserToolbar.setTitle(getString(R.string.new_user_title));
-        hideSoftKeyboard();
-
-        if (this.sports != null && sportsInitialize) {
-            hideContent();
-            createAuthUser(newUserEmail.getText().toString(), newUserPassword.getText().toString());
-        }
-    }
-
 
     /* https://stackoverflow.com/a/1109108/4235666 */
     public void hideSoftKeyboard() {

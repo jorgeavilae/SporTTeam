@@ -66,7 +66,6 @@ public class SportsListFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_ok) {
-            Log.d(TAG, "onOptionsItemSelected: Ok");
             if (getActivity() instanceof OnSportsSelected) {
                 String id = null;
                 if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_OBJECT_ID))
@@ -95,6 +94,20 @@ public class SportsListFragment extends BaseFragment {
         return root;
     }
 
+    private boolean isTheSameSport(Sport a, Sport b) {
+        return a.getSportID().equals(b.getSportID());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        hideSoftKeyboard();
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_sports_practiced), this);
+        if (mActionBarIconManagementListener != null) mActionBarIconManagementListener.setToolbarAsUp();
+        mSportAdapter.replaceData(loadSports());
+        showContent();
+    }
+
     private List<Sport> loadSports() {
         ArrayList<Sport> result = new ArrayList<>();
 
@@ -116,20 +129,6 @@ public class SportsListFragment extends BaseFragment {
         }
 
         return result;
-    }
-
-    private boolean isTheSameSport(Sport a, Sport b) {
-        return a.getSportID().equals(b.getSportID());
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        hideSoftKeyboard();
-        mFragmentManagementListener.setCurrentDisplayedFragment("Selecciona deportes", this);
-        if (mActionBarIconManagementListener != null) mActionBarIconManagementListener.setToolbarAsUp();
-        mSportAdapter.replaceData(loadSports());
-        showContent();
     }
 
     @Override

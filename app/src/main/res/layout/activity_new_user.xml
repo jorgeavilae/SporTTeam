@@ -38,9 +38,8 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/new_user_toolbar_container" />
 
-        <include
+        <FrameLayout
             android:id="@+id/new_user_content"
-            layout="@layout/fragment_new_user"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="0dp"

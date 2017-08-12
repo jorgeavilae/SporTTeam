@@ -144,8 +144,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, root);
 
-        //Es importante hacerlo aqui ya que el valor de mUserId gobierna el aspecto de la UI y
-        // en onCreate no se ejecutaria al volver de otro fragment
         if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
             mUserUid = getArguments().getString(BUNDLE_INSTANCE_UID);
 
