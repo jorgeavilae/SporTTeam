@@ -17,11 +17,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 20/07/2017.
- */
-
 public class SelectSportsAdapter  extends RecyclerView.Adapter<SelectSportsAdapter.ViewHolder> {
+    @SuppressWarnings("unused")
     private static final String TAG = SelectSportsAdapter.class.getSimpleName();
 
     private List<Sport> mDataset;
@@ -66,7 +63,7 @@ public class SelectSportsAdapter  extends RecyclerView.Adapter<SelectSportsAdapt
         notifyDataSetChanged();
     }
 
-    public void setDataset(List<Sport> mDataset) {
+    private void setDataset(List<Sport> mDataset) {
         this.mDataset = mDataset;
     }
 

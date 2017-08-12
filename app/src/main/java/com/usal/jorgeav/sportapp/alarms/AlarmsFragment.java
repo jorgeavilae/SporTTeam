@@ -24,7 +24,7 @@ import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AlarmsFragment extends BaseFragment implements AlarmsContract.View, AlarmAdapter.OnAlarmitemClickListener {
+public class AlarmsFragment extends BaseFragment implements AlarmsContract.View, AlarmAdapter.OnAlarmItemClickListener {
     private static final String TAG = AlarmsFragment.class.getSimpleName();
 
     AlarmsContract.Presenter mAlarmsPresenter;

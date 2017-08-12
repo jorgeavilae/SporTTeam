@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -136,7 +137,7 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setTiltGesturesEnabled(false);
         mMap.setOnMarkerClickListener(this);
-        mMap.setInfoWindowAdapter(new MapMarkerInfoAdapter(getActivity().getLayoutInflater(), mFieldsList));
+        mMap.setInfoWindowAdapter(new MapMarkerInfoAdapter(getActivity().getLayoutInflater(), mFieldsList, Glide.with(this)));
         mMap.setOnInfoWindowClickListener(this);
 
         //Populate map with Fields

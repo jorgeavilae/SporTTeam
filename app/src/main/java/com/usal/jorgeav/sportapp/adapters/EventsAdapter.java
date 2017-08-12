@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.adapters;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
-import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -22,11 +20,8 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 23/04/2017.
- */
-
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
+    @SuppressWarnings("unused")
     private static final String TAG = EventsAdapter.class.getSimpleName();
 
     private Cursor mDataset;
@@ -42,8 +37,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View eventView = inflater.inflate(R.layout.events_item_list, parent, false);
 
         return new ViewHolder(eventView);
@@ -54,9 +48,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         if (mDataset.moveToPosition(position)) {
             // Set icon
             String sportId = mDataset.getString(SportteamContract.EventEntry.COLUMN_SPORT);
-            int sportIcon = MyApplication.getAppContext().getResources()
-                    .getIdentifier(sportId, "drawable", MyApplication.getAppContext().getPackageName());
-            mGlide.load(sportIcon).into(holder.imageViewEventSport);
+            mGlide.load(Utiles.getSportIconFromResource(sportId)).into(holder.imageViewEventSport);
 
             // Set title
             holder.textViewEventName.setText(mDataset.getString(SportteamContract.EventEntry.COLUMN_NAME));
@@ -70,7 +62,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 holder.textViewEventPlace.setText(address);
             else {
                 if (!TextUtils.isEmpty(fieldName)) fieldName = fieldName + ", ";
-                holder.textViewEventPlace.setText(fieldName + "" + city);
+                holder.textViewEventPlace.setText(fieldName + city);
             }
             long date = mDataset.getLong(SportteamContract.EventEntry.COLUMN_DATE);
             holder.textViewEventDate.setText(UtilesTime.millisToDateTimeString(date));
@@ -88,7 +80,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    public void setDataset(Cursor mDataset) {
+    private void setDataset(Cursor mDataset) {
         this.mDataset = mDataset;
     }
 

@@ -5,28 +5,27 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestManager;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
-import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SportCourt;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by Jorge Avila on 21/07/2017.
- */
 
 public class MapMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
     private View mContent;
     private List<Field> mDataset;
+    private RequestManager mGlide;
 
-    public MapMarkerInfoAdapter(LayoutInflater layoutInflater, ArrayList<Field> fieldList) {
+    public MapMarkerInfoAdapter(LayoutInflater layoutInflater, ArrayList<Field> fieldList, RequestManager glide) {
         this.mContent = layoutInflater.inflate(R.layout.field_marker, null);
         this.mDataset = fieldList;
+        this.mGlide = glide;
     }
 
     @Override
@@ -37,7 +36,7 @@ public class MapMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
     @Override
     public View getInfoContents(Marker marker) {
         Integer position = (Integer) marker.getTag();
-        if (position != null) {
+        if (position != null && position > -1 && mDataset != null && position < mDataset.size()) {
             populate(mContent, mDataset.get(position));
             return mContent;
         }
@@ -64,30 +63,23 @@ public class MapMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
         if (field.getSport() != null && field.getSport().size() > 0) {
             ArrayList<SportCourt> sports = new ArrayList<>(field.getSport().values());
 
-            int sport1Icon = MyApplication.getAppContext().getResources().getIdentifier(
-                    sports.get(0).getSport_id() , "drawable", MyApplication.getAppContext().getPackageName());
-            imageViewFieldSport1.setImageResource(sport1Icon);
             imageViewFieldSport1.setVisibility(View.VISIBLE);
+            mGlide.load(Utiles.getSportIconFromResource(sports.get(0).getSport_id())).into(imageViewFieldSport1);
 
             // Set second sport icon
             if (sports.size() > 1) {
-                int sport2Icon = MyApplication.getAppContext().getResources().getIdentifier(
-                        sports.get(1).getSport_id() , "drawable", MyApplication.getAppContext().getPackageName());
-                imageViewFieldSport2.setImageResource(sport2Icon);
                 imageViewFieldSport2.setVisibility(View.VISIBLE);
+                mGlide.load(Utiles.getSportIconFromResource(sports.get(1).getSport_id())).into(imageViewFieldSport2);
 
                 // Set third sport icon
                 if (sports.size() > 2) {
-                    int sport3Icon = MyApplication.getAppContext().getResources().getIdentifier(
-                            sports.get(2).getSport_id() , "drawable", MyApplication.getAppContext().getPackageName());
-                    imageViewFieldSport3.setImageResource(sport3Icon);
                     imageViewFieldSport3.setVisibility(View.VISIBLE);
+                    mGlide.load(Utiles.getSportIconFromResource(sports.get(2).getSport_id())).into(imageViewFieldSport3);
 
                     // Set dots if there are more than 3
                     if (sports.size() > 3) textViewSportMore.setVisibility(View.VISIBLE);
                 }
             }
         }
-
     }
 }

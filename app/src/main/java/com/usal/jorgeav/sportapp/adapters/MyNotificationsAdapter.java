@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.adapters;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -30,19 +29,17 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 13/07/2017.
- */
-
 public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotificationsAdapter.ViewHolder> {
+    @SuppressWarnings("unused")
     private static final String TAG = MyNotificationsAdapter.class.getSimpleName();
 
+    /* LinkedHasMap to reference a notification by position instead of by key */
     private LinkedHashMap<String, MyNotification> mDataset;
     private OnMyNotificationItemClickListener mClickListener;
     private RequestManager mGlide;
 
-    public MyNotificationsAdapter(Map<String, MyNotification> mDataset, OnMyNotificationItemClickListener listener, RequestManager glide) {
-        if (mDataset != null) this.mDataset = new LinkedHashMap<>(mDataset);
+    public MyNotificationsAdapter(Map<String, MyNotification> dataset, OnMyNotificationItemClickListener listener, RequestManager glide) {
+        if (dataset != null) this.mDataset = new LinkedHashMap<>(dataset);
         else this.mDataset = null;
         this.mClickListener = listener;
         this.mGlide = glide;
@@ -50,8 +47,7 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
 
     @Override
     public MyNotificationsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.notification_item_list, parent, false);
 
         return new MyNotificationsAdapter.ViewHolder(view);
@@ -68,8 +64,7 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
                 case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
                     String alarmSportId = UtilesContentProvider.getAlarmSportFromContentProvider(n.getExtra_data_one());
                     if (alarmSportId != null && !TextUtils.isEmpty(alarmSportId)) {
-                        int alarmSportIdResource = Utiles.getSportIconFromResource(alarmSportId);
-                        mGlide.load(alarmSportIdResource).into(holder.imageViewNotificationIcon);
+                        mGlide.load(Utiles.getSportIconFromResource(alarmSportId)).into(holder.imageViewNotificationIcon);
                     } else
                         mGlide.load(R.drawable.ic_logo)
                                 .placeholder(R.drawable.ic_logo)
@@ -83,8 +78,7 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
                 case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
                     String eventSportId = UtilesContentProvider.getEventSportFromContentProvider(n.getExtra_data_one());
                     if (eventSportId != null && !TextUtils.isEmpty(eventSportId)) {
-                        int eventSportIdResource = Utiles.getSportIconFromResource(eventSportId);
-                        mGlide.load(eventSportIdResource).into(holder.imageViewNotificationIcon);
+                        mGlide.load(Utiles.getSportIconFromResource(eventSportId)).into(holder.imageViewNotificationIcon);
                     } else
                         mGlide.load(R.drawable.ic_logo)
                                 .placeholder(R.drawable.ic_logo)
@@ -120,6 +114,8 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         }
     }
 
+    /* Look for value in position. Value is always the same since
+     * mDataset is a LinkedHasMap (ordered) not a simple HashMap */
     private Map.Entry<String, MyNotification> getEntry(int position) {
         if (position > -1 && position < mDataset.size()) {
             int i = 0;
@@ -134,7 +130,7 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         notifyDataSetChanged();
     }
 
-    public void setDataset(Map<String, MyNotification> mDataset) {
+    private void setDataset(Map<String, MyNotification> mDataset) {
         if (mDataset != null) this.mDataset = new LinkedHashMap<>(mDataset);
         else this.mDataset = null;
     }

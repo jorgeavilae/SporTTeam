@@ -14,17 +14,16 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 25/05/2017.
- */
-
 public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdapter.ViewHolder> {
+    @SuppressWarnings("unused")
+    private static final String TAG = ProfileSportsAdapter.class.getSimpleName();
 
     private Cursor mDataset;
     private OnProfileSportClickListener mListener;
@@ -46,16 +45,14 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
     @Override
     public void onBindViewHolder(ProfileSportsAdapter.ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
-            String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
+            String sportId = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
 
             // Set icon
-            int iconDrawableId = MyApplication.getAppContext().getResources()
-                    .getIdentifier(name , "drawable", MyApplication.getAppContext().getPackageName());
-            mGlide.load(iconDrawableId).asBitmap().into(holder.imageViewSportIcon);
+            mGlide.load(Utiles.getSportIconFromResource(sportId)).asBitmap().into(holder.imageViewSportIcon);
 
             // Set title
             int nameResource = MyApplication.getAppContext().getResources()
-                    .getIdentifier(name, "string", MyApplication.getAppContext().getPackageName());
+                    .getIdentifier(sportId, "string", MyApplication.getAppContext().getPackageName());
             holder.textViewSportName.setText(nameResource);
 
             // Set stars
@@ -75,13 +72,13 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         notifyDataSetChanged();
     }
 
-    public void setDataset(Cursor mDataset) {
+    private void setDataset(Cursor mDataset) {
         this.mDataset = mDataset;
     }
 
     public ArrayList<Sport> getDataAsArrayList() {
         if (mDataset == null) return null;
-        ArrayList<Sport> result = new ArrayList<Sport>();
+        ArrayList<Sport> result = new ArrayList<>();
         for(mDataset.moveToFirst(); !mDataset.isAfterLast(); mDataset.moveToNext()) {
             String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
             float level = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);

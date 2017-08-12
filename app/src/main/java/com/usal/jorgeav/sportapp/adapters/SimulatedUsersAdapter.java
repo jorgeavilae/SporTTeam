@@ -24,11 +24,8 @@ import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 13/07/2017.
- */
-
 public class SimulatedUsersAdapter extends RecyclerView.Adapter<SimulatedUsersAdapter.ViewHolder> {
+    @SuppressWarnings("unused")
     private static final String TAG = SimulatedUsersAdapter.class.getSimpleName();
 
     private Cursor mDataset;
@@ -85,7 +82,7 @@ public class SimulatedUsersAdapter extends RecyclerView.Adapter<SimulatedUsersAd
         notifyDataSetChanged();
     }
 
-    public void setDataset(Cursor mDataset) {
+    private void setDataset(Cursor mDataset) {
         this.mDataset = mDataset;
     }
 

@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.adapters;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -15,25 +14,23 @@ import com.bumptech.glide.RequestManager;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 15/06/2017.
- */
-
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
+    @SuppressWarnings("unused")
     private static final String TAG = AlarmAdapter.class.getSimpleName();
 
     private Cursor mDataset;
-    private OnAlarmitemClickListener mClickListener;
+    private OnAlarmItemClickListener mClickListener;
     // To use Glide with hosted Fragment Context (https://stackoverflow.com/a/32887693/4235666)
     private final RequestManager mGlide;
 
-    public AlarmAdapter(Cursor mDataset, OnAlarmitemClickListener clickListener, RequestManager glide) {
+    public AlarmAdapter(Cursor mDataset, OnAlarmItemClickListener clickListener, RequestManager glide) {
         this.mDataset = mDataset;
         this.mClickListener = clickListener;
         this.mGlide = glide;
@@ -41,8 +38,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     @Override
     public AlarmAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View alarmView = inflater.inflate(R.layout.alarm_item_list, parent, false);
 
         return new AlarmAdapter.ViewHolder(alarmView);
@@ -53,9 +49,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         if (mDataset.moveToPosition(position)) {
             // Set icon
             String sportId = mDataset.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
-            int sportDrawableResource = MyApplication.getAppContext().getResources()
-                    .getIdentifier(sportId , "drawable", MyApplication.getAppContext().getPackageName());
-            mGlide.load(sportDrawableResource).into(holder.imageViewAlarmSport);
+            mGlide.load(Utiles.getSportIconFromResource(sportId)).into(holder.imageViewAlarmSport);
 
             // Set title
             String fieldName = UtilesContentProvider.getFieldNameFromContentProvider(
@@ -79,7 +73,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public void setDataset(Cursor mDataset) {
+    private void setDataset(Cursor mDataset) {
         this.mDataset = mDataset;
     }
 
@@ -113,7 +107,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         }
     }
 
-    public interface OnAlarmitemClickListener {
+    public interface OnAlarmItemClickListener {
         void onAlarmClick(String alarmId);
     }
 }

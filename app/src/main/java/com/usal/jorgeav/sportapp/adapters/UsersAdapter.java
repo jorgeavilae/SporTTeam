@@ -3,7 +3,6 @@ package com.usal.jorgeav.sportapp.adapters;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +17,8 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 26/05/2017.
- */
-
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
+    @SuppressWarnings("unused")
     private static final String TAG = UsersAdapter.class.getSimpleName();
 
     private Cursor mDataset;
@@ -48,10 +44,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         if (mDataset.moveToPosition(position)) {
             // Set icon
             String userPicture = mDataset.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
-            if (userPicture != null && !TextUtils.isEmpty(userPicture))
-                mGlide.load(Uri.parse(userPicture)).asBitmap().into(holder.imageViewUserPhoto);
-            else
-                holder.imageViewUserPhoto.setImageResource(R.drawable.profile_picture_placeholder);
+            mGlide.load(Uri.parse(userPicture)).asBitmap()
+                    .placeholder(R.drawable.profile_picture_placeholder)
+                    .into(holder.imageViewUserPhoto);
 
             // Set title
             holder.textViewUserName.setText(mDataset.getString(SportteamContract.UserEntry.COLUMN_NAME));
@@ -66,7 +61,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public void setDataset(Cursor mDataset) {
+    private void setDataset(Cursor mDataset) {
         this.mDataset = mDataset;
     }
 

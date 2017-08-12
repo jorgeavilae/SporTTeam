@@ -12,13 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by Jorge Avila on 03/08/2017.
- */
 
 public class SportSpinnerAdapter extends ArrayAdapter {
     ArrayList<String> mDataset;
@@ -36,18 +33,16 @@ public class SportSpinnerAdapter extends ArrayAdapter {
             convertView = inflater.inflate(R.layout.sport_spinner_item, parent, false);
         }
 
+        int sportDrawableResource = Utiles.getSportIconFromResource(sportId);
+        ImageView icon = (ImageView) convertView.findViewById(R.id.sport_spinner_item_icon);
+        icon.setImageResource(sportDrawableResource);
+
         int sportStringResource = parent.getContext().getResources()
                 .getIdentifier(sportId , "string", parent.getContext().getPackageName());
         TextView text = (TextView) convertView.findViewById(R.id.sport_spinner_item_text);
         text.setText(parent.getContext().getString(sportStringResource));
 
-        int sportDrawableResource = parent.getContext().getResources()
-                .getIdentifier(sportId , "drawable", parent.getContext().getPackageName());
-        ImageView icon = (ImageView) convertView.findViewById(R.id.sport_spinner_item_icon);
-        icon.setImageResource(sportDrawableResource);
-
         return convertView;
-
     }
 
     @NonNull
