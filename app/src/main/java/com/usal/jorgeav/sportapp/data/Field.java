@@ -9,26 +9,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 25/04/2017.
- */
-
 public class Field implements Parcelable {
-    String id;
-    String name;
-    String address;
-    Double coord_latitude;
-    Double coord_longitude;
-    String city;
-    Long opening_time;
-    Long closing_time;
-    String creator;
-    HashMap<String, SportCourt> sport;
+    private String id;
+    private String name;
+    private String address;
+    private Double coord_latitude;
+    private Double coord_longitude;
+    private String city;
+    private Long opening_time;
+    private Long closing_time;
+    private String creator;
+    private HashMap<String, SportCourt> sport;
 
     public Field() {
+        // Default constructor required for calls to DataSnapshot.getValue(Field.class)
     }
 
-    public Field(String id, String name, String address, Double coord_latitude, Double coord_longitude, String city, Long opening_time, Long closing_time, String creator, List<SportCourt> sport) {
+    public Field(String id, String name, String address, Double coord_latitude, Double coord_longitude,
+                 String city, Long opening_time, Long closing_time, String creator, List<SportCourt> sport) {
         this.id = id;
         this.name = name;
         this.address = address;

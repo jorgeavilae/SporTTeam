@@ -8,16 +8,13 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import java.io.Serializable;
 import java.util.HashMap;
 
-/**
- * Created by Jorge Avila on 22/07/2017.
- */
-
 public class SportCourt implements Parcelable, Serializable {
-    String sport_id;
-    Double punctuation;
-    Long votes;
+    private String sport_id;
+    private Double punctuation;
+    private Long votes;
 
     public SportCourt() {
+        // Default constructor required for calls to DataSnapshot.getValue(SportCourt.class)
     }
 
     public SportCourt(String sport_id, Double punctuation, Long votes) {

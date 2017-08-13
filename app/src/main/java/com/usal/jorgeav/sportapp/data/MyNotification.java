@@ -6,6 +6,7 @@ import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class MyNotification {
     private Long notification_type;
     private Boolean checked;
@@ -16,12 +17,12 @@ public class MyNotification {
     private Long data_type;
     private Long date;
 
-    @SuppressWarnings("unused")
     public MyNotification() {
         // Default constructor required for calls to DataSnapshot.getValue(MyNotification.class)
     }
 
-    public MyNotification(Long notification_type, Boolean checked, String title, String message, String extra_data_one, String extra_data_two, Long data_type, Long date) {
+    public MyNotification(Long notification_type, Boolean checked, String title, String message,
+                          String extra_data_one, String extra_data_two, Long data_type, Long date) {
         this.notification_type = notification_type;
         this.checked = checked;
         this.title = title;

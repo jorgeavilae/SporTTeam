@@ -5,18 +5,15 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 13/07/2017.
- */
-
+@SuppressWarnings("unused")
 public class SimulatedUser {
-    String alias;
-    String profile_picture;
-    Long age;
-    String owner;
+    private String alias;
+    private String profile_picture;
+    private Long age;
+    private String owner;
 
     public SimulatedUser() {
-        // Default constructor required for calls to DataSnapshot.getValue(Invitation.class)
+        // Default constructor required for calls to DataSnapshot.getValue(SimulatedUser.class)
     }
 
     public SimulatedUser(String alias, String profile_picture, Long age, String owner) {

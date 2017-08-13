@@ -5,15 +5,11 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 08/07/2017.
- */
-
 public class Invitation {
-    String sender;
-    String receiver;
-    String event;
-    Long date;
+    private String sender;
+    private String receiver;
+    private String event;
+    private Long date;
 
     public Invitation() {
         // Default constructor required for calls to DataSnapshot.getValue(Invitation.class)

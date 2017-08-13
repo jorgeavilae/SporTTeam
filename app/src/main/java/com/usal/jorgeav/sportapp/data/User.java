@@ -5,25 +5,24 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 23/04/2017.
- */
-
 public class User {
-    String uid;
-    String email;
-    String alias;
-    String city;
-    Double coord_latitude;
-    Double coord_longitude;
-    Long age;
-    String profile_picture;
-    Map<String, Double> sports_practiced;
+    private String uid;
+    private String email;
+    private String alias;
+    private String city;
+    private Double coord_latitude;
+    private Double coord_longitude;
+    private Long age;
+    private String profile_picture;
+    private Map<String, Double> sports_practiced;
 
     public User() {
+        // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(String uid, String email, String alias, String city, Double coord_latitude, Double coord_longitude, Long age, String profile_picture, Map<String, Double> sports_practiced) {
+    public User(String uid, String email, String alias, String city,
+                Double coord_latitude, Double coord_longitude, Long age, String profile_picture,
+                Map<String, Double> sports_practiced) {
         this.uid = uid;
         this.email = email;
         this.alias = alias;

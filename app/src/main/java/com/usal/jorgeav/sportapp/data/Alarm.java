@@ -5,25 +5,26 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 15/06/2017.
- */
-
 public class Alarm {
-    String id;
-    String sport_id;
-    String field_id;
-    String city;
-    Long date_from;
-    Long date_to;
-    Long total_players_from;
-    Long total_players_to;
-    Long empty_players_from;
-    Long empty_players_to;
+    private String id;
+    private String sport_id;
+    private String field_id;
+    private String city;
+    private Long date_from;
+    private Long date_to;
+    private Long total_players_from;
+    private Long total_players_to;
+    private Long empty_players_from;
+    private Long empty_players_to;
 
-    public Alarm(){}
+    public Alarm(){
+        // Default constructor required for calls to DataSnapshot.getValue(Alarm.class)
+    }
 
-    public Alarm(String id, String sport_id, String field_id, String city, Long date_from, Long date_to, Long total_players_from, Long total_players_to, Long empty_players_from, Long empty_players_to) {
+    public Alarm(String id, String sport_id, String field_id, String city,
+                 Long date_from, Long date_to,
+                 Long total_players_from, Long total_players_to,
+                 Long empty_players_from, Long empty_players_to) {
         this.id = id;
         this.sport_id = sport_id;
         this.field_id = field_id;

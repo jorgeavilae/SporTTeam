@@ -5,19 +5,16 @@ import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 
-/**
- * Created by Jorge Avila on 15/07/2017.
- */
-
+@SuppressWarnings("unused")
 public class MyPlace implements Parcelable {
-    String status;
-    String placeId;
-    String address;
-    String shortNameLocality;
-    String longNameLocality;
-    LatLng coordinates;
-    LatLng viewPortNortheast;
-    LatLng viewPortSouthwest;
+    private String status;
+    private String placeId;
+    private String address;
+    private String shortNameLocality;
+    private String longNameLocality;
+    private LatLng coordinates;
+    private LatLng viewPortNortheast;
+    private LatLng viewPortSouthwest;
 
     public MyPlace(String status, String placeId, String address, String shortNameLocality,
                    String longNameLocality, LatLng coordinates, LatLng viewPortNortheast, LatLng viewPortSouthwest) {
@@ -103,7 +100,7 @@ public class MyPlace implements Parcelable {
         dest.writeParcelable(this.viewPortSouthwest, flags);
     }
 
-    protected MyPlace(Parcel in) {
+    private MyPlace(Parcel in) {
         this.status = in.readString();
         this.placeId = in.readString();
         this.address = in.readString();

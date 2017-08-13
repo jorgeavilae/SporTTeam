@@ -9,32 +9,28 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 23/04/2017.
- */
-
 public class Event implements Parcelable {
-    String event_id;
-    String sport_id;
-    String field_id;
-    String name;
-    String address;
-    String city;
-    Double coord_latitude;
-    Double coord_longitude;
-    Long date;
-    String owner;
-    Long total_players;
-    Long empty_players;
-    HashMap<String, Boolean> participants;
-    HashMap<String, SimulatedUser> simulated_participants;
+    private String event_id;
+    private String sport_id;
+    private String field_id;
+    private String name;
+    private String address;
+    private String city;
+    private Double coord_latitude;
+    private Double coord_longitude;
+    private Long date;
+    private String owner;
+    private Long total_players;
+    private Long empty_players;
+    private HashMap<String, Boolean> participants;
+    private HashMap<String, SimulatedUser> simulated_participants;
 
     public Event() {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
-    public Event(String mId, String mSport, String mField, String address, LatLng coord, String mName, String mCity,
-                 Long mDate, String mOwner, Long mTotalPlayers, Long mEmptyPlayers,
+    public Event(String mId, String mSport, String mField, String address, LatLng coord, String mName,
+                 String mCity, Long mDate, String mOwner, Long mTotalPlayers, Long mEmptyPlayers,
                  HashMap<String, Boolean> participants, HashMap<String, SimulatedUser> simulated_participants) {
         this.event_id = mId;
         this.sport_id = mSport;
@@ -122,7 +118,7 @@ public class Event implements Parcelable {
     }
 
     public void addToParticipants(String userId, Boolean participates) {
-        if (this.participants == null) this.participants = new HashMap<String, Boolean>();
+        if (this.participants == null) this.participants = new HashMap<>();
         this.participants.put(userId, participates);
     }
 
@@ -134,7 +130,7 @@ public class Event implements Parcelable {
     }
 
     public void addToSimulatedParticipants(String key, SimulatedUser participant) {
-        if (this.simulated_participants == null) this.simulated_participants = new HashMap<String, SimulatedUser>();
+        if (this.simulated_participants == null) this.simulated_participants = new HashMap<>();
         this.simulated_participants.put(key, participant);
     }
 
@@ -191,8 +187,8 @@ public class Event implements Parcelable {
 
         Event event = (Event) o;
 
-        if (total_players != event.total_players) return false;
-        if (empty_players != event.empty_players) return false;
+        if (total_players.longValue() != event.total_players.longValue()) return false;
+        if (empty_players.longValue() != event.empty_players.longValue()) return false;
         if (event_id != null ? !event_id.equals(event.event_id) : event.event_id != null)
             return false;
         if (sport_id != null ? !sport_id.equals(event.sport_id) : event.sport_id != null)

@@ -7,10 +7,6 @@ import com.usal.jorgeav.sportapp.data.Field;
 
 import java.util.Calendar;
 
-/**
- * Created by Jorge Avila on 28/07/2017.
- */
-
 public class MyCalendarEvent extends BaseCalendarEvent {
     private String event_id;
     private String sport_id;
@@ -22,41 +18,9 @@ public class MyCalendarEvent extends BaseCalendarEvent {
     private Long total_players;
     private Long empty_players;
 
-    private int mDrawableId;
-
-    /**
-     * Initializes the event
-     *
-     * @param title       The title of the event.
-     * @param description The description of the event.
-     * @param location    The location of the event.
-     * @param color       The color of the event (for display in the app).
-     * @param startTime   The start time of the event.
-     * @param endTime     The end time of the event.
-     * @param allDay      Indicates if the event lasts the whole day.
-     */
-    private MyCalendarEvent(String title, String description, String location, int color, Calendar startTime, Calendar endTime, boolean allDay) {
-        super(title, description, location, color, startTime, endTime, allDay);
-    }
-
-    /**
-     * Initializes the event
-     *
-     * @param id          The id of the event.
-     * @param color       The color of the event.
-     * @param title       The title of the event.
-     * @param description The description of the event.
-     * @param location    The location of the event.
-     * @param dateStart   The start date of the event.
-     * @param dateEnd     The end date of the event.
-     * @param allDay      Int that can be equal to 0 or 1.
-     * @param duration    The duration of the event in RFC2445 format.
-     */
-    public MyCalendarEvent(long id, int color, String title, String description, String location, long dateStart, long dateEnd, int allDay, String duration) {
+    private MyCalendarEvent(long id, int color, String title, String description, String location, long dateStart, long dateEnd, int allDay, String duration) {
         super(id, color, title, description, location, dateStart, dateEnd, allDay, duration);
     }
-
-
 
     private void setEvent_id(String event_id) {
         this.event_id = event_id;
@@ -95,7 +59,6 @@ public class MyCalendarEvent extends BaseCalendarEvent {
     }
 
     public String getEvent_id() {
-
         return event_id;
     }
 
@@ -140,7 +103,7 @@ public class MyCalendarEvent extends BaseCalendarEvent {
         public static MyCalendarEvent newInstance(Event event, Field field, int color) {
 
             // Set field name or event address
-            String place = "";
+            String place;
             if (field == null) place = event.getAddress();
             else place = field.getName();
 

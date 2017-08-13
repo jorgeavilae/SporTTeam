@@ -5,16 +5,12 @@ import com.github.tibolte.agendacalendarview.models.CalendarEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Jorge Avila on 28/07/2017.
- */
-
 public class MyCalendarEventList {
     private List<MyCalendarEvent> mOwnEventList;
     private List<MyCalendarEvent> mParticipationEventList;
 
-    public MyCalendarEventList(List<MyCalendarEvent> mOwnEventListlist, List<MyCalendarEvent> mParticipationEventList) {
-        this.mOwnEventList = mOwnEventListlist;
+    public MyCalendarEventList(List<MyCalendarEvent> mOwnEventList, List<MyCalendarEvent> mParticipationEventList) {
+        this.mOwnEventList = mOwnEventList;
         this.mParticipationEventList = mParticipationEventList;
         notifyListChange();
     }
