@@ -358,7 +358,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public void setParticipants(HashMap<String, Boolean> map) {
         mParticipants = map;
     }
-
     @Override
     public void setSimulatedParticipants(HashMap<String, SimulatedUser> map) {
         mSimulatedParticipants = map;

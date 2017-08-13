@@ -69,8 +69,7 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
             ((EventsActivity)mNewEventView.getActivityContext()).mCity = null;
             ((EventsActivity)mNewEventView.getActivityContext()).mCoord = null;
             mNewEventView.getThis().resetBackStack();
-        } else
-            Toast.makeText(mNewEventView.getActivityContext(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private boolean isValidSport(String sport) {
@@ -78,6 +77,7 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
         String[] arraySports = mNewEventView.getActivityContext().getResources().getStringArray(R.array.sport_id_values);
         for (String sportArr : arraySports)
             if (sport.equals(sportArr)) return true;
+        Toast.makeText(mNewEventView.getActivityContext(), R.string.toast_sport_invalid, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "isValidSport: not valid");
         return false;
     }
@@ -98,6 +98,7 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
                 && field.containsSportCourt(sportId))
             return true;
         else {
+            Toast.makeText(mNewEventView.getActivityContext(), R.string.toast_place_invalid, Toast.LENGTH_SHORT).show();
             Log.e(TAG, "isValidField: not valid");
             return false;
         }
@@ -105,18 +106,21 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
 
     private boolean isValidName(String name) {
         if (!TextUtils.isEmpty(name)) return true;
+        Toast.makeText(mNewEventView.getActivityContext(), R.string.error_invalid_name, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "isValidName: not valid");
         return false;
     }
 
     private boolean isValidOwner(String uid) {
         if (!TextUtils.isEmpty(uid)) return true;
+        Toast.makeText(mNewEventView.getActivityContext(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "isValidOwner: not valid");
         return false;
     }
 
     private boolean isDateTimeCorrect(Long date, Long time) {
         if (date != null && time != null && System.currentTimeMillis() < date + time) return true;
+        Toast.makeText(mNewEventView.getActivityContext(), R.string.toast_date_invalid, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "isDateTimeCorrect: incorrect");
         return false;
     }
@@ -126,6 +130,7 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
             if (Integer.valueOf(total) >= Integer.valueOf(empty) // Total player must be grater than empty
                     || (!Utiles.sportNeedsField(sportId) && empty.equals("0"))) // OR the sport doesn't need a field and infinite is marked
                 return true;
+        Toast.makeText(mNewEventView.getActivityContext(), R.string.toast_players_relation_invalid, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "isPlayersCorrect: incorrect");
         return false;
     }
@@ -152,7 +157,7 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String eventId, city, sportId;
+        String eventId;
         switch (id) {
             case SportteamLoader.LOADER_EVENT_ID:
                 eventId = args.getString(NewEventFragment.BUNDLE_EVENT_ID);
@@ -167,8 +172,8 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
                 return SportteamLoader
                         .cursorLoaderEventSimulatedParticipants(mNewEventView.getActivityContext(), eventId);
             case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
-                city = UtilesPreferences.getCurrentUserCity(mNewEventView.getActivityContext());
-                sportId = args.getString(NewEventFragment.BUNDLE_SPORT_SELECTED_ID);
+                String city = UtilesPreferences.getCurrentUserCity(mNewEventView.getActivityContext());
+                String sportId = args.getString(NewEventFragment.BUNDLE_SPORT_SELECTED_ID);
                 return SportteamLoader
                         .cursorLoaderFieldsFromCityWithSport(mNewEventView.getActivityContext(), city, sportId);
         }
