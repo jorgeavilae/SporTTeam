@@ -29,7 +29,7 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
 
     private NewFieldContract.View mNewFieldView;
 
-    NewFieldPresenter(NewFieldContract.View view){
+    NewFieldPresenter(NewFieldContract.View view) {
         this.mNewFieldView = view;
     }
 
@@ -43,20 +43,23 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
                 && isTimesCorrect(openMillis, closeMillis) && isValidCreator(userId)) {
 
             //If are equals means "all day" so: from 0:00 to 0:00
-            if (openMillis.longValue() == closeMillis.longValue()) {openMillis = 0L; closeMillis = 0L;}
+            if (openMillis.longValue() == closeMillis.longValue()) {
+                openMillis = 0L;
+                closeMillis = 0L;
+            }
 
             Field field = new Field(id, name, address, coords.latitude, coords.longitude, city,
                     openMillis, closeMillis, userId, sports);
 
-            Log.d(TAG, "addField: "+field);
-            if(TextUtils.isEmpty(field.getId()))
+            Log.d(TAG, "addField: " + field);
+            if (TextUtils.isEmpty(field.getId()))
                 FirebaseActions.addField(field);
             else
                 FirebaseActions.updateField(field);
-            ((FieldsActivity)mNewFieldView.getActivityContext()).mFieldId = null;
-            ((FieldsActivity)mNewFieldView.getActivityContext()).mAddress = null;
-            ((FieldsActivity)mNewFieldView.getActivityContext()).mCity = null;
-            ((FieldsActivity)mNewFieldView.getActivityContext()).mCoord = null;
+            ((FieldsActivity) mNewFieldView.getActivityContext()).mFieldId = null;
+            ((FieldsActivity) mNewFieldView.getActivityContext()).mAddress = null;
+            ((FieldsActivity) mNewFieldView.getActivityContext()).mCity = null;
+            ((FieldsActivity) mNewFieldView.getActivityContext()).mCoord = null;
             mNewFieldView.getThis().resetBackStack();
         }
     }
@@ -156,7 +159,7 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
             case SportteamLoader.LOADER_FIELD_SPORTS_ID:
                 ArrayList<SportCourt> sports = new ArrayList<>();
                 //Loader reuses Cursor so move to first position
-                for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                     String sportId = data.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
                     Double punctuation = data.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
                     Long votes = data.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);

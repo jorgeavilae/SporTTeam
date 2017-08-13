@@ -145,7 +145,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID))
                 fieldId = getArguments().getString(BUNDLE_FIELD_ID);
 
-            if (mCreator == null || TextUtils.isEmpty(mCreator)) mCreator = Utiles.getCurrentUserId();
+            if (mCreator == null || TextUtils.isEmpty(mCreator))
+                mCreator = Utiles.getCurrentUserId();
             if (newFieldAllDayTime.isChecked()) {
                 newFieldOpenTime.setText(UtilesTime.millisToTimeString(0));
                 newFieldCloseTime.setText(UtilesTime.millisToTimeString(0));
@@ -153,9 +154,9 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             mNewFieldPresenter.addField(
                     fieldId,
                     newFieldName.getText().toString(),
-                    ((FieldsActivity)getActivity()).mAddress,
-                    ((FieldsActivity)getActivity()).mCoord,
-                    ((FieldsActivity)getActivity()).mCity,
+                    ((FieldsActivity) getActivity()).mAddress,
+                    ((FieldsActivity) getActivity()).mCoord,
+                    ((FieldsActivity) getActivity()).mCity,
                     newFieldOpenTime.getText().toString(),
                     newFieldCloseTime.getText().toString(),
                     mCreator, mSports);
@@ -171,15 +172,18 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
 
         //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
         newFieldMap.onCreate(savedInstanceState);
-        try { MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         newFieldMap.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
 
                 // Coordinates selected previously
-                Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((FieldsActivity)getActivity()).mCoord);
+                Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((FieldsActivity) getActivity()).mCoord);
             }
         });
 
@@ -187,7 +191,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             @Override
             public void onClick(View view) {
                 if (mFieldList != null) // Wait till all Fields from city are loaded
-                    ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldList, false);
+                    ((FieldsActivity) getActivity()).startMapActivityForResult(mFieldList, false);
             }
         });
 
@@ -215,11 +219,15 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    newFieldOpenTime.setEnabled(false); newFieldOpenTime.setText(" ");
-                    newFieldCloseTime.setEnabled(false); newFieldCloseTime.setText(" ");
+                    newFieldOpenTime.setEnabled(false);
+                    newFieldOpenTime.setText(" ");
+                    newFieldCloseTime.setEnabled(false);
+                    newFieldCloseTime.setText(" ");
                 } else {
-                    newFieldOpenTime.setEnabled(true); newFieldOpenTime.setText("");
-                    newFieldCloseTime.setEnabled(true); newFieldCloseTime.setText("");
+                    newFieldOpenTime.setEnabled(true);
+                    newFieldOpenTime.setText("");
+                    newFieldCloseTime.setEnabled(true);
+                    newFieldCloseTime.setText("");
                 }
             }
         });
@@ -251,7 +259,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             mNewFieldPresenter.openField(getLoaderManager(), getArguments());
             sInitialize = true;
         } else { //Do when create a new Field
-            setSportCourts(((FieldsActivity)getActivity()).mSports);
+            setSportCourts(((FieldsActivity) getActivity()).mSports);
         }
     }
 
@@ -271,8 +279,10 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     public void onPause() {
         super.onPause();
         newFieldMap.onPause();
-        if (openTimePickerDialog != null && openTimePickerDialog.isShowing()) openTimePickerDialog.dismiss();
-        if (closeTimePickerDialog != null && closeTimePickerDialog.isShowing()) closeTimePickerDialog.dismiss();
+        if (openTimePickerDialog != null && openTimePickerDialog.isShowing())
+            openTimePickerDialog.dismiss();
+        if (closeTimePickerDialog != null && closeTimePickerDialog.isShowing())
+            closeTimePickerDialog.dismiss();
     }
 
     @Override
