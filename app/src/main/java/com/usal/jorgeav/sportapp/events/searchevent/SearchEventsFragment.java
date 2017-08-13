@@ -26,6 +26,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.adapters.SportSpinnerAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,18 +44,19 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
 
     String mSportIdSelected = "";
     SearchEventsContract.Presenter mSearchEventsPresenter;
-    EventsAdapter mEventsRecyclerAdapter;
 
-    @BindView(R.id.search_events_list)
-    RecyclerView searchEventsList;
-    @BindView(R.id.search_events_placeholder)
-    ConstraintLayout searchEventsPlaceholder;
     @BindView(R.id.search_events_button)
     Button searchEventsButton;
     @BindView(R.id.search_events_icon)
     ImageView searchEventsIcon;
     @BindView(R.id.search_events_sport)
     TextView searchEventsSportName;
+
+    @BindView(R.id.search_events_list)
+    RecyclerView searchEventsList;
+    EventsAdapter mEventsRecyclerAdapter;
+    @BindView(R.id.search_events_placeholder)
+    ConstraintLayout searchEventsPlaceholder;
 
     public SearchEventsFragment() {
         // Required empty public constructor
@@ -144,10 +146,9 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         searchEventsSportName.setVisibility(View.VISIBLE);
         searchEventsSportName.setText(getString(sportStringResource));
 
-        int sportDrawableResource = getResources()
-                .getIdentifier(sportId, "drawable", getActivityContext().getPackageName());
+        int sportDrawableResource = Utiles.getSportIconFromResource(sportId);
         searchEventsIcon.setVisibility(View.VISIBLE);
-        searchEventsIcon.setImageResource(sportDrawableResource);
+        Glide.with(this).load(sportDrawableResource).into(searchEventsIcon);
     }
 
     private void unsetSportSearched() {

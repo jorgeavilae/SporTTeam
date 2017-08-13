@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
@@ -12,7 +13,6 @@ import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 
 class SearchEventsPresenter implements SearchEventsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
-
     @SuppressWarnings("unused")
     private static final String TAG = SearchEventsPresenter.class.getSimpleName();
 
@@ -28,7 +28,8 @@ class SearchEventsPresenter implements SearchEventsContract.Presenter, LoaderMan
         loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_WITH_SPORT);
 
         String city = UtilesPreferences.getCurrentUserCity(mSearchEventsView.getActivityContext());
-        FirebaseSync.loadEventsFromCity(city);
+        if (city != null && !TextUtils.isEmpty(city))
+            FirebaseSync.loadEventsFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_FROM_CITY, b, this);
     }
 
