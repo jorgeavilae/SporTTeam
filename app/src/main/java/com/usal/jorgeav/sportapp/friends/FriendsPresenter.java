@@ -4,21 +4,19 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
-/**
- * Created by Jorge Avila on 26/05/2017.
- */
-
-public class FriendsPresenter implements FriendsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class FriendsPresenter implements FriendsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    @SuppressWarnings("unused")
     private static final String TAG = FriendsPresenter.class.getSimpleName();
 
-    FriendsContract.View mFriendsView;
+    private FriendsContract.View mFriendsView;
 
-    public FriendsPresenter(FriendsContract.View friendsView) {
+    FriendsPresenter(FriendsContract.View friendsView) {
         this.mFriendsView = friendsView;
     }
 
@@ -30,7 +28,8 @@ public class FriendsPresenter implements FriendsContract.Presenter, LoaderManage
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(currentUserID)) return null;
         switch (id) {
             case SportteamLoader.LOADER_FRIENDS_ID:
                 return SportteamLoader

@@ -5,11 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
-/**
- * Created by Jorge Avila on 26/05/2017.
- */
-
-public abstract class FriendsContract {
+abstract class FriendsContract {
 
     public interface Presenter {
         void loadFriend(LoaderManager loaderManager, Bundle b);

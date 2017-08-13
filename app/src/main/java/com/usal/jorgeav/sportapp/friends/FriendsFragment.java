@@ -25,18 +25,15 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 26/05/2017.
- */
-
 public class FriendsFragment extends BaseFragment implements FriendsContract.View, UsersAdapter.OnUserItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = FriendsFragment.class.getSimpleName();
 
     FriendsContract.Presenter mFriendsPresenter;
-    UsersAdapter mFriendsRecyclerAdapter;
 
     @BindView(R.id.friends_list)
     RecyclerView friendsRecyclerList;
+    UsersAdapter mFriendsRecyclerAdapter;
     @BindView(R.id.friends_placeholder)
     ConstraintLayout friendsPlaceholder;
 
