@@ -112,6 +112,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mMenu = menu;
         super.onCreateOptionsMenu(mMenu, inflater);
+        mMenu.clear();
     }
 
     @Override
@@ -303,7 +304,10 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void uiSetupForUserRelation(@ProfilePresenter.UserRelationType int relation) {
         if (relation == ProfilePresenter.RELATION_TYPE_ME) {
-            if (mMenu != null) getActivity().getMenuInflater().inflate(R.menu.menu_my_profile, mMenu);
+            if (mMenu != null) {
+                mMenu.clear();
+                getActivity().getMenuInflater().inflate(R.menu.menu_my_profile, mMenu);
+            }
         } else {
             if (mMenu != null) mMenu.clear();
 
@@ -436,6 +440,12 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             userSportList.setVisibility(View.GONE);
             userSportPlaceholder.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void showContent() {
+        super.showContent();
+        mProfilePresenter.getRelationTypeBetweenThisUserAndI();
     }
 
     @Override
