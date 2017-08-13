@@ -180,6 +180,8 @@
     <string name="action_change_age">Change age</string>
     <string name="event_invitations">Event invitations</string>
     <string name="friend_requests">Friend requests</string>
+    <string name="friend_request_sent">Friend request sent</string>
+    <string name="send_user_request">Send request</string>
     <string name="sports_practiced">Sports practiced</string>
     <string name="pick_sports_practiced">Pick sports practiced</string>
     <string name="toast_error_autocomplete_city">Error looking for cities</string>
@@ -216,8 +218,6 @@
     <string name="action_unanswered_invitations">Unanswered invitations</string>
     <string name="dialog_msg_delete_event">The event will be deleted and participants will be notified.</string>
     <string name="toast_msg_error_there_is_next_events">Sorry. there is next events</string>
-    <string name="user_request_sent">Request sent</string>
-    <string name="send_user_request">Send request</string>
     <string name="invite_user">Invite users</string>
     <string name="dialog_msg_cancel_invitation">Do you want to cancel this invitation?</string>
     <string name="dialog_msg_accept_participant">Accept as participant?</string>

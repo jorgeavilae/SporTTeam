@@ -353,7 +353,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 case ProfilePresenter.RELATION_TYPE_I_SEND_REQUEST:
                     userEventInvitationsButton.setVisibility(View.INVISIBLE);
                     userFriendRequestsButton.setVisibility(View.VISIBLE);
-                    userFriendRequestsButtonText.setText(R.string.user_request_sent);
+                    userFriendRequestsButtonText.setText(R.string.friend_request_sent);
                     userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {

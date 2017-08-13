@@ -24,13 +24,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class EventRequestsFragment extends BaseFragment implements EventRequestsContract.View, EventsAdapter.OnEventItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = EventRequestsFragment.class.getSimpleName();
 
     EventRequestsContract.Presenter mEventRequestsPresenter;
-    EventsAdapter mEventsRecyclerAdapter;
 
     @BindView(R.id.recycler_list)
     RecyclerView eventRequestsList;
+    EventsAdapter mEventsRecyclerAdapter;
     @BindView(R.id.list_placeholder)
     ConstraintLayout eventRequestsPlaceholder;
 
@@ -57,7 +58,6 @@ public class EventRequestsFragment extends BaseFragment implements EventRequests
         menu.clear();
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class EventRequestsFragment extends BaseFragment implements EventRequests
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Peticiones enviadas", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.action_event_requests), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 

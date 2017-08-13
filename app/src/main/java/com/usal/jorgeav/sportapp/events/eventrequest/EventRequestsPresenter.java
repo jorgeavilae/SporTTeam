@@ -4,21 +4,19 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
-/**
- * Created by Jorge Avila on 27/05/2017.
- */
-
-public class EventRequestsPresenter implements EventRequestsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class EventRequestsPresenter implements EventRequestsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    @SuppressWarnings("unused")
     private static final String TAG = EventRequestsPresenter.class.getSimpleName();
 
-    EventRequestsContract.View mEventRequestsView;
+    private EventRequestsContract.View mEventRequestsView;
 
-    public EventRequestsPresenter(EventRequestsContract.View mEventRequestsView) {
+    EventRequestsPresenter(EventRequestsContract.View mEventRequestsView) {
         this.mEventRequestsView = mEventRequestsView;
     }
 
@@ -30,7 +28,8 @@ public class EventRequestsPresenter implements EventRequestsContract.Presenter, 
     }
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(currentUserID)) return null;
         switch (id) {
             case SportteamLoader.LOADER_EVENT_REQUESTS_SENT_ID:
                 return SportteamLoader
