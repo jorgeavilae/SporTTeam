@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -135,8 +134,6 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
 
     @Override
     public void showResult(final String msg) {
-        Log.d(TAG, "showResult: " + msg);
-
         /* Perform UI actions (like display a Toast or press back) need to happen in UI thread
          * https://stackoverflow.com/a/3875204/4235666
          * https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)

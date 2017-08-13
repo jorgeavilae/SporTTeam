@@ -5,7 +5,6 @@ import android.net.Uri;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
 
-
 public abstract class SimulateParticipantContract {
 
     public interface Presenter {
