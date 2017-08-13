@@ -187,6 +187,7 @@
     <string name="event_invitations_received">Event invitations received</string>
     <string name="friend_requests">Friend requests</string>
     <string name="friend_request_sent">Friend request sent</string>
+    <string name="friend_requests_received">Friend requests received</string>
     <string name="send_user_request">Send request</string>
     <string name="sports_practiced">Sports practiced</string>
     <string name="pick_sports_practiced">Pick sports practiced</string>

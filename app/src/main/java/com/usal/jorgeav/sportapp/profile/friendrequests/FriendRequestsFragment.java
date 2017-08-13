@@ -23,24 +23,24 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 25/05/2017.
- */
-
 public class FriendRequestsFragment extends BaseFragment implements FriendRequestsContract.View,
         UsersAdapter.OnUserItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = FriendRequestsFragment.class.getSimpleName();
 
     FriendRequestsContract.Presenter mFriendRequestsPresenter;
-    UsersAdapter mUsersRecyclerAdapter;
-
     @BindView(R.id.recycler_list)
     RecyclerView friendRequestsList;
+    UsersAdapter mUsersRecyclerAdapter;
     @BindView(R.id.list_placeholder)
     ConstraintLayout friendRequestsPlaceholder;
 
     public FriendRequestsFragment() {
         // Required empty public constructor
+    }
+
+    public static FriendRequestsFragment newInstance() {
+        return new FriendRequestsFragment();
     }
 
     @Override
@@ -75,7 +75,7 @@ public class FriendRequestsFragment extends BaseFragment implements FriendReques
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Peticiones de amistad", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.friend_requests_received), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
