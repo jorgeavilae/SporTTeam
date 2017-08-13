@@ -26,20 +26,18 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 29/05/2017.
- */
-
 public class InvitationsSentFragment extends BaseFragment implements InvitationsSentContract.View, UsersAdapter.OnUserItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = InvitationsSentFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
-    private static String mEventId = "";
     InvitationsSentContract.Presenter mEventInvitationsPresenter;
-    UsersAdapter mUsersAdapter;
+
+    private static String mEventId = "";
 
     @BindView(R.id.recycler_list)
     RecyclerView userInvitationsSentList;
+    UsersAdapter mUsersAdapter;
     @BindView(R.id.list_placeholder)
     ConstraintLayout userInvitationsSentPlaceholder;
 
@@ -90,7 +88,7 @@ public class InvitationsSentFragment extends BaseFragment implements Invitations
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Usuarios invitados", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.action_unanswered_invitations), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -121,13 +119,15 @@ public class InvitationsSentFragment extends BaseFragment implements Invitations
 
     @Override
     public void onUserClick(final String uid) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        builder.setPositiveButton("Delete Invitation", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                .setMessage(R.string.dialog_msg_cancel_invitation)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mEventInvitationsPresenter.deleteInvitationToThisEvent(mEventId, uid);
                     }
                 })
-                .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                .setNegativeButton(android.R.string.no, null)
+                .setNeutralButton(R.string.see_details, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Fragment newFragment = ProfileFragment.newInstance(uid);
                         mFragmentManagementListener.initFragment(newFragment, true);

@@ -190,7 +190,6 @@
     <!-- Simulated User -->
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
-    <string name="action_unanswered_invitations">Unanswered invitations</string>
 
     <!-- Events Strings-->
     <string name="simulated_participants">Simulated Participants</string>
@@ -210,6 +209,7 @@
     <string name="event_state_request_rejected">Request rejected</string>
     <string name="dialog_msg_answer_invitation">Do you want to participate?</string>
     <string name="send_invitation">Send invitation</string>
+    <string name="action_unanswered_invitations">Unanswered invitations</string>
     <string name="dialog_msg_delete_event">The event will be deleted and participants will be notified.</string>
     <string name="toast_msg_error_there_is_next_events">Sorry. there is next events</string>
     <string name="delete_friend">Delete friend</string>
@@ -218,4 +218,5 @@
     <string name="user_request_sent">Request sent</string>
     <string name="send_user_request">Send request</string>
     <string name="invite_user">Invite users</string>
+    <string name="dialog_msg_cancel_invitation">Do you want to cancel this invitation?</string>
 </resources>
