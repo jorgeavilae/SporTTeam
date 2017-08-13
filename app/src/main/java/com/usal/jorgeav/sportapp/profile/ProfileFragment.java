@@ -202,7 +202,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edit_text_change_dialog, null);
         final EditText editText = (EditText) dialogView.findViewById(R.id.change_dialog_text);
         editText.setText(userName.getText());
-        editText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME|InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        editText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         editText.setHint(R.string.prompt_name);
 
         // Create dialog
@@ -248,6 +248,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         });
         alertDialog.show();
     }
+
     private void showDialogForEditAge() {
         // Prepare View
         final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edit_text_change_dialog, null);
@@ -296,7 +297,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
     @Override
     public void croppedResult(Uri photoCroppedUri) {
-        // Uri from cropped photo as result of UCrop
+        // Uri from cropped photo in filesystem as result of UCrop
         if (photoCroppedUri != null)
             mProfilePresenter.updateUserPhoto(photoCroppedUri);
     }
@@ -304,7 +305,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void uiSetupForUserRelation(@ProfilePresenter.UserRelationType int relation) {
         if (relation == ProfilePresenter.RELATION_TYPE_ME) {
-            if (mMenu != null) {
+            if (mMenu != null && getActivity() != null) {
                 mMenu.clear();
                 getActivity().getMenuInflater().inflate(R.menu.menu_my_profile, mMenu);
             }
@@ -405,8 +406,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void showUserImage(String imageUrl) {
         userImage.setVisibility(View.VISIBLE);
-        Glide.with(this.getActivity())
-                .load(imageUrl)
+        Glide.with(this).load(imageUrl)
                 .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)
                 .into(userImage);
@@ -437,7 +437,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             userSportList.setVisibility(View.VISIBLE);
             userSportPlaceholder.setVisibility(View.GONE);
         } else {
-            userSportList.setVisibility(View.GONE);
+            userSportList.setVisibility(View.INVISIBLE);
             userSportPlaceholder.setVisibility(View.VISIBLE);
         }
     }
