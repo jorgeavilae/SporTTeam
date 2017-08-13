@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.adduser;
+package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,9 +20,10 @@ import android.widget.Toast;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.adduser.NewUserContract;
+import com.usal.jorgeav.sportapp.adduser.NewUserFragment;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
-import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.yalantis.ucrop.UCrop;
 
@@ -46,7 +47,8 @@ public class NewUserActivity extends AppCompatActivity implements
 
     Fragment mDisplayedFragment;
 
-    ArrayList<Sport> sports;
+    public ArrayList<Sport> sports;
+    public boolean sportsInitialize;
 
     @BindView(R.id.new_user_toolbar)
     Toolbar newUserToolbar;
@@ -54,8 +56,6 @@ public class NewUserActivity extends AppCompatActivity implements
     ProgressBar newUserProgressbar;
     @BindView(R.id.new_user_content)
     FrameLayout newUserContent;
-
-    boolean sportsInitialize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

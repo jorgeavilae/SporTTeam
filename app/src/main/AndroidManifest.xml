@@ -98,7 +98,7 @@
             android:theme="@style/AppTheme.NoActionBar.Login"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".adduser.NewUserActivity"
+            android:name=".mainactivities.NewUserActivity"
             android:parentActivityName=".mainactivities.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Login"

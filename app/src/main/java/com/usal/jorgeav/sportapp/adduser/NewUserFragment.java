@@ -38,6 +38,7 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
+import com.usal.jorgeav.sportapp.mainactivities.NewUserActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import butterknife.BindView;
@@ -308,6 +309,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                         Long.parseLong(newUserAge.getText().toString()),
                         ((NewUserActivity) getActivity()).sports);
             } else {
+                showContent();
                 Toast.makeText(getActivity(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
             }
         }

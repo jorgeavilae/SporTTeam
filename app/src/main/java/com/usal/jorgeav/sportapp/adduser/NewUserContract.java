@@ -9,7 +9,7 @@ import com.usal.jorgeav.sportapp.data.Sport;
 
 import java.util.ArrayList;
 
-class NewUserContract {
+public class NewUserContract {
 
     public interface Presenter {
         void checkUserEmailExists(String email);

@@ -39,7 +39,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adduser.NewUserActivity;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
