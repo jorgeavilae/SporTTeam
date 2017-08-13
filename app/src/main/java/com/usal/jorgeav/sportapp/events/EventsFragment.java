@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +18,6 @@ import com.github.tibolte.agendacalendarview.models.CalendarEvent;
 import com.github.tibolte.agendacalendarview.models.DayItem;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEvent;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEventList;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyEventRenderer;
@@ -35,7 +33,8 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EventsFragment extends BaseFragment implements EventsContract.View, EventsAdapter.OnEventItemClickListener, CalendarPickerController {
+public class EventsFragment extends BaseFragment implements EventsContract.View, CalendarPickerController {
+    @SuppressWarnings("unused")
     private static final String TAG = EventsFragment.class.getSimpleName();
 
     EventsContract.Presenter mEventsPresenter;
@@ -63,8 +62,8 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_events_calendar, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_events_calendar, menu);
     }
 
     @Override
@@ -72,17 +71,14 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         super.onOptionsItemSelected(item);
         hideSoftKeyboard();
         if (item.getItemId() == R.id.action_new_event) {
-            Log.d(TAG, "onOptionsItemSelected: New Event");
             Fragment fragment = SelectSportFragment.newInstance();
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_event_requests) {
-            Log.d(TAG, "onOptionsItemSelected: Event Requests");
             Fragment fragment = EventRequestsFragment.newInstance();
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_search_events) {
-            Log.d(TAG, "onOptionsItemSelected: Search Events");
             Fragment fragment = SearchEventsFragment.newInstance();
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
@@ -113,9 +109,6 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         if (maxDateInMillis != null) maxDate.setTimeInMillis(maxDateInMillis);
         maxDate.add(Calendar.MONTH, 2);
 
-        Log.d(TAG, "initCalendar: "+minDate);
-        Log.d(TAG, "initCalendar: "+maxDate);
-
         // Init is the only way to pass events to eventsCalendar
         eventsAgendaCalendarView.init(mEventList.getAsCalendarEventList(), minDate, maxDate, Locale.getDefault(), this);
         eventsAgendaCalendarView.addEventRenderer(new MyEventRenderer());
@@ -124,7 +117,6 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated: ");
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
         mActionBarIconManagementListener.setToolbarAsNav();
     }
@@ -165,14 +157,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     }
 
     @Override
-    public void onEventClick(String eventId) {
-        Fragment newFragment = DetailEventFragment.newInstance(eventId);
-        mFragmentManagementListener.initFragment(newFragment, true);
-    }
-
-    @Override
     public void onDaySelected(DayItem dayItem) {
-        Log.d(TAG, "onDaySelected: "+dayItem);
     }
 
     @Override
@@ -185,6 +170,5 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
     @Override
     public void onScrollToDate(Calendar calendar) {
-        Log.d(TAG, "onScrollToDate: "+calendar);
     }
 }

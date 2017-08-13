@@ -4,21 +4,19 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
-/**
- * Created by Jorge Avila on 23/04/2017.
- */
+class EventsPresenter implements EventsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    @SuppressWarnings("unused")
+    private static final String TAG = EventsPresenter.class.getSimpleName();
 
-public class EventsPresenter implements EventsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String EVENTS_KEY = "EVENTS_KEY";
+    private EventsContract.View mEventsView;
 
-    EventsContract.View mEventsView;
-
-    public EventsPresenter(EventsContract.View eventsView) {
+    EventsPresenter(EventsContract.View eventsView) {
         this.mEventsView = eventsView;
     }
 
@@ -32,7 +30,8 @@ public class EventsPresenter implements EventsContract.Presenter, LoaderManager.
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(currentUserID)) return null;
         switch (id) {
             case SportteamLoader.LOADER_MY_EVENTS_ID:
                 return SportteamLoader

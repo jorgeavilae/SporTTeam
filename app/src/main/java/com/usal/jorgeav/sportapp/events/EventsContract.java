@@ -7,11 +7,7 @@ import android.support.v4.app.LoaderManager;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
 
-/**
- * Created by Jorge Avila on 23/04/2017.
- */
-
-public abstract class EventsContract {
+abstract class EventsContract {
 
     public interface Presenter {
         void loadEvents(LoaderManager loaderManager, Bundle b);
