@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.data.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -65,7 +66,9 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_US
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.TABLE_USER_SPORTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.UserEntry;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class SportteamProvider extends ContentProvider {
+    @SuppressWarnings("unused")
     private static final String TAG = SportteamProvider.class.getSimpleName();
 
     public static final int CODE_EMAIL_LOGGED = 10;
@@ -174,53 +177,53 @@ public class SportteamProvider extends ContentProvider {
 
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        Context context = getContext(); if (context == null) return 0;
+
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        int rowsInserted = 0;
-//        Log.d(TAG, "bulkInsert: uri "+uri);
-//        Log.d(TAG, "bulkInsert: values "+values);
+        int rowsInserted;
         switch (sUriMatcher.match(uri)) {
             case CODE_EVENTS:
-                rowsInserted = bulkInsert(uri, values, db, TABLE_EVENT);
+                rowsInserted = bulkInsert(values, db, TABLE_EVENT);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                     getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
                 }
                 return rowsInserted;
             case CODE_FIELDS:
-                rowsInserted = bulkInsert(uri, values, db, TABLE_FIELD);
+                rowsInserted = bulkInsert(values, db, TABLE_FIELD);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                     getContext().getContentResolver().notifyChange(FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI, null);
                 }
                 return rowsInserted;
             case CODE_FIELD_SPORT:
-                rowsInserted = bulkInsert(uri, values, db, TABLE_FIELD_SPORTS);
+                rowsInserted = bulkInsert(values, db, TABLE_FIELD_SPORTS);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                     getContext().getContentResolver().notifyChange(FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI, null);
                 }
                 return rowsInserted;
             case CODE_USER_SPORT:
-                rowsInserted = bulkInsert(uri, values, db, TABLE_USER_SPORTS);
+                rowsInserted = bulkInsert(values, db, TABLE_USER_SPORTS);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
                 return rowsInserted;
             case CODE_SIMULATED_PARTICIPANTS:
-                rowsInserted = bulkInsert(uri, values, db, TABLE_EVENT_SIMULATED_PARTICIPANT);
+                rowsInserted = bulkInsert(values, db, TABLE_EVENT_SIMULATED_PARTICIPANT);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
                 return rowsInserted;
             case CODE_FRIEND_REQUEST:
-                rowsInserted = bulkInsert(uri, values, db, TABLE_FRIENDS_REQUESTS);
+                rowsInserted = bulkInsert(values, db, TABLE_FRIENDS_REQUESTS);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                     getContext().getContentResolver().notifyChange(FriendRequestEntry.CONTENT_FRIEND_REQUESTS_WITH_USER_URI, null);
                 }
                 return rowsInserted;
             case CODE_FRIEND:
-                rowsInserted = bulkInsert(uri, values, db, TABLE_FRIENDS);
+                rowsInserted = bulkInsert(values, db, TABLE_FRIENDS);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                     getContext().getContentResolver().notifyChange(FriendsEntry.CONTENT_FRIEND_WITH_USER_URI, null);
@@ -228,7 +231,7 @@ public class SportteamProvider extends ContentProvider {
                 }
                 return rowsInserted;
             case CODE_EVENTS_PARTICIPATION:
-                rowsInserted = bulkInsert(uri, values, db, TABLE_EVENTS_PARTICIPATION);
+                rowsInserted = bulkInsert(values, db, TABLE_EVENTS_PARTICIPATION);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                     getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_USER_URI, null);
@@ -236,7 +239,7 @@ public class SportteamProvider extends ContentProvider {
                 }
                 return rowsInserted;
             case CODE_EVENT_INVITATIONS:
-                rowsInserted = bulkInsert(uri, values, db, TABLE_EVENT_INVITATIONS);
+                rowsInserted = bulkInsert(values, db, TABLE_EVENT_INVITATIONS);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                     getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_USER_URI, null);
@@ -244,7 +247,7 @@ public class SportteamProvider extends ContentProvider {
                 }
                 return rowsInserted;
             case CODE_EVENTS_REQUESTS:
-                rowsInserted = bulkInsert(uri, values, db, TABLE_EVENTS_REQUESTS);
+                rowsInserted = bulkInsert(values, db, TABLE_EVENTS_REQUESTS);
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                     getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI, null);
@@ -255,7 +258,7 @@ public class SportteamProvider extends ContentProvider {
                 return super.bulkInsert(uri, values);
         }
     }
-    private int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values, SQLiteDatabase db, String tableName) {
+    private int bulkInsert(@NonNull ContentValues[] values, SQLiteDatabase db, String tableName) {
         int rowsInserted = 0;
         db.beginTransaction();
         try {
@@ -270,6 +273,7 @@ public class SportteamProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+        Context context = getContext(); if (context == null) return 0;
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;
         switch (sUriMatcher.match(uri)) {
@@ -328,21 +332,21 @@ public class SportteamProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-//        Log.d(TAG, "delete: uri "+uri.toString());
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
 
     @Override
-    public String getType(Uri uri) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public String getType(@NonNull Uri uri) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
+        Context context = getContext(); if (context == null) return null;
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         Uri returnUri = null;
-        long _id = 0;
+        long _id;
         switch (sUriMatcher.match(uri)) {
             case CODE_EMAIL_LOGGED:
                 _id = db.insert(TABLE_EMAIL_LOGGED, null, values);
@@ -414,297 +418,143 @@ public class SportteamProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-//        Log.d(TAG, "insert: uri "+uri.toString());
-//        Log.d(TAG, "insert: values "+values);
         getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
+        Context context = getContext(); if (context == null) return null;
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         Cursor cursor;
         switch (sUriMatcher.match(uri)) {
             case CODE_EMAIL_LOGGED:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_EMAIL_LOGGED,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_EMAIL_LOGGED,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_USERS:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_USER,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_USER,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_FIELDS:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_FIELD,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_FIELD,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENTS:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_EVENT,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_EVENT,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_ALARMS:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_ALARM,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_ALARM,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_USER_SPORT:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_USER_SPORTS,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_USER_SPORTS,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_FIELD_SPORT:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_FIELD_SPORTS,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_FIELD_SPORTS,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_FIELD_WITH_FIELD_SPORT:
                 builder.setTables(FieldEntry.TABLES_FIELD_JOIN_FIELD_SPORT);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_SIMULATED_PARTICIPANTS:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_EVENT_SIMULATED_PARTICIPANT,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_EVENT_SIMULATED_PARTICIPANT,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_FRIEND_REQUEST:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_FRIENDS_REQUESTS,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_FRIENDS_REQUESTS,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_FRIEND_REQUEST_WITH_USER:
                 builder.setTables(FriendRequestEntry.TABLES_FRIENDS_REQUESTS_JOIN_USER);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_FRIEND:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_FRIENDS,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_FRIENDS,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_FRIEND_WITH_USER:
                 builder.setTables(FriendsEntry.TABLES_FRIENDS_JOIN_USER);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENTS_PARTICIPATION:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_EVENTS_PARTICIPATION,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_EVENTS_PARTICIPATION,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENTS_PARTICIPATION_WITH_USER:
                 builder.setTables(EventsParticipationEntry.TABLES_EVENTS_PARTICIPATION_JOIN_USER);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENTS_PARTICIPATION_WITH_EVENT:
                 builder.setTables(EventsParticipationEntry.TABLES_EVENTS_PARTICIPATION_JOIN_EVENT);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENT_INVITATIONS:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_EVENT_INVITATIONS,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_EVENT_INVITATIONS,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENT_INVITATIONS_WITH_USER:
                 builder.setTables(EventsInvitationEntry.TABLES_EVENT_INVITATIONS_JOIN_USER);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENT_INVITATIONS_WITH_EVENT:
                 builder.setTables(EventsInvitationEntry.TABLES_EVENT_INVITATIONS_JOIN_EVENT);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENTS_REQUESTS:
-                cursor = mOpenHelper.getReadableDatabase().query(
-                        TABLE_EVENTS_REQUESTS,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                cursor = mOpenHelper.getReadableDatabase().query(TABLE_EVENTS_REQUESTS,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENTS_REQUESTS_WITH_USER:
                 builder.setTables(EventRequestsEntry.TABLES_EVENTS_REQUESTS_JOIN_USER);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENTS_REQUESTS_WITH_EVENT:
                 builder.setTables(EventRequestsEntry.TABLES_EVENTS_REQUESTS_JOIN_EVENT);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_EVENTS_WITHOUT_RELATION_WITH_FRIEND:
                 builder.setTables(JoinQueryEntries.TABLES_EVENTS_JOIN_PARTICIPATION_P_JOIN_INVITATIONS_JOIN_REQUESTS);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT:
                 builder.setTables(JoinQueryEntries.TABLES_USERS_JOIN_FRIENDS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME:
                 builder.setTables(JoinQueryEntries.TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME:
                 builder.setTables(JoinQueryEntries.TABLES_EVENTS_JOIN_PARTICIPATION_JOIN_INVITATIONS_JOIN_REQUESTS);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_NOT_FRIENDS_USERS_FROM_CITY:
                 builder.setTables(JoinQueryEntries.TABLES_USERS_JOIN_FRIENDS);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case CODE_NOT_FRIENDS_USERS_WITH_NAME:
                 builder.setTables(JoinQueryEntries.TABLES_USERS_JOIN_FRIENDS);
                 cursor = builder.query(mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -714,60 +564,12 @@ public class SportteamProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection,
+    public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        /* TODO Deberia haber updates? comentar todo menos exception y comprobar si se produce
-         * Los cambios en la DDBB se hacen contra Firebase que los trae y los INSERTA
-         * En DBHelper esta puesto ON CONFLICT REPLACE
+        /* When data changes, the update are in Firebase and retrieve from there into Content Provider.
+         * When retrieve data that already are in Content Provider, it's replaced, because of all tables
+         * are created with ON CONFLICT REPLACE.
          */
-//        Log.e(TAG, "update: uri "+uri.toString());
-        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        int count = 0;
-        switch (sUriMatcher.match(uri)) {
-            case CODE_EMAIL_LOGGED:
-                count = db.update(TABLE_EMAIL_LOGGED, values, selection, selectionArgs);
-                break;
-            case CODE_USERS:
-                count = db.update(TABLE_USER, values, selection, selectionArgs);
-                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_NOT_FRIENDS_USERS_FROM_CITY_URI, null);
-                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_NOT_FRIENDS_USERS_WITH_NAME_URI, null);
-                break;
-            case CODE_EVENTS:
-                count = db.update(TABLE_EVENT, values, selection, selectionArgs);
-                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
-                break;
-            case CODE_FIELDS:
-                count = db.update(TABLE_FIELD, values, selection, selectionArgs);
-                getContext().getContentResolver().notifyChange(FieldEntry.CONTENT_FIELDS_WITH_FIELD_SPORT_URI, null);
-                break;
-            case CODE_FRIEND_REQUEST:
-                count = db.update(TABLE_FRIENDS_REQUESTS, values, selection, selectionArgs);
-                getContext().getContentResolver().notifyChange(FriendRequestEntry.CONTENT_FRIEND_REQUESTS_WITH_USER_URI, null);
-                break;
-            case CODE_FRIEND:
-                count = db.update(TABLE_FRIENDS, values, selection, selectionArgs);
-                getContext().getContentResolver().notifyChange(FriendsEntry.CONTENT_FRIEND_WITH_USER_URI, null);
-                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI, null);
-                break;
-            case CODE_EVENTS_PARTICIPATION:
-                count = db.update(TABLE_EVENTS_PARTICIPATION, values, selection, selectionArgs);
-                getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_USER_URI, null);
-                getContext().getContentResolver().notifyChange(EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_EVENT_URI, null);
-                break;
-            case CODE_EVENT_INVITATIONS:
-                count = db.update(TABLE_EVENT_INVITATIONS, values, selection, selectionArgs);
-                getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_USER_URI, null);
-                getContext().getContentResolver().notifyChange(EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_WITH_EVENT_URI, null);
-                break;
-            case CODE_EVENTS_REQUESTS:
-                count = db.update(TABLE_EVENTS_REQUESTS, values, selection, selectionArgs);
-                getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_USER_URI, null);
-                getContext().getContentResolver().notifyChange(EventRequestsEntry.CONTENT_EVENTS_REQUESTS_WITH_EVENT_URI, null);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-        }
-        getContext().getContentResolver().notifyChange(uri, null);
-        return count;
+        throw new UnsupportedOperationException("Not implemented");
     }
 }

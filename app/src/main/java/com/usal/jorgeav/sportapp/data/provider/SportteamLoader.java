@@ -11,7 +11,7 @@ import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
+@SuppressWarnings("SpellCheckingInspection")
 public final class SportteamLoader {
     @SuppressWarnings("unused")
     private static final String TAG = SportteamLoader.class.getSimpleName();
@@ -53,7 +53,7 @@ public final class SportteamLoader {
                 SportteamContract.EventEntry.COLUMN_DATE + " ASC");
     }
     public static CursorLoader cursorLoaderMyEventParticipation(Context context, String myUserID, boolean participate) {
-        // Return event data of my participation events
+        // Return my participation events
         return new CursorLoader(
                 context,
                 SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_EVENT_URI,
@@ -63,6 +63,7 @@ public final class SportteamLoader {
                 new String[]{myUserID, String.valueOf(participate?1:0)},
                 SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
     }
+
     public static final int LOADER_EVENT_ID = 2010;
     public static final int LOADER_EVENTS_PARTICIPANTS_ID = 2011;
     public static final int LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID = 2012;

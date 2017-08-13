@@ -4,26 +4,51 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"unused", "WeakerAccess", "SpellCheckingInspection"})
 public final class SportteamContract {
 
     /*
-     * The "Content authority" is a name for the entire content provider, similar to the
-     * relationship between a domain name and its website. A convenient string to use for the
-     * content authority is the package name for the app, which is guaranteed to be unique on the
-     * Play Store.
+     * Name for the entire content provider. Is convenient to use for the
+     * content authority the package name for the app.
      */
     public static final String CONTENT_AUTHORITY = "com.usal.jorgeav.sportapp";
 
-    /*
-     * Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
-     * the content provider.
-     */
+    /* Use CONTENT_AUTHORITY to create the base of all URI's to contact the content provider. */
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
     public static final String PATH_EMAIL_LOGGED = "email_logged";
-    /* Used internally as the name of our email logged table. */
+    public static final String PATH_USERS = "users";
+    public static final String PATH_USER_RELATION_USER = "user_relation_user";
+    public static final String PATH_USER_RELATION_EVENT = "user_relation_event";
+    public static final String PATH_USER_SPORT = "userSport";
+    public static final String PATH_FIELDS = "fields";
+    public static final String PATH_FIELDS_WITH_FIELD_SPORT = "fields_fieldSport";
+    public static final String PATH_FIELD_SPORT = "fieldSport";
+    public static final String PATH_ALARMS = "alarms";
+    public static final String PATH_EVENTS = "events";
+    public static final String PATH_EVENT_SIMULATED_PARTICIPANT = "eventSimulatedParticipant";
+    public static final String PATH_FRIENDS_REQUESTS = "friendRequests";
+    public static final String PATH_FRIENDS_REQUESTS_WITH_USER = "friendRequests_user";
+    public static final String PATH_FRIENDS = "friends";
+    public static final String PATH_FRIENDS_WITH_USER = "friends_user";
+    public static final String PATH_EVENTS_PARTICIPATION = "eventsParticipation";
+    public static final String PATH_EVENTS_PARTICIPATION_WITH_USER = "eventsParticipation_user";
+    public static final String PATH_EVENTS_PARTICIPATION_WITH_EVENT = "eventsParticipation_event";
+    public static final String PATH_EVENT_INVITATIONS = "eventInvitations";
+    public static final String PATH_EVENT_INVITATIONS_WITH_USER = "eventInvitations_user";
+    public static final String PATH_EVENT_INVITATIONS_WITH_EVENT = "eventInvitations_event";
+    public static final String PATH_EVENTS_REQUESTS = "eventRequests";
+    public static final String PATH_EVENTS_REQUESTS_WITH_USER = "eventRequests_user";
+    public static final String PATH_EVENTS_REQUESTS_WITH_EVENT = "eventRequests_event";
+    public static final String PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND = "myEvent_friendUser";
+    public static final String PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME = "cityEvent_myUser";
+    public static final String PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME = "citySportEvent_myUser";
+    public static final String PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS = "friendsUser_myEvent";
+    public static final String PATH_NOT_FRIENDS_USERS_FROM_CITY = "notFriendsCity_users";
+    public static final String PATH_NOT_FRIENDS_USERS_WITH_NAME = "notFriendsName_users";
+
+    /* Used internally as the name of email logged table. */
     public static final String TABLE_EMAIL_LOGGED = "email_logged";
     /* Inner class that defines the table contents of the email logged table */
     public static final class EmailLoggedEntry implements BaseColumns {
@@ -55,13 +80,7 @@ public final class SportteamContract {
         }
     }
 
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_USERS = "users";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_USER_RELATION_USER = "user_relation_user";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_USER_RELATION_EVENT = "user_relation_event";
-    /* Used internally as the name of our user table. */
+    /* Used internally as the name of user table. */
     public static final String TABLE_USER = "user";
     /* Inner class that defines the table contents of the user table */
     public static final class UserEntry implements BaseColumns {
@@ -130,8 +149,6 @@ public final class SportteamContract {
     }
 
 
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_USER_SPORT = "userSport";
     /* Used internally as the name of our user sports table. */
     public static final String TABLE_USER_SPORTS = "userSport";
     /* Inner class that defines the table contents of the user sport table
@@ -173,11 +190,6 @@ public final class SportteamContract {
         }
     }
 
-
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_FIELDS = "fields";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_FIELDS_WITH_FIELD_SPORT = "fields_fieldSport";
     /* Used internally as the name of our field table. */
     public static final String TABLE_FIELD = "field";
     /* Inner class that defines the table contents of the field table */
@@ -251,9 +263,6 @@ public final class SportteamContract {
         }
     }
 
-
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_FIELD_SPORT = "fieldSport";
     /* Used internally as the name of our field sports table. */
     public static final String TABLE_FIELD_SPORTS = "fieldSport";
     /* Inner class that defines the table contents of the field sport table
@@ -299,9 +308,6 @@ public final class SportteamContract {
         }
     }
 
-
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_ALARMS = "alarms";
     /* Used internally as the name of our alarm table. */
     public static final String TABLE_ALARM = "alarm";
     /* Inner class that defines the table contents of the alarm table */
@@ -370,9 +376,6 @@ public final class SportteamContract {
         }
     }
 
-
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENTS = "events";
     /* Used internally as the name of our event table. */
     public static final String TABLE_EVENT = "event";
     /* Inner class that defines the table contents of the event table */
@@ -449,13 +452,10 @@ public final class SportteamContract {
         }
     }
 
-
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENT_SIMULATED_PARTICIPANT = "eventSimulatedParticipant";
     /* Used internally as the name of the simulated participant table. */
     public static final String TABLE_EVENT_SIMULATED_PARTICIPANT = "eventSimulatedParticipant";
     /* Inner class that defines the table contents of the simulated participant table
-     * This table store a row for every simulated participant in event in the event table */
+     * This table store a row for every simulated participant in events */
     public static final class SimulatedParticipantEntry implements BaseColumns {
 
         /* The base CONTENT_URI used to query the eventSimulatedParticipant table from the content provider */
@@ -505,11 +505,6 @@ public final class SportteamContract {
         }
     }
 
-
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_FRIENDS_REQUESTS = "friendRequests";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_FRIENDS_REQUESTS_WITH_USER = "friendRequests_user";
     /* Used internally as the name of our friend requests table. */
     public static final String TABLE_FRIENDS_REQUESTS = "friendRequest";
     /* Inner class that defines the table contents of the friendRequests table
@@ -560,10 +555,6 @@ public final class SportteamContract {
         }
     }
 
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_FRIENDS = "friends";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_FRIENDS_WITH_USER = "friends_user";
     /* Used internally as the name of our friends table. */
     public static final String TABLE_FRIENDS = "friends";
     /* Inner class that defines the table contents of the friends table
@@ -614,16 +605,10 @@ public final class SportteamContract {
         }
     }
 
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENTS_PARTICIPATION = "eventsParticipation";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENTS_PARTICIPATION_WITH_USER = "eventsParticipation_user";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENTS_PARTICIPATION_WITH_EVENT = "eventsParticipation_event";
     /* Used internally as the name of our events participation table. */
     public static final String TABLE_EVENTS_PARTICIPATION = "eventsParticipation";
     /* Inner class that defines the table contents of the eventsParticipation table
-     * This table store a row for every participate relation between an user and an event*/
+     * This table store a row for every participation relation between an user and an event*/
     public static final class EventsParticipationEntry implements BaseColumns {
 
         /* The base CONTENT_URI used to query the eventsParticipation table from the content provider */
@@ -679,16 +664,10 @@ public final class SportteamContract {
         }
     }
 
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENT_INVITATIONS = "eventInvitations";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENT_INVITATIONS_WITH_USER = "eventInvitations_user";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENT_INVITATIONS_WITH_EVENT = "eventInvitations_event";
     /* Used internally as the name of our event invitations table. */
     public static final String TABLE_EVENT_INVITATIONS = "eventInvitations";
     /* Inner class that defines the table contents of the eventInvitations table
-     * This table store a row for every event invitation received by the user*/
+     * This table store a row for every event invitation received or sent by the user*/
     public static final class EventsInvitationEntry implements BaseColumns {
 
         /* The base CONTENT_URI used to query the eventInvitations table from the content provider */
@@ -748,16 +727,10 @@ public final class SportteamContract {
         }
     }
 
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENTS_REQUESTS = "eventRequests";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENTS_REQUESTS_WITH_USER = "eventRequests_user";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_EVENTS_REQUESTS_WITH_EVENT = "eventRequests_event";
     /* Used internally as the name of our event requests table. */
     public static final String TABLE_EVENTS_REQUESTS = "eventRequest";
     /* Inner class that defines the table contents of the eventRequest table
-     * This table store a row for every event request from any user to one of our user events
+     * This table store a row for every event request from any user to one of our user's events
      * and a row for every event request sent by our user*/
     public static final class EventRequestsEntry implements BaseColumns {
 
@@ -814,21 +787,11 @@ public final class SportteamContract {
     }
 
 
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND = "myEvent_friendUser";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME = "cityEvent_myUser";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME = "citySportEvent_myUser";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS = "friendsUser_myEvent";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_NOT_FRIENDS_USERS_FROM_CITY = "notFriendsCity_users";
-    /* Possible paths that can be appended to BASE_CONTENT_URI to form valid URI. */
-    public static final String PATH_NOT_FRIENDS_USERS_WITH_NAME = "notFriendsName_users";
+
+    /* Inner class that defines parameters for especially complex queries with multiple joins */
     public static final class JoinQueryEntries {
-        /* The base CONTENT_URI used to query the event table for my events or my participation ones
-           without relation with one particular friend from the content provider */
+        /* The base CONTENT_URI used to query the event table looking for my events or my
+           participation ones without relation with one particular friend from the content provider */
         public static final Uri CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND)
                 .build();
@@ -858,7 +821,7 @@ public final class SportteamContract {
             String currentTime = String.valueOf(System.currentTimeMillis());
             return new String[]{friendId, friendId, friendId, currentTime, ownerId, ownerId};
         }
-        /* SELECT
+        /* SELECT "all columns in event table"
          * FROM event
          *      LEFT JOIN eventsParticipation p1
          *          ON (event.eventId = p1.eventId )
@@ -877,7 +840,7 @@ public final class SportteamContract {
          */
 
 
-        /* The base CONTENT_URI used to query the event table for events
+        /* The base CONTENT_URI used to query the event table looking for events
            in city without relation with me from the content provider */
         public static final Uri CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME)
@@ -908,7 +871,7 @@ public final class SportteamContract {
             return new String[]{myUserId, myUserId, myUserId, currentTime, city, myUserId};
         }
 
-        /* The base CONTENT_URI used to query the event table for events
+        /* The base CONTENT_URI used to query the event table looking for events
            in city without relation with me AND with a sport from the content provider */
         public static final Uri CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME)
@@ -931,7 +894,7 @@ public final class SportteamContract {
         }
 
 
-        /* The base CONTENT_URI used to query the user table for my friends without
+        /* The base CONTENT_URI used to query the user table looking for my friends without
            relation with one particular event from the content provider */
         public static final Uri CONTENT_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS)
@@ -964,17 +927,20 @@ public final class SportteamContract {
         public static String[] queryMyFriendsWithoutRelationWithMyEventsArguments(String myUserId, String eventId) {
             return new String[]{eventId, eventId, eventId, eventId, myUserId};
         }
-        /* SELECT all columns from users table
+        /* SELECT "all columns in users table"
          * FROM user
          *      INNER JOIN friends
          *          ON (user.uid = friends.userId )
+         *      LEFT JOIN event
+         *          ON (user.uid = event.owner AND event.eventId = eventId )
          *      LEFT JOIN eventsParticipation
-         *          ON (user.uid = eventsParticipation.userId AND eventsParticipation.eventId = ? )
+         *          ON (user.uid = eventsParticipation.userId AND eventsParticipation.eventId = eventId )
          *      LEFT JOIN eventInvitations
-         *          ON (user.uid = eventInvitations.receiverId AND eventInvitations.eventId = ? )
+         *          ON (user.uid = eventInvitations.receiverId AND eventInvitations.eventId = eventId )
          *      LEFT JOIN eventRequest
-         *          ON (user.uid = eventRequest.senderId AND eventRequest.eventId = ? )
+         *          ON (user.uid = eventRequest.senderId AND eventRequest.eventId = eventId )
          * WHERE (friends.myUserId = ?
+         *      AND event.eventId IS NULL
          *      AND eventsParticipation.eventId IS NULL
          *      AND eventInvitations.eventId IS NULL
          *      AND eventRequest.eventId IS NULL )
@@ -1003,7 +969,7 @@ public final class SportteamContract {
         public static String[] queryNotFriendsUsersFromCityArguments(String myUserId, String city) {
             return new String[]{myUserId, city, myUserId};
         }
-        /* SELECT all columns from users table
+        /* SELECT "all columns in users table"
          * FROM user
          *      LEFT JOIN friends
          *          ON (user.uid = friend.userId AND friend.myuid = ? )

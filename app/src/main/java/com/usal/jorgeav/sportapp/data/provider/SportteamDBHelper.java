@@ -4,21 +4,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-/**
- * Created by Jorge Avila on 17/05/2017.
- */
-
 public class SportteamDBHelper extends SQLiteOpenHelper {
 
-    /*
-     * This is the name of our database. Database names should be descriptive and end with the
-     * .db extension.
-     */
-    public static final String DATABASE_NAME = "sportteam.db";
-    /*
-     * If you change the database schema, you must increment the database version or the onUpgrade
-     * method will not be called.
-     */
+    /* Name of database, should end with the .db extension */
+    private static final String DATABASE_NAME = "sportteam.db";
+
+    /* Increment when change the database schema or the onUpgrade method will not be called */
     private static final int DATABASE_VERSION = 26;
 
     public SportteamDBHelper(Context context) {
@@ -123,7 +114,6 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 " UNIQUE (" + SportteamContract.FriendRequestEntry.RECEIVER_ID  + ", "
                             + SportteamContract.FriendRequestEntry.SENDER_ID    + ") ON CONFLICT REPLACE);";
 
-        // Only have entries for my current logged user. MY_USER_ID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final String SQL_CREATE_FRIENDS_TABLE = "CREATE TABLE " + SportteamContract.TABLE_FRIENDS + " (" +
                 SportteamContract.FriendsEntry._ID              + " INTEGER PRIMARY KEY,"       +
                 SportteamContract.FriendsEntry.MY_USER_ID       + " TEXT NOT NULL,"             +
