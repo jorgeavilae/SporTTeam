@@ -169,7 +169,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Fragment fragment = new EventInvitationsFragment();
+                    Fragment fragment = EventInvitationsFragment.newInstance();
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });
@@ -178,7 +178,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             userFriendRequestsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Fragment fragment = new FriendRequestsFragment();
+                    Fragment fragment = FriendRequestsFragment.newInstance();
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });

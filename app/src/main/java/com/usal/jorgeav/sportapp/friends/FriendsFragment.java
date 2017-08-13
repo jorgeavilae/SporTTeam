@@ -65,7 +65,7 @@ public class FriendsFragment extends BaseFragment implements FriendsContract.Vie
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_search_users) {
-            Fragment fragment = new SearchUsersFragment();
+            Fragment fragment = SearchUsersFragment.newInstance();
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         }

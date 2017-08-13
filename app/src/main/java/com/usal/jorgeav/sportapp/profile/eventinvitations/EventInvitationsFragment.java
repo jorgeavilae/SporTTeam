@@ -39,6 +39,10 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
         // Required empty public constructor
     }
 
+    public static EventInvitationsFragment newInstance() {
+        return new EventInvitationsFragment();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

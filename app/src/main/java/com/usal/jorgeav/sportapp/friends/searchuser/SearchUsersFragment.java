@@ -49,6 +49,10 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
         // Required empty public constructor
     }
 
+    public static SearchUsersFragment newInstance() {
+        return new SearchUsersFragment();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
