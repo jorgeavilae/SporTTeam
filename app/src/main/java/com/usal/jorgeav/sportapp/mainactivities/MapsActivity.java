@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -87,7 +86,6 @@ public class MapsActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_ok) {
-            Log.d(TAG, "onOptionsItemSelected: Ok");
             //Field first in case MyPlace isn't succeeded
             if (mFieldSelected != null) {
                 Intent resultIntent = new Intent();
@@ -100,13 +98,13 @@ public class MapsActivity extends AppCompatActivity implements
                 setResult(RESULT_OK, resultIntent);
                 finish();
             } else {
-                Toast.makeText(this, "No place selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.toast_should_select_place, Toast.LENGTH_SHORT).show();
             }
             return true;
         } else if (item.getItemId() == R.id.action_new_field) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Quieres crear un campo nuevo?")
-                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setMessage(R.string.dialog_msg_create_new_field)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             Intent resultIntent = new Intent();
                             resultIntent.putExtra(ADD_FIELD_SELECTED_EXTRA, "dummy");
@@ -114,7 +112,7 @@ public class MapsActivity extends AppCompatActivity implements
                             finish();
                         }
                     })
-                    .setNegativeButton("No", null);
+                    .setNegativeButton(android.R.string.no, null);
             builder.create().show();
         }
         return false;
@@ -134,7 +132,7 @@ public class MapsActivity extends AppCompatActivity implements
         mapFragment.getMapAsync(this);
 
         if (getSupportActionBar() != null)
-            getSupportActionBar().setTitle("Maps");
+            getSupportActionBar().setTitle(getString(R.string.title_activity_maps));
     }
 
     @Override
@@ -180,8 +178,6 @@ public class MapsActivity extends AppCompatActivity implements
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        Log.d(TAG, "onMapClick: "+latLng);
-
         int position = Utiles.searchClosestFieldInList(mFieldsList, latLng);
         if (position > -1) {
             // latLng are too near from a Field
@@ -235,26 +231,26 @@ public class MapsActivity extends AppCompatActivity implements
                     break;
                 case "ZERO_RESULTS":
                     /* Maybe latlng in a remote location */
-                    Toast.makeText(this, "Maybe latlng in a remote location", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.toast_place_error_zero_results, Toast.LENGTH_SHORT).show();
                     break;
                 case "OVER_QUERY_LIMIT":
                     /* Over your quota. */
-                    Toast.makeText(this, "Over quota", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.toast_place_error_zero_results, Toast.LENGTH_SHORT).show();
                     break;
                 case "REQUEST_DENIED":
                     /* API key invalid */
-                    Toast.makeText(this, "API key invalid", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.toast_place_error_bad_connection, Toast.LENGTH_SHORT).show();
                     break;
                 case "INVALID_REQUEST":
                     /* Missing latlng or error in result_type */
-                    Toast.makeText(this, "Missing latlng or error in result_type", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.toast_place_error_bad_connection, Toast.LENGTH_SHORT).show();
                     break;
                 case "UNKNOWN_ERROR":
                     /* Probably a bad connection */
-                    Toast.makeText(this, "Probably a bad connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.toast_place_error_bad_connection, Toast.LENGTH_SHORT).show();
                     break;
                 default:
-                    Toast.makeText(this, "Probably a bad connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.toast_place_error_bad_connection, Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -277,8 +273,6 @@ public class MapsActivity extends AppCompatActivity implements
             LatLngBounds llb = new LatLngBounds(southwest, northeast);
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
             marker.showInfoWindow();
-
-            Log.d(TAG, "onMarkerClick: " + mFieldSelected);
             return true;
         }
         return false;

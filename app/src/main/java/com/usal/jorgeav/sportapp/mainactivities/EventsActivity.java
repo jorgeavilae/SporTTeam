@@ -38,7 +38,6 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
     private final static String TAG = EventsActivity.class.getSimpleName();
 
     public static final String EVENTID_PENDING_INTENT_EXTRA = "EVENTID_PENDING_INTENT_EXTRA";
-
     public static final int REQUEST_CODE_ADDRESS = 23;
 
     private static final String INSTANCE_FIELD_ID_SELECTED = "INSTANCE_FIELD_ID_SELECTED";
@@ -56,9 +55,9 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
         String eventId = getIntent().getStringExtra(EVENTID_PENDING_INTENT_EXTRA);
 
         initFragment(EventsFragment.newInstance(), false);
-        if (eventId != null) {
+        if (eventId != null)
             initFragment(DetailEventFragment.newInstance(eventId), true);
-        }
+
         mNavigationView.setCheckedItem(R.id.nav_events);
     }
 

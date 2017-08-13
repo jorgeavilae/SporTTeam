@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -23,6 +22,7 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import java.util.ArrayList;
 
 public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.OnSelectSportClickListener {
+    @SuppressWarnings("unused")
     private final static String TAG = AlarmsActivity.class.getSimpleName();
 
     public static final String ALARMID_PENDING_INTENT_EXTRA = "ALARMID_PENDING_INTENT_EXTRA";
@@ -42,7 +42,8 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
 
         initFragment(AlarmsFragment.newInstance(), false);
 
-        // Open an alarm detail right after alarm list because this Activity is due to a notification
+        // Open an alarm detail right after alarm list because
+        // this Activity is open because of a notification
         if (alarmId != null)
             initFragment(DetailAlarmFragment.newInstance(alarmId), true);
 
@@ -104,7 +105,6 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
                     mFieldId = field.getId();
                     mCity = field.getCity();
                     mCoord = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
-                    Log.d(TAG, "onActivityResult: " + field);
                 } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
                     new AlertDialog.Builder(this)
                             .setTitle(R.string.dialog_title_you_must_select_place)
@@ -112,7 +112,6 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
                             .create().show();
                 } else if (data.hasExtra(MapsActivity.ADD_FIELD_SELECTED_EXTRA)) {
                     Utiles.startFieldsActivityAndNewField(this);
-                    Log.d(TAG, "onActivityResult: ADD_FIELD_SELECTED_EXTRA");
                 }
 
                 if (mDisplayedFragment instanceof NewAlarmContract.View)

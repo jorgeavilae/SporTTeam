@@ -6,10 +6,6 @@ import android.view.MenuItem;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.notifications.NotificationsFragment;
 
-/**
- * Created by Jorge Avila on 13/07/2017.
- */
-
 public class NotificationsActivity extends BaseActivity {
 
     @Override

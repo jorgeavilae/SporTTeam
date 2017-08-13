@@ -1,8 +1,5 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,7 +7,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -46,16 +42,31 @@ import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A login screen that offers login via email/password.
- */
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
+
+    @BindView(R.id.login_logo_name)
+    ImageView loginLogo;
+    @BindView(R.id.email)
+    AutoCompleteTextView mEmailView;
+    @BindView(R.id.password)
+    EditText mPasswordView;
+    @BindView(R.id.login_visible_pass)
+    ImageView visiblePassButton;
+    @BindView(R.id.email_sign_in_button)
+    Button mEmailSignInButton;
+    @BindView(R.id.new_user_button)
+    TextView mNewUserButton;
+    @BindView(R.id.reset_password_button)
+    TextView mResetPassword;
+    @BindView(R.id.login_progress)
+    View mProgressView;
+    @BindView(R.id.login_form)
+    View mLoginFormView;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -63,19 +74,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
+
         setSupportActionBar(null);
 
-        ImageView logo = (ImageView) findViewById(R.id.login_logo_name);
         Glide.with(this)
                 .load(R.drawable.logo_name)
                 .animate(android.R.anim.fade_in)
-                .into(logo);
+                .into(loginLogo);
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -86,8 +96,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
         });
-        ImageView visibleButton = (ImageView) findViewById(R.id.login_visible_pass);
-        visibleButton.setOnTouchListener(new View.OnTouchListener() {
+        visiblePassButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN)
@@ -98,7 +107,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,14 +114,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 attemptLogin();
             }
         });
-        TextView mNewUserButton = (TextView) findViewById(R.id.new_user_button);
+
         mNewUserButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 startNewUserForResult();
             }
         });
-        TextView mResetPassword = (TextView) findViewById(R.id.reset_password_button);
+
         mResetPassword.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +132,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Log.d(TAG, "Email sent.");
+                                        Toast.makeText(LoginActivity.this, R.string.email_sent,
+                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -138,8 +147,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
 
         //If Activity rotate while downloading Firebase data
-        if(mAuth.getCurrentUser() != null) showProgress(true);
-        //If the user is no logged yet
+        if (mAuth.getCurrentUser() != null) showProgress(true);
+            //If the user is no logged yet
         else SportteamSyncUtils.finalize(this);
 
     }
@@ -152,28 +161,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (resultCode) {
-            case RESULT_OK: //User created 
-                Log.d(TAG, "onActivityResult: RESULT_OK");
-                initLoadMyProfile();
-                break;
-            case RESULT_CANCELED:
-                Log.d(TAG, "onActivityResult: RESULT_CANCELED");
-                break;
-        }
+        if (resultCode == RESULT_OK) //User created
+            initLoadMyProfile();
     }
 
     private void populateAutoComplete() {
         getLoaderManager().initLoader(0, null, LoginActivity.this);
     }
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     private void attemptLogin() {
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -182,34 +178,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         final String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
+        boolean cancelLogin = false;
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
+            cancelLogin = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
+            cancelLogin = true;
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
+            cancelLogin = true;
         }
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+        if (!cancelLogin) {
+            // Show a progress spinner, and perform the user login attempt.
             showProgress(true);
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -231,42 +218,43 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void initLoadMyProfile() {
         final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (fUser != null) {
-            Log.d(TAG, "initLoadMyProfile: "); //TODO isEmailVerified()
+        if (fUser != null) { //TODO isEmailVerified()
 //            if (fUser.isEmailVerified()) {
-                deleteContentProvider();
+            deleteContentProvider();
 
-                //Add email to emails logged table
-                ContentValues cv = new ContentValues();
-                cv.put(SportteamContract.EmailLoggedEntry.EMAIL, fUser.getEmail());
-                getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
+            //Add email to emails logged table
+            ContentValues cv = new ContentValues();
+            cv.put(SportteamContract.EmailLoggedEntry.EMAIL, fUser.getEmail());
+            getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
 
-                // The user is logged and his data is in Firebase. Retrieve that data and
-                // populate Content Provider. Later finishLoadMyProfile() will be invoked
-                SportteamSyncUtils.initialize(LoginActivity.this);
+            // The user is logged and his data is in Firebase. Retrieve that data and
+            // populate Content Provider. Later finishLoadMyProfile() will be invoked
+            SportteamSyncUtils.initialize(LoginActivity.this);
 //            } else {
 //                showProgress(false);
 //                AlertDialog.Builder builder = new AlertDialog.Builder(this)
-//                        .setTitle("You have to verify your email")
-//                        .setMessage("Resend email verification?")
-//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                        .setTitle(R.string.dialog_title_verify_email)
+//                        .setMessage(R.string.dialog_msg_verify_email)
+//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 //                            @Override
 //                            public void onClick(DialogInterface dialogInterface, int i) {
 //                                fUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
 //                                    @Override
 //                                    public void onComplete(@NonNull Task<Void> task) {
 //                                        Log.d(TAG, "sendEmailVerification: onComplete: "+task.isSuccessful());
+//                                        Toast.makeText(LoginActivity.this, R.string.email_sent,
+//                                                Toast.LENGTH_SHORT).show();
 //                                    }
 //                                });
 //                            }
 //                        })
-//                        .setNegativeButton("No", null);
-//                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss(DialogInterface dialogInterface) {
-//                        FirebaseAuth.getInstance().signOut();
-//                    }
-//                });
+//                        .setNegativeButton(android.R.string.no, null)
+//                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                            @Override
+//                            public void onDismiss(DialogInterface dialogInterface) {
+//                                FirebaseAuth.getInstance().signOut();
+//                            }
+//                        });
 //                builder.create().show();
 //            }
         }
@@ -281,18 +269,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void deleteContentProvider() {
         SportteamDBHelper db = new SportteamDBHelper(this);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER_SPORTS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT_SIMULATED_PARTICIPANT);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD_SPORTS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_ALARM);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FRIENDS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FRIENDS_REQUESTS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENTS_PARTICIPATION);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT_INVITATIONS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENTS_REQUESTS);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_USER);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_USER_SPORTS);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_EVENT);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_EVENT_SIMULATED_PARTICIPANT);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_FIELD);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_FIELD_SPORTS);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_ALARM);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_FRIENDS);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_FRIENDS_REQUESTS);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_EVENTS_PARTICIPATION);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_EVENT_INVITATIONS);
+        db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_EVENTS_REQUESTS);
     }
 
     private boolean isEmailValid(@NonNull String email) {
@@ -303,37 +291,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         return password.length() > 6;
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -348,7 +308,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
         List<String> emails = new ArrayList<>();
         //Loader reuses Cursor so move to first position
-        for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext())
+        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext())
             emails.add(data.getString(SportteamContract.EmailLoggedEntry.COLUMN_EMAIL));
         addEmailsToAutoComplete(emails);
     }
@@ -367,6 +327,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    /* https://stackoverflow.com/a/1109108/4235666 */
     public void hideSoftKeyboard() {
         View view = getCurrentFocus();
         if (view != null) {

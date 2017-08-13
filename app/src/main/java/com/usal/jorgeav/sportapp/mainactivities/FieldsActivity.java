@@ -31,10 +31,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by Jorge Avila on 26/06/2017.
- */
-
 public class FieldsActivity extends BaseActivity implements SportsListFragment.OnSportsSelected {
     public static final String TAG = FieldsActivity.class.getSimpleName();
     public static final String INTENT_EXTRA_CREATE_NEW_FIELD = "INTENT_EXTRA_CREATE_NEW_FIELD";
@@ -56,6 +52,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
     public void startMainFragment() {
         super.startMainFragment();
 
+        // If needed, start createNewField from fragment instead of from here
         boolean createNewField = false;
         if (getIntent().hasExtra(INTENT_EXTRA_CREATE_NEW_FIELD)) createNewField = true;
         initFragment(FieldsMapFragment.newInstance(createNewField), false, FieldsMapFragment.FRAGMENT_TAG);
@@ -81,7 +78,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE_ADDRESS_TO_RETRIEVE || requestCode == REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT) {
+        if (requestCode == REQUEST_CODE_ADDRESS_TO_RETRIEVE || requestCode == REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT) {
             if (resultCode == RESULT_OK) {
                 // Expect a Field where to add a new Sport,
                 // or an address (MyPlace) where to add a new Field
@@ -139,7 +136,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String sportId = sportSpinner.getSelectedItem().toString();
                         float punctuation = ratingBar.getRating();
-                        FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double)punctuation, 1L));
+                        FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double) punctuation, 1L));
                         Toast.makeText(FieldsActivity.this, getString(R.string.toast_add_sport_success), Toast.LENGTH_SHORT).show();
                         if (mDisplayedFragment != null) mDisplayedFragment.resetBackStack();
                     }

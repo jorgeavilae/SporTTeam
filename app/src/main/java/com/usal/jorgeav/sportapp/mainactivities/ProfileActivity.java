@@ -9,8 +9,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
@@ -30,18 +28,14 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-/**
- * Created by Jorge Avila on 26/06/2017.
- */
-
 public class ProfileActivity extends BaseActivity implements SportsListFragment.OnSportsSelected {
     public static final String TAG = ProfileActivity.class.getSimpleName();
 
     @Override
     public void startMainFragment() {
         super.startMainFragment();
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        String myUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserID)) return;
 
         initFragment(ProfileFragment.newInstance(myUserID), false);
         mNavigationView.setCheckedItem(R.id.nav_profile);
@@ -104,13 +98,13 @@ public class ProfileActivity extends BaseActivity implements SportsListFragment.
 
             if (grantResults[0] == PackageManager.PERMISSION_DENIED)
                 //Without WRITE_EXTERNAL_STORAGE it can't save cropped photo
-                Toast.makeText(this, "Se necesita guardar la imagen", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.toast_need_write_permission, Toast.LENGTH_SHORT).show();
             else if (grantResults[1] == PackageManager.PERMISSION_DENIED)
                 //The user can't take pictures
                 EasyImage.openGallery(this, ProfileFragment.RC_PHOTO_PICKER);
             else if (grantResults[1] == PackageManager.PERMISSION_GRANTED)
                 //The user can take pictures or pick an image
-                EasyImage.openChooserWithGallery(this, "Elegir foto de...", ProfileFragment.RC_PHOTO_PICKER);
+                EasyImage.openChooserWithGallery(this, getString(R.string.pick_photo_from), ProfileFragment.RC_PHOTO_PICKER);
         }
     }
 }

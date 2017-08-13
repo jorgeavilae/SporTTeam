@@ -57,6 +57,10 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="reauthenticate">Reauthenticate</string>
+    <string name="email_sent">Email sent</string>
+    <string name="dialog_title_verify_email">You have to verify your email</string>
+    <string name="dialog_msg_verify_email">Do you want to resend a verification email? Make sure you check
+        spam folder</string>
 
     <!-- Strings for new user -->
     <string name="new_user_title">New User</string>
@@ -139,6 +143,7 @@
     <string name="dialog_msg_you_must_select_place">A field is needed in order to look up for sports events.
         You can also create a new Field by click in the icon add above.</string>
     <string name="dialog_title_create_new_field">Create new Field</string>
+    <string name="dialog_msg_create_new_field">Do you want to create a new Field?</string>
     <string name="dialog_msg_create_new_field_for_alarm">There isn\'t Fields for this sport but isn\'t needed in
          order to create a new Alarm. Anyway… Do you want to create a new Field now?</string>
     <string name="dialog_msg_create_new_field_for_event">There isn\'t Fields for this sport and it is needed in
@@ -148,6 +153,8 @@
     <string name="court_list">Court list</string>
     <string name="field_detail_title">Field details</string>
     <string name="dialog_msg_delete_field">The field will be deleted only if there is not next event in any of his courts.</string>
+    <string name="toast_place_error_zero_results">Maybe is a remote location</string>
+    <string name="toast_place_error_bad_connection">Check internet connection</string>
 
     <!-- Alarms -->
     <!-- https://stackoverflow.com/questions/1587056/how-to-keep-the-spaces-at-the-end-and-or-at-the-beginning-of-a-string#comment26178169_2206684 -->

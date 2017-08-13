@@ -31,8 +31,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
-import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
 import com.usal.jorgeav.sportapp.fields.FieldsMapFragment;
 import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
@@ -64,13 +62,13 @@ public class BaseActivity extends AppCompatActivity
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    // False when changing Activity to not detach listeners in that cases
     private Boolean shouldDetachFirebaseListener;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO borrar
-//        debugTrickyErrors();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -87,9 +85,6 @@ public class BaseActivity extends AppCompatActivity
 
         hideContent();
 
-        //TODO borrar
-//        reiniciarContentProviderYSalir();
-
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -97,20 +92,24 @@ public class BaseActivity extends AppCompatActivity
                 FirebaseUser fuser = firebaseAuth.getCurrentUser();
                 if (fuser != null) {
                     // User is signed in
-                    Log.d(TAG, "userID: "+fuser.getUid());
+                    Log.i(TAG, "FirebaseUser logged ID: "+fuser.getUid());
                     setUserInfoInNavigationDrawer();
-                    // Initialization is cases when user is already logged.
+
+                    // Initialization for populate Content Provider and init Service if needed
                     SportteamSyncUtils.initialize(BaseActivity.this);
 
-                    // Diplayed fragment is null on Initialization OR when FieldsMapFragment is
+                    // Displayed fragment is null on Initialization OR when FieldsMapFragment is
                     // displayed since FieldsMapFragment is not a BaseFragment.
                     if(mDisplayedFragment == null && getSupportFragmentManager()
                             .findFragmentByTag(FieldsMapFragment.FRAGMENT_TAG) == null)
                         startMainFragment();
                 } else {
                     // User is signed out
-                    Log.d(TAG, "userID: null");
+                    Log.i(TAG, "FirebaseUser logged ID: null");
+
+                    // Finalize service
                     SportteamSyncUtils.finalize(BaseActivity.this);
+
                     UtilesNotification.clearAllNotifications(BaseActivity.this);
 
                     Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
@@ -126,21 +125,23 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public void setUserInfoInNavigationDrawer() {
-        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
-        if (fuser == null) return;
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser == null) return;
         ImageView image = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_image);
         TextView title = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_title);
         TextView subtitle = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_subtitle);
 
-        title.setText(fuser.getDisplayName());
-        subtitle.setText(fuser.getEmail());
+        title.setText(firebaseUser.getDisplayName());
+        subtitle.setText(firebaseUser.getEmail());
         Glide.with(this)
-                .load(fuser.getPhotoUrl())
+                .load(firebaseUser.getPhotoUrl())
                 .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)
                 .into(image);
     }
 
+    // Method used to debug some not enough verbose errors
+    @SuppressWarnings("unused")
     private void debugTrickyErrors() {
         /* https://stackoverflow.com/a/29846562/4235666 */
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -157,25 +158,6 @@ public class BaseActivity extends AppCompatActivity
                 .build());
     }
 
-    private void reiniciarContentProviderYSalir() {
-        FirebaseAuth.getInstance().signOut();
-        SportteamDBHelper db = new SportteamDBHelper(this);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EMAIL_LOGGED);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_USER_SPORTS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT_SIMULATED_PARTICIPANT);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FIELD_SPORTS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_ALARM);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FRIENDS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_FRIENDS_REQUESTS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENTS_PARTICIPATION);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENT_INVITATIONS);
-        db.getWritableDatabase().execSQL("DELETE FROM "+ SportteamContract.TABLE_EVENTS_REQUESTS);
-        finish();
-    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -186,7 +168,6 @@ public class BaseActivity extends AppCompatActivity
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Log.d(TAG, "onRestoreInstanceState: ");
         mDisplayedFragment = null;
         if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
             try {
@@ -200,7 +181,7 @@ public class BaseActivity extends AppCompatActivity
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-            mToggle.syncState();
+        mToggle.syncState();
     }
 
     @Override
@@ -221,22 +202,18 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        Log.d(TAG, "onNavigationItemSelected: "+item.getTitle());
-
-        if (id == R.id.nav_sign_out) {
-            if (mDisplayedFragment != null || getSupportFragmentManager()
-                    .findFragmentByTag(FieldsMapFragment.FRAGMENT_TAG) != null) {
+        if (item.getItemId() == R.id.nav_sign_out) {
+            if (mDisplayedFragment != null) {
                 getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
                 mDisplayedFragment = null;
             }
             mAuth.signOut();
-        } else if (id == R.id.nav_settings) {
+        } else if (item.getItemId() == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else {
             Intent intent;
-            switch (id) {
+            switch (item.getItemId()) {
                 default: case R.id.nav_profile:
                     intent = new Intent(this, ProfileActivity.class); break;
                 case R.id.nav_notifications:
@@ -251,22 +228,23 @@ public class BaseActivity extends AppCompatActivity
                     intent = new Intent(this, FieldsActivity.class); break;
             }
             // Do not invoke detachListeners in onPause if it's a
-            // navigation between activities of Nav menu
+            // navigation between activities
             shouldDetachFirebaseListener = false;
 
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
         }
-        mNavigationView.setCheckedItem(id);
+
+        mNavigationView.setCheckedItem(item.getItemId());
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    /* https://stackoverflow.com/a/6357330/4235666 */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        /* https://stackoverflow.com/a/6357330/4235666 */
         setIntent(intent);
     }
 

@@ -7,13 +7,8 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.friends.FriendsFragment;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 
-/**
- * Created by Jorge Avila on 26/06/2017.
- */
-
 public class FriendsActivity extends BaseActivity {
     public static final String TAG = FriendsActivity.class.getSimpleName();
-
     public static final String USERID_PENDING_INTENT_EXTRA = "USERID_PENDING_INTENT_EXTRA";
 
     @Override
