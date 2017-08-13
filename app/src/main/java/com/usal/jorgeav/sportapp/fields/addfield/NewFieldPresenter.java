@@ -58,25 +58,27 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
             ((FieldsActivity)mNewFieldView.getActivityContext()).mCity = null;
             ((FieldsActivity)mNewFieldView.getActivityContext()).mCoord = null;
             mNewFieldView.getThis().resetBackStack();
-        } else
-            Toast.makeText(mNewFieldView.getActivityContext(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private boolean isValidAddress(String address, String city) {
         if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(city)
                 && address.contains(city)) return true;
+        Toast.makeText(mNewFieldView.getActivityContext(), R.string.toast_place_invalid, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "isValidField: not valid");
         return false;
     }
 
     private boolean isValidName(String name) {
         if (!TextUtils.isEmpty(name)) return true;
+        Toast.makeText(mNewFieldView.getActivityContext(), R.string.error_invalid_name, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "isValidName: not valid");
         return false;
     }
 
     private boolean isValidCreator(String userId) {
         if (!TextUtils.isEmpty(userId)) return true;
+        Toast.makeText(mNewFieldView.getActivityContext(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "isValidCreator: not valid");
         return false;
     }
@@ -84,12 +86,14 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
     private boolean isValidCoords(LatLng coords) {
         if (coords != null && coords.latitude != 0 && coords.longitude != 0)
             return true;
+        Toast.makeText(mNewFieldView.getActivityContext(), R.string.toast_place_invalid, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "isValidCoords: not valid");
         return false;
     }
 
     private boolean isTimesCorrect(Long open, Long close) {
         if (open != null && close != null && open <= close) return true;
+        Toast.makeText(mNewFieldView.getActivityContext(), R.string.toast_invalid_times, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "isTimesCorrect: incorrect");
         return false;
     }
@@ -165,7 +169,6 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader loader) {
-        //tODO deberia borrar todos los loaderreset?
     }
 
     private void showFieldDetail(Cursor data) {

@@ -129,6 +129,7 @@
     <string name="open_24h">Open 24h</string>
     <string name="opening_time">Opening time</string>
     <string name="closing_time">Closing time</string>
+    <string name="toast_invalid_times">Invalid times</string>
     <string name="toast_invalid_arg">No valid data</string>
     <string name="dialog_title_you_must_select_place">You must select a field</string>
     <string name="dialog_msg_you_must_select_place">A field is needed in order to look up for sports events.

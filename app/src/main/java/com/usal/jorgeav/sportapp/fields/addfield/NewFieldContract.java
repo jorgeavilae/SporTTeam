@@ -12,7 +12,6 @@ import com.usal.jorgeav.sportapp.data.SportCourt;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public abstract class NewFieldContract {
 
     public interface Presenter {
