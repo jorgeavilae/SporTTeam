@@ -24,13 +24,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class EventInvitationsFragment extends BaseFragment implements EventInvitationsContract.View, EventsAdapter.OnEventItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = EventInvitationsFragment.class.getSimpleName();
 
     EventInvitationsContract.Presenter mEventInvitationsPresenter;
-    EventsAdapter mEventsRecyclerAdapter;
 
     @BindView(R.id.recycler_list)
     RecyclerView eventInvitationsList;
+    EventsAdapter mEventsRecyclerAdapter;
     @BindView(R.id.list_placeholder)
     ConstraintLayout eventInvitationsPlaceholder;
 
@@ -69,7 +70,7 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Invitaciones recibidas", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.event_invitations_received), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 

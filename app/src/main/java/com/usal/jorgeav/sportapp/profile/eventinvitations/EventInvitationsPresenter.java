@@ -4,21 +4,19 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
-/**
- * Created by Jorge Avila on 27/05/2017.
- */
-
-public class EventInvitationsPresenter implements EventInvitationsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class EventInvitationsPresenter implements EventInvitationsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    @SuppressWarnings("unused")
     private static final String TAG = EventInvitationsPresenter.class.getSimpleName();
 
-    EventInvitationsContract.View mEventInvitationsView;
+    private EventInvitationsContract.View mEventInvitationsView;
 
-    public EventInvitationsPresenter(EventInvitationsContract.View mEventInvitationsView) {
+    EventInvitationsPresenter(EventInvitationsContract.View mEventInvitationsView) {
         this.mEventInvitationsView = mEventInvitationsView;
     }
 
@@ -26,11 +24,12 @@ public class EventInvitationsPresenter implements EventInvitationsContract.Prese
     public void loadEventInvitations(LoaderManager loaderManager, Bundle b) {
         FirebaseSync.loadEventsFromInvitationsReceived();
         loaderManager.initLoader(SportteamLoader.LOADER_EVENT_INVITATIONS_RECEIVED_ID, b, this);
-
     }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(currentUserID)) return null;
         switch (id) {
             case SportteamLoader.LOADER_EVENT_INVITATIONS_RECEIVED_ID:
                 return SportteamLoader

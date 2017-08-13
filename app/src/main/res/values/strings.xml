@@ -184,6 +184,7 @@
     <string name="action_change_name">Change name</string>
     <string name="action_change_age">Change age</string>
     <string name="event_invitations">Event invitations</string>
+    <string name="event_invitations_received">Event invitations received</string>
     <string name="friend_requests">Friend requests</string>
     <string name="friend_request_sent">Friend request sent</string>
     <string name="send_user_request">Send request</string>
