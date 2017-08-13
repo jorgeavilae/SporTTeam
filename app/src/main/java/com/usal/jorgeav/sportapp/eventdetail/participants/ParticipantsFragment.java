@@ -34,10 +34,6 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 29/05/2017.
- */
-
 public class ParticipantsFragment extends BaseFragment implements ParticipantsContract.View, SimulatedUsersAdapter.OnSimulatedUserItemClickListener, UsersAdapter.OnUserItemClickListener {
     private static final String TAG = ParticipantsFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
@@ -75,11 +71,17 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
                                                    @DetailEventPresenter.EventRelationType int relation,
                                                    @NonNull Boolean isPast, @NonNull Boolean isFull) {
         Bundle args = new Bundle();
-        args.putString(BUNDLE_EVENT_ID, eventID);
-        args.putString(BUNDLE_OWNER_ID, ownerId);
-        args.putInt(BUNDLE_RELATION_TYPE, relation);
+
+        if (!TextUtils.isEmpty(eventID))
+            args.putString(BUNDLE_EVENT_ID, eventID);
+        if (!TextUtils.isEmpty(ownerId))
+            args.putString(BUNDLE_OWNER_ID, ownerId);
+        if (relation != DetailEventPresenter.RELATION_TYPE_ERROR)
+            args.putInt(BUNDLE_RELATION_TYPE, relation);
+
         args.putBoolean(BUNDLE_IS_PAST, isPast);
         args.putBoolean(BUNDLE_IS_FULL, isFull);
+
         ParticipantsFragment fragment = new ParticipantsFragment();
         fragment.setArguments(args);
         return fragment;
