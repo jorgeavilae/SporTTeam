@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,24 +22,22 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
+import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 29/05/2017.
- */
-
 public class SendInvitationFragment extends BaseFragment implements SendInvitationContract.View, EventsAdapter.OnEventItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = SendInvitationFragment.class.getSimpleName();
-
     public static final String BUNDLE_INSTANCE_UID = "BUNDLE_INSTANCE_UID";
+
     private String mUserId;
     SendInvitationContract.Presenter mSendInvitationPresenter;
-    EventsAdapter mEventsRecyclerAdapter;
 
     @BindView(R.id.recycler_list)
     RecyclerView sendInvitationList;
+    EventsAdapter mEventsRecyclerAdapter;
     @BindView(R.id.list_placeholder)
     ConstraintLayout sendInvitationPlaceholder;
 
@@ -47,7 +46,6 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
     }
 
     public static SendInvitationFragment newInstance(@NonNull String uid) {
-
         Bundle args = new Bundle();
         args.putString(BUNDLE_INSTANCE_UID, uid);
         SendInvitationFragment fragment = new SendInvitationFragment();
@@ -68,9 +66,6 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
-            mUserId = getArguments().getString(BUNDLE_INSTANCE_UID);
     }
 
     @Override
@@ -78,6 +73,9 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
+            mUserId = getArguments().getString(BUNDLE_INSTANCE_UID);
 
         sendInvitationList.setAdapter(mEventsRecyclerAdapter);
         sendInvitationList.setHasFixedSize(true);
@@ -89,7 +87,7 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Selecciona evento", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_event), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -120,17 +118,24 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
 
     @Override
     public void onEventClick(final String eventId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        builder.setPositiveButton("Send Invitation", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                mSendInvitationPresenter.sendInvitationToThisUser(eventId, mUserId);
-            }
-        }).setNeutralButton("See details", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Fragment newFragment = DetailEventFragment.newInstance(eventId);
-                mFragmentManagementListener.initFragment(newFragment, true);
-            }
-        });
-        builder.create().show();
+        String userName = UtilesContentProvider.getUserNameFromContentProvider(mUserId);
+        if (userName != null && !TextUtils.isEmpty(userName)) {
+            String msg = getString(R.string.dialog_msg_send_invitation_to_user);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                    .setMessage(String.format(msg, userName))
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            mSendInvitationPresenter.sendInvitationToThisUser(eventId, mUserId);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .setNeutralButton(R.string.see_details, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Fragment newFragment = DetailEventFragment.newInstance(eventId);
+                            mFragmentManagementListener.initFragment(newFragment, true);
+                        }
+                    });
+            builder.create().show();
+        }
     }
 }

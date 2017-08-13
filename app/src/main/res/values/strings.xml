@@ -195,6 +195,7 @@
     <string name="delete_friend">Delete friend</string>
     <string name="answer_request">Accept friend?</string>
     <string name="dialog_msg_accept_friend">Accept as friend?</string>
+    <string name="dialog_msg_send_invitation_to_user">Invite user %1$s to this event?</string>
 
     <!-- Strings for searches -->
     <string name="users_found">Users found</string>
@@ -229,4 +230,5 @@
     <string name="dialog_msg_cancel_invitation">Do you want to cancel this invitation?</string>
     <string name="dialog_msg_accept_participant">Accept as participant?</string>
     <string name="dialog_msg_unblock_participant">Unblock user? The user will have to send another request.</string>
+    <string name="pick_event">Pick event</string>
 </resources>

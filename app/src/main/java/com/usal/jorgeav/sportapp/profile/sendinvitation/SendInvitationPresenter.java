@@ -6,22 +6,18 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 
-/**
- * Created by Jorge Avila on 29/05/2017.
- */
-
-public class SendInvitationPresenter implements SendInvitationContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class SendInvitationPresenter implements SendInvitationContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    @SuppressWarnings("unused")
     private static final String TAG = SendInvitationPresenter.class.getSimpleName();
 
-    SendInvitationContract.View mSendInvitationView;
+    private SendInvitationContract.View mSendInvitationView;
 
-    public SendInvitationPresenter(SendInvitationContract.View mSendIvitationView) {
+    SendInvitationPresenter(SendInvitationContract.View mSendIvitationView) {
         this.mSendInvitationView = mSendIvitationView;
     }
 
@@ -33,8 +29,7 @@ public class SendInvitationPresenter implements SendInvitationContract.Presenter
 
     @Override
     public void sendInvitationToThisUser(String eventId, String uid) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUid = ""; if (fUser != null) myUid = fUser.getUid();
+        String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
             FirebaseActions.sendInvitationToThisEvent(myUid, eventId, uid);
     }
@@ -43,7 +38,8 @@ public class SendInvitationPresenter implements SendInvitationContract.Presenter
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case SportteamLoader.LOADER_EVENTS_FOR_INVITATION_ID:
-                String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String currentUserID = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(currentUserID)) return null;
                 String otherUserID = args.getString(SendInvitationFragment.BUNDLE_INSTANCE_UID);
                 return SportteamLoader
                         .cursorLoaderEventsForInvitation(

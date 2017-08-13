@@ -5,11 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
-/**
- * Created by Jorge Avila on 29/05/2017.
- */
-
-public abstract class SendInvitationContract {
+abstract class SendInvitationContract {
 
     public interface Presenter {
         void loadEventsForInvitation(LoaderManager loaderManager, Bundle b);
