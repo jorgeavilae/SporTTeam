@@ -101,13 +101,6 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         }
     }
 
-    /* Puede estar
-        asistencia true: ya asiste
-        asistencia false: esta bloqueado, desbloquear
-        invitacion enviada: invitado y esperando que conteste
-        peticion participar: envio una peticion para entrar, contestar
-        otro caso: enviar invitacion
-     */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_OWNER,
             RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_INVITATION,
