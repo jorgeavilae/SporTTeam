@@ -13,7 +13,6 @@ import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 
 class SearchUsersPresenter implements SearchUsersContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
-
     @SuppressWarnings("unused")
     private static final String TAG = SearchUsersPresenter.class.getSimpleName();
 
