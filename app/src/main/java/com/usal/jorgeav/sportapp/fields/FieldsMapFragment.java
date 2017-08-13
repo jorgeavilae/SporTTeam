@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,10 +34,7 @@ import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 import java.util.ArrayList;
 
-/**
- * Created by Jorge Avila on 27/07/2017.
- */
-
+@SuppressWarnings("unused")
 public class FieldsMapFragment extends SupportMapFragment implements FieldsContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener {
     private static final String TAG = FieldsMapFragment.class.getSimpleName();
     public static final String FRAGMENT_TAG = FieldsMapFragment.class.getSimpleName();
@@ -56,14 +52,14 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
     public FieldsMapFragment() {
         // Required empty public constructor
     }
+
     public static FieldsMapFragment newInstance(boolean createNewField) {
         Bundle b = new Bundle();
-        //If is necessary to init NewField programmatically
+        //Is necessary a NewFieldFragment initialization programmatically?
         if (createNewField)
             b.putString(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "");
         FieldsMapFragment fragment = new FieldsMapFragment();
         fragment.setArguments(b);
-        Log.d(TAG, "newInstance: ");
         sInitialize = false;
         return fragment;
     }
@@ -113,13 +109,13 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
     public void showFields(Cursor cursor) {
         mFieldsList = UtilesContentProvider.cursorToMultipleField(cursor);
 
+        // Remove markers from map with remove() and clear marker list with a new ArrayList
         if (mMarkersList != null) for (Marker m : mMarkersList) m.remove();
         mMarkersList = new ArrayList<>();
 
-
-        Log.d(TAG, "showFields: "+sInitialize);
-        //If is necessary to init NewField programmatically
-        if (!sInitialize && getArguments() != null && getArguments().containsKey(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD)) {
+        //Is necessary a NewFieldFragment initialization programmatically?
+        if (!sInitialize
+                && getArguments() != null && getArguments().containsKey(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD)) {
             if (mFieldsList != null)
                 ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList, true);
             sInitialize = true;
@@ -229,13 +225,11 @@ public class FieldsMapFragment extends SupportMapFragment implements FieldsContr
     }
 
     public void showContent() {
-        Log.d(TAG, "showContent: ");
         if (mFragmentManagementListener != null)
             mFragmentManagementListener.showContent();
     }
 
     public void hideContent() {
-        Log.d(TAG, "hideContent: ");
         if (mFragmentManagementListener != null)
             mFragmentManagementListener.hideContent();
     }
