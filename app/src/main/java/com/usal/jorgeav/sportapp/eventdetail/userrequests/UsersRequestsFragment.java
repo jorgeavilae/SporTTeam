@@ -26,16 +26,14 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 29/05/2017.
- */
-
 public class UsersRequestsFragment extends BaseFragment implements UsersRequestsContract.View {
+    @SuppressWarnings("unused")
     private static final String TAG = UsersRequestsFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
-    private static String mEventId = "";
     UsersRequestsContract.Presenter mUsersRequestsPresenter;
+
+    private static String mEventId = "";
 
     UsersAdapter mUsersRequestRecyclerAdapter;
     @BindView(R.id.user_requests_list)
@@ -70,20 +68,20 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
         mUsersRequestRecyclerAdapter = new UsersAdapter(null, new UsersAdapter.OnUserItemClickListener() {
             @Override
             public void onUserClick(final String uid) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                builder.setMessage("Quieres aceptarlo como asistente?")
-                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                        .setMessage(R.string.dialog_msg_accept_participant)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 mUsersRequestsPresenter.acceptUserRequestToThisEvent(mEventId, uid);
                             }
                         })
-                        .setNegativeButton("Denegar", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 mUsersRequestsPresenter.declineUserRequestToThisEvent(mEventId, uid);
                             }
                         })
-                        .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                        .setNeutralButton(R.string.see_details, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Fragment newFragment = ProfileFragment.newInstance(uid);
                                 mFragmentManagementListener.initFragment(newFragment, true);
@@ -100,15 +98,15 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
         mUsersRejectedRecyclerAdapter = new UsersAdapter(null, new UsersAdapter.OnUserItemClickListener() {
             @Override
             public void onUserClick(final String uid) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-                builder.setMessage("Quieres desbloquearlo?")
-                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                        .setMessage(R.string.dialog_msg_unblock_participant)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 mUsersRequestsPresenter.unblockUserParticipationRejectedToThisEvent(mEventId, uid);
                             }
                         })
-                        .setNegativeButton("No", null)
-                        .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(android.R.string.no, null)
+                        .setNeutralButton(R.string.see_details, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Fragment newFragment = ProfileFragment.newInstance(uid);
                                 mFragmentManagementListener.initFragment(newFragment, true);
@@ -156,7 +154,7 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Peticiones para participar", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.user_request), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
