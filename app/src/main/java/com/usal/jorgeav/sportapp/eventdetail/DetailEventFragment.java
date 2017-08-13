@@ -34,7 +34,7 @@ import com.usal.jorgeav.sportapp.eventdetail.participants.ParticipantsFragment;
 import com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation.InvitationsSentFragment;
 import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
-import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
+import com.usal.jorgeav.sportapp.fields.fielddetail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;

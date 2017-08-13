@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.fields.detail;
+package com.usal.jorgeav.sportapp.fields.fielddetail;
 
 
 import android.content.DialogInterface;
@@ -34,7 +34,6 @@ import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
-import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
@@ -43,7 +42,7 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailFieldFragment extends BaseFragment implements DetailFieldContract.View{
+public class DetailFieldFragment extends BaseFragment implements DetailFieldContract.View {
     @SuppressWarnings("unused")
     private static final String TAG = DetailFieldFragment.class.getSimpleName();
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
@@ -117,7 +116,8 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             mPresenter.deleteField(mFieldId);
-                        }})
+                        }
+                    })
                     .setNegativeButton(android.R.string.no, null);
             builder.create().show();
             return true;
@@ -140,8 +140,11 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
         //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
         detailFieldMap.onCreate(savedInstanceState);
-        try { MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         detailFieldMap.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -196,19 +199,14 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     }
 
     @Override
-    public void showFieldId(String id) {
-        ((BaseActivity)getActivity()).showContent();
-    }
-
-    @Override
     public void showFieldName(String name) {
-        ((BaseActivity)getActivity()).showContent();
+        showContent();
         mActionBarIconManagementListener.setActionBarTitle(name);
     }
 
     @Override
     public void showFieldPlace(String address, String city, LatLng coordinates) {
-        ((BaseActivity)getActivity()).showContent();
+        showContent();
         this.detailFieldAddress.setText(address);
 
         if (getActivity() instanceof FieldsActivity) {
@@ -222,7 +220,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
     @Override
     public void showFieldTimes(long openTime, long closeTime) {
-        ((BaseActivity)getActivity()).showContent();
+        showContent();
         if (openTime == closeTime) {
             this.detailFieldOpening.setText(getString(R.string.open_24h));
             this.detailFieldClosing.setText("");
@@ -280,6 +278,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         detailFieldMap.onPause();
         sportsAdapter.replaceData(null);
     }
+
     @Override
     public void onDetach() {
         super.onDetach();

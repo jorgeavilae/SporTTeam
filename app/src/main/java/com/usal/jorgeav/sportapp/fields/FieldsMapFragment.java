@@ -26,7 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.MapMarkerInfoAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
-import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
+import com.usal.jorgeav.sportapp.fields.fielddetail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;

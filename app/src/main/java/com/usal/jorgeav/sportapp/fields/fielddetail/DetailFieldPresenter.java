@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.fields.detail;
+package com.usal.jorgeav.sportapp.fields.fielddetail;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -21,6 +21,7 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
 class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = DetailFieldPresenter.class.getSimpleName();
+
     private DetailFieldContract.View mView;
 
     DetailFieldPresenter(@NonNull DetailFieldContract.View view) {
@@ -49,7 +50,7 @@ class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManag
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 FirebaseActions.deleteField(fieldId);
-                                ((BaseFragment)mView).resetBackStack();
+                                ((BaseFragment) mView).resetBackStack();
                             }
                         }
 
@@ -107,8 +108,7 @@ class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManag
     }
 
     private void showFieldDetails(Cursor data) {
-        if(data != null && data.moveToFirst()) {
-            mView.showFieldId(data.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID));
+        if (data != null && data.moveToFirst()) {
             mView.showFieldName(data.getString(SportteamContract.FieldEntry.COLUMN_NAME));
 
             String address = data.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);

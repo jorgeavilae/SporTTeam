@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.fields.detail;
+package com.usal.jorgeav.sportapp.fields.fielddetail;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,7 +10,6 @@ import com.google.android.gms.maps.model.LatLng;
 abstract class DetailFieldContract {
 
     public interface View {
-        void showFieldId(String id);
         void showFieldName(String name);
         void showFieldPlace(String address, String city, LatLng coords);
         void showFieldTimes(long openTime, long closeTime);

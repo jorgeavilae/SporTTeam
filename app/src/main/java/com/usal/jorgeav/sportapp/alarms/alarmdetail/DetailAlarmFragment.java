@@ -31,7 +31,7 @@ import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
 import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
-import com.usal.jorgeav.sportapp.fields.detail.DetailFieldFragment;
+import com.usal.jorgeav.sportapp.fields.fielddetail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
