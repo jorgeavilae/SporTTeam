@@ -137,7 +137,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                             ((BaseActivity)getActivity()).hideContent();
                         }
                     })
-                    .setNegativeButton(android.R.string.yes, null);
+                    .setNegativeButton(android.R.string.no, null);
             builder.create().show();
             return true;
         } else if (item.getItemId() == R.id.action_unanswered_invitations) {

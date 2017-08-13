@@ -141,7 +141,7 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         else return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener, AdapterView.OnLongClickListener {
         @BindView(R.id.notification_item_icon)
         ImageView imageViewNotificationIcon;
         @BindView(R.id.notification_item_title)
@@ -153,6 +153,7 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
@@ -162,9 +163,20 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
             if (entry != null)
                 mClickListener.onMyNotificationClick(entry.getKey(), entry.getValue());
         }
+
+        @Override
+        public boolean onLongClick(View view) {
+            int position = getAdapterPosition();
+            Map.Entry<String, MyNotification> entry = getEntry(position);
+            //noinspection SimplifiableIfStatement
+            if (entry != null)
+                return mClickListener.onMyNotificationLongClick(entry.getKey(), entry.getValue());
+            return false;
+        }
     }
 
     public interface OnMyNotificationItemClickListener {
         void onMyNotificationClick(String key, MyNotification notification);
+        boolean onMyNotificationLongClick(String key, MyNotification notification);
     }
 }

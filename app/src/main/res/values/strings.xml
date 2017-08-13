@@ -77,6 +77,10 @@
 
 
     <!--Strings for notification messages-->
+    <string name="dialog_msg_delete_all_notifications">All notifications will be deleted</string>
+    <string name="dialog_msg_delete_one_notification">This notification will be deleted</string>
+    <string name="toast_notification_load_error">Notifications couldn\'t be loaded</string>
+
     <string name="notification_title_friend_request_received">New friend request</string>
     <string name="notification_title_friend_request_accepted">New friend!!</string>
     <string name="notification_title_event_invitation_received">New event invitation</string>

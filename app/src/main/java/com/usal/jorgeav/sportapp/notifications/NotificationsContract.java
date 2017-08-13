@@ -7,11 +7,7 @@ import com.usal.jorgeav.sportapp.data.MyNotification;
 
 import java.util.HashMap;
 
-/**
- * Created by Jorge Avila on 25/04/2017.
- */
-
-public abstract class NotificationsContract {
+abstract class NotificationsContract {
 
     public interface Presenter {
         void loadNotifications();
