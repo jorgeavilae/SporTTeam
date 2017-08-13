@@ -242,12 +242,12 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         ((BaseActivity) getActivity()).showContent();
 
         if (totalPlayersFrom != null && totalPlayersFrom > -1)
-            this.textViewAlarmTotalFrom.setText(String.format(Locale.getDefault(), "%2d", totalPlayersFrom));
+            this.textViewAlarmTotalFrom.setText(String.format(Locale.getDefault(), "%d", totalPlayersFrom));
         else
             this.textViewAlarmTotalFrom.setText(R.string.unspecified);
 
         if (totalPlayersTo != null && totalPlayersTo > -1)
-            this.textViewAlarmTotalTo.setText(String.format(Locale.getDefault(), "%2d", totalPlayersTo));
+            this.textViewAlarmTotalTo.setText(String.format(Locale.getDefault(), "%d", totalPlayersTo));
         else
             this.textViewAlarmTotalTo.setText(R.string.unspecified);
     }
@@ -257,12 +257,12 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         ((BaseActivity) getActivity()).showContent();
 
         if (emptyPlayersFrom != null && emptyPlayersFrom > -1)
-            this.textViewAlarmEmptyFrom.setText(String.format(Locale.getDefault(), "%2d", emptyPlayersFrom));
+            this.textViewAlarmEmptyFrom.setText(String.format(Locale.getDefault(), "%d", emptyPlayersFrom));
         else
             this.textViewAlarmEmptyFrom.setText(R.string.unspecified);
 
         if (emptyPlayersTo != null && emptyPlayersTo > -1)
-            this.textViewAlarmEmptyTo.setText(String.format(Locale.getDefault(), "%2d", emptyPlayersTo));
+            this.textViewAlarmEmptyTo.setText(String.format(Locale.getDefault(), "%d", emptyPlayersTo));
         else
             this.textViewAlarmEmptyTo.setText(R.string.unspecified);
     }

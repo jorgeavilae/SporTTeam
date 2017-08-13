@@ -8,16 +8,13 @@ import android.support.v4.content.Loader;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 
-/**
- * Created by Jorge Avila on 23/04/2017.
- */
-
-public class AlarmsPresenter implements AlarmsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class AlarmsPresenter implements AlarmsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+    @SuppressWarnings("unused")
     private static final String TAG = AlarmsPresenter.class.getSimpleName();
 
-    AlarmsContract.View mAlarmsView;
+    private AlarmsContract.View mAlarmsView;
 
-    public AlarmsPresenter(AlarmsContract.View mAlarmsView) {
+    AlarmsPresenter(AlarmsContract.View mAlarmsView) {
         this.mAlarmsView = mAlarmsView;
     }
 

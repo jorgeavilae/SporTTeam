@@ -18,9 +18,9 @@ abstract class DetailAlarmContract {
         void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo);
         void showEvents(Cursor data);
         void clearUI();
+
         Context getActivityContext();
         BaseFragment getThis();
-
     }
 
     public interface Presenter {

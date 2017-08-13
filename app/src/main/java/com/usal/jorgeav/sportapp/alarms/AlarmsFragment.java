@@ -25,6 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class AlarmsFragment extends BaseFragment implements AlarmsContract.View, AlarmAdapter.OnAlarmItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = AlarmsFragment.class.getSimpleName();
 
     AlarmsContract.Presenter mAlarmsPresenter;

@@ -61,22 +61,22 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
     public static final String BUNDLE_ALARM_ID = "BUNDLE_ALARM_ID";
     public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
+    public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
+    ArrayList<Field> mFieldList;
 
     // Static prevent double initialization with same ID
     private static GoogleApiClient mGoogleApiClient;
     PlaceAutocompleteAdapter mAdapter;
-    public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
-    ArrayList<Field> mFieldList;
 
     NewAlarmContract.Presenter mNewAlarmPresenter;
     private static boolean sInitialize;
+    String mSportId = "";
 
     @BindView(R.id.new_alarm_map)
     MapView newAlarmMap;
     private GoogleMap mMap;
     @BindView(R.id.new_alarm_sport)
     ImageView newAlarmSport;
-    String mSportId = "";
     @BindView(R.id.new_alarm_field)
     TextView newAlarmField;
     @BindView(R.id.new_alarm_field_button)
@@ -190,6 +190,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             }
         });
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
+            mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
         if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
             setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
 
@@ -284,10 +286,6 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                 }
             }
         });
-
-
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
-            mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
 
         return root;
     }
@@ -457,11 +455,13 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     public void showAlarmField(String fieldId, String city) {
         if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof AlarmsActivity) {
             Field f = UtilesContentProvider.getFieldFromContentProvider(fieldId);
-            newAlarmField.setText(f.getName() + ", " + f.getCity());
+            if (f != null) {
+                newAlarmField.setText(f.getName() + ", " + f.getCity());
 
-            ((AlarmsActivity) getActivity()).mFieldId = fieldId;
-            ((AlarmsActivity) getActivity()).mCity = f.getCity();
-            ((AlarmsActivity) getActivity()).mCoord = new LatLng(f.getCoord_latitude(), f.getCoord_longitude());
+                ((AlarmsActivity) getActivity()).mFieldId = fieldId;
+                ((AlarmsActivity) getActivity()).mCity = f.getCity();
+                ((AlarmsActivity) getActivity()).mCoord = new LatLng(f.getCoord_latitude(), f.getCoord_longitude());
+            }
         } else if (city != null && !TextUtils.isEmpty(city) && getActivity() instanceof AlarmsActivity) {
             newAlarmCity.setText(city);
             ((AlarmsActivity) getActivity()).mCity = city;
