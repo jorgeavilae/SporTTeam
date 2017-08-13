@@ -26,20 +26,18 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Jorge Avila on 29/05/2017.
- */
-
 public class InviteUserFragment extends BaseFragment implements InviteUserContract.View, UsersAdapter.OnUserItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = InviteUserFragment.class.getSimpleName();
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
-    private static String mEvent = "";
     InviteUserContract.Presenter mSendInvitationPresenter;
-    UsersAdapter mSendInvitationRecyclerAdapter;
+
+    private static String mEvent = "";
 
     @BindView(R.id.recycler_list)
     RecyclerView sendInvitationRecyclerList;
+    UsersAdapter mSendInvitationRecyclerAdapter;
     @BindView(R.id.list_placeholder)
     ConstraintLayout sendInvitationPlaceholder;
 
@@ -90,7 +88,7 @@ public class InviteUserFragment extends BaseFragment implements InviteUserContra
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment("Selecciona usuario", this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.invite_user), this);
         mActionBarIconManagementListener.setToolbarAsUp();
     }
 
@@ -121,13 +119,14 @@ public class InviteUserFragment extends BaseFragment implements InviteUserContra
 
     @Override
     public void onUserClick(final String uid) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
-        builder.setPositiveButton("Send Invitation", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
+                .setTitle(R.string.dialog_msg_are_you_sure)
+                .setPositiveButton(R.string.send_invitation, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mSendInvitationPresenter.sendInvitationToThisEvent(mEvent, uid);
                     }
                 })
-                .setNeutralButton("See details", new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.see_details, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Fragment newFragment = ProfileFragment.newInstance(uid);
                         mFragmentManagementListener.initFragment(newFragment, true);

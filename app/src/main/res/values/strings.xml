@@ -217,4 +217,5 @@
     <string name="dialog_msg_accept_friend">Accept as friend?</string>
     <string name="user_request_sent">Request sent</string>
     <string name="send_user_request">Send request</string>
+    <string name="invite_user">Invite users</string>
 </resources>
