@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class UtilesContentValues {
+    @SuppressWarnings("unused")
     private static final String TAG = UtilesContentValues.class.getSimpleName();
 
     public static ContentValues alarmToContentValues(Alarm alarm) {
@@ -110,9 +111,9 @@ public class UtilesContentValues {
         return cv;
     }
 
-    public static ContentValues dataSnapshotFriendRequestToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheSender) {
+    public static ContentValues dataSnapshotFriendRequestToContentValues(DataSnapshot dataSnapshot, String key, boolean keyIsTheSender) {
         String senderId, receiverId;
-        if(iAmTheSender) {
+        if(keyIsTheSender) {
             receiverId = dataSnapshot.getKey();
             senderId = key;
         } else {

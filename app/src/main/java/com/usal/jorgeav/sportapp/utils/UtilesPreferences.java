@@ -6,12 +6,9 @@ import android.content.SharedPreferences;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.preferences.SettingsFragment;
 
-/**
- * Created by Jorge Avila on 15/07/2017.
- */
-
+@SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class UtilesPreferences {
-    // TODO Only for testing purpose, delete
+    // Used in case COORD_PREF are not set
     public static final double SALAMANCA_LATITUDE = 40.9701039;
     public static final double SALAMANCA_LONGITUDE = -5.6635397;
     public static final double CACERES_LATITUDE = 39.4752765;

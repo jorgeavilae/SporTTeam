@@ -57,7 +57,7 @@ public class UtilesContentProvider {
         return null;
     }
 
-    public static ArrayList<Alarm> cursorToMultipleAlarm(Cursor cursor) {
+    private static ArrayList<Alarm> cursorToMultipleAlarm(Cursor cursor) {
         ArrayList<Alarm> result = new ArrayList<>();
         if (cursor != null)
             //Move to first position to prevent errors
@@ -117,33 +117,36 @@ public class UtilesContentProvider {
 
     public static HashMap<String, Boolean> cursorToMultipleParticipants(Cursor data) {
         HashMap<String, Boolean> map = new HashMap<>();
-        //Loader reuses Cursor so move to first position
-        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-            String userId = data.getString(SportteamContract.EventsParticipationEntry.COLUMN_USER_ID);
-            Boolean participates = data.getInt(SportteamContract.EventsParticipationEntry.COLUMN_PARTICIPATES) == 1;
-            map.put(userId, participates);
-        }
+        if (data != null)
+            //Loader reuses Cursor so move to first position
+            for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                String userId = data.getString(SportteamContract.EventsParticipationEntry.COLUMN_USER_ID);
+                Boolean participates = data.getInt(SportteamContract.EventsParticipationEntry.COLUMN_PARTICIPATES) == 1;
+                map.put(userId, participates);
+            }
         return map;
     }
     public static HashMap<String, SimulatedUser> cursorToMultipleSimulatedParticipants(Cursor data) {
         HashMap<String, SimulatedUser> simulatedUserHashMap = new HashMap<>();
-        //Loader reuses Cursor so move to first position
-        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-            String key = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_SIMULATED_USER_ID);
+        if (data != null)
+            //Loader reuses Cursor so move to first position
+            for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                String key = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_SIMULATED_USER_ID);
 
-            String alias = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_ALIAS);
-            String profile_picture = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_PROFILE_PICTURE);
-            Long age = data.getLong(SportteamContract.SimulatedParticipantEntry.COLUMN_AGE);
-            String owner = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_OWNER);
-            SimulatedUser simulatedUser = new SimulatedUser(alias, profile_picture, age, owner);
+                String alias = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_ALIAS);
+                String profile_picture = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_PROFILE_PICTURE);
+                Long age = data.getLong(SportteamContract.SimulatedParticipantEntry.COLUMN_AGE);
+                String owner = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_OWNER);
+                SimulatedUser simulatedUser = new SimulatedUser(alias, profile_picture, age, owner);
 
-            simulatedUserHashMap.put(key, simulatedUser);
-        }
+                simulatedUserHashMap.put(key, simulatedUser);
+            }
         return simulatedUserHashMap;
     }
 
     public static User getUserFromContentProvider(@NonNull String userId) {
         User u = null;
+        if (TextUtils.isEmpty(userId)) return null;
         Cursor c = SportteamLoader.simpleQueryUserId(MyApplication.getAppContext(), userId);
         if (c != null) {
             if (c.getCount() == 1 && c.moveToFirst()) {
@@ -240,7 +243,7 @@ public class UtilesContentProvider {
 
     public static Event getEventFromContentProvider(@NonNull String eventId) {
         Event e = null;
-        if (TextUtils.isEmpty(eventId)) return null; // TODO comprobar esto en los demas y comprobar loq devuelve esta funcion
+        if (TextUtils.isEmpty(eventId)) return null;
         Cursor c = SportteamLoader.simpleQueryEventId(MyApplication.getAppContext(), eventId);
         if (c != null) {
             if (c.getCount() == 1 && c.moveToFirst()) {
@@ -312,7 +315,7 @@ public class UtilesContentProvider {
             Log.e(TAG, "getFieldFromContentProvider: Error with field "+fieldId);
         return f;
     }
-    public static ArrayList<SportCourt> getFieldSportFromContentProvider(@NonNull String fieldId) {
+    private static ArrayList<SportCourt> getFieldSportFromContentProvider(@NonNull String fieldId) {
         ArrayList<SportCourt> result = new ArrayList<>();
         Cursor cursorFieldSport = SportteamLoader.simpleQuerySportsOfFieldId(MyApplication.getAppContext(), fieldId);
         if (cursorFieldSport != null) {
@@ -352,6 +355,7 @@ public class UtilesContentProvider {
 
     public static Alarm getAlarmFromContentProvider(@NonNull String alarmId) {
         Alarm a = null;
+        if (TextUtils.isEmpty(alarmId)) return null;
         Cursor c = SportteamLoader.simpleQueryAlarmId(MyApplication.getAppContext(), alarmId);
         if (c != null) {
             if (c.getCount() == 1 && c.moveToFirst()) {
@@ -403,6 +407,7 @@ public class UtilesContentProvider {
 
     public static String eventsCoincidenceAlarmFromContentProvider(Alarm alarm, String myUserId) {
         String result = null;
+        if (alarm == null || myUserId == null || TextUtils.isEmpty(myUserId)) return null;
         Cursor c = SportteamLoader.cursorAlarmCoincidence(MyApplication.getAppContext().getContentResolver(), alarm, myUserId);
         if (c != null) {
             if (c.getCount() > 0 && c.moveToFirst()) result = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
@@ -437,7 +442,6 @@ public class UtilesContentProvider {
                 result.add(MyCalendarEvent.Builder.newInstance(event, field, color));
             }
         }
-        Log.d(TAG, "cursorToMultipleCalendarEvent: "+result);
         return result;
     }
 }

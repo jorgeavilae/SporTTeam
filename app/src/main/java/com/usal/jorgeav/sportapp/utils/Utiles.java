@@ -41,24 +41,22 @@ import java.util.List;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-/**
- * Created by Jorge Avila on 17/05/2017.
- */
-
 public class Utiles {
     private static final String TAG = Utiles.class.getSimpleName();
 
     /* Request code for ask permissions to gallery and camera */
     public static final int RC_GALLERY_CAMERA_PERMISSIONS = 3;
-
-    //TODO mover a settings
-    public static final double DISTANCE_ALLOWED = 50;
+    private static final double DISTANCE_ALLOWED = 50;
 
     public static String getFirebaseStorageRootReference() {
         /* https://firebase.google.com/docs/storage/android/create-reference?hl=es-419 */
         /* https://stackoverflow.com/a/40647158/4235666 */
-        FirebaseOptions opts = FirebaseApp.getInstance().getOptions();
-        return "gs://" + opts.getStorageBucket();
+        FirebaseApp firebaseApp = FirebaseApp.getInstance();
+        if (firebaseApp != null) {
+            FirebaseOptions opts = firebaseApp.getOptions();
+            return "gs://" + opts.getStorageBucket();
+        }
+        return "";
     }
 
     public static String getCurrentUserId() {
@@ -102,7 +100,7 @@ public class Utiles {
 
     /* https://stackoverflow.com/a/123305/4235666 */
     /* https://en.wikipedia.org/wiki/Haversine_formula */
-    public static double distanceHaversine(double lat1, double lng1, double lat2, double lng2) {
+    private static double distanceHaversine(double lat1, double lng1, double lat2, double lng2) {
         double earthRadius = 6371000; // in meters
         double dLat = Math.toRadians(lat2-lat1);
         double dLng = Math.toRadians(lng2-lng1);

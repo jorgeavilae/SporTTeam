@@ -8,10 +8,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-/**
- * Created by Jorge Avila on 15/06/2017.
- */
-
 public class UtilesTime {
 
     public static Long stringDateToMillis(String dateStr) {

@@ -18,10 +18,6 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-/**
- * Created by Jorge Avila on 15/07/2017.
- */
-
 // https://developers.google.com/maps/documentation/geocoding/intro?hl=es-419#ReverseGeocoding
 public class UtilesNetwork {
     public static final String TAG = UtilesNetwork.class.getSimpleName();
@@ -30,17 +26,14 @@ public class UtilesNetwork {
     private static final String BASE_URL = "https://maps.googleapis.com/maps/api/geocode/";
     private static final String RESPONSE_TYPE = "json";
 
-    // latlng 0.0,0.0
     private static final String LATLNG_PARAM = "latlng";
 
     // result_type street_address https://developers.google.com/maps/documentation/geocoding/intro?hl=es-419#Types
     private static final String RESULT_TYPE_PARAM = "result_type";
     private static final String RESULT_TYPE = "street_address";
 
-    // key asdasdasd6asd5as54d55a
     private static final String KEY_PARAM = "key";
 
-    // Status field from Json response
     private static final String STATUS_CODE = "status";
 
     public static URL getUrl(String apiKey, Double latitude, Double longitude) {
