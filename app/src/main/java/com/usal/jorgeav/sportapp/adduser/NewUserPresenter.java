@@ -28,8 +28,8 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
 
 import java.io.File;
 import java.util.ArrayList;

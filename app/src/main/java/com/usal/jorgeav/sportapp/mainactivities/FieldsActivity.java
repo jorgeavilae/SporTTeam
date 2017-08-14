@@ -24,7 +24,7 @@ import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.fields.FieldsMapFragment;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldContract;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
 
 import java.util.ArrayList;
 import java.util.Arrays;

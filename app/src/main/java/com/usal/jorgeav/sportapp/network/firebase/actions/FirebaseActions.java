@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.network.firebase;
+package com.usal.jorgeav.sportapp.network.firebase.actions;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -36,6 +36,10 @@ import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantContract;
+import com.usal.jorgeav.sportapp.network.firebase.AppExecutor;
+import com.usal.jorgeav.sportapp.network.firebase.ExecutorValueEventListener;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.preferences.SettingsFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
@@ -1128,7 +1132,7 @@ public class FirebaseActions {
         });
     }
 
-    static void checkNotification(String ref) {
+    public static void checkNotification(String ref) {
         FirebaseDatabase.getInstance().getReferenceFromUrl(ref)
                 .child(FirebaseDBContract.Notification.CHECKED).setValue(true);
     }
@@ -1143,7 +1147,7 @@ public class FirebaseActions {
                 .removeValue();
     }
 
-    static void checkAlarmsForNotifications() {
+    public static void checkAlarmsForNotifications() {
         List<Alarm> alarms = UtilesContentProvider.getAllAlarmsFromContentProvider(MyApplication.getAppContext());
         if (alarms == null || alarms.size() < 1) return;
 

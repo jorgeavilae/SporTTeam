@@ -14,9 +14,9 @@ import java.util.concurrent.Executor;
  * https://github.com/CodingDoug/white-label-event-app/commit/917ff279febce1977635226fe9181cc1ff099656
  * https://github.com/CodingDoug/white-label-event-app/blob/3adbbb62e2c94feb14fb709af02da1b4742915c1/app/src/main/java/com/hyperaware/conference/android/dagger/AppExecutorsModule.java
  */
-abstract class ExecutorValueEventListener implements ValueEventListener {
+public abstract class ExecutorValueEventListener implements ValueEventListener {
     private final Executor executor;
-    ExecutorValueEventListener(final Executor executor) {
+    protected ExecutorValueEventListener(final Executor executor) {
         this.executor = executor;
     }
 

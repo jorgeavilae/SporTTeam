@@ -31,7 +31,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;

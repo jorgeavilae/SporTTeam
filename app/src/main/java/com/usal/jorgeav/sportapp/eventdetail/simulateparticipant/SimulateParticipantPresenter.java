@@ -7,7 +7,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.UploadTask;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 class SimulateParticipantPresenter implements SimulateParticipantContract.Presenter {

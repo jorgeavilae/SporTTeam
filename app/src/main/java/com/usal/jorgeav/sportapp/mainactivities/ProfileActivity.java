@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Sport;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
 import com.usal.jorgeav.sportapp.profile.ProfileContract;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;

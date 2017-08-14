@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadFactory;
  * https://github.com/CodingDoug/white-label-event-app/commit/917ff279febce1977635226fe9181cc1ff099656
  * https://github.com/CodingDoug/white-label-event-app/blob/3adbbb62e2c94feb14fb709af02da1b4742915c1/app/src/main/java/com/hyperaware/conference/android/dagger/AppExecutorsModule.java
  */
-class AppExecutor {
+public class AppExecutor {
     private static final int COMPUTE_THREAD_PRIORITY = Process.THREAD_PRIORITY_BACKGROUND;
 
     // A pool of background threads
@@ -28,7 +28,7 @@ class AppExecutor {
     }
 
     public static AppExecutor getInstance() { return sInstance; }
-    Executor getExecutor() { return mExecutor; }
+    public Executor getExecutor() { return mExecutor; }
 
     // Constructs the thread pool used to decode dataSnapshot and insert in Content Provider.
     private AppExecutor() {
