@@ -30,6 +30,7 @@
     <string name="delete">Delete</string>
     <string name="infinite">Infinite</string>
     <string name="error">Error</string>
+    <string name="loading">Performing action…</string>
 
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_maps">Map</string>
@@ -255,5 +256,4 @@
     <string name="dialog_msg_accept_participant">Accept as participant?</string>
     <string name="dialog_msg_unblock_participant">Unblock user? The user will have to send another request.</string>
     <string name="pick_event">Pick event</string>
-    <string name="loading">Performing action...</string>
 </resources>

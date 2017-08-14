@@ -6,10 +6,6 @@ import com.usal.jorgeav.sportapp.utils.UtilesNetwork;
 
 import java.net.URL;
 
-/**
- * Created by Jorge Avila on 15/07/2017.
- */
-
 public class HttpRequestTask {
 
     /* Performs the network request for Google Places near by a given LatLng Object
