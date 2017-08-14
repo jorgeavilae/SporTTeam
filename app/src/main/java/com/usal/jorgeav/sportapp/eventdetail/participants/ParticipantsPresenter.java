@@ -10,8 +10,8 @@ import android.text.TextUtils;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.network.firebase.actions.EventsFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 
 class ParticipantsPresenter implements ParticipantsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     @SuppressWarnings("unused")

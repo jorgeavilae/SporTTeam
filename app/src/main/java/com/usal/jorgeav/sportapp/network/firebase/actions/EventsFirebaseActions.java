@@ -19,7 +19,7 @@ import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulatePartici
 import com.usal.jorgeav.sportapp.network.firebase.AppExecutor;
 import com.usal.jorgeav.sportapp.network.firebase.ExecutorValueEventListener;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;

@@ -33,7 +33,7 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.fields.FieldsMapFragment;
 import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.preferences.SettingsActivity;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 

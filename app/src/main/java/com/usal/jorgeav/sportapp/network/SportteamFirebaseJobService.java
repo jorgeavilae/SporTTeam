@@ -2,7 +2,7 @@ package com.usal.jorgeav.sportapp.network;
 
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 public class SportteamFirebaseJobService extends JobService {

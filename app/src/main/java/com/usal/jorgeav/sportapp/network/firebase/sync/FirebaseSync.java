@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.network.firebase;
+package com.usal.jorgeav.sportapp.network.firebase.sync;
 
 import android.content.ContentValues;
 import android.net.Uri;
@@ -24,6 +24,10 @@ import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.mainactivities.LoginActivity;
+import com.usal.jorgeav.sportapp.network.firebase.AppExecutor;
+import com.usal.jorgeav.sportapp.network.firebase.ExecutorChildEventListener;
+import com.usal.jorgeav.sportapp.network.firebase.ExecutorValueEventListener;
+import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.network.firebase.actions.EventRequestFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.actions.InvitationFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseActions;
@@ -97,7 +101,174 @@ public class FirebaseSync {
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS);
 
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+        ExecutorChildEventListener childEventListener = getListenerToLoadUsersFromFriends();
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + myUserRef);
+        }
+    }
+    public static void loadUsersFromFriendsRequestsSent() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT);
+
+        ExecutorChildEventListener childEventListener = getListenerToLoadUsersFromFriendsRequestsSent();
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + myUserRef);
+        }
+    }
+    public static void loadUsersFromFriendsRequestsReceived() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED);
+
+        ExecutorChildEventListener childEventListener = getListenerToLoadUsersFromFriendsRequestsReceived();
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + myUserRef);
+        }
+    }
+
+    public static void loadEventsFromMyOwnEvents() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_CREATED);
+
+        ExecutorChildEventListener childEventListener = getListenerToLoadEventsFromMyOwnEvents();
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + myUserRef);
+        }
+    }
+    public static void loadEventsFromEventsParticipation() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION);
+
+        ExecutorChildEventListener childEventListener = getListenerToLoadEventsFromEventsParticipation();
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + myUserRef);
+        }
+    }
+
+    // Retrieve all invitations, sent by the current user or others, in order to not
+    // invite same user twice.
+    public static void loadUsersFromInvitationsSent(String eventId) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
+                .child(eventId + "/" + FirebaseDBContract.Event.INVITATIONS);
+
+        ExecutorChildEventListener childEventListener = getListenerToLoadUsersFromInvitationsSent();
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + myUserRef);
+        }
+    }
+    public static void loadEventsFromInvitationsReceived() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED);
+
+        ExecutorChildEventListener childEventListener = getListenerToLoadEventsFromInvitationsReceived();
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + myUserRef);
+        }
+    }
+
+    public static void loadUsersFromUserRequests(String key) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
+                .child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS);
+
+        ExecutorChildEventListener childEventListener = getListenerToLoadUsersFromUserRequests();
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + myUserRef);
+        }
+    }
+    public static void loadEventsFromEventsRequests() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_REQUESTS);
+
+        ExecutorChildEventListener childEventListener = getListenerToLoadEventsFromEventsRequests();
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + myUserRef);
+        }
+    }
+
+    public static void loadAlarmsFromMyAlarms() {
+        String myUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserID)) return;
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID).child(FirebaseDBContract.User.ALARMS);
+
+        ExecutorChildEventListener childEventListener = getListenerToLoadAlarmsFromMyAlarms();
+
+        if (!listenerMap.containsKey(myUserRef)) {
+            myUserRef.addChildEventListener(childEventListener);
+            listenerMap.put(myUserRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + myUserRef);
+        }
+    }
+
+    public static void loadFieldsFromCity(String city, boolean shouldResetFieldsData) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference fieldsRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
+        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
+
+        // Should reset Fields table because it's first load or it's change city.
+        if (shouldResetFieldsData) {
+            /* remove listener from DatabaseReference and from listenerMap */
+            if (listenerMap.get(fieldsRef) != null) {
+                fieldsRef.removeEventListener(listenerMap.get(fieldsRef));
+                listenerMap.remove(fieldsRef);
+            }
+
+            /* remove Fields and FieldsSport from tables */
+            MyApplication.getAppContext().getContentResolver()
+                    .delete(SportteamContract.FieldEntry.CONTENT_FIELD_URI, null, null);
+            MyApplication.getAppContext().getContentResolver()
+                    .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI, null, null);
+        }
+
+        ExecutorChildEventListener childEventListener = getListenerToLoadFieldsFromCity();
+        if (!listenerMap.containsKey(fieldsRef)) {
+            fieldsRef.orderByChild(filter).equalTo(city).addChildEventListener(childEventListener);
+            listenerMap.put(fieldsRef, childEventListener);
+            Log.d(TAG, "attachListener ref " + fieldsRef);
+        }
+    }
+
+    public static ExecutorChildEventListener getListenerToLoadUsersFromFriends() {
+        return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
@@ -147,20 +318,9 @@ public class FirebaseSync {
 
             }
         };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + myUserRef);
-        }
     }
-    public static void loadUsersFromFriendsRequestsSent() {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_SENT);
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+    public static ExecutorChildEventListener getListenerToLoadUsersFromFriendsRequestsSent() {
+        return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -201,20 +361,9 @@ public class FirebaseSync {
 
             }
         };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + myUserRef);
-        }
     }
-    public static void loadUsersFromFriendsRequestsReceived() {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.FRIENDS_REQUESTS_RECEIVED);
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+    public static ExecutorChildEventListener getListenerToLoadUsersFromFriendsRequestsReceived() {
+        return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -258,21 +407,10 @@ public class FirebaseSync {
 
             }
         };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + myUserRef);
-        }
     }
 
-    public static void loadEventsFromMyOwnEvents() {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_CREATED);
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+    public static ExecutorChildEventListener getListenerToLoadEventsFromMyOwnEvents() {
+        return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -327,20 +465,9 @@ public class FirebaseSync {
 
             }
         };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + myUserRef);
-        }
     }
-    public static void loadEventsFromEventsParticipation() {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION);
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+    public static ExecutorChildEventListener getListenerToLoadEventsFromEventsParticipation() {
+        return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -389,21 +516,10 @@ public class FirebaseSync {
 
             }
         };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + myUserRef);
-        }
     }
 
-    // Retrieve all invitations, sent by the current user or others, in order to not
-    // invite same user twice.
-    public static void loadUsersFromInvitationsSent(String eventId) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
-                .child(eventId + "/" + FirebaseDBContract.Event.INVITATIONS);
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+    public static ExecutorChildEventListener getListenerToLoadUsersFromInvitationsSent() {
+        return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -454,20 +570,9 @@ public class FirebaseSync {
 
             }
         };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + myUserRef);
-        }
     }
-    public static void loadEventsFromInvitationsReceived() {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED);
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+    public static ExecutorChildEventListener getListenerToLoadEventsFromInvitationsReceived() {
+        return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -515,19 +620,10 @@ public class FirebaseSync {
 
             }
         };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + myUserRef);
-        }
     }
 
-    public static void loadUsersFromUserRequests(String key) {
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
-                .child(key + "/" + FirebaseDBContract.Event.USER_REQUESTS);
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+    public static ExecutorChildEventListener getListenerToLoadUsersFromUserRequests() {
+        return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()) {
@@ -567,20 +663,9 @@ public class FirebaseSync {
 
             }
         };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + myUserRef);
-        }
     }
-    public static void loadEventsFromEventsRequests() {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.EVENTS_REQUESTS);
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+    public static ExecutorChildEventListener getListenerToLoadEventsFromEventsRequests() {
+        return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
@@ -624,25 +709,13 @@ public class FirebaseSync {
 
             }
         };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + myUserRef);
-        }
     }
 
-    public static void loadAlarmsFromMyAlarms() {
-        String myUserID = Utiles.getCurrentUserId();
-        if (TextUtils.isEmpty(myUserID)) return;
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID).child(FirebaseDBContract.User.ALARMS);
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+    public static ExecutorChildEventListener getListenerToLoadAlarmsFromMyAlarms() {
+         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     Alarm a = dataSnapshot.getValue(Alarm.class);
                     if (a == null) {
                         Log.e(TAG, "loadAlarmsFromMyAlarms: onChildAddedExecutor: Error parsing alarm");
@@ -684,11 +757,61 @@ public class FirebaseSync {
 
             }
         };
-        if (!listenerMap.containsKey(myUserRef)) {
-            myUserRef.addChildEventListener(childEventListener);
-            listenerMap.put(myUserRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + myUserRef);
-        }
+    }
+
+    public static ExecutorChildEventListener getListenerToLoadFieldsFromCity() {
+        return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.exists()) {
+                    Field field = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Field.class);
+                    if (field == null) {
+                        Log.e(TAG, "loadFieldsFromCity: onDataChangeExecutor: Error parsing Field from "
+                                + dataSnapshot.child(FirebaseDBContract.DATA).getRef());
+                        return;
+                    }
+                    field.setId(dataSnapshot.getKey());
+
+                    ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
+
+                    List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
+                    MyApplication.getAppContext().getContentResolver()
+                            .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                    cvSports.toArray(new ContentValues[cvSports.size()]));
+                }
+            }
+
+            @Override
+            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
+                onChildAdded(dataSnapshot, s);
+            }
+
+            @Override
+            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
+                String fieldId = dataSnapshot.getKey();
+                Log.d(TAG, "onChildRemovedExecutor: "+fieldId);
+                MyApplication.getAppContext().getContentResolver()
+                        .delete(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
+                                SportteamContract.FieldEntry.FIELD_ID + " = ? ",
+                                new String[]{fieldId});
+                MyApplication.getAppContext().getContentResolver()
+                        .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+                                new String[]{fieldId});
+            }
+
+            @Override
+            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        };
     }
 
     public static void loadMyNotifications(ValueEventListener listener) {
@@ -814,7 +937,7 @@ public class FirebaseSync {
                     }
                 });
     }
-    private static void loadAProfileAndNotify(final String notificationRef, final MyNotification notification) {
+    public static void loadAProfileAndNotify(final String notificationRef, final MyNotification notification) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
 
@@ -1020,7 +1143,7 @@ public class FirebaseSync {
                     }
                 });
     }
-    private static void loadAnEventAndNotify(final String notificationRef, final MyNotification notification) {
+    public static void loadAnEventAndNotify(final String notificationRef, final MyNotification notification) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
 
@@ -1104,7 +1227,7 @@ public class FirebaseSync {
                     }
                 });
     }
-    private static void loadUsersFromParticipants(String eventId, Map<String, Boolean> participants) {
+    public static void loadUsersFromParticipants(String eventId, Map<String, Boolean> participants) {
         MyApplication.getAppContext().getContentResolver()
                 .delete(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
                         SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
@@ -1122,7 +1245,7 @@ public class FirebaseSync {
                         .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cv);
             }
     }
-    private static void loadSimulatedParticipants(String eventId, Map<String, SimulatedUser> simulatedParticipants) {
+    public static void loadSimulatedParticipants(String eventId, Map<String, SimulatedUser> simulatedParticipants) {
         MyApplication.getAppContext().getContentResolver()
                 .delete(SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI,
                         SportteamContract.SimulatedParticipantEntry.EVENT_ID + " = ? ",
@@ -1142,84 +1265,6 @@ public class FirebaseSync {
             }
     }
 
-    public static void loadFieldsFromCity(String city, boolean shouldResetFieldsData) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference fieldsRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
-        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Field.CITY;
-
-        // Should reset Fields table because it's first load or it's change city.
-        if (shouldResetFieldsData) {
-            /* remove listener from DatabaseReference and from listenerMap */
-            if (listenerMap.get(fieldsRef) != null) {
-                fieldsRef.removeEventListener(listenerMap.get(fieldsRef));
-                listenerMap.remove(fieldsRef);
-            }
-
-            /* remove Fields and FieldsSport from tables */
-            MyApplication.getAppContext().getContentResolver()
-                    .delete(SportteamContract.FieldEntry.CONTENT_FIELD_URI, null, null);
-            MyApplication.getAppContext().getContentResolver()
-                    .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI, null, null);
-        }
-
-        ExecutorChildEventListener childEventListener = new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
-            @Override
-            public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
-                    Field field = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Field.class);
-                    if (field == null) {
-                        Log.e(TAG, "loadFieldsFromCity: onDataChangeExecutor: Error parsing Field from "
-                                + dataSnapshot.child(FirebaseDBContract.DATA).getRef());
-                        return;
-                    }
-                    field.setId(dataSnapshot.getKey());
-
-                    ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
-                    MyApplication.getAppContext().getContentResolver()
-                            .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
-
-                    List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
-                    MyApplication.getAppContext().getContentResolver()
-                            .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
-                                    cvSports.toArray(new ContentValues[cvSports.size()]));
-                }
-            }
-
-            @Override
-            public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
-                onChildAdded(dataSnapshot, s);
-            }
-
-            @Override
-            public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                String fieldId = dataSnapshot.getKey();
-                Log.d(TAG, "onChildRemovedExecutor: "+fieldId);
-                MyApplication.getAppContext().getContentResolver()
-                        .delete(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
-                                SportteamContract.FieldEntry.FIELD_ID + " = ? ",
-                                new String[]{fieldId});
-                MyApplication.getAppContext().getContentResolver()
-                        .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
-                                SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
-                                new String[]{fieldId});
-            }
-
-            @Override
-            public void onChildMovedExecutor(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelledExecutor(DatabaseError databaseError) {
-
-            }
-        };
-        if (!listenerMap.containsKey(fieldsRef)) {
-            fieldsRef.orderByChild(filter).equalTo(city).addChildEventListener(childEventListener);
-            listenerMap.put(fieldsRef, childEventListener);
-            Log.d(TAG, "attachListener ref " + fieldsRef);
-        }
-    }
     public static void loadEventsFromCity(String city) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);

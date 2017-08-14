@@ -20,9 +20,9 @@ import com.google.firebase.storage.UploadTask;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.network.firebase.actions.FriendsFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.lang.annotation.Retention;

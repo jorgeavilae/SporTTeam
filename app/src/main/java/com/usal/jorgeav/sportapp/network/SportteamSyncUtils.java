@@ -13,7 +13,7 @@ import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
 import com.usal.jorgeav.sportapp.mainactivities.LoginActivity;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 
 import java.util.concurrent.TimeUnit;
 

@@ -16,8 +16,8 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.network.firebase.actions.FieldsFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 
 class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = DetailFieldPresenter.class.getSimpleName();

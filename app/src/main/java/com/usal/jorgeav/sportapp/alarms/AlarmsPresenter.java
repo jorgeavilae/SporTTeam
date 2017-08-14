@@ -6,7 +6,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 
 class AlarmsPresenter implements AlarmsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     @SuppressWarnings("unused")

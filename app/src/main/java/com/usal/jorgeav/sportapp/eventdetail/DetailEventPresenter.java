@@ -16,10 +16,10 @@ import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
 import com.usal.jorgeav.sportapp.network.firebase.actions.EventRequestFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.actions.EventsFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.actions.InvitationFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 

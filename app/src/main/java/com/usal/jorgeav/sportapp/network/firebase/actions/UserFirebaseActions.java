@@ -23,7 +23,7 @@ import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.network.firebase.AppExecutor;
 import com.usal.jorgeav.sportapp.network.firebase.ExecutorValueEventListener;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.preferences.SettingsFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;

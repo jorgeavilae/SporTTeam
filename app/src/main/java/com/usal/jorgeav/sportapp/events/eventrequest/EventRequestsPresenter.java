@@ -7,7 +7,7 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 class EventRequestsPresenter implements EventRequestsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
