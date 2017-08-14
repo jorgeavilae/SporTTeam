@@ -11,7 +11,7 @@ import com.google.firebase.database.Transaction;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
-import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FieldsFirebaseSync;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -118,7 +118,7 @@ public class FieldsFirebaseActions {
 
                 mutableData.setValue(sport);
 
-                FirebaseSync.loadAField(fieldId);
+                FieldsFirebaseSync.loadAField(fieldId);
 
                 return Transaction.success(mutableData);
             }

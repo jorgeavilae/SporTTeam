@@ -23,6 +23,7 @@ import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.network.firebase.actions.FriendsFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.UsersFirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.lang.annotation.Retention;
@@ -49,7 +50,7 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
     @Override
     public void openUser(LoaderManager loaderManager, Bundle b) {
         String userId = b.getString(ProfileFragment.BUNDLE_INSTANCE_UID);
-        if (userId != null) FirebaseSync.loadAProfile(userId, false);
+        if (userId != null) UsersFirebaseSync.loadAProfile(null, userId, false);
         FirebaseSync.loadUsersFromFriendsRequestsSent();
         loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_PROFILE_SPORTS_ID, b, this);
@@ -260,7 +261,7 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
         });
 
         UserFirebaseActions.updateUserName(fUser.getUid(), name);
-        FirebaseSync.loadAProfile(fUser.getUid(), false);
+        UsersFirebaseSync.loadAProfile(null, fUser.getUid(), false);
     }
 
     @Override
@@ -269,7 +270,7 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
         if (TextUtils.isEmpty(myUserId)) return;
 
         UserFirebaseActions.updateUserAge(myUserId, age);
-        FirebaseSync.loadAProfile(myUserId, false);
+        UsersFirebaseSync.loadAProfile(null, myUserId, false);
     }
 
     @Override
@@ -295,7 +296,7 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
                     });
 
                     UserFirebaseActions.updateUserPhoto(fUser.getUid(), downloadUrl.toString());
-                    FirebaseSync.loadAProfile(fUser.getUid(), false);
+                    UsersFirebaseSync.loadAProfile(null, fUser.getUid(), false);
                 }
             }
         });

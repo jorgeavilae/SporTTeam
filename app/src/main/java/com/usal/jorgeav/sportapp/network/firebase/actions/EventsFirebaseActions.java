@@ -19,7 +19,7 @@ import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulatePartici
 import com.usal.jorgeav.sportapp.network.firebase.AppExecutor;
 import com.usal.jorgeav.sportapp.network.firebase.ExecutorValueEventListener;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
-import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.EventsFirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
@@ -210,7 +210,7 @@ public class EventsFirebaseActions {
                     Log.d(TAG, "deleteSimulatedParticipant: onComplete: Transaction completed");
                 else
                     Log.e(TAG, "deleteSimulatedParticipant: onComplete: Transaction error "+databaseError);
-                FirebaseSync.loadAnEvent(eventId);
+                EventsFirebaseSync.loadAnEvent(eventId);
             }
         });
     }
@@ -273,7 +273,7 @@ public class EventsFirebaseActions {
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
-                FirebaseSync.loadAnEvent(eventId);
+                EventsFirebaseSync.loadAnEvent(eventId);
             }
         });
     }

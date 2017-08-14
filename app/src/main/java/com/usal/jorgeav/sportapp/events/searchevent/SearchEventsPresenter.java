@@ -7,7 +7,7 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.EventsFirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
@@ -29,7 +29,7 @@ class SearchEventsPresenter implements SearchEventsContract.Presenter, LoaderMan
 
         String city = UtilesPreferences.getCurrentUserCity(mSearchEventsView.getActivityContext());
         if (city != null && !TextUtils.isEmpty(city))
-            FirebaseSync.loadEventsFromCity(city);
+            EventsFirebaseSync.loadEventsFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_FROM_CITY, b, this);
     }
 

@@ -23,7 +23,7 @@ import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.network.firebase.AppExecutor;
 import com.usal.jorgeav.sportapp.network.firebase.ExecutorValueEventListener;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
-import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.UsersFirebaseSync;
 import com.usal.jorgeav.sportapp.preferences.SettingsFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
@@ -105,7 +105,7 @@ public class UserFirebaseActions {
                         if (task.isSuccessful())
                             // Passing true makes update sharedPreferences and
                             // perform loadEventsFromCity and loadFieldsFromCity
-                            FirebaseSync.loadAProfile(myUid, true);
+                            UsersFirebaseSync.loadAProfile(null, myUid, true);
                     }
                 });
     }

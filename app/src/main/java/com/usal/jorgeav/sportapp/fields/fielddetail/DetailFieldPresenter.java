@@ -17,7 +17,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.actions.FieldsFirebaseActions;
-import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.FieldsFirebaseSync;
 
 class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = DetailFieldPresenter.class.getSimpleName();
@@ -64,7 +64,7 @@ class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManag
     @Override
     public void openField(LoaderManager loaderManager, Bundle b) {
         String fieldId = b.getString(DetailFieldFragment.BUNDLE_FIELD_ID);
-        if (fieldId != null) FirebaseSync.loadAField(fieldId);
+        if (fieldId != null) FieldsFirebaseSync.loadAField(fieldId);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELD_ID, b, this);
         loaderManager.initLoader(SportteamLoader.LOADER_FIELD_SPORTS_ID, b, this);
     }

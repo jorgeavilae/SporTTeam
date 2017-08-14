@@ -19,7 +19,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.actions.EventRequestFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.actions.EventsFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.actions.InvitationFirebaseActions;
-import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.EventsFirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
@@ -51,7 +51,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     @Override
     public void openEvent(LoaderManager loaderManager, Bundle b) {
         String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
-        if (eventId != null) FirebaseSync.loadAnEvent(eventId);
+        if (eventId != null) EventsFirebaseSync.loadAnEvent(eventId);
         loaderManager.initLoader(SportteamLoader.LOADER_EVENT_ID, b, this);
     }
 

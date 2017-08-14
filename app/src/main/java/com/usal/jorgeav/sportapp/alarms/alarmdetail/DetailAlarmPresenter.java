@@ -14,7 +14,7 @@ import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.actions.AlarmFirebaseActions;
-import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.AlarmsFirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
@@ -33,7 +33,7 @@ class DetailAlarmPresenter implements DetailAlarmContract.Presenter, LoaderManag
         if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_ALARM_ID)) {
             String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
             if (alarmId != null) {
-                FirebaseSync.loadAnAlarm(alarmId);
+                AlarmsFirebaseSync.loadAnAlarm(alarmId);
                 loaderManager.initLoader(SportteamLoader.LOADER_ALARM_ID, b, this);
                 loaderManager.initLoader(SportteamLoader.LOADER_ALARM_EVENTS_COINCIDENCE_ID, b, this);
             }

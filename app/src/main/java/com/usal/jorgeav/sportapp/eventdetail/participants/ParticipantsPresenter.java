@@ -11,7 +11,7 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.actions.EventsFirebaseActions;
-import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.EventsFirebaseSync;
 
 class ParticipantsPresenter implements ParticipantsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     @SuppressWarnings("unused")
@@ -49,7 +49,7 @@ class ParticipantsPresenter implements ParticipantsContract.Presenter, LoaderMan
         // display Simulated Participants recently added
         if (b != null && b.containsKey(ParticipantsFragment.BUNDLE_EVENT_ID)) {
             String eventId = b.getString(ParticipantsFragment.BUNDLE_EVENT_ID);
-            if (eventId != null) FirebaseSync.loadAnEvent(eventId);
+            if (eventId != null) EventsFirebaseSync.loadAnEvent(eventId);
         }
         if (b != null && b.containsKey(ParticipantsFragment.BUNDLE_OWNER_ID))
             mOwnerUid = b.getString(ParticipantsFragment.BUNDLE_OWNER_ID);

@@ -13,7 +13,10 @@ import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.sync.AlarmsFirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.EventsFirebaseSync;
 import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.UsersFirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
@@ -50,14 +53,14 @@ class NotificationsPresenter implements NotificationsContract.Presenter {
                             case FirebaseDBContract.NOTIFICATION_TYPE_USER:
                                 User user = UtilesContentProvider.getUserFromContentProvider(notification.getExtra_data_one());
                                 if (user == null) {
-                                    FirebaseSync.loadAProfile(notification.getExtra_data_one(), false);
+                                    UsersFirebaseSync.loadAProfile(null, notification.getExtra_data_one(), false);
                                 }
                                 result.put(data.getKey(), notification);
                                 break;
                             case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
                                 Event event = UtilesContentProvider.getEventFromContentProvider(notification.getExtra_data_one());
                                 if (event == null) {
-                                    FirebaseSync.loadAnEvent(notification.getExtra_data_one());
+                                    EventsFirebaseSync.loadAnEvent(notification.getExtra_data_one());
                                 }
                                 result.put(data.getKey(), notification);
                                 break;
@@ -65,10 +68,10 @@ class NotificationsPresenter implements NotificationsContract.Presenter {
                                 Alarm alarm = UtilesContentProvider.getAlarmFromContentProvider(notification.getExtra_data_one());
                                 Event eventCoincidence = UtilesContentProvider.getEventFromContentProvider(notification.getExtra_data_two());
                                 if (alarm == null) {
-                                    FirebaseSync.loadAnAlarm(notification.getExtra_data_one());
+                                    AlarmsFirebaseSync.loadAnAlarm(notification.getExtra_data_one());
                                 }
                                 if (eventCoincidence == null) {
-                                    FirebaseSync.loadAnEvent(notification.getExtra_data_two());
+                                    EventsFirebaseSync.loadAnEvent(notification.getExtra_data_two());
                                 }
                                 result.put(data.getKey(), notification);
                                 break;

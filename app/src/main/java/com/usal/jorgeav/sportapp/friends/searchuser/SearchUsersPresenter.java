@@ -7,7 +7,7 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
-import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.network.firebase.sync.UsersFirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
@@ -28,7 +28,7 @@ class SearchUsersPresenter implements SearchUsersContract.Presenter, LoaderManag
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_WITH_NAME);
 
         String city = UtilesPreferences.getCurrentUserCity(mSearchUsersView.getActivityContext());
-        FirebaseSync.loadUsersFromCity(city);
+        UsersFirebaseSync.loadUsersFromCity(city);
         loaderManager.initLoader(SportteamLoader.LOADER_USERS_FROM_CITY, b, this);
     }
 
@@ -38,7 +38,7 @@ class SearchUsersPresenter implements SearchUsersContract.Presenter, LoaderManag
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_WITH_NAME);
 
         String username = b.getString(SearchUsersFragment.BUNDLE_USERNAME);
-        FirebaseSync.loadUsersWithName(username);
+        UsersFirebaseSync.loadUsersWithName(username);
         loaderManager.restartLoader(SportteamLoader.LOADER_USERS_WITH_NAME, b, this);
     }
 
