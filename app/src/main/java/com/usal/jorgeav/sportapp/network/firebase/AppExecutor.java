@@ -30,15 +30,10 @@ class AppExecutor {
     public static AppExecutor getInstance() { return sInstance; }
     Executor getExecutor() { return mExecutor; }
 
-    /*
-     * Constructs the thread pool used to decode dataSnapshot
-     * and insert in Content Provider. Because the constructor is marked private,
-     * it's unavailable to other classes, even in the same package.
-     */
+    // Constructs the thread pool used to decode dataSnapshot and insert in Content Provider.
     private AppExecutor() {
         mExecutor = provideAppExecutor();
     }
-
     private Executor provideAppExecutor() {
         final int fixed = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
         return Executors.newFixedThreadPool(fixed, new ThreadFactory() {

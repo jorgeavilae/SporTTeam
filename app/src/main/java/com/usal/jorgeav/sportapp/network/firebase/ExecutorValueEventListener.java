@@ -28,13 +28,6 @@ abstract class ExecutorValueEventListener implements ValueEventListener {
                 onDataChangeExecutor(dataSnapshot);
             }
         });
-//        new AsyncTask<Object, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Object... objects) {
-//                onDataChangeExecutor((DataSnapshot) objects[0]);
-//                return null;
-//            }
-//        }.execute(dataSnapshot);
     }
 
     @Override
@@ -45,13 +38,6 @@ abstract class ExecutorValueEventListener implements ValueEventListener {
                 onCancelledExecutor(databaseError);
             }
         });
-//        new AsyncTask<Object, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Object... objects) {
-//                onCancelledExecutor((DatabaseError) objects[0]);
-//                return null;
-//            }
-//        }.execute(databaseError);
     }
 
     protected abstract void onDataChangeExecutor(DataSnapshot dataSnapshot);

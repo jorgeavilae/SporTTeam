@@ -5,10 +5,7 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/**
- * Created by Jorge Avila on 19/05/2017.
- */
-
+@SuppressWarnings({"WeakerAccess", "SpellCheckingInspection"})
 public final class FirebaseDBContract {
     public static final String DATA = "data";
     public static final String TABLE_USERS = "users";
@@ -71,6 +68,7 @@ public final class FirebaseDBContract {
     public static final int NOTIFICATION_TYPE_USER = 1;
     public static final int NOTIFICATION_TYPE_EVENT = 2;
     public static final int NOTIFICATION_TYPE_ALARM = 3;
+
     public static final class Notification {
         public static final String NOTIFICATION_TYPE = "notification_type";
         public static final String CHECKED = "checked";
@@ -114,7 +112,6 @@ public final class FirebaseDBContract {
     }
 
     public static final class Storage {
-        /* https://stackoverflow.com/questions/38779713/how-to-store-direct-link-to-an-image-using-firebase-storage */
         public static final String PROFILE_PICTURES = "profile_picture";
     }
 }

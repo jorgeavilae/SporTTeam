@@ -28,13 +28,6 @@ abstract class ExecutorChildEventListener implements ChildEventListener {
                 onChildAddedExecutor(dataSnapshot, s);
             }
         });
-//        new AsyncTask<Object, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Object... objects) {
-//                onChildAddedExecutor((DataSnapshot) objects[0], (String) objects[1]);
-//                return null;
-//            }
-//        }.execute(dataSnapshot, s);
     }
 
     @Override
@@ -45,14 +38,6 @@ abstract class ExecutorChildEventListener implements ChildEventListener {
                 onChildChangedExecutor(dataSnapshot, s);
             }
         });
-//        new AsyncTask<Object, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Object... objects) {
-//                onChildChangedExecutor((DataSnapshot) objects[0], (String) objects[1]);
-//                return null;
-//            }
-//        }.execute(dataSnapshot, s);
-
     }
 
     @Override
@@ -63,13 +48,6 @@ abstract class ExecutorChildEventListener implements ChildEventListener {
                 onChildRemovedExecutor(dataSnapshot);
             }
         });
-//        new AsyncTask<Object, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Object... objects) {
-//                onChildRemovedExecutor((DataSnapshot) objects[0]);
-//                return null;
-//            }
-//        }.execute(dataSnapshot);
     }
 
     @Override
@@ -80,14 +58,6 @@ abstract class ExecutorChildEventListener implements ChildEventListener {
                 onChildMovedExecutor(dataSnapshot, s);
             }
         });
-//        new AsyncTask<Object, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Object... objects) {
-//                onChildMovedExecutor((DataSnapshot) objects[0], (String) objects[1]);
-//                return null;
-//            }
-//        }.execute(dataSnapshot, s);
-
     }
 
     @Override
@@ -98,14 +68,6 @@ abstract class ExecutorChildEventListener implements ChildEventListener {
                 onCancelledExecutor(databaseError);
             }
         });
-//        new AsyncTask<Object, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Object... objects) {
-//                onCancelledExecutor((DatabaseError) objects[0]);
-//                return null;
-//            }
-//        }.execute(databaseError);
-
     }
 
     protected abstract void onChildAddedExecutor(DataSnapshot dataSnapshot, String s);
