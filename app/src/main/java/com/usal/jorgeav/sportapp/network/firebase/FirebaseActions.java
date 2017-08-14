@@ -1012,6 +1012,11 @@ public class FirebaseActions {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                 .child(userId).child(FirebaseDBContract.User.ALARMS).child(alarmId).removeValue();
     }
+    public static void deleteAllAlarms(String userId) {
+        //Delete Alarm in my User
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                .child(userId).child(FirebaseDBContract.User.ALARMS).removeValue();
+    }
 
     public static void deleteEvent(final BaseFragment baseFragment, String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -1377,6 +1382,9 @@ public class FirebaseActions {
 
                             //Delete all notifications
                             deleteAllNotifications(myUser.getUid());
+
+                            //Delete all alarms
+                            deleteAllAlarms(myUser.getUid());
 
                             //Delete User
                             if (settingsFragment != null)

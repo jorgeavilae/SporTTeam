@@ -121,7 +121,24 @@
     <string name="pref_password_title">Change Password</string>
     <string name="pref_password_dialog">New password</string>
     <string name="pref_reset_title">Delete User data</string>
+    <string name="dialog_msg_reset_user">Are you sure you want to DELETE ALL USER\'S DATA?
+        Events, invitations, friends… everything will be deleted. Only keeps on database your personal info like name,
+        city or sports.</string>
     <string name="pref_delete_title">Delete User</string>
+    <string name="dialog_msg_delete_user">Are you sure you want to DELETE USER?
+        Events, invitations, friends… everything will be deleted, including your personal info like name,
+        city or sports.</string>
+    <string name="toast_error_deleting_user">Error deleting user</string>
+    <string name="toast_user_reset_success">User\'s data deleted</string>
+    <string name="toast_change_email_equals">New email must be different</string>
+    <string name="toast_email_updated">Email updated</string>
+    <string name="toast_error_updating_email">Error updating email</string>
+    <string name="dialog_title_email_changed">Your email have been changed</string>
+    <string name="toast_password_updated">Password updated</string>
+    <string name="toast_error_updating_password">Error updating password</string>
+    <string name="dialog_msg_email_changed">You will receive an email in the address you provided when registering for
+        the first time in case you want to revert the process, and another email in the new address to confirm it.
+        To re-identify you when you close this session, you must confirm the email sent to the new address.</string>
 
     <!-- Fields Activity -->
     <string name="dialog_title_add_sport_to_field">Add a sport to this field</string>
@@ -238,4 +255,5 @@
     <string name="dialog_msg_accept_participant">Accept as participant?</string>
     <string name="dialog_msg_unblock_participant">Unblock user? The user will have to send another request.</string>
     <string name="pick_event">Pick event</string>
+    <string name="loading">Performing action...</string>
 </resources>

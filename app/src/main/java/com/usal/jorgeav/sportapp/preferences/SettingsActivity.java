@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.usal.jorgeav.sportapp.R;
 
 public class SettingsActivity extends AppCompatActivity {
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsActivity.class.getSimpleName();
 
     @Override

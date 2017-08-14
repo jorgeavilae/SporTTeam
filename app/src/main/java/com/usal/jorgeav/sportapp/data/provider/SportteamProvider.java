@@ -569,7 +569,20 @@ public class SportteamProvider extends ContentProvider {
         /* When data changes, the update are in Firebase and retrieve from there into Content Provider.
          * When retrieve data that already are in Content Provider, it's replaced, because of all tables
          * are created with ON CONFLICT REPLACE.
+         *
+         * There are only one exception, emails that already are successfuly logged and changed in Settings
          */
-        throw new UnsupportedOperationException("Not implemented");
+        Context context = getContext(); if (context == null) return 0;
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int count;
+        switch (sUriMatcher.match(uri)) {
+            case CODE_EMAIL_LOGGED:
+                count = db.update(TABLE_EMAIL_LOGGED, values, selection, selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Not implemented");
+        }
+        context.getContentResolver().notifyChange(uri, null);
+        return count;
     }
 }
