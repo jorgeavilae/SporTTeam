@@ -8,7 +8,7 @@ import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.InvitationFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 class InviteUserPresenter implements InviteUserContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
@@ -25,7 +25,7 @@ class InviteUserPresenter implements InviteUserContract.Presenter, LoaderManager
     public void sendInvitationToThisEvent(String eventId, String uid) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
-            FirebaseActions.sendInvitationToThisEvent(myUid, eventId, uid);
+            InvitationFirebaseActions.sendInvitationToThisEvent(myUid, eventId, uid);
     }
 
     @Override

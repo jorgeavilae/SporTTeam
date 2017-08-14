@@ -24,7 +24,9 @@ import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.mainactivities.LoginActivity;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.EventRequestFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.InvitationFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesContentValues;
@@ -737,7 +739,7 @@ public class FirebaseSync {
                             case FirebaseDBContract.NOTIFICATION_TYPE_ERROR:
                                 break;
                         }
-                        FirebaseActions.checkNotification(data.getRef().toString());
+                        NotificationsFirebaseActions.checkNotification(data.getRef().toString());
                     }
             }
 
@@ -844,7 +846,7 @@ public class FirebaseSync {
 
                             //Notify
                             UtilesNotification.createNotification(MyApplication.getAppContext(), notification, anUser);
-                            FirebaseActions.checkNotification(notificationRef);
+                            NotificationsFirebaseActions.checkNotification(notificationRef);
                         } else {
                             Log.e(TAG, "loadAProfileAndNotify: onDataChangeExecutor: User "
                                     + notification.getExtra_data_one() + " doesn't exist");
@@ -941,7 +943,7 @@ public class FirebaseSync {
 
                                         //Notify
                                         UtilesNotification.createNotification(MyApplication.getAppContext(), notification, a);
-                                        FirebaseActions.checkNotification(notificationRef);
+                                        NotificationsFirebaseActions.checkNotification(notificationRef);
 
                                     } else {
                                         Log.e(TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Event "
@@ -990,11 +992,11 @@ public class FirebaseSync {
                             if (currentUser != null && e.getOwner().equals(currentUser.getUid())
                                     && System.currentTimeMillis() > e.getDate()) {
                                 for (DataSnapshot d : dataSnapshot.child(FirebaseDBContract.Event.USER_REQUESTS).getChildren())
-                                    FirebaseActions.cancelEventRequest(d.getKey(), e.getEvent_id(), e.getOwner());
+                                    EventRequestFirebaseActions.cancelEventRequest(d.getKey(), e.getEvent_id(), e.getOwner());
                                 for (DataSnapshot d : dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS).getChildren()) {
                                     Invitation invitation = d.getValue(Invitation.class);
                                     if (invitation != null)
-                                        FirebaseActions.deleteInvitationToThisEvent(invitation.getSender(), e.getEvent_id(), invitation.getReceiver());
+                                        InvitationFirebaseActions.deleteInvitationToThisEvent(invitation.getSender(), e.getEvent_id(), invitation.getReceiver());
                                 }
                             }
 
@@ -1049,7 +1051,7 @@ public class FirebaseSync {
 
                             //Notify
                             UtilesNotification.createNotification(MyApplication.getAppContext(), notification, e);
-                            FirebaseActions.checkNotification(notificationRef);
+                            NotificationsFirebaseActions.checkNotification(notificationRef);
                         } else {
                             Log.e(TAG, "loadAnEventAndNotify: onDataChangeExecutor: Event "
                                     + notification.getExtra_data_one() + " doesn't exist");
@@ -1063,6 +1065,7 @@ public class FirebaseSync {
                     }
                 });
     }
+
     public static void loadAField(String fieldId) {
         if (fieldId == null || TextUtils.isEmpty(fieldId)) return;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -1252,7 +1255,7 @@ public class FirebaseSync {
                                     loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
                                 }
                             }
-                            FirebaseActions.checkAlarmsForNotifications();
+                            NotificationsFirebaseActions.checkAlarmsForNotifications();
                         }
                     }
 

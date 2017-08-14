@@ -34,7 +34,7 @@ import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.fields.fielddetail.DetailFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.BaseActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -276,7 +276,7 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         } else {
             String myUserId = Utiles.getCurrentUserId();
             if (TextUtils.isEmpty(myUserId))
-                FirebaseActions.deleteNotification(myUserId, mAlarmId + FirebaseDBContract.User.ALARMS);
+                NotificationsFirebaseActions.deleteNotification(myUserId, mAlarmId + FirebaseDBContract.User.ALARMS);
             eventsCoincidenceList.setVisibility(View.INVISIBLE);
             eventsCoincidencePlaceholder.setVisibility(View.VISIBLE);
         }

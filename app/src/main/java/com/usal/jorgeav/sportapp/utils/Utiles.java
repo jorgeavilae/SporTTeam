@@ -31,7 +31,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -136,7 +136,7 @@ public class Utiles {
         if (fUserEmail != null && !TextUtils.isEmpty(fUserEmail)) {
             if (!fUserEmail.equals(myUserDatabase.getEmail())) {
                 //Update email in FirebaseDatabase
-                FirebaseActions.updateUserEmail(myUserDatabase.getUid(), fUserEmail);
+                UserFirebaseActions.updateUserEmail(myUserDatabase.getUid(), fUserEmail);
 
                 myUserDatabase.setEmail(fUserEmail);
             }

@@ -14,7 +14,7 @@ import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.AlarmFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
@@ -48,7 +48,7 @@ class DetailAlarmPresenter implements DetailAlarmContract.Presenter, LoaderManag
             Toast.makeText(mView.getActivityContext(), R.string.action_not_done, Toast.LENGTH_SHORT).show();
             return;
         }
-        FirebaseActions.deleteAlarm(userId, alarmId);
+        AlarmFirebaseActions.deleteAlarm(userId, alarmId);
     }
 
     @Override

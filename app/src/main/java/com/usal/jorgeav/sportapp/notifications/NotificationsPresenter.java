@@ -13,7 +13,7 @@ import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
@@ -93,14 +93,14 @@ class NotificationsPresenter implements NotificationsContract.Presenter {
     public void deleteNotification(String key) {
         String myUserID = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUserID) && key != null && !TextUtils.isEmpty(key))
-            FirebaseActions.deleteNotification(myUserID, key);
+            NotificationsFirebaseActions.deleteNotification(myUserID, key);
     }
 
     @Override
     public void deleteAllNotifications() {
         String myUserID = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUserID))
-            FirebaseActions.deleteAllNotifications(myUserID);
+            NotificationsFirebaseActions.deleteAllNotifications(myUserID);
 
         // Reload
         loadNotifications();

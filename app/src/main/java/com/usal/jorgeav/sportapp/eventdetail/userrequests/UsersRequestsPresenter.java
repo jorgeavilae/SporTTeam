@@ -8,7 +8,7 @@ import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.EventRequestFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 class UsersRequestsPresenter implements UsersRequestsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
@@ -24,20 +24,20 @@ class UsersRequestsPresenter implements UsersRequestsContract.Presenter, LoaderM
     @Override
     public void acceptUserRequestToThisEvent(String eventId, String uid) {
         if (!TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
-            FirebaseActions.acceptUserRequestToThisEvent(uid, eventId);
+            EventRequestFirebaseActions.acceptUserRequestToThisEvent(uid, eventId);
     }
 
     @Override
     public void declineUserRequestToThisEvent(String eventId, String uid) {
         String myUserID = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUserID) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
-            FirebaseActions.declineUserRequestToThisEvent(uid, eventId, myUserID);
+            EventRequestFirebaseActions.declineUserRequestToThisEvent(uid, eventId, myUserID);
     }
 
     @Override
     public void unblockUserParticipationRejectedToThisEvent(String eventId, String uid) {
         if (!TextUtils.isEmpty(eventId))
-            FirebaseActions.unblockUserParticipationRejectedToThisEvent(uid, eventId);
+            EventRequestFirebaseActions.unblockUserParticipationRejectedToThisEvent(uid, eventId);
     }
 
     @Override

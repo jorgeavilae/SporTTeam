@@ -17,7 +17,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.FieldsFirebaseActions;
 
 class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = DetailFieldPresenter.class.getSimpleName();
@@ -33,14 +33,14 @@ class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManag
         if (fieldId != null && !TextUtils.isEmpty(fieldId)
                 && sportId != null && !TextUtils.isEmpty(sportId)
                 && rating > 0 && rating <= 5) {
-            FirebaseActions.voteField(fieldId, sportId, rating);
+            FieldsFirebaseActions.voteField(fieldId, sportId, rating);
         }
     }
 
     @Override
     public void deleteField(final String fieldId) {
         if (fieldId != null && !TextUtils.isEmpty(fieldId)) {
-            FirebaseActions.getFieldNextEventsReferenceWithId(fieldId)
+            FieldsFirebaseActions.getFieldNextEventsReferenceWithId(fieldId)
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -49,7 +49,7 @@ class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManag
                                         R.string.toast_msg_error_there_is_next_events,
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                FirebaseActions.deleteField(fieldId);
+                                FieldsFirebaseActions.deleteField(fieldId);
                                 ((BaseFragment) mView).resetBackStack();
                             }
                         }

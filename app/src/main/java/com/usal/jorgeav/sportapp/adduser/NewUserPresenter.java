@@ -29,7 +29,7 @@ import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
     public void checkUserEmailExists(String email) {
         if (email != null && !TextUtils.isEmpty(email)) {
             if (isEmailValid(email))
-                FirebaseActions.getUserEmailReferenceEqualTo(email)
+                UserFirebaseActions.getUserEmailReferenceEqualTo(email)
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -77,7 +77,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
     @Override
     public void checkUserNameExists(String name) {
         if (name != null && !TextUtils.isEmpty(name))
-            FirebaseActions.getUserNameReferenceEqualTo(name)
+            UserFirebaseActions.getUserNameReferenceEqualTo(name)
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -251,7 +251,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
         User user = new User(fUser.getUid(), fUser.getEmail(),
                 name, city, coords.latitude, coords.longitude, age, photoUriStr,
                 sportsArrayToHashMap(sportsList));
-        FirebaseActions.addUser(user);
+        UserFirebaseActions.addUser(user);
 
         // Return to LoginActivity
         mView.getHostActivity().setResult(RESULT_OK);

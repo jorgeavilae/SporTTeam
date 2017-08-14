@@ -21,7 +21,8 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.FriendsFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.lang.annotation.Retention;
@@ -196,7 +197,7 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
     public void sendFriendRequest(String uid) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(uid)) {
-            FirebaseActions.sendFriendRequest(myUid, uid);
+            FriendsFirebaseActions.sendFriendRequest(myUid, uid);
         }
     }
 
@@ -204,7 +205,7 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
     public void cancelFriendRequest(String uid) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(uid)) {
-            FirebaseActions.cancelFriendRequest(myUid, uid);
+            FriendsFirebaseActions.cancelFriendRequest(myUid, uid);
         }
 
     }
@@ -213,7 +214,7 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
     public void acceptFriendRequest(String uid) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(uid)) {
-            FirebaseActions.acceptFriendRequest(myUid, uid);
+            FriendsFirebaseActions.acceptFriendRequest(myUid, uid);
         }
 
     }
@@ -222,7 +223,7 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
     public void declineFriendRequest(String uid) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(uid)) {
-            FirebaseActions.declineFriendRequest(myUid, uid);
+            FriendsFirebaseActions.declineFriendRequest(myUid, uid);
         }
 
     }
@@ -231,14 +232,14 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
     public void deleteFriend(String uid) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(uid)) {
-            FirebaseActions.deleteFriend(myUid, uid);
+            FriendsFirebaseActions.deleteFriend(myUid, uid);
         }
     }
 
     @Override
     public void checkUserName(String name, ValueEventListener listener) {
         if (name != null && !TextUtils.isEmpty(name))
-            FirebaseActions.getUserNameReferenceEqualTo(name)
+            UserFirebaseActions.getUserNameReferenceEqualTo(name)
                     .addListenerForSingleValueEvent(listener);
     }
 
@@ -258,7 +259,7 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
             }
         });
 
-        FirebaseActions.updateUserName(fUser.getUid(), name);
+        UserFirebaseActions.updateUserName(fUser.getUid(), name);
         FirebaseSync.loadAProfile(fUser.getUid(), false);
     }
 
@@ -267,13 +268,13 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
         String myUserId = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserId)) return;
 
-        FirebaseActions.updateUserAge(myUserId, age);
+        UserFirebaseActions.updateUserAge(myUserId, age);
         FirebaseSync.loadAProfile(myUserId, false);
     }
 
     @Override
     public void updateUserPhoto(Uri photoCroppedUri) {
-        FirebaseActions.storePhotoOnFirebase(photoCroppedUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        UserFirebaseActions.storePhotoOnFirebase(photoCroppedUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // Handle successful uploads on complete
@@ -293,7 +294,7 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
                         }
                     });
 
-                    FirebaseActions.updateUserPhoto(fUser.getUid(), downloadUrl.toString());
+                    UserFirebaseActions.updateUserPhoto(fUser.getUid(), downloadUrl.toString());
                     FirebaseSync.loadAProfile(fUser.getUid(), false);
                 }
             }

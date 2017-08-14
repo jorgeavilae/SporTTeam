@@ -16,7 +16,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.FieldsFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
@@ -53,9 +53,9 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
 
             Log.d(TAG, "addField: " + field);
             if (TextUtils.isEmpty(field.getId()))
-                FirebaseActions.addField(field);
+                FieldsFirebaseActions.addField(field);
             else
-                FirebaseActions.updateField(field);
+                FieldsFirebaseActions.updateField(field);
             ((FieldsActivity) mNewFieldView.getActivityContext()).mFieldId = null;
             ((FieldsActivity) mNewFieldView.getActivityContext()).mAddress = null;
             ((FieldsActivity) mNewFieldView.getActivityContext()).mCity = null;

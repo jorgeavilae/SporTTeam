@@ -24,7 +24,7 @@ import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.fields.FieldsMapFragment;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldContract;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.FieldsFirebaseActions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -136,7 +136,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String sportId = sportSpinner.getSelectedItem().toString();
                         float punctuation = ratingBar.getRating();
-                        FirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double) punctuation, 1L));
+                        FieldsFirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double) punctuation, 1L));
                         Toast.makeText(FieldsActivity.this, getString(R.string.toast_add_sport_success), Toast.LENGTH_SHORT).show();
                         if (mDisplayedFragment != null) mDisplayedFragment.resetBackStack();
                     }
@@ -197,7 +197,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
 
             if (fieldId != null && !TextUtils.isEmpty(fieldId)) {
                 //Update sports (DetailFieldFragment update sports)
-                FirebaseActions.updateFieldSports(fieldId, sportsMap);
+                FieldsFirebaseActions.updateFieldSports(fieldId, sportsMap);
                 onBackPressed();
             } else {
                 //Start NewFieldFragment with sport already selected

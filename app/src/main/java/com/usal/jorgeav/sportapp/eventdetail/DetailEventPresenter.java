@@ -17,7 +17,9 @@ import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.EventRequestFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.EventsFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.InvitationFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
@@ -232,21 +234,21 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     public void sendEventRequest(String eventId) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(ownerUid))
-            FirebaseActions.sendEventRequest(myUid, eventId, ownerUid);
+            EventRequestFirebaseActions.sendEventRequest(myUid, eventId, ownerUid);
     }
 
     @Override
     public void cancelEventRequest(String eventId) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(ownerUid))
-            FirebaseActions.cancelEventRequest(myUid, eventId, ownerUid);
+            EventRequestFirebaseActions.cancelEventRequest(myUid, eventId, ownerUid);
     }
 
     @Override
     public void acceptEventInvitation(String eventId, String sender) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(sender))
-            FirebaseActions.acceptEventInvitation(myUid, eventId, sender);
+            InvitationFirebaseActions.acceptEventInvitation(myUid, eventId, sender);
     }
 
     @Override
@@ -258,20 +260,20 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     public void declineEventInvitation(String eventId, String sender) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(sender))
-            FirebaseActions.declineEventInvitation(myUid, eventId, sender);
+            InvitationFirebaseActions.declineEventInvitation(myUid, eventId, sender);
     }
 
     @Override
     public void quitEvent(String eventId, boolean deleteSimulatedParticipant) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId))
-            FirebaseActions.quitEvent(myUid, eventId, deleteSimulatedParticipant);
+            EventsFirebaseActions.quitEvent(myUid, eventId, deleteSimulatedParticipant);
     }
 
     @Override
     public void deleteEvent(Bundle b) {
         String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
-        FirebaseActions.deleteEvent(mView.getThis(), eventId);
+        EventsFirebaseActions.deleteEvent(mView.getThis(), eventId);
     }
 
     @Override

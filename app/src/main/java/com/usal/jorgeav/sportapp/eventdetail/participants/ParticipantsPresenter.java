@@ -11,7 +11,7 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseSync;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.EventsFirebaseActions;
 
 class ParticipantsPresenter implements ParticipantsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     @SuppressWarnings("unused")
@@ -27,13 +27,13 @@ class ParticipantsPresenter implements ParticipantsContract.Presenter, LoaderMan
     @Override
     public void quitEvent(String userId, String eventId, boolean deleteSimulatedParticipant) {
         if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(eventId))
-            FirebaseActions.quitEvent(userId, eventId, deleteSimulatedParticipant);
+            EventsFirebaseActions.quitEvent(userId, eventId, deleteSimulatedParticipant);
     }
 
     @Override
     public void deleteSimulatedUser(String simulatedUserId, String eventId) {
         if (!TextUtils.isEmpty(simulatedUserId) && !TextUtils.isEmpty(eventId))
-            FirebaseActions.deleteSimulatedParticipant(simulatedUserId, eventId);
+            EventsFirebaseActions.deleteSimulatedParticipant(simulatedUserId, eventId);
     }
 
     @Override

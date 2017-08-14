@@ -33,7 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
@@ -91,7 +91,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 if (user != null)
-                                    FirebaseActions.deleteCurrentUser(user.getUid(), SettingsFragment.this, false);
+                                    UserFirebaseActions.deleteCurrentUser(user.getUid(), SettingsFragment.this, false);
                             }
                         })
                         .setNegativeButton(android.R.string.cancel, null);
@@ -122,7 +122,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                                         public void onComplete(@NonNull Task<Void> task) {
                                             progressDialog.dismiss();
                                             if (task.isSuccessful()) {
-                                                FirebaseActions.deleteCurrentUser(uid, SettingsFragment.this, true);
+                                                UserFirebaseActions.deleteCurrentUser(uid, SettingsFragment.this, true);
                                             } else if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
                                                 displayReauthenticateDialog(user, new OnCompleteListener<Void>() {
                                                     @Override
@@ -130,7 +130,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                                                         if (task.isSuccessful()) {
                                                             Toast.makeText(getActivity(), R.string.toast_login_success, Toast.LENGTH_SHORT).show();
                                                             Log.i(TAG, "User re-authenticated.");
-                                                            FirebaseActions.deleteCurrentUser(uid, SettingsFragment.this, true);
+                                                            UserFirebaseActions.deleteCurrentUser(uid, SettingsFragment.this, true);
                                                         }
                                                     }
                                                 });
@@ -197,7 +197,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 //Update User and reload data
                 String myUid = Utiles.getCurrentUserId();
                 if (TextUtils.isEmpty(myUid)) return;
-                FirebaseActions.updateUserCityAndReload(myUid, cityPref.citySelectedName, cityPref.citySelectedCoord);
+                UserFirebaseActions.updateUserCityAndReload(myUid, cityPref.citySelectedName, cityPref.citySelectedCoord);
 
                 // Set summary to be the user-description for the selected value
                 cityPref.setSummary(cityPref.citySelectedName);
@@ -262,7 +262,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     });
 
                     //Update email in FirebaseDatabase
-                    FirebaseActions.updateUserEmail(user.getUid(), email);
+                    UserFirebaseActions.updateUserEmail(user.getUid(), email);
 
                     //Update email in ContentProvider Email_logged
                     ContentValues cv = new ContentValues();

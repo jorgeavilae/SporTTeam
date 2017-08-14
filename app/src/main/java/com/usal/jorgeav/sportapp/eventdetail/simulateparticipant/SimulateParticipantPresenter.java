@@ -7,7 +7,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.UploadTask;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.EventsFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 class SimulateParticipantPresenter implements SimulateParticipantContract.Presenter {
@@ -51,7 +52,7 @@ class SimulateParticipantPresenter implements SimulateParticipantContract.Presen
                 String myUserID = Utiles.getCurrentUserId();
                 if (TextUtils.isEmpty(myUserID)) return;
                 SimulatedUser su = new SimulatedUser(mName, null, mAge, myUserID);
-                FirebaseActions.addSimulatedParticipant(mView.getThis(), mEventId, su);
+                EventsFirebaseActions.addSimulatedParticipant(mView.getThis(), mEventId, su);
             }
             mView.hideContent();
         } else
@@ -59,7 +60,7 @@ class SimulateParticipantPresenter implements SimulateParticipantContract.Presen
     }
 
     private void storePhotoOnFirebase(Uri photo) {
-        FirebaseActions.storePhotoOnFirebase(photo, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        UserFirebaseActions.storePhotoOnFirebase(photo, new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // Handle successful uploads on complete
@@ -69,7 +70,7 @@ class SimulateParticipantPresenter implements SimulateParticipantContract.Presen
                 if (TextUtils.isEmpty(myUserID)) return;
                 String photo = downloadUrl != null ? downloadUrl.toString() : null;
                 SimulatedUser su = new SimulatedUser(mName, photo, mAge, myUserID);
-                FirebaseActions.addSimulatedParticipant(mView.getThis(), mEventId, su);
+                EventsFirebaseActions.addSimulatedParticipant(mView.getThis(), mEventId, su);
             }
         });
     }

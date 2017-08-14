@@ -16,7 +16,7 @@ import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
-import com.usal.jorgeav.sportapp.network.firebase.actions.FirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.EventsFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
@@ -60,9 +60,9 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
 
             Log.d(TAG, "addEvent: "+event);
             if(TextUtils.isEmpty(event.getEvent_id()))
-                FirebaseActions.addEvent(event);
+                EventsFirebaseActions.addEvent(event);
             else
-                FirebaseActions.editEvent(event);
+                EventsFirebaseActions.editEvent(event);
 
             ((EventsActivity)mNewEventView.getActivityContext()).mFieldId = null;
             ((EventsActivity)mNewEventView.getActivityContext()).mAddress = null;
