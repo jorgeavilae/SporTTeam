@@ -229,6 +229,7 @@
     <!-- Simulated User -->
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
+    <string name="no_empty_players_for_sim_user">There is not empty slots for Simulated User</string>
 
     <!-- Events Strings-->
     <string name="simulated_participants">Simulated Participants</string>

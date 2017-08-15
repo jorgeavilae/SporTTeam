@@ -3,8 +3,6 @@ package com.usal.jorgeav.sportapp.network.firebase.actions;
 
 import android.text.TextUtils;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -23,8 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("WeakerAccess")
 public class NotificationsFirebaseActions {
-        public static final String TAG = NotificationsFirebaseActions.class.getSimpleName();
+    @SuppressWarnings("unused")
+    private static final String TAG = NotificationsFirebaseActions.class.getSimpleName();
 
     // Notification
     public static void checkNotification(String ref) {
@@ -45,8 +45,8 @@ public class NotificationsFirebaseActions {
     }
 
     public static void eventCompleteNotifications(boolean isComplete, Event event) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        String myUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserID)) return;
 
         // Notification object
         String notificationTitle;
@@ -66,11 +66,10 @@ public class NotificationsFirebaseActions {
                     .getString(R.string.notification_msg_event_someone_quit);
             notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_SOMEONE_QUIT;
         }
-        MyNotification n;
         long currentTime = System.currentTimeMillis();
         @FirebaseDBContract.NotificationDataTypes
         Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-        n = new MyNotification(notificationType, false, notificationTitle,
+        MyNotification n = new MyNotification(notificationType, false, notificationTitle,
                 notificationMessage, event.getEvent_id(), null, type, currentTime);
 
         //Set Event complete/incomplete MyNotification in participant
@@ -98,10 +97,11 @@ public class NotificationsFirebaseActions {
         if (alarms == null || alarms.size() < 1) return;
 
         String myUserID = Utiles.getCurrentUserId();
-        if(TextUtils.isEmpty(myUserID)) return;
+        if (TextUtils.isEmpty(myUserID)) return;
         final String finalMyUserID = myUserID;
 
-        for (final Alarm a : alarms) {
+        for (Alarm a : alarms) {
+            final Alarm finalAlarm = a;
             final String eventId = UtilesContentProvider.eventsCoincidenceAlarmFromContentProvider(a, myUserID);
             if (eventId != null) {
                 //Check if notification already exists
@@ -112,7 +112,7 @@ public class NotificationsFirebaseActions {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (!dataSnapshot.exists()) {
-                                    // Alarm a has some Event Coincidence (both in ContentProvider)
+                                    // Alarm a has some Event Coincidence (alarm and event in ContentProvider)
                                     // and notification doesn't exists
 
                                     // Create MyNotification
@@ -127,25 +127,25 @@ public class NotificationsFirebaseActions {
                                     Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_ALARM_EVENT;
                                     MyNotification n = new MyNotification(
                                             notificationType, true, notificationTitle,
-                                            notificationMessage, a.getId(), eventId,
+                                            notificationMessage, finalAlarm.getId(), eventId,
                                             type, currentTime);
 
                                     // Store on Firebase
                                     FirebaseDatabase.getInstance().getReference().child(FirebaseDBContract.TABLE_USERS)
                                             .child(finalMyUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
-                                            .child(a.getId() + FirebaseDBContract.User.ALARMS)
+                                            .child(finalAlarm.getId() + FirebaseDBContract.User.ALARMS)
                                             .setValue(n.toMap());
 
                                     // Notify
                                     n.setChecked(false); /* storing true in Firebase but changing false for show in StatusBar */
-                                    UtilesNotification.createNotification(MyApplication.getAppContext(), n, a);
+                                    UtilesNotification.createNotification(MyApplication.getAppContext(), n, finalAlarm);
                                 }
                             }
 
                             @Override
-                            public void onCancelled(DatabaseError databaseError) { }
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
                         });
-
             }
         }
     }

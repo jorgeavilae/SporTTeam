@@ -133,7 +133,7 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
     }
 
     @Override
-    public void showResult(final String msg) {
+    public void showResult(final int msgResource) {
         /* Perform UI actions (like display a Toast or press back) need to happen in UI thread
          * https://stackoverflow.com/a/3875204/4235666
          * https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)
@@ -141,8 +141,8 @@ public class SimulateParticipantFragment extends BaseFragment implements Simulat
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (msg != null)
-                    Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+                if (msgResource != -1)
+                    Toast.makeText(getActivity(), msgResource, Toast.LENGTH_SHORT).show();
                 getActivity().onBackPressed();
             }
         });

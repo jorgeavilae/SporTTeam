@@ -13,7 +13,7 @@ public abstract class SimulateParticipantContract {
 
     public interface View {
         void croppedResult(Uri photoCroppedUri);
-        void showResult(String msg);
+        void showResult(int msgResource);
         void showError(int msgResource);
         void showContent();
         void hideContent();

@@ -20,20 +20,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InvitationFirebaseActions {
-    public static final String TAG = InvitationFirebaseActions.class.getSimpleName();
+    @SuppressWarnings("unused")
+    private static final String TAG = InvitationFirebaseActions.class.getSimpleName();
 
-    // Invitation
     public static void sendInvitationToThisEvent(String myUid, String eventId, String otherUid) {
         //Set Invitation Sent in myUid
-        String userInvitationSent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
+        String userInvitationSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                 + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + eventId;
 
         //Set Invitation Sent in Event
-        String eventInvitationSent =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+        String eventInvitationSent = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
                 + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + otherUid;
 
         //Set Invitation Received in otherUid
-        String userInvitationReceived =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
+        String userInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
                 + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + eventId;
 
         //Set Invitation Received MyNotification in otherUid
@@ -69,15 +69,15 @@ public class InvitationFirebaseActions {
 
     public static void deleteInvitationToThisEvent(String myUid, String eventId, String otherUid) {
         //Delete Invitation Sent in myUid
-        String userInvitationSent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
+        String userInvitationSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                 + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + eventId;
 
         //Delete Invitation Sent in Event
-        String eventInvitationSent =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+        String eventInvitationSent = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
                 + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + otherUid;
 
         //Delete Invitation Received in otherUid
-        String userInvitationReceived =  "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
+        String userInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
                 + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + eventId;
 
         //Delete Invitation Received MyNotification in otherUid
@@ -112,7 +112,8 @@ public class InvitationFirebaseActions {
                 } else if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToParticipants(myUid, true);
-                    if (e.getEmpty_players() == 0) NotificationsFirebaseActions.eventCompleteNotifications(true, e);
+                    if (e.getEmpty_players() == 0)
+                        NotificationsFirebaseActions.eventCompleteNotifications(true, e);
                 }
 
                 // Set ID to null to not store ID under data in Event's tree in Firebase.
@@ -120,19 +121,19 @@ public class InvitationFirebaseActions {
                 mutableData.setValue(e);
 
                 //Add Assistant Event to my User
-                String userParticipationEvent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
+                String userParticipationEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                         + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION + "/" + eventId;
 
                 //Delete Invitation Received in my User
-                String userInvitationReceived =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
+                String userInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                         + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + eventId;
 
                 //Delete Invitation Sent in Event
-                String eventInvitationSent =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                String eventInvitationSent = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
                         + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + myUid;
 
                 //Delete Invitation Sent in other User
-                String userInvitationSent =  "/" + FirebaseDBContract.TABLE_USERS + "/" + sender
+                String userInvitationSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + sender
                         + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + eventId;
 
                 //Delete Invitation Received MyNotification in other User
@@ -158,8 +159,6 @@ public class InvitationFirebaseActions {
                 MyNotification n = new MyNotification(notificationType, false, notificationTitle,
                         notificationMessage, eventId, null, type, currentTime);
 
-                DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
                 Map<String, Object> childUpdates = new HashMap<>();
                 childUpdates.put(userParticipationEvent, true);
                 childUpdates.put(userInvitationReceived, null);
@@ -168,7 +167,7 @@ public class InvitationFirebaseActions {
                 childUpdates.put(userInvitationReceivedNotification, null);
                 childUpdates.put(userInvitationAcceptedNotification, n.toMap());
 
-                database.updateChildren(childUpdates);
+                FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
 
                 return Transaction.success(mutableData);
             }
@@ -183,11 +182,11 @@ public class InvitationFirebaseActions {
 
     public static void declineEventInvitation(String myUid, String eventId, String sender) {
         //Delete Invitation Received in my User
-        String userInvitationReceived =  "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
+        String userInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                 + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + eventId;
 
         //Delete Invitation Sent in Event
-        String eventInvitationSent =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+        String eventInvitationSent = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
                 + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + myUid;
 
         //Delete Invitation Sent in other User
@@ -217,8 +216,6 @@ public class InvitationFirebaseActions {
         MyNotification n = new MyNotification(notificationType, false, notificationTitle,
                 notificationMessage, eventId, null, type, currentTime);
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(userInvitationReceived, null);
         childUpdates.put(eventInvitationSent, null);
@@ -226,9 +223,6 @@ public class InvitationFirebaseActions {
         childUpdates.put(userInvitationReceivedNotification, null);
         childUpdates.put(userInvitationDeclinedNotification, n.toMap());
 
-        database.updateChildren(childUpdates);
+        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
-
-
-    // User otherUid receive an invitation to the event eventId, from user myUid
 }

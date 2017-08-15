@@ -16,14 +16,9 @@ import com.usal.jorgeav.sportapp.network.firebase.sync.FieldsFirebaseSync;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 14/08/2017.
- */
-
 public class FieldsFirebaseActions {
-    public static final String TAG = FieldsFirebaseActions.class.getSimpleName();
+    private static final String TAG = FieldsFirebaseActions.class.getSimpleName();
 
-    // Field
     public static void addField(Field field) {
         //Create fieldId
         DatabaseReference fieldTable = FirebaseDatabase.getInstance()
@@ -40,7 +35,6 @@ public class FieldsFirebaseActions {
     }
 
     public static void updateField(final Field field) {
-        //Set Field in Field Table
         DatabaseReference fieldRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_FIELDS)
                 .child(field.getId());
@@ -93,7 +87,7 @@ public class FieldsFirebaseActions {
 
     public static void deleteField(String fieldId) {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS)
-            .child(fieldId).setValue(null);
+                .child(fieldId).removeValue();
     }
 
     public static void voteField(final String fieldId, String sportId, final float rate) {
@@ -110,7 +104,7 @@ public class FieldsFirebaseActions {
                 SportCourt sport = mutableData.getValue(SportCourt.class);
                 if (sport == null) return Transaction.success(mutableData);
 
-                double newRating = (sport.getPunctuation()*sport.getVotes() + rate) / (sport.getVotes()+1);
+                double newRating = (sport.getPunctuation() * sport.getVotes() + rate) / (sport.getVotes() + 1);
                 sport.setVotes(sport.getVotes() + 1);
 
                 // Round to .5 or .0 https://stackoverflow.com/a/23449769/4235666

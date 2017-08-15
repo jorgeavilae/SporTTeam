@@ -28,14 +28,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 14/08/2017.
- */
-
 public class EventsFirebaseActions {
-    public static final String TAG = EventsFirebaseActions.class.getSimpleName();
+    private static final String TAG = EventsFirebaseActions.class.getSimpleName();
 
-    // Event
     public static void addEvent(Event event) {
         //Create eventId
         DatabaseReference eventTable = FirebaseDatabase.getInstance()
@@ -58,7 +53,6 @@ public class EventsFirebaseActions {
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(eventInEventTable, event.toMap());
-        // Listener is attached to this reference so it doesn't need to reload
         childUpdates.put(userEventCreated, currentTime);
         childUpdates.put(fieldNextEvent, currentTime);
 
@@ -82,7 +76,6 @@ public class EventsFirebaseActions {
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(eventInEventTable, event.toMap());
-        // Listener is attached to this reference so it doesn't need to reload
         childUpdates.put(userEventCreated, currentTime);
         childUpdates.put(fieldNextEvent, currentTime);
 
@@ -109,7 +102,6 @@ public class EventsFirebaseActions {
                             + entry.getKey() + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
                     childUpdates.put(eventEditNotification, n.toMap());
                 }
-            //The current user is the owner since is the only one who can edit this event
         }
 
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
@@ -135,23 +127,22 @@ public class EventsFirebaseActions {
                 if (!Utiles.sportNeedsTeams(e.getSport_id())) {
                     e.addToSimulatedParticipants(simulatedParticipantKey, su);
                     if (fragment != null && fragment instanceof SimulateParticipantContract.View)
-                        ((SimulateParticipantContract.View) fragment).showResult(null);
+                        ((SimulateParticipantContract.View) fragment).showResult(-1);
                     else
                         Log.e(TAG, "addSimulatedParticipant: doTransaction: " +
                                 "fragment not instanceof SimulateParticipantContract.View");
                 } else if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToSimulatedParticipants(simulatedParticipantKey, su);
-                    if (e.getEmpty_players() == 0) NotificationsFirebaseActions.eventCompleteNotifications(true, e);
+                    if (e.getEmpty_players() == 0)
+                        NotificationsFirebaseActions.eventCompleteNotifications(true, e);
                     if (fragment != null && fragment instanceof SimulateParticipantContract.View)
-                        ((SimulateParticipantContract.View) fragment).showResult(null);
+                        ((SimulateParticipantContract.View) fragment).showResult(-1);
                     else
                         Log.e(TAG, "addSimulatedParticipant: doTransaction: " +
                                 "fragment not instanceof SimulateParticipantContract.View");
-                } else
-                if (fragment != null && fragment instanceof SimulateParticipantContract.View)
-                    ((SimulateParticipantContract.View) fragment).showResult(
-                            "There isn't empty slots for Simulated User");
+                } else if (fragment != null && fragment instanceof SimulateParticipantContract.View)
+                    ((SimulateParticipantContract.View) fragment).showResult(R.string.no_empty_players_for_sim_user);
                 else
                     Log.e(TAG, "addSimulatedParticipant: doTransaction: " +
                             "fragment not instanceof SimulateParticipantContract.View");
@@ -169,13 +160,12 @@ public class EventsFirebaseActions {
                 if (b)
                     Log.d(TAG, "addSimulatedParticipant: onComplete: Transaction completed");
                 else
-                    Log.e(TAG, "addSimulatedParticipant: onComplete: Transaction error "+databaseError);
+                    Log.e(TAG, "addSimulatedParticipant: onComplete: Transaction error " + databaseError);
             }
         });
     }
 
     public static void deleteSimulatedParticipant(final String simulatedUid, final String eventId) {
-        //Delete Assistant User to that Event (uid can be another user, not the current one)
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
                 .child(eventId).child(FirebaseDBContract.DATA);
@@ -192,7 +182,8 @@ public class EventsFirebaseActions {
                 if (Utiles.sportNeedsTeams(e.getSport_id())) {
                     e.setEmpty_players(e.getEmpty_players() + 1);
                     // The event isn't complete because this quit
-                    if (e.getEmpty_players() == 1) NotificationsFirebaseActions.eventCompleteNotifications(false, e);
+                    if (e.getEmpty_players() == 1)
+                        NotificationsFirebaseActions.eventCompleteNotifications(false, e);
                 }
 
                 // Set ID to null to not store ID under data in Event's tree in Firebase.
@@ -209,7 +200,7 @@ public class EventsFirebaseActions {
                 if (b)
                     Log.d(TAG, "deleteSimulatedParticipant: onComplete: Transaction completed");
                 else
-                    Log.e(TAG, "deleteSimulatedParticipant: onComplete: Transaction error "+databaseError);
+                    Log.e(TAG, "deleteSimulatedParticipant: onComplete: Transaction error " + databaseError);
                 EventsFirebaseSync.loadAnEvent(eventId);
             }
         });
@@ -232,11 +223,12 @@ public class EventsFirebaseActions {
                         .child(FirebaseDBContract.User.EVENTS_PARTICIPATION).child(eventId).removeValue();
 
                 // Delete invitations sent by User UID
-                for (MutableData mutableInvitation : mutableData.child(FirebaseDBContract.Event.INVITATIONS).getChildren()) {
+                Iterable<MutableData> mutableInvitationsList = mutableData.child(FirebaseDBContract.Event.INVITATIONS).getChildren();
+                for (MutableData mutableInvitation : mutableInvitationsList) {
                     Invitation invitation = mutableInvitation.getValue(Invitation.class);
-                    if (invitation != null)
-                        if (invitation.getSender().equals(uid))
-                            InvitationFirebaseActions.deleteInvitationToThisEvent(invitation.getSender(), invitation.getEvent(), invitation.getReceiver());
+                    if (invitation != null && invitation.getSender().equals(uid))
+                        InvitationFirebaseActions.deleteInvitationToThisEvent(
+                                invitation.getSender(), invitation.getEvent(), invitation.getReceiver());
                 }
 
                 int usersLeaving = 0;
@@ -259,7 +251,8 @@ public class EventsFirebaseActions {
                 if (Utiles.sportNeedsTeams(e.getSport_id())) {
                     e.setEmpty_players(e.getEmpty_players() + usersLeaving);
                     // The event isn't complete because this quits
-                    if (e.getEmpty_players() == usersLeaving) NotificationsFirebaseActions.eventCompleteNotifications(false, e);
+                    if (e.getEmpty_players() == usersLeaving)
+                        NotificationsFirebaseActions.eventCompleteNotifications(false, e);
                 }
 
                 // Set ID to null to not store ID under data in Event's tree in Firebase.
@@ -280,111 +273,111 @@ public class EventsFirebaseActions {
 
     public static void deleteEvent(final BaseFragment baseFragment, String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+        DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId);
 
-        eventRef.child(eventId).addListenerForSingleValueEvent(
-                new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
-                            if (e == null) return;
-                            e.setEvent_id(dataSnapshot.getKey());
+        eventRef.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
+                    if (e == null) return;
+                    e.setEvent_id(dataSnapshot.getKey());
 
-                            ArrayList<String> participantsUserId = new ArrayList<>();
-                            if (e.getParticipants() != null)
-                                participantsUserId.addAll(new ArrayList<>(e.getParticipants().keySet()));
+                    ArrayList<String> participantsUserId = new ArrayList<>();
+                    if (e.getParticipants() != null)
+                        participantsUserId.addAll(new ArrayList<>(e.getParticipants().keySet()));
 
-                            ArrayList<String> invitationsSentUserId = new ArrayList<>();
-                            ArrayList<String> invitationsReceivedUserId = new ArrayList<>();
-                            DataSnapshot dataInvitations = dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS);
-                            for (DataSnapshot data : dataInvitations.getChildren()) {
-                                invitationsReceivedUserId.add(data.getKey());
-                                invitationsSentUserId.add(data.child(FirebaseDBContract.Invitation.SENDER).getValue(String.class));
-                            }
-
-                            ArrayList<String> requestsUserId = new ArrayList<>();
-                            DataSnapshot dataRequests = dataSnapshot.child(FirebaseDBContract.Event.USER_REQUESTS);
-                            for (DataSnapshot data : dataRequests.getChildren()) requestsUserId.add(data.getKey());
-
-                            DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-                            Map<String, Object> childDeletes = new HashMap<>();
-
-                            //Delete Event
-                            String event =  "/" + FirebaseDBContract.TABLE_EVENTS + "/" + e.getEvent_id();
-                            childDeletes.put(event, null);
-
-                            //Delete Event in Field next events
-                            String eventInFieldNextEvent = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + e.getField_id()
-                                    + "/" + FirebaseDBContract.Field.NEXT_EVENTS + "/" + e.getEvent_id();
-                            childDeletes.put(eventInFieldNextEvent, null);
-
-                            //Delete Event in User events created
-                            String eventInUserEventsCreated = "/" + FirebaseDBContract.TABLE_USERS + "/" + e.getOwner()
-                                    + "/" + FirebaseDBContract.User.EVENTS_CREATED + "/" + e.getEvent_id();
-                            childDeletes.put(eventInUserEventsCreated, null);
-
-                            // Notification object
-                            long currentTime = System.currentTimeMillis();
-                            String notificationTitle = MyApplication.getAppContext()
-                                    .getString(R.string.notification_title_event_delete);
-                            String notificationMessage = MyApplication.getAppContext()
-                                    .getString(R.string.notification_msg_event_delete,
-                                            e.getName(), e.getCity(),
-                                            UtilesTime.millisToDateTimeString(e.getDate()));
-                            @FirebaseDBContract.NotificationDataTypes
-                            Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_NONE;
-                            @UtilesNotification.NotificationType
-                            Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_DELETE;
-                            MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                                    notificationMessage, null, null, type, currentTime);
-
-                            //Delete Event in User participation
-                            for (String userParticipation : participantsUserId) {
-                                String eventInUserParticipation = "/" + FirebaseDBContract.TABLE_USERS + "/" + userParticipation
-                                        + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION + "/" + e.getEvent_id();
-                                childDeletes.put(eventInUserParticipation, null);
-
-                                //Set Event Deleted MyNotification in participants User
-                                String notificationDeleteId = e.getEvent_id() + FirebaseDBContract.Event.OWNER;
-                                String eventDeletedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
-                                        + userParticipation + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationDeleteId;
-                                childDeletes.put(eventDeletedNotification, n.toMap());
-                            }
-
-                            //Delete Event in User invitations received
-                            for (String userInvitation : invitationsReceivedUserId) {
-                                String eventInUserInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + userInvitation
-                                        + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + e.getEvent_id();
-                                childDeletes.put(eventInUserInvitationReceived, null);
-                            }
-
-                            //Delete Event in User invitations sent
-                            for (String userInvitation : invitationsSentUserId) {
-                                String eventInUserInvitationSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + userInvitation
-                                        + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + e.getEvent_id();
-                                childDeletes.put(eventInUserInvitationSent, null);
-                            }
-
-                            //Delete Event in User event requests send
-                            for (String userRequest : requestsUserId) {
-                                String eventInUserRequest = "/" + FirebaseDBContract.TABLE_USERS + "/" + userRequest
-                                        + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + e.getEvent_id();
-                                childDeletes.put(eventInUserRequest, null);
-                            }
-
-                            //No need to delete notifications since is automatic when it can not found eventId
-                            database.updateChildren(childDeletes);
-
-                            if (baseFragment != null)
-                                baseFragment.resetBackStack();
-                        }
+                    ArrayList<String> invitationsSentUserId = new ArrayList<>();
+                    ArrayList<String> invitationsReceivedUserId = new ArrayList<>();
+                    DataSnapshot dataInvitations = dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS);
+                    for (DataSnapshot data : dataInvitations.getChildren()) {
+                        invitationsReceivedUserId.add(data.getKey());
+                        invitationsSentUserId.add(data.child(FirebaseDBContract.Invitation.SENDER).getValue(String.class));
                     }
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+                    ArrayList<String> requestsUserId = new ArrayList<>();
+                    DataSnapshot dataRequests = dataSnapshot.child(FirebaseDBContract.Event.USER_REQUESTS);
+                    for (DataSnapshot data : dataRequests.getChildren())
+                        requestsUserId.add(data.getKey());
 
+                    Map<String, Object> childDeletes = new HashMap<>();
+
+                    //Delete Event
+                    String event = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + e.getEvent_id();
+                    childDeletes.put(event, null);
+
+                    //Delete Event in Field next events
+                    String eventInFieldNextEvent = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + e.getField_id()
+                            + "/" + FirebaseDBContract.Field.NEXT_EVENTS + "/" + e.getEvent_id();
+                    childDeletes.put(eventInFieldNextEvent, null);
+
+                    //Delete Event in User events created
+                    String eventInUserEventsCreated = "/" + FirebaseDBContract.TABLE_USERS + "/" + e.getOwner()
+                            + "/" + FirebaseDBContract.User.EVENTS_CREATED + "/" + e.getEvent_id();
+                    childDeletes.put(eventInUserEventsCreated, null);
+
+                    // Notification object
+                    long currentTime = System.currentTimeMillis();
+                    String notificationTitle = MyApplication.getAppContext()
+                            .getString(R.string.notification_title_event_delete);
+                    String notificationMessage = MyApplication.getAppContext()
+                            .getString(R.string.notification_msg_event_delete,
+                                    e.getName(), e.getCity(),
+                                    UtilesTime.millisToDateTimeString(e.getDate()));
+                    @FirebaseDBContract.NotificationDataTypes
+                    Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_NONE;
+                    @UtilesNotification.NotificationType
+                    Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_DELETE;
+                    MyNotification n = new MyNotification(notificationType, false, notificationTitle,
+                            notificationMessage, null, null, type, currentTime);
+
+                    //Delete Event in User participation
+                    for (String userParticipation : participantsUserId) {
+                        String eventInUserParticipation = "/" + FirebaseDBContract.TABLE_USERS + "/" + userParticipation
+                                + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION + "/" + e.getEvent_id();
+                        childDeletes.put(eventInUserParticipation, null);
+
+                        //Set Event Deleted MyNotification in participants User
+                        String notificationDeleteId = e.getEvent_id() + FirebaseDBContract.Event.OWNER;
+                        String eventDeletedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                                + userParticipation + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationDeleteId;
+                        childDeletes.put(eventDeletedNotification, n.toMap());
                     }
-                });
+
+                    //Delete Event in User invitations received
+                    for (String userInvitation : invitationsReceivedUserId) {
+                        String eventInUserInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + userInvitation
+                                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + e.getEvent_id();
+                        childDeletes.put(eventInUserInvitationReceived, null);
+                    }
+
+                    //Delete Event in User invitations sent
+                    for (String userInvitation : invitationsSentUserId) {
+                        String eventInUserInvitationSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + userInvitation
+                                + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + e.getEvent_id();
+                        childDeletes.put(eventInUserInvitationSent, null);
+                    }
+
+                    //Delete Event in User event requests send
+                    for (String userRequest : requestsUserId) {
+                        String eventInUserRequest = "/" + FirebaseDBContract.TABLE_USERS + "/" + userRequest
+                                + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + e.getEvent_id();
+                        childDeletes.put(eventInUserRequest, null);
+                    }
+
+                    //No need to delete notifications since is automatic when it can not found eventId
+
+                    FirebaseDatabase.getInstance().getReference().updateChildren(childDeletes);
+
+                    if (baseFragment != null)
+                        baseFragment.resetBackStack();
+                }
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
