@@ -30,116 +30,112 @@ import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
 import java.util.Map;
 
-/**
- * Created by Jorge Avila on 14/08/2017.
- */
-
+@SuppressWarnings("WeakerAccess")
 public class EventsFirebaseSync {
-    public static final String TAG = EventsFirebaseSync.class.getSimpleName();
+    private static final String TAG = EventsFirebaseSync.class.getSimpleName();
 
-    // Events
     public static void loadAnEvent(@NonNull String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+        DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId);
 
-        eventRef.child(eventId)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
-                            if (e == null) {
-                                Log.e(TAG, "loadAnEvent: onDataChangeExecutor: Error parsing Event");
-                                return;
-                            }
-                            e.setEvent_id(dataSnapshot.getKey());
+        eventRef.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
+                    if (e == null) {
+                        Log.e(TAG, "loadAnEvent: onDataChangeExecutor: Error parsing Event");
+                        return;
+                    }
+                    e.setEvent_id(dataSnapshot.getKey());
 
-                            //If the current user is the owner and it is a past event
-                            // delete user requests and invitations
-                            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                            if (currentUser != null && e.getOwner().equals(currentUser.getUid())
-                                    && System.currentTimeMillis() > e.getDate()) {
-                                for (DataSnapshot d : dataSnapshot.child(FirebaseDBContract.Event.USER_REQUESTS).getChildren())
-                                    EventRequestFirebaseActions.cancelEventRequest(d.getKey(), e.getEvent_id(), e.getOwner());
-                                for (DataSnapshot d : dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS).getChildren()) {
-                                    Invitation invitation = d.getValue(Invitation.class);
-                                    if (invitation != null)
-                                        InvitationFirebaseActions.deleteInvitationToThisEvent(invitation.getSender(), e.getEvent_id(), invitation.getReceiver());
-                                }
-                            }
-
-                            ContentValues cv = UtilesContentValues.eventToContentValues(e);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                            UsersFirebaseSync.loadAProfile(null, e.getOwner(), false);
-                            FieldsFirebaseSync.loadAField(e.getField_id());
-
-                            // Load users participants with data
-                            loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
-
-                            // Load simulated users participants with data
-                            loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
+                    //If the current user is the owner and it is a past event
+                    // delete user requests and invitations
+                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                    if (currentUser != null && e.getOwner().equals(currentUser.getUid())
+                            && System.currentTimeMillis() > e.getDate()) {
+                        for (DataSnapshot d : dataSnapshot.child(FirebaseDBContract.Event.USER_REQUESTS).getChildren())
+                            EventRequestFirebaseActions.cancelEventRequest(d.getKey(), e.getEvent_id(), e.getOwner());
+                        for (DataSnapshot d : dataSnapshot.child(FirebaseDBContract.Event.INVITATIONS).getChildren()) {
+                            Invitation invitation = d.getValue(Invitation.class);
+                            if (invitation != null)
+                                InvitationFirebaseActions.deleteInvitationToThisEvent(invitation.getSender(), e.getEvent_id(), invitation.getReceiver());
                         }
                     }
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+                    ContentValues cv = UtilesContentValues.eventToContentValues(e);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                    UsersFirebaseSync.loadAProfile(null, e.getOwner(), false);
+                    FieldsFirebaseSync.loadAField(e.getField_id());
 
-                    }
-                });
+                    // Load users participants with data
+                    loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+
+                    // Load simulated users participants with data
+                    loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
+                }
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public static void loadAnEventAndNotify(final String notificationRef, final MyNotification notification) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
+        if (notification.getExtra_data_one() != null) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS)
+                    .child(notification.getExtra_data_one());
 
-        if (notification.getExtra_data_one() != null)
-            eventRef.child(notification.getExtra_data_one())
-                    .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
-                            if (e == null) {
-                                Log.e(TAG, "loadAnEventAndNotify: onDataChangeExecutor: Error parsing Event");
-                                return;
-                            }
-                            e.setEvent_id(dataSnapshot.getKey());
-
-                            ContentValues cv = UtilesContentValues.eventToContentValues(e);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                            UsersFirebaseSync.loadAProfile(null, e.getOwner(), false);
-                            FieldsFirebaseSync.loadAField(e.getField_id());
-
-                            // Load users participants with data
-                            loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
-
-                            // Load simulated users participants with data
-                            loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
-
-                            //Notify
-                            UtilesNotification.createNotification(MyApplication.getAppContext(), notification, e);
-                            NotificationsFirebaseActions.checkNotification(notificationRef);
-                        } else {
-                            Log.e(TAG, "loadAnEventAndNotify: onDataChangeExecutor: Event "
-                                    + notification.getExtra_data_one() + " doesn't exist");
-                            FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
+            eventRef.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+                @Override
+                public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
+                        if (e == null) {
+                            Log.e(TAG, "loadAnEventAndNotify: onDataChangeExecutor: Error parsing Event");
+                            return;
                         }
-                    }
+                        e.setEvent_id(dataSnapshot.getKey());
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+                        ContentValues cv = UtilesContentValues.eventToContentValues(e);
+                        MyApplication.getAppContext().getContentResolver()
+                                .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                        UsersFirebaseSync.loadAProfile(null, e.getOwner(), false);
+                        FieldsFirebaseSync.loadAField(e.getField_id());
 
+                        // Load users participants with data
+                        loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+
+                        // Load simulated users participants with data
+                        loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
+
+                        //Notify
+                        UtilesNotification.createNotification(MyApplication.getAppContext(), notification, e);
+                        NotificationsFirebaseActions.checkNotification(notificationRef);
+                    } else {
+                        Log.e(TAG, "loadAnEventAndNotify: onDataChangeExecutor: Event "
+                                + notification.getExtra_data_one() + " doesn't exist");
+                        FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
                     }
-                });
+                }
+
+                @Override
+                public void onCancelledExecutor(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     public static void loadUsersFromParticipants(String eventId, Map<String, Boolean> participants) {
-        MyApplication.getAppContext().getContentResolver()
-                .delete(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
-                        SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
-                        new String[]{eventId});
+        MyApplication.getAppContext().getContentResolver().delete(
+                SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
+                SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
+                new String[]{eventId});
 
         if (participants != null)
             for (Map.Entry<String, Boolean> entry : participants.entrySet()) {
@@ -149,16 +145,16 @@ public class EventsFirebaseSync {
                 cv.put(SportteamContract.EventsParticipationEntry.USER_ID, entry.getKey());
                 cv.put(SportteamContract.EventsParticipationEntry.EVENT_ID, eventId);
                 cv.put(SportteamContract.EventsParticipationEntry.PARTICIPATES, entry.getValue() ? 1 : 0);
-                MyApplication.getAppContext().getContentResolver()
-                        .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cv);
+                MyApplication.getAppContext().getContentResolver().insert(
+                        SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cv);
             }
     }
 
     public static void loadSimulatedParticipants(String eventId, Map<String, SimulatedUser> simulatedParticipants) {
-        MyApplication.getAppContext().getContentResolver()
-                .delete(SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI,
-                        SportteamContract.SimulatedParticipantEntry.EVENT_ID + " = ? ",
-                        new String[]{eventId});
+        MyApplication.getAppContext().getContentResolver().delete(
+                SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI,
+                SportteamContract.SimulatedParticipantEntry.EVENT_ID + " = ? ",
+                new String[]{eventId});
 
         if (simulatedParticipants != null)
             for (Map.Entry<String, SimulatedUser> entry : simulatedParticipants.entrySet()) {
@@ -169,8 +165,8 @@ public class EventsFirebaseSync {
                 cv.put(SportteamContract.SimulatedParticipantEntry.PROFILE_PICTURE, entry.getValue().getProfile_picture());
                 cv.put(SportteamContract.SimulatedParticipantEntry.AGE, entry.getValue().getAge());
                 cv.put(SportteamContract.SimulatedParticipantEntry.OWNER, entry.getValue().getOwner());
-                MyApplication.getAppContext().getContentResolver()
-                        .insert(SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI, cv);
+                MyApplication.getAppContext().getContentResolver().insert(
+                        SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI, cv);
             }
     }
 
@@ -179,58 +175,58 @@ public class EventsFirebaseSync {
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
 
-        eventsRef.orderByChild(filter).equalTo(city)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                Event e = data.child(FirebaseDBContract.DATA).getValue(Event.class);
-                                if (e == null) {
-                                    Log.e(TAG, "loadEventsFromCity: onDataChangeExecutor: Error parsing Event");
-                                    return;
-                                }
-                                e.setEvent_id(data.getKey());
-                                String myUserId = Utiles.getCurrentUserId();
+        eventsRef.orderByChild(filter).equalTo(city).addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        Event e = data.child(FirebaseDBContract.DATA).getValue(Event.class);
+                        if (e == null) {
+                            Log.e(TAG, "loadEventsFromCity: onDataChangeExecutor: Error parsing Event");
+                            continue;
+                        }
+                        e.setEvent_id(data.getKey());
 
-                                // Check if I am participant or owner
-                                if (!TextUtils.isEmpty(myUserId) && !myUserId.equals(e.getOwner())
-                                        && (e.getParticipants() == null || !e.getParticipants().containsKey(myUserId))) {
-                                    ContentValues cv = UtilesContentValues.eventToContentValues(e);
-                                    MyApplication.getAppContext().getContentResolver()
-                                            .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                                    UsersFirebaseSync.loadAProfile(null, e.getOwner(), false);
-                                    FieldsFirebaseSync.loadAField(e.getField_id());
+                        // Check if I am not participant nor owner
+                        String myUserId = Utiles.getCurrentUserId();
+                        if (!TextUtils.isEmpty(myUserId) && !myUserId.equals(e.getOwner())
+                                && (e.getParticipants() == null || !e.getParticipants().containsKey(myUserId))) {
 
-                                    // Load users participants with data
-                                    loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+                            ContentValues cv = UtilesContentValues.eventToContentValues(e);
+                            MyApplication.getAppContext().getContentResolver().insert(
+                                    SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                            UsersFirebaseSync.loadAProfile(null, e.getOwner(), false);
+                            FieldsFirebaseSync.loadAField(e.getField_id());
 
-                                    // Load simulated users participants with data
-                                    loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
-                                }
-                            }
-                            NotificationsFirebaseActions.checkAlarmsForNotifications();
+                            // Load users participants with data
+                            loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+
+                            // Load simulated users participants with data
+                            loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
                         }
                     }
+                    NotificationsFirebaseActions.checkAlarmsForNotifications();
+                }
+            }
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
 
-                    }
-                });
+            }
+        });
     }
 
     public static ExecutorChildEventListener getListenerToLoadEventsFromMyOwnEvents() {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
 
-                    // Load user requests received with data
-                    FirebaseSync.loadUsersFromUserRequests(dataSnapshot.getKey());
                     // Load users invited with data
                     FirebaseSync.loadUsersFromInvitationsSent(dataSnapshot.getKey());
+                    // Load user requests received with data
+                    FirebaseSync.loadUsersFromUserRequests(dataSnapshot.getKey());
                 }
 
             }
@@ -282,7 +278,7 @@ public class EventsFirebaseSync {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
 
                     // Load users invited with data if I participate
@@ -292,10 +288,11 @@ public class EventsFirebaseSync {
 
                     String myUserID = Utiles.getCurrentUserId();
                     if (TextUtils.isEmpty(myUserID)) return;
+
                     ContentValues cvData = UtilesContentValues
                             .dataSnapshotEventsParticipationToContentValues(dataSnapshot, myUserID);
-                    MyApplication.getAppContext().getContentResolver()
-                            .insert(SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
+                    MyApplication.getAppContext().getContentResolver().insert(
+                            SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI, cvData);
                 }
 
             }
@@ -307,9 +304,10 @@ public class EventsFirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+                String myUserID = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(myUserID)) return;
                 String eventId = dataSnapshot.getKey();
+
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
                         SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
@@ -334,7 +332,7 @@ public class EventsFirebaseSync {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     Invitation invitation = dataSnapshot.getValue(Invitation.class);
                     if (invitation == null) {
                         Log.e(TAG, "loadEventsFromInvitationsReceived: onChildAddedExecutor: parse Invitation null");
@@ -343,11 +341,11 @@ public class EventsFirebaseSync {
                     // Load Event
                     loadAnEvent(invitation.getEvent());
 
-                    // Load User who send me this invitation. Load in loadFriends
+                    // Load User who send me this invitation. Loaded in loadFriends
 
                     ContentValues cvData = UtilesContentValues.invitationToContentValues(invitation);
-                    MyApplication.getAppContext().getContentResolver()
-                            .insert(SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI, cvData);
+                    MyApplication.getAppContext().getContentResolver().insert(
+                            SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI, cvData);
                 }
 
             }
@@ -359,9 +357,10 @@ public class EventsFirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+                String myUserID = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(myUserID)) return;
                 String eventId = dataSnapshot.getKey();
+
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventsInvitationEntry.CONTENT_EVENT_INVITATIONS_URI,
                         SportteamContract.EventsInvitationEntry.EVENT_ID + " = ? AND "
@@ -388,12 +387,13 @@ public class EventsFirebaseSync {
                 if (dataSnapshot.exists()) {
                     loadAnEvent(dataSnapshot.getKey());
 
-                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+                    String myUserID = Utiles.getCurrentUserId();
+                    if (TextUtils.isEmpty(myUserID)) return;
+
                     ContentValues cvData = UtilesContentValues
                             .dataSnapshotEventsRequestsToContentValues(dataSnapshot, myUserID, true);
-                    MyApplication.getAppContext().getContentResolver()
-                            .insert(SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI, cvData);
+                    MyApplication.getAppContext().getContentResolver().insert(
+                            SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI, cvData);
                 }
 
             }
@@ -405,13 +405,14 @@ public class EventsFirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+                String myUserID = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(myUserID)) return;
                 String eventId = dataSnapshot.getKey();
+
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,
                         SportteamContract.EventRequestsEntry.EVENT_ID + " = ? AND "
-                                +SportteamContract.EventRequestsEntry.SENDER_ID + " = ? ",
+                                + SportteamContract.EventRequestsEntry.SENDER_ID + " = ? ",
                         new String[]{eventId, myUserID});
 
             }
