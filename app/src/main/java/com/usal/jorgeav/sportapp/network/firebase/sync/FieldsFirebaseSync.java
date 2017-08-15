@@ -19,58 +19,57 @@ import com.usal.jorgeav.sportapp.utils.UtilesContentValues;
 
 import java.util.List;
 
-/**
- * Created by Jorge Avila on 14/08/2017.
- */
-
+@SuppressWarnings("WeakerAccess")
 public class FieldsFirebaseSync {
-    public static final String TAG = FieldsFirebaseSync.class.getSimpleName();
+    private static final String TAG = FieldsFirebaseSync.class.getSimpleName();
 
-    // Fields
     public static void loadAField(String fieldId) {
         if (fieldId == null || TextUtils.isEmpty(fieldId)) return;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
+        DatabaseReference ref = database.getReference(FirebaseDBContract.TABLE_FIELDS).child(fieldId);
 
-        myUserRef.child(fieldId)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            Field field = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Field.class);
-                            if (field == null) {
-                                Log.e(TAG, "loadAField: onDataChangeExecutor: Error parsing Field");
-                                return;
-                            }
-                            field.setId(dataSnapshot.getKey());
-
-                            ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
-
-                            List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
-                                            SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
-                                            new String[]{field.getId()});
-                            MyApplication.getAppContext().getContentResolver()
-                                    .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
-                                            cvSports.toArray(new ContentValues[cvSports.size()]));
-                        }
+        ref.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Field field = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Field.class);
+                    if (field == null) {
+                        Log.e(TAG, "loadAField: onDataChangeExecutor: Error parsing Field");
+                        return;
                     }
+                    field.setId(dataSnapshot.getKey());
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+                    // Store Field in Content Provider
+                    ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
 
-                    }
-                });
+                    // Delete Field's courts in case some of them was deleted
+                    MyApplication.getAppContext().getContentResolver()
+                            .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                    SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+                                    new String[]{field.getId()});
+
+                    // Store Field's courts in ContentProvider
+                    List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
+                    MyApplication.getAppContext().getContentResolver()
+                            .bulkInsert(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                    cvSports.toArray(new ContentValues[cvSports.size()]));
+                }
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public static ExecutorChildEventListener getListenerToLoadFieldsFromCity() {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     Field field = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Field.class);
                     if (field == null) {
                         Log.e(TAG, "loadFieldsFromCity: onDataChangeExecutor: Error parsing Field from "
@@ -82,6 +81,11 @@ public class FieldsFirebaseSync {
                     ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.FieldEntry.CONTENT_FIELD_URI, cvData);
+
+                    MyApplication.getAppContext().getContentResolver()
+                            .delete(SportteamContract.FieldSportEntry.CONTENT_FIELD_SPORT_URI,
+                                    SportteamContract.FieldSportEntry.FIELD_ID + " = ? ",
+                                    new String[]{field.getId()});
 
                     List<ContentValues> cvSports = UtilesContentValues.fieldSportToContentValues(field);
                     MyApplication.getAppContext().getContentResolver()
@@ -98,7 +102,6 @@ public class FieldsFirebaseSync {
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
                 String fieldId = dataSnapshot.getKey();
-                Log.d(TAG, "onChildRemovedExecutor: "+fieldId);
                 MyApplication.getAppContext().getContentResolver()
                         .delete(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
                                 SportteamContract.FieldEntry.FIELD_ID + " = ? ",

@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,196 +29,216 @@ import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 import java.util.List;
 
-/**
- * Created by Jorge Avila on 14/08/2017.
- */
-
+@SuppressWarnings("WeakerAccess")
 public class UsersFirebaseSync {
-    public static final String TAG = UsersFirebaseSync.class.getSimpleName();
+    private static final String TAG = UsersFirebaseSync.class.getSimpleName();
 
-    // User
     public static void loadAProfile(final LoginActivity loginActivity, @NonNull String userID, final boolean shouldUpdateCityPrefs) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+        DatabaseReference ref = database.getReference(FirebaseDBContract.TABLE_USERS).child(userID);
 
-        myUserRef.child(userID)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            User anUser = dataSnapshot.child(FirebaseDBContract.DATA).getValue(User.class);
-                            if (anUser == null) {
-                                Log.e(TAG, "loadAProfile: onDataChangeExecutor: Error parsing user");
-                                return;
-                            }
-                            anUser.setUid(dataSnapshot.getKey());
-
-                            FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                            String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
-                            if (!TextUtils.isEmpty(myUserID) && myUserID.equals(anUser.getUid()))
-                                // anUser is the current User so check email address in case
-                                // it was recently changed and later cancel that change.
-                                Utiles.checkEmailFromDatabaseIsCorrect(fUser, anUser);
-
-                            ContentValues cvData = UtilesContentValues.dataUserToContentValues(anUser);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
-
-                            List<ContentValues> cvSports = UtilesContentValues.sportUserToContentValues(anUser);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .delete(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
-                                            SportteamContract.UserSportEntry.USER_ID + " = ? ",
-                                            new String[]{anUser.getUid()});
-                            MyApplication.getAppContext().getContentResolver()
-                                    .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
-                                            cvSports.toArray(new ContentValues[cvSports.size()]));
-
-                            if (shouldUpdateCityPrefs) {
-                                UtilesPreferences.setCurrentUserCity(MyApplication.getAppContext());
-                                UtilesPreferences.setCurrentUserCityCoords(MyApplication.getAppContext());
-
-                                // Load fields from user city
-                                FirebaseSync.loadFieldsFromCity(UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext()), true);
-                                // Load events from user city
-                                EventsFirebaseSync.loadEventsFromCity(UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext()));
-
-                                // Updates in prefs came from new login in so if the mLoginActivity
-                                // isn't null, ends that Activity and start BaseActivity with the
-                                // User data in ContentProvider.
-                                if (loginActivity != null)
-                                    loginActivity.finishLoadMyProfile();
-                            }
-                        }
+        ref.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    User anUser = dataSnapshot.child(FirebaseDBContract.DATA).getValue(User.class);
+                    if (anUser == null) {
+                        Log.e(TAG, "loadAProfile: onDataChangeExecutor: Error parsing user");
+                        return;
                     }
+                    anUser.setUid(dataSnapshot.getKey());
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+                    String myUserID = Utiles.getCurrentUserId();
+                    if (!TextUtils.isEmpty(myUserID) && myUserID.equals(anUser.getUid()))
+                        // anUser is the current User so check email address in case
+                        // it was recently changed and later cancel that change,
+                        // in such case FirebaseAuth.user.email != FirebaseDatabase.user.email
+                        Utiles.checkEmailFromDatabaseIsCorrect(FirebaseAuth.getInstance().getCurrentUser(), anUser);
 
+                    // Store user in ContentProvider
+                    ContentValues cvData = UtilesContentValues.dataUserToContentValues(anUser);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
+
+                    // Delete sports in case some of them was deleted
+                    MyApplication.getAppContext().getContentResolver()
+                            .delete(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                    SportteamContract.UserSportEntry.USER_ID + " = ? ",
+                                    new String[]{anUser.getUid()});
+
+                    // Store sports in ContentProvider
+                    List<ContentValues> cvSports = UtilesContentValues.sportUserToContentValues(anUser);
+                    MyApplication.getAppContext().getContentResolver()
+                            .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                    cvSports.toArray(new ContentValues[cvSports.size()]));
+
+                    // This is the current user and it is first load or city was change
+                    if (shouldUpdateCityPrefs) {
+                        UtilesPreferences.setCurrentUserCity(MyApplication.getAppContext());
+                        UtilesPreferences.setCurrentUserCityCoords(MyApplication.getAppContext());
+
+                        // Load fields from user city
+                        FirebaseSync.loadFieldsFromCity(UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext()), true);
+                        // Load events from user city
+                        EventsFirebaseSync.loadEventsFromCity(UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext()));
+
+                        // If loginActivity isn't null means this came from that Activity so,
+                        // ends that Activity and start BaseActivity with the User data already stored in ContentProvider.
+                        if (loginActivity != null) loginActivity.finishLoadMyProfile();
                     }
-                });
+                }
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public static void loadAProfileAndNotify(final String notificationRef, final MyNotification notification) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+        if (notification.getExtra_data_one() != null) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference ref = database.getReference(FirebaseDBContract.TABLE_USERS)
+                    .child(notification.getExtra_data_one());
 
-        if (notification.getExtra_data_one() != null)
-        myUserRef.child(notification.getExtra_data_one())
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            User anUser = dataSnapshot.child(FirebaseDBContract.DATA).getValue(User.class);
-                            if (anUser == null) {
-                                Log.e(TAG, "loadAProfileAndNotify: onDataChangeExecutor: Error parsing user");
-                                return;
-                            }
-                            anUser.setUid(dataSnapshot.getKey());
-
-                            ContentValues cvData = UtilesContentValues.dataUserToContentValues(anUser);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
-
-                            List<ContentValues> cvSports = UtilesContentValues.sportUserToContentValues(anUser);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .delete(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
-                                            SportteamContract.UserSportEntry.USER_ID + " = ? ",
-                                            new String[]{anUser.getUid()});
-                            MyApplication.getAppContext().getContentResolver()
-                                    .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
-                                            cvSports.toArray(new ContentValues[cvSports.size()]));
-
-                            //Notify
-                            UtilesNotification.createNotification(MyApplication.getAppContext(), notification, anUser);
-                            NotificationsFirebaseActions.checkNotification(notificationRef);
-                        } else {
-                            Log.e(TAG, "loadAProfileAndNotify: onDataChangeExecutor: User "
-                                    + notification.getExtra_data_one() + " doesn't exist");
-                            FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
+            ref.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+                @Override
+                public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        User anUser = dataSnapshot.child(FirebaseDBContract.DATA).getValue(User.class);
+                        if (anUser == null) {
+                            Log.e(TAG, "loadAProfileAndNotify: onDataChangeExecutor: Error parsing user");
+                            return;
                         }
-                    }
+                        anUser.setUid(dataSnapshot.getKey());
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+                        // Store user in ContentProvider
+                        ContentValues cvData = UtilesContentValues.dataUserToContentValues(anUser);
+                        MyApplication.getAppContext().getContentResolver()
+                                .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
 
+                        // Delete sports in case some of them was deleted
+                        MyApplication.getAppContext().getContentResolver()
+                                .delete(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                        SportteamContract.UserSportEntry.USER_ID + " = ? ",
+                                        new String[]{anUser.getUid()});
+
+                        // Store sports in ContentProvider
+                        List<ContentValues> cvSports = UtilesContentValues.sportUserToContentValues(anUser);
+                        MyApplication.getAppContext().getContentResolver()
+                                .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                        cvSports.toArray(new ContentValues[cvSports.size()]));
+
+                        //Notify
+                        UtilesNotification.createNotification(MyApplication.getAppContext(), notification, anUser);
+                        NotificationsFirebaseActions.checkNotification(notificationRef);
+                    } else {
+                        Log.e(TAG, "loadAProfileAndNotify: onDataChangeExecutor: User "
+                                + notification.getExtra_data_one() + " doesn't exist");
+                        FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
                     }
-                });
+                }
+
+                @Override
+                public void onCancelledExecutor(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     public static void loadUsersFromCity(String city) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference usersRef = database.getReference(FirebaseDBContract.TABLE_USERS);
-        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
+        DatabaseReference ref = database.getReference(FirebaseDBContract.TABLE_USERS);
+        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.CITY;
 
-        usersRef.orderByChild(filter).equalTo(city)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                User anUser = data.child(FirebaseDBContract.DATA).getValue(User.class);
-                                if (anUser == null) {
-                                    Log.e(TAG, "loadUsersFromCity: onDataChangeExecutor: Error parsing user");
-                                    return;
-                                }
-                                anUser.setUid(data.getKey());
-
-                                ContentValues cvData = UtilesContentValues.dataUserToContentValues(anUser);
-                                MyApplication.getAppContext().getContentResolver()
-                                        .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
-
-                                List<ContentValues> cvSports = UtilesContentValues.sportUserToContentValues(anUser);
-                                MyApplication.getAppContext().getContentResolver()
-                                        .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
-                                                cvSports.toArray(new ContentValues[cvSports.size()]));
-                            }
+        ref.orderByChild(filter).equalTo(city).addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        User anUser = data.child(FirebaseDBContract.DATA).getValue(User.class);
+                        if (anUser == null) {
+                            Log.e(TAG, "loadUsersFromCity: onDataChangeExecutor: Error parsing user");
+                            continue;
                         }
-                    }
+                        anUser.setUid(data.getKey());
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+                        // Store user in ContentProvider
+                        ContentValues cvData = UtilesContentValues.dataUserToContentValues(anUser);
+                        MyApplication.getAppContext().getContentResolver()
+                                .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
 
+                        // Delete sports in case some of them was deleted
+                        MyApplication.getAppContext().getContentResolver()
+                                .delete(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                        SportteamContract.UserSportEntry.USER_ID + " = ? ",
+                                        new String[]{anUser.getUid()});
+
+                        // Store sports in ContentProvider
+                        List<ContentValues> cvSports = UtilesContentValues.sportUserToContentValues(anUser);
+                        MyApplication.getAppContext().getContentResolver()
+                                .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                        cvSports.toArray(new ContentValues[cvSports.size()]));
                     }
-                });
+                }
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public static void loadUsersWithName(String username) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference usersRef = database.getReference(FirebaseDBContract.TABLE_USERS);
-        String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.ALIAS;
+        if (username != null && !TextUtils.isEmpty(username) && username.length() > 3) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference usersRef = database.getReference(FirebaseDBContract.TABLE_USERS);
+            String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.ALIAS;
 
         /* https://stackoverflow.com/a/40633692/4235666
          * https://firebase.google.com/docs/database/admin/retrieve-data */
-        usersRef.orderByChild(filter).startAt(username).endAt(username+"\uf8ff").limitToFirst(40)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                User anUser = data.child(FirebaseDBContract.DATA).getValue(User.class);
-                                if (anUser == null) {
-                                    Log.e(TAG, "loadUsersWithName: onDataChangeExecutor: Error parsing user");
-                                    return;
+            usersRef.orderByChild(filter).startAt(username).endAt(username + "\uf8ff").limitToFirst(40)
+                    .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+                        @Override
+                        public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                    User anUser = data.child(FirebaseDBContract.DATA).getValue(User.class);
+                                    if (anUser == null) {
+                                        Log.e(TAG, "loadUsersWithName: onDataChangeExecutor: Error parsing user");
+                                        continue;
+                                    }
+                                    anUser.setUid(data.getKey());
+
+                                    // Store user in ContentProvider
+                                    ContentValues cvData = UtilesContentValues.dataUserToContentValues(anUser);
+                                    MyApplication.getAppContext().getContentResolver()
+                                            .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
+
+                                    // Delete sports in case some of them was deleted
+                                    MyApplication.getAppContext().getContentResolver()
+                                            .delete(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                                    SportteamContract.UserSportEntry.USER_ID + " = ? ",
+                                                    new String[]{anUser.getUid()});
+
+                                    // Store sports in ContentProvider
+                                    List<ContentValues> cvSports = UtilesContentValues.sportUserToContentValues(anUser);
+                                    MyApplication.getAppContext().getContentResolver()
+                                            .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
+                                                    cvSports.toArray(new ContentValues[cvSports.size()]));
                                 }
-                                anUser.setUid(data.getKey());
-
-                                ContentValues cvData = UtilesContentValues.dataUserToContentValues(anUser);
-                                MyApplication.getAppContext().getContentResolver()
-                                        .insert(SportteamContract.UserEntry.CONTENT_USER_URI, cvData);
-
-                                List<ContentValues> cvSports = UtilesContentValues.sportUserToContentValues(anUser);
-                                MyApplication.getAppContext().getContentResolver()
-                                        .bulkInsert(SportteamContract.UserSportEntry.CONTENT_USER_SPORT_URI,
-                                                cvSports.toArray(new ContentValues[cvSports.size()]));
                             }
                         }
-                    }
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelledExecutor(DatabaseError databaseError) {
 
-                    }
-                });
+                        }
+                    });
+        }
     }
 
     public static ExecutorChildEventListener getListenerToLoadUsersFromFriends() {
@@ -228,9 +247,10 @@ public class UsersFirebaseSync {
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
                     loadAProfile(null, dataSnapshot.getKey(), false);
-                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                    String myUserID = "";
-                    if (fUser != null) myUserID = fUser.getUid();
+
+                    String myUserID = Utiles.getCurrentUserId();
+                    if (TextUtils.isEmpty(myUserID)) return;
+
                     ContentValues cvData = UtilesContentValues.dataSnapshotFriendToContentValues(dataSnapshot, myUserID);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI, cvData);
@@ -239,28 +259,20 @@ public class UsersFirebaseSync {
 
             @Override
             public void onChildChangedExecutor(DataSnapshot dataSnapshot, String s) {
-                loadAProfile(null, dataSnapshot.getKey(), false);
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                String myUserID = "";
-                if (fUser != null) myUserID = fUser.getUid();
-                ContentValues cvData = UtilesContentValues.dataSnapshotFriendToContentValues(dataSnapshot, myUserID);
-                MyApplication.getAppContext().getContentResolver()
-                        .insert(SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI, cvData);
-
+                onChildAdded(dataSnapshot, s);
             }
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                String myUserID = "";
-                if (fUser != null) myUserID = fUser.getUid();
+                String myUserID = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(myUserID)) return;
+
                 String userId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI,
                         SportteamContract.FriendsEntry.MY_USER_ID + " = ? AND "
                                 + SportteamContract.FriendsEntry.USER_ID + " = ? ",
                         new String[]{myUserID, userId});
-
             }
 
             @Override
@@ -279,11 +291,12 @@ public class UsersFirebaseSync {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     loadAProfile(null, dataSnapshot.getKey(), false);
 
-                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+                    String myUserID = Utiles.getCurrentUserId();
+                    if (TextUtils.isEmpty(myUserID)) return;
+
                     ContentValues cvData = UtilesContentValues.dataSnapshotFriendRequestToContentValues(dataSnapshot, myUserID, true);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
@@ -297,8 +310,9 @@ public class UsersFirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                String senderId = ""; if (fUser != null) senderId = fUser.getUid();
+                String senderId = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(senderId)) return;
+
                 String receiverId = dataSnapshot.getKey();
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
@@ -323,11 +337,12 @@ public class UsersFirebaseSync {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     loadAProfile(null, dataSnapshot.getKey(), false);
 
-                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                    String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+                    String myUserID = Utiles.getCurrentUserId();
+                    if (TextUtils.isEmpty(myUserID)) return;
+
                     ContentValues cvData = UtilesContentValues.dataSnapshotFriendRequestToContentValues(dataSnapshot, myUserID, false);
                     MyApplication.getAppContext().getContentResolver()
                             .insert(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI, cvData);
@@ -341,11 +356,10 @@ public class UsersFirebaseSync {
 
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                String receiverId = ""; if (fUser != null) receiverId = fUser.getUid();
+                String receiverId = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(receiverId)) return;
+
                 String senderId = dataSnapshot.getKey();
-                Log.d(TAG, "onChildRemoved: sender "+senderId);
-                Log.d(TAG, "onChildRemoved: receiver "+receiverId);
                 MyApplication.getAppContext().getContentResolver()
                         .delete(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
                                 SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ? AND "
@@ -370,7 +384,7 @@ public class UsersFirebaseSync {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     Invitation invitation = dataSnapshot.getValue(Invitation.class);
                     if (invitation == null) {
                         Log.e(TAG, "loadUsersFromInvitationsSent: onChildAddedExecutor: parse Invitation null");
@@ -424,7 +438,7 @@ public class UsersFirebaseSync {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     loadAProfile(null, dataSnapshot.getKey(), false);
 
                     String eventId = Uri.parse(dataSnapshot.getRef().getParent().getParent().toString()).getLastPathSegment();
@@ -447,7 +461,7 @@ public class UsersFirebaseSync {
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,
                         SportteamContract.EventRequestsEntry.EVENT_ID + " = ? AND "
-                                +SportteamContract.EventRequestsEntry.SENDER_ID + " = ? ",
+                                + SportteamContract.EventRequestsEntry.SENDER_ID + " = ? ",
                         new String[]{eventId, senderId});
             }
 

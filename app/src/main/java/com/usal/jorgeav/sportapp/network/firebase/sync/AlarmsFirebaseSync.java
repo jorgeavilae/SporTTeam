@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,80 +23,81 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentValues;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
-/**
- * Created by Jorge Avila on 14/08/2017.
- */
-
+@SuppressWarnings("WeakerAccess")
 public class AlarmsFirebaseSync {
-    public static final String TAG = AlarmsFirebaseSync.class.getSimpleName();
+    private static final String TAG = AlarmsFirebaseSync.class.getSimpleName();
 
-    // Alarms
     public static void loadAnAlarm(@NonNull String alarmId) {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        String myUserID = ""; if (fUser != null) myUserID = fUser.getUid();
+        String myUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserID)) return;
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
+        DatabaseReference ref = database.getReference(FirebaseDBContract.TABLE_USERS)
+                .child(myUserID).child(FirebaseDBContract.User.ALARMS).child(alarmId);
 
-        myUserRef.child(alarmId)
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            Alarm a = dataSnapshot.getValue(Alarm.class);
-                            if (a == null) {
-                                Log.e(TAG, "loadAnAlarm: onChildAddedExecutor: Error parsing alarm");
-                                return;
-                            }
-                            a.setId(dataSnapshot.getKey());
-
-                            ContentValues cv = UtilesContentValues.alarmToContentValues(a);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
-                            if (a.getField_id() != null)
-                                FieldsFirebaseSync.loadAField(a.getField_id());
-                        }
+        ref.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+            @Override
+            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Alarm a = dataSnapshot.getValue(Alarm.class);
+                    if (a == null) {
+                        Log.e(TAG, "loadAnAlarm: onChildAddedExecutor: Error parsing alarm");
+                        return;
                     }
+                    a.setId(dataSnapshot.getKey());
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+                    // Store alarm in Content Provider
+                    ContentValues cv = UtilesContentValues.alarmToContentValues(a);
+                    MyApplication.getAppContext().getContentResolver()
+                            .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
 
-                    }
-                });
+                    // Load field
+                    if (a.getField_id() != null)
+                        FieldsFirebaseSync.loadAField(a.getField_id());
+                }
+            }
+
+            @Override
+            public void onCancelledExecutor(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public static void loadAnAlarmAndNotify(final String notificationRef, final MyNotification notification) {
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
-                .child(myUserID + "/" + FirebaseDBContract.User.ALARMS);
+        if (notification.getExtra_data_one() != null) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myUserRef = database.getReference(FirebaseDBContract.TABLE_USERS)
+                    .child(myUserID).child(FirebaseDBContract.User.ALARMS).child(notification.getExtra_data_one());
 
-        if (notification.getExtra_data_one() != null)
-        myUserRef.child(notification.getExtra_data_one())
-                .addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-                    @Override
-                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            final Alarm a = dataSnapshot.getValue(Alarm.class);
-                            if (a == null) {
-                                Log.e(TAG, "loadAnAlarmAndNotify: onChildAddedExecutor: Error parsing alarm");
-                                return;
-                            }
-                            a.setId(dataSnapshot.getKey());
+            myUserRef.addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+                @Override
+                public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        final Alarm a = dataSnapshot.getValue(Alarm.class);
+                        if (a == null) {
+                            Log.e(TAG, "loadAnAlarmAndNotify: onChildAddedExecutor: Error parsing alarm");
+                            return;
+                        }
+                        a.setId(dataSnapshot.getKey());
 
-                            ContentValues cv = UtilesContentValues.alarmToContentValues(a);
-                            MyApplication.getAppContext().getContentResolver()
-                                    .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
-                            if (a.getField_id() != null)
-                                FieldsFirebaseSync.loadAField(a.getField_id());
+                        // Store alarm in Content Provider
+                        ContentValues cv = UtilesContentValues.alarmToContentValues(a);
+                        MyApplication.getAppContext().getContentResolver()
+                                .insert(SportteamContract.AlarmEntry.CONTENT_ALARM_URI, cv);
+
+                        // Load field
+                        if (a.getField_id() != null)
+                            FieldsFirebaseSync.loadAField(a.getField_id());
 
 
-                            String eventId = notification.getExtra_data_two();
-                            if (eventId != null)
-                                database.getReference(FirebaseDBContract.TABLE_EVENTS)
-                                        .child(eventId).addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()){
+                        String eventId = notification.getExtra_data_two();
+                        if (eventId != null)
+                            FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_EVENTS)
+                                    .child(eventId).addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
                                 @Override
                                 protected void onDataChangeExecutor(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists()) {
@@ -109,9 +108,12 @@ public class AlarmsFirebaseSync {
                                         }
                                         e.setEvent_id(dataSnapshot.getKey());
 
+                                        // Store event in Content Provider
                                         ContentValues cv = UtilesContentValues.eventToContentValues(e);
                                         MyApplication.getAppContext().getContentResolver()
                                                 .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+
+                                        // Load owner and field
                                         UsersFirebaseSync.loadAProfile(null, e.getOwner(), false);
                                         FieldsFirebaseSync.loadAField(e.getField_id());
 
@@ -131,18 +133,19 @@ public class AlarmsFirebaseSync {
 
                                 }
                             });
-                        } else {
-                            Log.e(TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Alarm "
-                                    + notification.getExtra_data_one() + " doesn't exist");
-                            FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
-                        }
+                    } else {
+                        Log.e(TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Alarm "
+                                + notification.getExtra_data_one() + " doesn't exist");
+                        FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
                     }
+                }
 
-                    @Override
-                    public void onCancelledExecutor(DatabaseError databaseError) {
+                @Override
+                public void onCancelledExecutor(DatabaseError databaseError) {
 
-                    }
-                });
+                }
+            });
+        }
     }
 
     public static ExecutorChildEventListener getListenerToLoadAlarmsFromMyAlarms() {

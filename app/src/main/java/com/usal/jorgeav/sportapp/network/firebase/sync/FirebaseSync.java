@@ -272,55 +272,55 @@ public class FirebaseSync {
 
         if (listener == null)
             listener = new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-            @Override
-            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists())
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        MyNotification notification = data.getValue(MyNotification.class);
-                        if (notification == null) continue;
+                @Override
+                public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists())
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                            MyNotification notification = data.getValue(MyNotification.class);
+                            if (notification == null) continue;
 
-                        @FirebaseDBContract.NotificationDataTypes int type = notification.getData_type();
-                        switch (type) {
-                            case FirebaseDBContract.NOTIFICATION_TYPE_NONE:
-                                UtilesNotification.createNotification(MyApplication.getAppContext(), notification);
-                                break;
-                            case FirebaseDBContract.NOTIFICATION_TYPE_USER:
-                                User user = UtilesContentProvider.getUserFromContentProvider(notification.getExtra_data_one());
-                                if (user == null) {
-                                    UsersFirebaseSync.loadAProfileAndNotify(data.getRef().toString(), notification);
-                                    continue;
-                                }
-                                UtilesNotification.createNotification(MyApplication.getAppContext(), notification, user);
-                                break;
-                            case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
-                                Event event = UtilesContentProvider.getEventFromContentProvider(notification.getExtra_data_one());
-                                if (event == null) {
-                                    EventsFirebaseSync.loadAnEventAndNotify(data.getRef().toString(), notification);
-                                    continue;
-                                }
-                                UtilesNotification.createNotification(MyApplication.getAppContext(), notification, event);
-                                break;
-                            case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
-                                Alarm alarm = UtilesContentProvider.getAlarmFromContentProvider(notification.getExtra_data_one());
-                                Event eventCoincidence = UtilesContentProvider.getEventFromContentProvider(notification.getExtra_data_two());
-                                if (alarm == null || eventCoincidence == null) {
-                                    AlarmsFirebaseSync.loadAnAlarmAndNotify(data.getRef().toString(), notification);
-                                    continue;
-                                }
-                                UtilesNotification.createNotification(MyApplication.getAppContext(), notification, alarm);
-                                break;
-                            case FirebaseDBContract.NOTIFICATION_TYPE_ERROR:
-                                break;
+                            @FirebaseDBContract.NotificationDataTypes int type = notification.getData_type();
+                            switch (type) {
+                                case FirebaseDBContract.NOTIFICATION_TYPE_NONE:
+                                    UtilesNotification.createNotification(MyApplication.getAppContext(), notification);
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_USER:
+                                    User user = UtilesContentProvider.getUserFromContentProvider(notification.getExtra_data_one());
+                                    if (user == null) {
+                                        UsersFirebaseSync.loadAProfileAndNotify(data.getRef().toString(), notification);
+                                        continue;
+                                    }
+                                    UtilesNotification.createNotification(MyApplication.getAppContext(), notification, user);
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_EVENT:
+                                    Event event = UtilesContentProvider.getEventFromContentProvider(notification.getExtra_data_one());
+                                    if (event == null) {
+                                        EventsFirebaseSync.loadAnEventAndNotify(data.getRef().toString(), notification);
+                                        continue;
+                                    }
+                                    UtilesNotification.createNotification(MyApplication.getAppContext(), notification, event);
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_ALARM:
+                                    Alarm alarm = UtilesContentProvider.getAlarmFromContentProvider(notification.getExtra_data_one());
+                                    Event eventCoincidence = UtilesContentProvider.getEventFromContentProvider(notification.getExtra_data_two());
+                                    if (alarm == null || eventCoincidence == null) {
+                                        AlarmsFirebaseSync.loadAnAlarmAndNotify(data.getRef().toString(), notification);
+                                        continue;
+                                    }
+                                    UtilesNotification.createNotification(MyApplication.getAppContext(), notification, alarm);
+                                    break;
+                                case FirebaseDBContract.NOTIFICATION_TYPE_ERROR:
+                                    break;
+                            }
+                            NotificationsFirebaseActions.checkNotification(data.getRef().toString());
                         }
-                        NotificationsFirebaseActions.checkNotification(data.getRef().toString());
-                    }
-            }
+                }
 
-            @Override
-            public void onCancelledExecutor(DatabaseError databaseError) {
+                @Override
+                public void onCancelledExecutor(DatabaseError databaseError) {
 
-            }
-        };
+                }
+            };
         ref.addListenerForSingleValueEvent(listener);
     }
 
