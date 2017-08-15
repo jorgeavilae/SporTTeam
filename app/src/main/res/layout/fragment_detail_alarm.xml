@@ -57,11 +57,11 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/alarm_detail_sport"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/alarm_detail_sport"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/alarm_detail_sport"
-            tools:text="Name of field, City"
-            app:layout_constraintHorizontal_bias="0.0" />
+            tools:text="Name of field, City" />
 
         <ImageView
             android:id="@+id/alarm_detail_place_icon"
@@ -129,6 +129,7 @@
             android:layout_marginLeft="0dp"
             android:layout_marginStart="0dp"
             android:layout_marginTop="@dimen/label_margin"
+            android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintLeft_toRightOf="@+id/textView11"
