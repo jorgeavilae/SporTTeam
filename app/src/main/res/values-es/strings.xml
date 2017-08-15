@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SportApp</string>
+
+    <string name="profile">Perfil</string>
+    <string name="notifications">Notificaciones</string>
+    <string name="events">Partidos</string>
+    <string name="fields">Campos</string>
+    <string name="friends">Amigos</string>
+    <string name="alarms">Alarmas</string>
+    <string name="settings">Opciones</string>
+
+    <string name="action_clear_filter">Borrar filtros</string>
+    <string name="action_clear_notifications">Borrar notificaciones</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_delete">Borrar</string>
+    <string name="action_vote">Votar</string>
+    <string name="action_create_event">Nuevo partido</string>
+    <string name="action_event_requests">Peticiones de entrada enviadas</string>
+    <string name="action_search_events">Buscar partidos</string>
+    <string name="action_search_users">Buscar usuarios</string>
+
+    <string name="pick_photo_from">Elegir foto de…</string>
+    <string name="toast_need_write_permission">Se necesitan permisos para guardar la imagen</string>
+    <string name="dialog_msg_are_you_sure">Estas seguro?</string>
+
+    <string name="add">Añadir</string>
+    <string name="delete">Borrar</string>
+    <string name="infinite">Infinitos</string>
+    <string name="error">Error</string>
+    <string name="loading">Ejecutando acción…</string>
+
+    <string name="title_activity_login">Indentificarse</string>
+    <string name="title_activity_maps">Mapa</string>
+
+    <!--Sports-->
+    <string name="running">Running</string>
+    <string name="biking">Biking</string>
+    <string name="basketball">Baloncesto</string>
+    <string name="skating">Skating</string>
+    <string name="football_5">Fútbol 5</string>
+    <string name="football_7">Fútbol 7</string>
+    <string name="football_11">Fútbol 11</string>
+    <string name="tennis">Tenis</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">E-mail</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="create_new_user_button">¿No eres miembro? Regístrate ahora.</string>
+    <string name="forgot_password">Olvidaste tu contraseña?</string>
+    <string name="action_sign_in">Indentificarse</string>
+    <string name="action_sign_in_short">Indentificarse</string>
+    <string name="action_sign_out">Cerrar sesión</string>
+    <string name="error_invalid_email">Esta dirección de email es inválida</string>
+    <string name="error_invalid_password">Esta contraseña es muy corta</string>
+    <string name="error_incorrect_password">Contraseña incorrecta</string>
+    <string name="error_field_required">Este campo es necesario</string>
+    <string name="reauthenticate">Reautenticarse</string>
+    <string name="email_sent">Email enviado</string>
+    <string name="dialog_title_verify_email">Tienes que verificar tu email</string>
+    <string name="dialog_msg_verify_email">Quieres reenviar el email de verificación? Asegúrate de comprobar la carpeta de spam</string>
+
+    <!-- Strings for new user -->
+    <string name="new_user_title">Nuevo usuario</string>
+    <string name="prompt_name">Nombre</string>
+    <string name="prompt_age">Edad</string>
+    <string name="prompt_city">Ciudad</string>
+    <string name="error_not_unique_email">Este email ya existe</string>
+    <string name="error_not_unique_name">Este nombre ya se está usando</string>
+    <string name="error_incorrect_age">La edad debe ser mayor de 12 y menor de 100</string>
+    <string name="error_invalid_age">Número inválido</string>
+    <string name="toast_login_success">Indentificado con éxito</string>
+    <string name="toast_create_user_fail">Fallo en la creación de usuario</string>
+    <string name="toast_login_failure">Fallo en la identificación</string>
+    <string name="error_invalid_name">Nombre inválido</string>
+    <string name="error_invalid_photo">Foto inválida</string>
+    <string name="error_invalid_city">Ciudad inválida</string>
+    <string name="error_invalid_sport_list">Lista de deportes inválida</string>
+
+
+    <!--Strings for notification messages-->
+    <string name="dialog_msg_delete_all_notifications">Todas las notificaciones serán borradas</string>
+    <string name="dialog_msg_delete_one_notification">Esta notificación será borrada</string>
+    <string name="toast_notification_load_error">Las notificaciones no se pudieron cargar</string>
+
+    <string name="notification_title_friend_request_received">Nueva petición de amistad</string>
+    <string name="notification_title_friend_request_accepted">Nuevo amigo!!</string>
+    <string name="notification_title_event_invitation_received">Invitación a partido recibida</string>
+    <string name="notification_title_event_invitation_accepted">Invitación a partido aceptada</string>
+    <string name="notification_title_event_invitation_declined">Invitación a partido rechazada</string>
+    <string name="notification_title_event_request_received">Petición de entrada recibida</string>
+    <string name="notification_title_event_request_accepted">Petición de entrada aceptada</string>
+    <string name="notification_title_event_request_declined">Petición de entrada rechazada</string>
+    <string name="notification_title_event_complete">Partido completo</string>
+    <string name="notification_title_event_someone_quit">Partido incompleto</string>
+    <string name="notification_title_event_edit">Partido editado</string>
+    <string name="notification_title_event_delete">Partido cancelado</string>
+    <string name="notification_title_alarm_event">Partido encontrado!</string>
+
+    <string name="notification_msg_friend_request_received">Tienes una nueva petición de amistad</string>
+    <string name="notification_msg_friend_request_accepted">Tienes un nuevo amigo</string>
+    <string name="notification_msg_event_invitation_received">Tienes una nueva invitación a un partido</string>
+    <string name="notification_msg_event_invitation_accepted">Tu invitación a un partido fue aceptada</string>
+    <string name="notification_msg_event_invitation_declined">Tu invitación a un partido fue rechazada</string>
+    <string name="notification_msg_event_request_received">Alguien quiere participar en uno de tus partidos</string>
+    <string name="notification_msg_event_request_accepted">Tu petición de entrada a partido fue aceptada</string>
+    <string name="notification_msg_event_request_declined">Tu petición de entrada a partido fue rechazada</string>
+    <string name="notification_msg_event_complete">Uno de tus partidos se ha llenado de participantes</string>
+    <string name="notification_msg_event_someone_quit">Uno de tus partidos ya no está completo</string>
+    <string name="notification_msg_event_edit">Un partido ha sido cambiado</string>
+    <string name="notification_msg_event_delete">El partido %1$s en %2$s el día %3$s ha sido cancelado</string>
+    <string name="notification_msg_alarm_event">Se ha encontrado algún partido que coincide con tu alarma</string>
+
+    <!-- Strings for preference Activity -->
+    <string name="pref_city_title">Ciudad actual</string>
+    <string name="pref_city_dialog">Escribe tu ciudad actual</string>
+    <string name="pref_email_title">Dirección de email</string>
+    <string name="pref_email_dialog">Cambia tu dirección de email</string>
+    <string name="pref_password_title">Cambiar contraseña</string>
+    <string name="pref_password_dialog">Contraseña nueva</string>
+    <string name="pref_reset_title">Borrar los datos de usuario</string>
+    <string name="dialog_msg_reset_user">Estás seguro de que quieres BORRAR TODOS TUS DATOS?
+        Partidos, invitaciones, amigos… todo será borrado. Sólo mantendremos tu información personal como el nombre,
+        la ciudad o los deportes que practicas</string>
+    <string name="pref_delete_title">Borar usuario</string>
+    <string name="dialog_msg_delete_user">Estás seguro de que quieres BORRAR EL USUARIO?
+        Partidos, invitaciones, amigos… todo será borrado, incluyendo tu información personal como el nombre,
+        la ciudad o los deportes que practicas</string>
+    <string name="toast_error_deleting_user">Error borrando el usuario</string>
+    <string name="toast_user_reset_success">Datos de usuario borrados</string>
+    <string name="toast_change_email_equals">El nuevo email tiene que ser diferente</string>
+    <string name="toast_email_updated">Email cambiado</string>
+    <string name="toast_error_updating_email">Error cambiando el email</string>
+    <string name="dialog_title_email_changed">Tu email ha sido cambiado</string>
+    <string name="toast_password_updated">Contraseña cambiada</string>
+    <string name="toast_error_updating_password">Error cambiando la contraseña</string>
+    <string name="dialog_msg_email_changed">Recibirás un email en la dirección que diste al crear el usuario
+        en caso de que quieras revertir el proceso, y otro email en la nueva dirección para confirmarla.
+        Para volver a identificarte después de cerrar sesión, deberás confirmar el mensaje enviado a la nueva dirección.</string>
+
+    <!-- Fields Activity -->
+    <string name="dialog_title_add_sport_to_field">Añadir pista a este campo</string>
+    <string name="pick_sport">Elige deporte</string>
+    <string name="punctuation">Puntuación</string>
+    <string name="toast_add_sport_success">Pista añadida</string>
+    <string name="toast_should_select_place">Debes seleccionar un sitio</string>
+    <string name="toast_sport_invalid">Deporte inválido</string>
+    <string name="created_by">Creado por: %1$s</string>
+    <string name="dialog_title_vote">Valora esta pista</string>
+    <string name="select_place">Selcciona un sitio</string>
+    <string name="select_field">Selecciona un campo</string>
+    <string name="open_24h">Abierto 24h</string>
+    <string name="opening_time">Hora de apertura</string>
+    <string name="closing_time">Hora de cierre</string>
+    <string name="toast_invalid_times">Horas inválidas</string>
+    <string name="toast_invalid_arg">Datos inválidos</string>
+    <string name="dialog_title_you_must_select_place">Debes seleccionar un campo</string>
+    <string name="dialog_title_create_new_field">Crear campo nuevo</string>
+    <string name="dialog_msg_create_new_field">Quieres crear un campo nuevo?</string>
+    <string name="dialog_msg_create_new_field_for_alarm">No hay campos para este deporte pero no son necesarios
+         para crear una nueva alarma. En cualquier caso… Quieres crear un campo nuevo ahora?</string>
+    <string name="dialog_msg_create_new_field_for_event">No hay campos para este deporte y son necesarios para
+         crear un nuevo partido. Quieres crear un campo nuevo ahora?</string>
+    <string name="new_field_title">Nuevo campo</string>
+    <string name="no_field_selection">No has seleccionado nada</string>
+    <string name="court_list">Lista de pistas</string>
+    <string name="field_detail_title">Detalles del campo</string>
+    <string name="dialog_msg_delete_field">El campo será borrado sólo si no hay próximos partidos en ninguna de sus pistas.</string>
+    <string name="toast_place_error_zero_results">Quizás sea una localización remota</string>
+    <string name="toast_place_error_bad_connection">Comprueba tu conexión a internet</string>
+
+    <!-- Alarms -->
+    <!-- https://stackoverflow.com/questions/1587056/how-to-keep-the-spaces-at-the-end-and-or-at-the-beginning-of-a-string#comment26178169_2206684 -->
+    <string name="from">Desde:\u0020</string>
+    <string name="until">Hasta:\u0020</string>
+    <string name="to">Desde:\u0020</string>
+    <string name="forever">Siempre</string>
+    <string name="unspecified">Sin especificar</string>
+    <string name="date_period">Periodo de fechas</string>
+    <string name="empty_players">Puestos vacantes</string>
+    <string name="empty_players_label">Puestos vacantes:\u0020</string>
+    <string name="total_players">Puestos totales</string>
+    <string name="total_players_label">Puestos totales:\u0020</string>
+    <string name="new_alarm_title">Nueva alarma</string>
+    <string name="toast_place_invalid">Sitio inválido</string>
+    <string name="toast_date_period_invalid">Periodo de fechas inválido</string>
+    <string name="toast_date_invalid">Fecha inválida</string>
+    <string name="toast_total_player_invalid">Puestos totales inválidos</string>
+    <string name="toast_empty_players_invalid">Puestos vacantes inválidos</string>
+    <string name="toast_players_relation_invalid">Los puestos totales deben ser más que los puestos vacantes</string>
+    <string name="alarm_detail_title">Detalles de alarma</string>
+    <string name="action_not_done">La acción no se pudo completar</string>
+    <string name="old_alarm">Esta alarma es antigua. Si quieres que siga activa debes editar su periodo de fechas.
+        También puedes borrarla.</string>
+    <string name="dialog_msg_you_must_select_place">Es necesario poner la alarma sobre un campo, no una dirección.
+        También puedes crear un campo nuevo pulsando en el icono + de arriba.</string>
+
+    <!-- Profile Fragment -->
+    <string name="dialog_title_change_name">Cambiar nombre</string>
+    <string name="dialog_title_change_age">Cambiar edad</string>
+    <string name="dialog_title_search_user">Cúal es el nombre del usuario?</string>
+    <string name="edit_sports">Editar deportes</string>
+    <string name="action_change_image">Cambiar foto</string>
+    <string name="action_change_name">Cambiar nombre</string>
+    <string name="action_change_age">Cambiar edad</string>
+    <string name="event_invitations">Invitaciones a partidos</string>
+    <string name="event_invitations_received">Invitaciones a partidos recibidas</string>
+    <string name="friend_requests">Peticiones de amistad</string>
+    <string name="friend_request_sent">Petición de amistad enviada</string>
+    <string name="friend_requests_received">Peticiones de amistad recibidas</string>
+    <string name="send_user_request">Enviar petición de entrada</string>
+    <string name="sports_practiced">Deportes que practica</string>
+    <string name="pick_sports_practiced">Selecciona deportes que practicas</string>
+    <string name="toast_error_autocomplete_city">Error buscando ciudades</string>
+    <string name="delete_friend">Borrar amigo</string>
+    <string name="answer_request">Contestar petición amistad</string>
+    <string name="dialog_msg_accept_friend">Aceptar como amigo?</string>
+
+    <!-- Strings for searches -->
+    <string name="users_found">Usuarios encontrados</string>
+    <string name="events_found">Eventos encontrados</string>
+
+    <!-- Simulated User -->
+    <string name="new_simulated_user">Nuevo usuario simulado</string>
+    <string name="new_simulated_user_invalid_arg">Error validando datos</string>
+    <string name="no_empty_players_for_sim_user">No hay puestos vacantes para el usuario simulado</string>
+
+    <!-- Events Strings-->
+    <string name="simulated_participants">Participantes simulados</string>
+    <string name="participants">Participantes</string>
+    <string name="event_participants">Asistentes al partido</string>
+    <string name="event_details">Detalles del partido</string>
+    <string name="user_request">Peticiones de entrada de usuarios</string>
+    <string name="user_rejected">Peticiones rechazadas</string>
+    <string name="prompt_date">Día</string>
+    <string name="prompt_time">Hora</string>
+    <string name="dialog_msg_quit_user_from_event">Quieres expulsar al usuario del partido?</string>
+    <string name="dialog_msg_quit_myself_from_event">Quieres salir del partido?</string>
+    <string name="dialog_msg_quit_sim_user_from_event">Quieres expulsar al usuario simulado del partido?</string>
+    <string name="dialog_msg_quit_my_sim_user_from_event">Quieres expulsar a tu usuario simulado del partido?</string>
+    <string name="see_details">Ver detalles</string>
+    <string name="dialog_msg_quit_user_from_event_sim_user">Quieres expulsar también a los usuarios simulados creados por él?</string>
+    <string name="event_state_none">Enviar petición</string>
+    <string name="event_state_participant">Salir del partido</string>
+    <string name="dialog_msg_send_invitation_to_user">Invitar al usuario %1$s a este partido?</string>
+    <string name="event_state_request_sent">Cancelar petición</string>
+    <string name="event_state_invitation_received">Contestar invitación</string>
+    <string name="event_state_request_rejected">Rechazada</string>
+    <string name="dialog_msg_answer_invitation">Quieres participar?</string>
+    <string name="send_invitation">Enviar invitación</string>
+    <string name="action_unanswered_invitations">Invitaciones sin respuesta</string>
+    <string name="dialog_msg_delete_event">El partido será borrado y los asistentes notificados.</string>
+    <string name="toast_msg_error_there_is_next_events">Lo siento, hay próximos partidos</string>
+    <string name="invite_user">Invitar usuario</string>
+    <string name="dialog_msg_cancel_invitation">Quieres cancelar la invitación?</string>
+    <string name="dialog_msg_accept_participant">Aceptar como participante?</string>
+    <string name="dialog_msg_unblock_participant">Desbloquear usuario? Tendrá que volver a mandar otra petición.</string>
+    <string name="pick_event">Elegir partido</string>
+</resources>
