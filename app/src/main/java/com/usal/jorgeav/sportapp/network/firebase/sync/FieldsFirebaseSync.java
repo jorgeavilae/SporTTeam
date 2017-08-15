@@ -39,7 +39,7 @@ public class FieldsFirebaseSync {
                         if (dataSnapshot.exists()) {
                             Field field = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Field.class);
                             if (field == null) {
-                                Log.e(FirebaseSync.TAG, "loadAField: onDataChangeExecutor: Error parsing Field");
+                                Log.e(TAG, "loadAField: onDataChangeExecutor: Error parsing Field");
                                 return;
                             }
                             field.setId(dataSnapshot.getKey());
@@ -73,7 +73,7 @@ public class FieldsFirebaseSync {
                 if(dataSnapshot.exists()) {
                     Field field = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Field.class);
                     if (field == null) {
-                        Log.e(FirebaseSync.TAG, "loadFieldsFromCity: onDataChangeExecutor: Error parsing Field from "
+                        Log.e(TAG, "loadFieldsFromCity: onDataChangeExecutor: Error parsing Field from "
                                 + dataSnapshot.child(FirebaseDBContract.DATA).getRef());
                         return;
                     }
@@ -98,7 +98,7 @@ public class FieldsFirebaseSync {
             @Override
             public void onChildRemovedExecutor(DataSnapshot dataSnapshot) {
                 String fieldId = dataSnapshot.getKey();
-                Log.d(FirebaseSync.TAG, "onChildRemovedExecutor: "+fieldId);
+                Log.d(TAG, "onChildRemovedExecutor: "+fieldId);
                 MyApplication.getAppContext().getContentResolver()
                         .delete(SportteamContract.FieldEntry.CONTENT_FIELD_URI,
                                 SportteamContract.FieldEntry.FIELD_ID + " = ? ",

@@ -47,7 +47,7 @@ public class AlarmsFirebaseSync {
                         if (dataSnapshot.exists()) {
                             Alarm a = dataSnapshot.getValue(Alarm.class);
                             if (a == null) {
-                                Log.e(FirebaseSync.TAG, "loadAnAlarm: onChildAddedExecutor: Error parsing alarm");
+                                Log.e(TAG, "loadAnAlarm: onChildAddedExecutor: Error parsing alarm");
                                 return;
                             }
                             a.setId(dataSnapshot.getKey());
@@ -83,7 +83,7 @@ public class AlarmsFirebaseSync {
                         if (dataSnapshot.exists()) {
                             final Alarm a = dataSnapshot.getValue(Alarm.class);
                             if (a == null) {
-                                Log.e(FirebaseSync.TAG, "loadAnAlarmAndNotify: onChildAddedExecutor: Error parsing alarm");
+                                Log.e(TAG, "loadAnAlarmAndNotify: onChildAddedExecutor: Error parsing alarm");
                                 return;
                             }
                             a.setId(dataSnapshot.getKey());
@@ -104,7 +104,7 @@ public class AlarmsFirebaseSync {
                                     if (dataSnapshot.exists()) {
                                         Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
                                         if (e == null) {
-                                            Log.e(FirebaseSync.TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Error parsing Event");
+                                            Log.e(TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Error parsing Event");
                                             return;
                                         }
                                         e.setEvent_id(dataSnapshot.getKey());
@@ -120,7 +120,7 @@ public class AlarmsFirebaseSync {
                                         NotificationsFirebaseActions.checkNotification(notificationRef);
 
                                     } else {
-                                        Log.e(FirebaseSync.TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Event "
+                                        Log.e(TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Event "
                                                 + notification.getExtra_data_two() + " doesn't exist");
                                         FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
                                     }
@@ -132,7 +132,7 @@ public class AlarmsFirebaseSync {
                                 }
                             });
                         } else {
-                            Log.e(FirebaseSync.TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Alarm "
+                            Log.e(TAG, "loadAnAlarmAndNotify: onDataChangeExecutor: Alarm "
                                     + notification.getExtra_data_one() + " doesn't exist");
                             FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
                         }
@@ -152,7 +152,7 @@ public class AlarmsFirebaseSync {
                 if (dataSnapshot.exists()) {
                     Alarm a = dataSnapshot.getValue(Alarm.class);
                     if (a == null) {
-                        Log.e(FirebaseSync.TAG, "loadAlarmsFromMyAlarms: onChildAddedExecutor: Error parsing alarm");
+                        Log.e(TAG, "loadAlarmsFromMyAlarms: onChildAddedExecutor: Error parsing alarm");
                         return;
                     }
                     a.setId(dataSnapshot.getKey());

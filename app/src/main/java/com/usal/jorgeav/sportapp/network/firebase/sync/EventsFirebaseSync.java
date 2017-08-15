@@ -49,7 +49,7 @@ public class EventsFirebaseSync {
                         if (dataSnapshot.exists()) {
                             Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
                             if (e == null) {
-                                Log.e(FirebaseSync.TAG, "loadAnEvent: onDataChangeExecutor: Error parsing Event");
+                                Log.e(TAG, "loadAnEvent: onDataChangeExecutor: Error parsing Event");
                                 return;
                             }
                             e.setEvent_id(dataSnapshot.getKey());
@@ -101,7 +101,7 @@ public class EventsFirebaseSync {
                         if (dataSnapshot.exists()) {
                             Event e = dataSnapshot.child(FirebaseDBContract.DATA).getValue(Event.class);
                             if (e == null) {
-                                Log.e(FirebaseSync.TAG, "loadAnEventAndNotify: onDataChangeExecutor: Error parsing Event");
+                                Log.e(TAG, "loadAnEventAndNotify: onDataChangeExecutor: Error parsing Event");
                                 return;
                             }
                             e.setEvent_id(dataSnapshot.getKey());
@@ -122,7 +122,7 @@ public class EventsFirebaseSync {
                             UtilesNotification.createNotification(MyApplication.getAppContext(), notification, e);
                             NotificationsFirebaseActions.checkNotification(notificationRef);
                         } else {
-                            Log.e(FirebaseSync.TAG, "loadAnEventAndNotify: onDataChangeExecutor: Event "
+                            Log.e(TAG, "loadAnEventAndNotify: onDataChangeExecutor: Event "
                                     + notification.getExtra_data_one() + " doesn't exist");
                             FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
                         }
@@ -187,7 +187,7 @@ public class EventsFirebaseSync {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 Event e = data.child(FirebaseDBContract.DATA).getValue(Event.class);
                                 if (e == null) {
-                                    Log.e(FirebaseSync.TAG, "loadEventsFromCity: onDataChangeExecutor: Error parsing Event");
+                                    Log.e(TAG, "loadEventsFromCity: onDataChangeExecutor: Error parsing Event");
                                     return;
                                 }
                                 e.setEvent_id(data.getKey());
@@ -337,7 +337,7 @@ public class EventsFirebaseSync {
                 if(dataSnapshot.exists()) {
                     Invitation invitation = dataSnapshot.getValue(Invitation.class);
                     if (invitation == null) {
-                        Log.e(FirebaseSync.TAG, "loadEventsFromInvitationsReceived: onChildAddedExecutor: parse Invitation null");
+                        Log.e(TAG, "loadEventsFromInvitationsReceived: onChildAddedExecutor: parse Invitation null");
                         return;
                     }
                     // Load Event

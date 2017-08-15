@@ -49,7 +49,7 @@ public class UsersFirebaseSync {
                         if (dataSnapshot.exists()) {
                             User anUser = dataSnapshot.child(FirebaseDBContract.DATA).getValue(User.class);
                             if (anUser == null) {
-                                Log.e(FirebaseSync.TAG, "loadAProfile: onDataChangeExecutor: Error parsing user");
+                                Log.e(TAG, "loadAProfile: onDataChangeExecutor: Error parsing user");
                                 return;
                             }
                             anUser.setUid(dataSnapshot.getKey());
@@ -111,7 +111,7 @@ public class UsersFirebaseSync {
                         if (dataSnapshot.exists()) {
                             User anUser = dataSnapshot.child(FirebaseDBContract.DATA).getValue(User.class);
                             if (anUser == null) {
-                                Log.e(FirebaseSync.TAG, "loadAProfileAndNotify: onDataChangeExecutor: Error parsing user");
+                                Log.e(TAG, "loadAProfileAndNotify: onDataChangeExecutor: Error parsing user");
                                 return;
                             }
                             anUser.setUid(dataSnapshot.getKey());
@@ -133,7 +133,7 @@ public class UsersFirebaseSync {
                             UtilesNotification.createNotification(MyApplication.getAppContext(), notification, anUser);
                             NotificationsFirebaseActions.checkNotification(notificationRef);
                         } else {
-                            Log.e(FirebaseSync.TAG, "loadAProfileAndNotify: onDataChangeExecutor: User "
+                            Log.e(TAG, "loadAProfileAndNotify: onDataChangeExecutor: User "
                                     + notification.getExtra_data_one() + " doesn't exist");
                             FirebaseDatabase.getInstance().getReferenceFromUrl(notificationRef).removeValue();
                         }
@@ -159,7 +159,7 @@ public class UsersFirebaseSync {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 User anUser = data.child(FirebaseDBContract.DATA).getValue(User.class);
                                 if (anUser == null) {
-                                    Log.e(FirebaseSync.TAG, "loadUsersFromCity: onDataChangeExecutor: Error parsing user");
+                                    Log.e(TAG, "loadUsersFromCity: onDataChangeExecutor: Error parsing user");
                                     return;
                                 }
                                 anUser.setUid(data.getKey());
@@ -198,7 +198,7 @@ public class UsersFirebaseSync {
                             for (DataSnapshot data : dataSnapshot.getChildren()) {
                                 User anUser = data.child(FirebaseDBContract.DATA).getValue(User.class);
                                 if (anUser == null) {
-                                    Log.e(FirebaseSync.TAG, "loadUsersWithName: onDataChangeExecutor: Error parsing user");
+                                    Log.e(TAG, "loadUsersWithName: onDataChangeExecutor: Error parsing user");
                                     return;
                                 }
                                 anUser.setUid(data.getKey());
@@ -344,8 +344,8 @@ public class UsersFirebaseSync {
                 FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
                 String receiverId = ""; if (fUser != null) receiverId = fUser.getUid();
                 String senderId = dataSnapshot.getKey();
-                Log.d(FirebaseSync.TAG, "onChildRemoved: sender "+senderId);
-                Log.d(FirebaseSync.TAG, "onChildRemoved: receiver "+receiverId);
+                Log.d(TAG, "onChildRemoved: sender "+senderId);
+                Log.d(TAG, "onChildRemoved: receiver "+receiverId);
                 MyApplication.getAppContext().getContentResolver()
                         .delete(SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
                                 SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ? AND "
@@ -373,7 +373,7 @@ public class UsersFirebaseSync {
                 if(dataSnapshot.exists()) {
                     Invitation invitation = dataSnapshot.getValue(Invitation.class);
                     if (invitation == null) {
-                        Log.e(FirebaseSync.TAG, "loadUsersFromInvitationsSent: onChildAddedExecutor: parse Invitation null");
+                        Log.e(TAG, "loadUsersFromInvitationsSent: onChildAddedExecutor: parse Invitation null");
                         return;
                     }
 
