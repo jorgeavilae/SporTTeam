@@ -195,6 +195,8 @@
     <string name="toast_players_relation_invalid">Total players should be greater than empty players</string>
     <string name="alarm_detail_title">Alarm details</string>
     <string name="action_not_done">Action can not be done</string>
+    <string name="old_alarm">This is an old alarm. If you want to keep it looking for events you must edit date period.
+        Or you can delete it too.</string>
 
     <!-- Profile Fragment -->
     <string name="dialog_title_change_name">Change name</string>

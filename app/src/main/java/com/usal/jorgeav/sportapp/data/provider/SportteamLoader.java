@@ -290,7 +290,7 @@ public final class SportteamLoader {
                 SportteamContract.AlarmEntry.ALARM_COLUMNS,
                 null,
                 null,
-                SportteamContract.AlarmEntry.DATE_FROM_TABLE_PREFIX + " ASC");
+                SportteamContract.AlarmEntry.DATE_FROM_TABLE_PREFIX + " DESC");
     }
     public static final int LOADER_ALARM_ID = 7200;
     public static final int LOADER_ALARM_EVENTS_COINCIDENCE_ID = 7210;
