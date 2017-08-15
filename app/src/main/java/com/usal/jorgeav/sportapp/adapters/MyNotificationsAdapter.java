@@ -21,8 +21,8 @@ import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -111,6 +111,7 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
             // Set title and subtitle
             holder.textViewNotificationTitle.setText(n.getTitle());
             holder.textViewNotificationMessage.setText(n.getMessage());
+            holder.textViewNotificationDate.setText(UtilesTime.millisToDateTimeString(n.getDate()));
         }
     }
 
@@ -125,12 +126,12 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         return null;
     }
 
-    public void replaceData(HashMap<String, MyNotification> notifications) {
+    public void replaceData(LinkedHashMap<String, MyNotification> notifications) {
         setDataset(notifications);
         notifyDataSetChanged();
     }
 
-    private void setDataset(Map<String, MyNotification> mDataset) {
+    private void setDataset(LinkedHashMap<String, MyNotification> mDataset) {
         if (mDataset != null) this.mDataset = new LinkedHashMap<>(mDataset);
         else this.mDataset = null;
     }
@@ -148,6 +149,8 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         TextView textViewNotificationTitle;
         @BindView(R.id.notification_item_message)
         TextView textViewNotificationMessage;
+        @BindView(R.id.notification_item_date)
+        TextView textViewNotificationDate;
 
         public ViewHolder(View itemView) {
             super(itemView);

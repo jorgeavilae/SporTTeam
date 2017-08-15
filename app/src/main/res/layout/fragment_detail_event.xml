@@ -27,8 +27,8 @@
 
         <ImageView
             android:id="@+id/event_detail_sport"
-            android:layout_width="@dimen/list_item_three_lines_height"
-            android:layout_height="@dimen/list_item_three_lines_height"
+            android:layout_width="@dimen/card_view_media_area"
+            android:layout_height="@dimen/card_view_media_area"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/activity_vertical_margin"

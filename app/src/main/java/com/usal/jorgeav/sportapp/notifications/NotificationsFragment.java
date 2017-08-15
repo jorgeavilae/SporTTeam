@@ -26,7 +26,7 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.profile.ProfileFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -120,7 +120,7 @@ public class NotificationsFragment extends BaseFragment implements Notifications
     }
 
     @Override
-    public void showNotifications(HashMap<String, MyNotification> notifications) {
+    public void showNotifications(LinkedHashMap<String, MyNotification> notifications) {
         myNotificationsAdapter.replaceData(notifications);
         if (notifications != null && notifications.size() > 0) {
             notificationsRecyclerList.setVisibility(View.VISIBLE);

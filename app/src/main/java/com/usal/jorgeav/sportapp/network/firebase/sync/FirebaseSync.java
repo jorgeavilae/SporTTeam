@@ -321,7 +321,8 @@ public class FirebaseSync {
 
                 }
             };
-        ref.addListenerForSingleValueEvent(listener);
+        ref.orderByChild(FirebaseDBContract.Notification.DATE).limitToLast(20)
+                .addListenerForSingleValueEvent(listener);
     }
 
 

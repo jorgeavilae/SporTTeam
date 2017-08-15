@@ -20,7 +20,10 @@ import com.usal.jorgeav.sportapp.network.firebase.sync.UsersFirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 class NotificationsPresenter implements NotificationsContract.Presenter {
     @SuppressWarnings("unused")
@@ -37,7 +40,7 @@ class NotificationsPresenter implements NotificationsContract.Presenter {
         FirebaseSync.loadMyNotifications(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, MyNotification> result = new HashMap<>();
+                LinkedHashMap<String, MyNotification> result = new LinkedHashMap<>();
                 if (dataSnapshot.exists()) {
                     // Populate a list of notifications
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -80,9 +83,8 @@ class NotificationsPresenter implements NotificationsContract.Presenter {
                         }
                     }
                 }
-
                 // Show notifications
-                mView.showNotifications(result);
+                mView.showNotifications(reverseLinkedHashMap(result));
             }
 
             @Override
@@ -90,6 +92,19 @@ class NotificationsPresenter implements NotificationsContract.Presenter {
                 Toast.makeText(mView.getActivityContext(), R.string.toast_notification_load_error, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private LinkedHashMap<String,MyNotification> reverseLinkedHashMap(LinkedHashMap<String, MyNotification> map) {
+        LinkedHashMap<String, MyNotification> result = new LinkedHashMap<>(map.size());
+
+        List<Map.Entry<String, MyNotification>> list = new ArrayList<>(map.entrySet());
+
+        for( int i = list.size() -1; i >= 0 ; i --){
+            Map.Entry<String, MyNotification> entry = list.get(i);
+            result.put(entry.getKey(), entry.getValue());
+        }
+
+        return result;
     }
 
     @Override

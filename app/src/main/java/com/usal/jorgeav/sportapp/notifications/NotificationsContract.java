@@ -5,7 +5,7 @@ import android.content.Context;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 abstract class NotificationsContract {
 
@@ -16,8 +16,8 @@ abstract class NotificationsContract {
     }
 
     public interface View {
-        void showNotifications(HashMap<String, MyNotification> notifications);
+        void showNotifications(LinkedHashMap<String, MyNotification> notifications);
         Context getActivityContext();
-        public BaseFragment getThis();
+        BaseFragment getThis();
     }
 }

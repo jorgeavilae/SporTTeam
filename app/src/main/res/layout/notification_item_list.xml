@@ -44,7 +44,7 @@
         android:layout_marginBottom="@dimen/list_item_vertical_margin"
         android:layout_marginEnd="@dimen/list_item_horizontal_margin"
         android:layout_marginLeft="@dimen/list_item_horizontal_margin"
-        android:layout_marginRight="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/label_margin"
         android:layout_marginStart="@dimen/list_item_horizontal_margin"
         android:layout_marginTop="0dp"
         android:ellipsize="end"
@@ -54,8 +54,23 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toRightOf="@+id/notification_item_icon"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/notification_item_date"
         app:layout_constraintTop_toBottomOf="@+id/notification_item_title"
         tools:text="This is the awesome message about that important thing. Maybe it's quite long." />
+
+    <TextView
+        android:id="@+id/notification_item_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/list_item_horizontal_margin"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
+        android:layout_marginStart="@dimen/list_item_horizontal_margin"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="10 agosto 10:30" />
 
 </android.support.constraint.ConstraintLayout>
