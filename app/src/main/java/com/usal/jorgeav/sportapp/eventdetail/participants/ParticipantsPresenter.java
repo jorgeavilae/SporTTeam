@@ -93,9 +93,8 @@ class ParticipantsPresenter implements ParticipantsContract.Presenter, LoaderMan
                 SportteamContract.UserEntry.USER_ID + " = ? ",
                 new String[]{uid},
                 null);
-        Cursor result = new MergeCursor(new Cursor[]{uidCursor, data});
-        if (uidCursor != null) uidCursor.close();
-        return result;
+        // Present an array of Cursors as a single linear Cursor, so members can not be closed
+        return new MergeCursor(new Cursor[]{uidCursor, data});
     }
 
     @Override
