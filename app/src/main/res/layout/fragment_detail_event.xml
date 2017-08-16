@@ -144,7 +144,7 @@
                     android:text="@string/empty_players_label"
                     android:textAppearance="@style/ListItemSubtitle"
                     app:layout_constraintBaseline_toBaselineOf="@+id/event_detail_empty"
-                    app:layout_constraintLeft_toRightOf="@+id/event_detail_players_proportion" />
+                    app:layout_constraintLeft_toLeftOf="parent" />
 
                 <TextView
                     android:id="@+id/event_detail_empty"
@@ -166,7 +166,7 @@
                     android:text="@string/total_players_label"
                     android:textAppearance="@style/ListItemSubtitle"
                     app:layout_constraintBaseline_toBaselineOf="@+id/event_detail_total"
-                    app:layout_constraintLeft_toRightOf="@+id/event_detail_players_proportion" />
+                    app:layout_constraintLeft_toLeftOf="parent" />
 
                 <TextView
                     android:id="@+id/event_detail_total"
