@@ -108,16 +108,17 @@
 
             <android.support.v7.widget.CardView
                 android:id="@+id/user_event_invitations"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/label_margin"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@+id/guideline11"
-                app:layout_constraintTop_toBottomOf="parent">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="@dimen/activity_horizontal_margin"
                     android:orientation="vertical">
 
@@ -136,6 +137,7 @@
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/event_invitations"
+                        android:textAlignment="center"
                         android:textAllCaps="true"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
                         android:textColor="@color/colorSportteam_logo" />
@@ -144,16 +146,17 @@
 
             <android.support.v7.widget.CardView
                 android:id="@+id/user_friend_requests"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/label_margin"
                 app:layout_constraintLeft_toLeftOf="@+id/guideline11"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="parent">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="@dimen/activity_horizontal_margin"
                     android:orientation="vertical">
 
@@ -172,6 +175,7 @@
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/friend_requests"
+                        android:textAlignment="center"
                         android:textAllCaps="true"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
                         android:textColor="@color/colorSportteam_logo" />
