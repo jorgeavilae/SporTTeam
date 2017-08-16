@@ -15,7 +15,7 @@ public class NewUserContract {
         void checkUserEmailExists(String email);
         void checkUserNameExists(String name);
 
-        void createAuthUser(String email, String pass, String name, Uri croppedImageFileSystemUri, String city, LatLng coords,
+        boolean createAuthUser(String email, String pass, String name, Uri croppedImageFileSystemUri, String city, LatLng coords,
                             Long age, ArrayList<Sport> sportsList);
     }
 

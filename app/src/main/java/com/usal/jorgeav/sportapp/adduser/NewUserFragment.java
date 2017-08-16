@@ -299,7 +299,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                     && newUserCitySelectedName != null
                     && newUserCitySelectedCoord != null) {
 
-                mPresenter.createAuthUser(
+                ((NewUserActivity)getActivity()).sportsInitialize = mPresenter.createAuthUser(
                         newUserEmail.getText().toString(),
                         newUserPassword.getText().toString(),
                         newUserName.getText().toString(),

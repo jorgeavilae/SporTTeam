@@ -94,7 +94,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
     }
 
     @Override
-    public void createAuthUser(final String email, String pass, final String name,
+    public boolean createAuthUser(final String email, String pass, final String name,
                                final Uri croppedImageFileSystemUri, final String city,
                                final LatLng coords, final Long age, final ArrayList<Sport> sportsList) {
         if (validateArguments(email, pass, name, croppedImageFileSystemUri, city, coords, age, sportsList)) {
@@ -165,7 +165,8 @@ class NewUserPresenter implements NewUserContract.Presenter {
                     e.printStackTrace();
                 }
             });
-        }
+            return true;
+        } else return false;
     }
 
     private boolean validateArguments(String email, String pass, String name,

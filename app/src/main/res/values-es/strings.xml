@@ -29,6 +29,7 @@
     <string name="infinite">Infinitos</string>
     <string name="error">Error</string>
     <string name="loading">Ejecutando acción…</string>
+    <string name="nothing_found">No se encontró nada</string>
 
     <string name="title_activity_login">Indentificarse</string>
     <string name="title_activity_maps">Mapa</string>
@@ -208,7 +209,7 @@
     <string name="friend_requests">Peticiones de amistad</string>
     <string name="friend_request_sent">Petición de amistad enviada</string>
     <string name="friend_requests_received">Peticiones de amistad recibidas</string>
-    <string name="send_user_request">Enviar petición de entrada</string>
+    <string name="send_user_request">Enviar petición de amistad</string>
     <string name="sports_practiced">Deportes que practica</string>
     <string name="pick_sports_practiced">Selecciona deportes que practicas</string>
     <string name="toast_error_autocomplete_city">Error buscando ciudades</string>
