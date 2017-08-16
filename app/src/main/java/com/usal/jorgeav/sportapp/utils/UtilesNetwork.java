@@ -30,7 +30,7 @@ public class UtilesNetwork {
 
     // result_type street_address https://developers.google.com/maps/documentation/geocoding/intro?hl=es-419#Types
     private static final String RESULT_TYPE_PARAM = "result_type";
-    private static final String RESULT_TYPE = "street_address";
+    private static final String RESULT_TYPE = "street_address"+"|"+"route"+"|"+"intersection";
 
     private static final String KEY_PARAM = "key";
 

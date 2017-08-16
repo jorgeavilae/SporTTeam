@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?android:attr/actionBarSize"
+    android:isScrollContainer="true"
     tools:context="com.usal.jorgeav.sportapp.mainactivities.FieldsActivity">
 
     <android.support.constraint.ConstraintLayout
@@ -60,7 +61,11 @@
             android:id="@+id/new_field_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/label_margin"
             android:hint="@string/prompt_name"
             android:inputType="textPersonName|textCapWords"
             android:maxLines="1"

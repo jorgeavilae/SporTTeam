@@ -232,6 +232,11 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             }
         });
 
+        // Show map if with place selected previously
+        showFieldPlace(((FieldsActivity)getActivity()).mAddress,
+                ((FieldsActivity)getActivity()).mCity,
+                ((FieldsActivity)getActivity()).mCoord);
+
         return root;
     }
 
@@ -293,9 +298,13 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
 
     @Override
     public void showFieldPlace(String address, String city, LatLng coords) {
-        newFieldAddress.setText(address);
+        if (address != null && !TextUtils.isEmpty(address)
+                && city != null && !TextUtils.isEmpty(city)
+                && coords != null) {
+            newFieldAddress.setText(address);
 
-        Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords);
+            Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords);
+        }
     }
 
     @Override
