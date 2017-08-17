@@ -14,6 +14,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
@@ -141,8 +142,10 @@ public class PlaceAutocompleteAdapter
 
             final Status status = autocompletePredictions.getStatus();
             if (!status.isSuccess()) {
-                Toast.makeText(getContext(), R.string.toast_error_autocomplete_city,
-                        Toast.LENGTH_SHORT).show();
+                if (status.getStatusCode() == CommonStatusCodes.NETWORK_ERROR)
+                    Toast.makeText(getContext(), R.string.error_check_conn, Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getContext(), R.string.toast_error_autocomplete_city, Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Error getting autocomplete prediction API call: " + status.toString());
                 autocompletePredictions.release();
                 return null;
