@@ -223,7 +223,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
 
-                datePickerDialogFrom.getDatePicker().setMinDate(System.currentTimeMillis());
+                datePickerDialogFrom.getDatePicker().setMinDate(System.currentTimeMillis()-1000);
                 datePickerDialogFrom.setCanceledOnTouchOutside(true);
                 datePickerDialogFrom.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.delete), new DialogInterface.OnClickListener() {
                     @Override
