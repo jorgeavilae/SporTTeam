@@ -32,6 +32,7 @@
     <string name="error">Error</string>
     <string name="loading">Performing action…</string>
     <string name="nothing_found">Nothing found</string>
+    <string name="error_check_conn">Error: Check internet connection</string>
 
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_maps">Map</string>

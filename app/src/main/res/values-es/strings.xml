@@ -30,6 +30,7 @@
     <string name="error">Error</string>
     <string name="loading">Ejecutando acción…</string>
     <string name="nothing_found">No se encontró nada</string>
+    <string name="error_check_conn">Error: Comprueba tu conexión a internet</string>
 
     <string name="title_activity_login">Indentificarse</string>
     <string name="title_activity_maps">Mapa</string>
@@ -211,6 +212,7 @@
     <string name="friend_requests_received">Peticiones de amistad recibidas</string>
     <string name="send_user_request">Enviar petición de amistad</string>
     <string name="sports_practiced">Deportes que practica</string>
+    <!--TODO title too long-->
     <string name="pick_sports_practiced">Selecciona deportes que practicas</string>
     <string name="toast_error_autocomplete_city">Error buscando ciudades</string>
     <string name="delete_friend">Borrar amigo</string>
