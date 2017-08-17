@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.RequestManager;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.usal.jorgeav.sportapp.R;
@@ -20,12 +19,10 @@ public class MapMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
     private View mContent;
     private List<Field> mDataset;
-    private RequestManager mGlide;
 
-    public MapMarkerInfoAdapter(LayoutInflater layoutInflater, ArrayList<Field> fieldList, RequestManager glide) {
+    public MapMarkerInfoAdapter(LayoutInflater layoutInflater, ArrayList<Field> fieldList) {
         this.mContent = layoutInflater.inflate(R.layout.field_marker, null);
         this.mDataset = fieldList;
-        this.mGlide = glide;
     }
 
     @Override
@@ -64,17 +61,17 @@ public class MapMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
             ArrayList<SportCourt> sports = new ArrayList<>(field.getSport().values());
 
             imageViewFieldSport1.setVisibility(View.VISIBLE);
-            mGlide.load(Utiles.getSportIconFromResource(sports.get(0).getSport_id())).into(imageViewFieldSport1);
+            imageViewFieldSport1.setImageResource(Utiles.getSportIconFromResource(sports.get(0).getSport_id()));
 
             // Set second sport icon
             if (sports.size() > 1) {
                 imageViewFieldSport2.setVisibility(View.VISIBLE);
-                mGlide.load(Utiles.getSportIconFromResource(sports.get(1).getSport_id())).into(imageViewFieldSport2);
+                imageViewFieldSport2.setImageResource(Utiles.getSportIconFromResource(sports.get(1).getSport_id()));
 
                 // Set third sport icon
                 if (sports.size() > 2) {
                     imageViewFieldSport3.setVisibility(View.VISIBLE);
-                    mGlide.load(Utiles.getSportIconFromResource(sports.get(2).getSport_id())).into(imageViewFieldSport3);
+                    imageViewFieldSport3.setImageResource(Utiles.getSportIconFromResource(sports.get(2).getSport_id()));
 
                     // Set dots if there are more than 3
                     if (sports.size() > 3) textViewSportMore.setVisibility(View.VISIBLE);

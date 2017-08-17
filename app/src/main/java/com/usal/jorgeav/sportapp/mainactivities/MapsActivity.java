@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -141,7 +140,7 @@ public class MapsActivity extends AppCompatActivity implements
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMarkerClickListener(this);
-        mMap.setInfoWindowAdapter(new MapMarkerInfoAdapter(getLayoutInflater(), mFieldsList, Glide.with(this)));
+        mMap.setInfoWindowAdapter(new MapMarkerInfoAdapter(getLayoutInflater(), mFieldsList));
 
         //Populate map with Fields
         for (int i = 0; i < mFieldsList.size(); i++) {
