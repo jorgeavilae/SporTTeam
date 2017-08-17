@@ -4,11 +4,13 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -125,19 +127,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mResetPassword.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                String emailAddress = mEmailView.getText().toString();
-                if (!TextUtils.isEmpty(emailAddress) && isEmailValid(emailAddress))
-                    FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                final String emailAddress = mEmailView.getText().toString();
+                if (!TextUtils.isEmpty(emailAddress) && isEmailValid(emailAddress)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
+                            .setTitle(R.string.forgot_password)
+                            .setMessage(R.string.dialog_msg_forgot_password)
+                            .setPositiveButton(R.string.send_it, new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(LoginActivity.this, R.string.email_sent,
-                                                Toast.LENGTH_SHORT).show();
-                                    }
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Toast.makeText(LoginActivity.this, R.string.email_sent,
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
                                 }
-                            });
-                else
+                            })
+                            .setNegativeButton(android.R.string.cancel, null);
+                    builder.create().show();
+                } else
                     Toast.makeText(LoginActivity.this, R.string.error_invalid_email,
                             Toast.LENGTH_SHORT).show();
             }
