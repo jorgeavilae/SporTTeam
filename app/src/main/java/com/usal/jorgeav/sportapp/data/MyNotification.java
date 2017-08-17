@@ -60,6 +60,12 @@ public class MyNotification {
             return UtilesNotification.NOTIFICATION_ID_EVENT_COMPLETE;
         if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_SOMEONE_QUIT)
             return UtilesNotification.NOTIFICATION_ID_EVENT_SOMEONE_QUIT;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_EDIT)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_EDIT;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_DELETE)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_DELETE;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_ALARM_EVENT)
+            return UtilesNotification.NOTIFICATION_ID_ALARM_EVENT;
         return UtilesNotification.NOTIFICATION_ID_ERROR;
     }
 
