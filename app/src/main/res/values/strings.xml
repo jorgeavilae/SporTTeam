@@ -52,6 +52,8 @@
     <string name="prompt_password">Password</string>
     <string name="create_new_user_button">Not a member? Sing up now.</string>
     <string name="forgot_password">Forgot password?</string>
+    <string name="dialog_msg_forgot_password">We can send you an email with a link to change the password.</string>
+    <string name="send_it">Send it</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_sign_out">Sign out</string>

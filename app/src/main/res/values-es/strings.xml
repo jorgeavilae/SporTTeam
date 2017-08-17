@@ -50,6 +50,8 @@
     <string name="prompt_password">Contraseña</string>
     <string name="create_new_user_button">¿No eres miembro? Regístrate ahora.</string>
     <string name="forgot_password">Olvidaste tu contraseña?</string>
+    <string name="dialog_msg_forgot_password">Podemos enviarte un email con un enlace para cambiar la contraseña.</string>
+    <string name="send_it">Envíamelo</string>
     <string name="action_sign_in">Indentificarse</string>
     <string name="action_sign_in_short">Indentificarse</string>
     <string name="action_sign_out">Cerrar sesión</string>
@@ -212,8 +214,7 @@
     <string name="friend_requests_received">Peticiones de amistad recibidas</string>
     <string name="send_user_request">Enviar petición de amistad</string>
     <string name="sports_practiced">Deportes que practica</string>
-    <!--TODO title too long-->
-    <string name="pick_sports_practiced">Selecciona deportes que practicas</string>
+    <string name="pick_sports_practiced">Deportes que practicas</string>
     <string name="toast_error_autocomplete_city">Error buscando ciudades</string>
     <string name="delete_friend">Borrar amigo</string>
     <string name="answer_request">Contestar petición amistad</string>
