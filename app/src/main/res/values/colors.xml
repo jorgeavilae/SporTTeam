@@ -16,8 +16,8 @@
     <!-- Change according to number: hue_of_colorSportteam_logo -->
     <color name="colorSportteam_logo">#1D9DD9</color>
 
-    <color name="ucrop_color_toolbar" tools:override="true">#3F51B5</color>
-    <color name="ucrop_color_statusbar" tools:override="true">#303F9F</color>
+    <color name="ucrop_color_toolbar" tools:override="true">#0f3b68</color>
+    <color name="ucrop_color_statusbar" tools:override="true">#082543</color>
     <color name="ucrop_color_widget_active" tools:override="true">#FF4081</color>
 
 </resources>
