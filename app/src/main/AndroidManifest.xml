@@ -10,8 +10,8 @@
         android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_22"
-        android:roundIcon="@mipmap/ic_launcher_22"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_22"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
@@ -81,6 +81,19 @@
             android:name=".data.provider.SportteamProvider"
             android:authorities="com.usal.jorgeav.sportapp"
             android:exported="false" />
+
+        <receiver android:name=".widget.EventsAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/events_app_widget_info" />
+        </receiver>
+        <service
+            android:name=".widget.UpdateEventsWidgetService"
+            android:exported="false"/>
 
         <!-- https://stackoverflow.com/questions/10530760/android-stop-recreating-the-activity-on-orientation-change -->
         <activity

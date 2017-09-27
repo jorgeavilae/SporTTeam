@@ -63,4 +63,7 @@
     <dimen name="agenda_calendar_item_margin_end">16dp</dimen>
     <dimen name="agenda_calendar_item_margin_vertical">4dp</dimen>
 
+    <!-- Widget margin -->
+    <dimen name="widget_margin">8dp</dimen>
+
 </resources>
