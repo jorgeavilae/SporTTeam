@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.widget;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.RemoteViews;
 
 import com.usal.jorgeav.sportapp.R;
@@ -11,6 +12,8 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import java.util.Locale;
 
 public class EventsAppWidget extends AppWidgetProvider {
+    @SuppressWarnings("unused")
+    private static final String TAG = EventsAppWidget.class.getSimpleName();
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int count, int appWidgetId) {
@@ -22,13 +25,14 @@ public class EventsAppWidget extends AppWidgetProvider {
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // TODO cambiar count 13
-        String currentUserID = Utiles.getCurrentUserId();
-        UpdateEventsWidgetService.startActionUpdateEvents(context, currentUserID);
+        String myUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserID)) return;
+        UpdateEventsWidgetService.startActionUpdateEvents(context, myUserID);
     }
 
     public static void updateEventsWidgets(Context context, AppWidgetManager appWidgetManager, int count, int[] appWidgetIds) {

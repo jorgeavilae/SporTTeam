@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +25,7 @@ import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseA
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentValues;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
+import com.usal.jorgeav.sportapp.widget.UpdateEventsWidgetService;
 
 import java.util.Map;
 
@@ -35,6 +34,10 @@ public class EventsFirebaseSync {
     private static final String TAG = EventsFirebaseSync.class.getSimpleName();
 
     public static void loadAnEvent(@NonNull String eventId) {
+        loadAnEvent(eventId, false);
+    }
+
+    public static void loadAnEvent(@NonNull String eventId, final boolean shouldUpdateWidget) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId);
 
@@ -51,8 +54,8 @@ public class EventsFirebaseSync {
 
                     //If the current user is the owner and it is a past event
                     // delete user requests and invitations
-                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                    if (currentUser != null && e.getOwner().equals(currentUser.getUid())
+                    String myUserID = Utiles.getCurrentUserId();
+                    if (!TextUtils.isEmpty(myUserID) && e.getOwner().equals(myUserID)
                             && System.currentTimeMillis() > e.getDate()) {
                         for (DataSnapshot d : dataSnapshot.child(FirebaseDBContract.Event.USER_REQUESTS).getChildren())
                             EventRequestFirebaseActions.cancelEventRequest(d.getKey(), e.getEvent_id(), e.getOwner());
@@ -68,6 +71,10 @@ public class EventsFirebaseSync {
                             .insert(SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
                     UsersFirebaseSync.loadAProfile(null, e.getOwner(), false);
                     FieldsFirebaseSync.loadAField(e.getField_id());
+
+                    //Update widgets
+                    if (shouldUpdateWidget && !TextUtils.isEmpty(myUserID))
+                        UpdateEventsWidgetService.startActionUpdateEvents(MyApplication.getAppContext(), myUserID);
 
                     // Load users participants with data
                     loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
@@ -221,7 +228,7 @@ public class EventsFirebaseSync {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
-                    loadAnEvent(dataSnapshot.getKey());
+                    loadAnEvent(dataSnapshot.getKey(), true);
 
                     // Load users invited with data
                     FirebaseSync.loadUsersFromInvitationsSent(dataSnapshot.getKey());
@@ -260,6 +267,11 @@ public class EventsFirebaseSync {
                         SportteamContract.EventRequestsEntry.EVENT_ID + " = ? ",
                         new String[]{eventId});
 
+                //Update widgets
+                String myUserID = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(myUserID)) return;
+                UpdateEventsWidgetService.startActionUpdateEvents(MyApplication.getAppContext(), myUserID);
+
             }
 
             @Override
@@ -279,12 +291,13 @@ public class EventsFirebaseSync {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
-                    loadAnEvent(dataSnapshot.getKey());
-
-                    // Load users invited with data if I participate
+                    // If I participate: load users invited with data and update widget
                     Boolean participation = dataSnapshot.getValue(Boolean.class);
-                    if (participation != null && participation)
+                    if (participation != null && participation) {
+                        loadAnEvent(dataSnapshot.getKey(), true);
                         FirebaseSync.loadUsersFromInvitationsSent(dataSnapshot.getKey());
+                    } else
+                        loadAnEvent(dataSnapshot.getKey());
 
                     String myUserID = Utiles.getCurrentUserId();
                     if (TextUtils.isEmpty(myUserID)) return;
@@ -313,6 +326,9 @@ public class EventsFirebaseSync {
                         SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? AND "
                                 + SportteamContract.EventsParticipationEntry.USER_ID + " = ? ",
                         new String[]{eventId, myUserID});
+
+                //Update widgets
+                UpdateEventsWidgetService.startActionUpdateEvents(MyApplication.getAppContext(), myUserID);
 
             }
 

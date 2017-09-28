@@ -5,10 +5,16 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.util.Log;
 
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 
 public class UpdateEventsWidgetService extends IntentService {
+    private static final String TAG = UpdateEventsWidgetService.class.getSimpleName();
+
     private static final String ACTION_UPDATE_EVENTS = "com.usal.jorgeav.sportapp.widget.action.UPDATE_EVENTS";
 
     private static final String EXTRA_USER_ID = "com.usal.jorgeav.sportapp.widget.extra.USER_ID";
@@ -29,15 +35,20 @@ public class UpdateEventsWidgetService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_UPDATE_EVENTS.equals(action)) {
-                final String userID= intent.getStringExtra(EXTRA_USER_ID);
+                final String userID = intent.getStringExtra(EXTRA_USER_ID);
                 handleActionUpdateEvents(userID);
             }
         }
     }
 
     private void handleActionUpdateEvents(String userID) {
-        // TODO Query number of events
-        int count = 10;
+        Cursor cursor = SportteamLoader.simpleQueryMyEventsAndEventsParticipation(this, userID);
+        Log.d(TAG, "handleActionUpdateEvents: "+ DatabaseUtils.dumpCursorToString(cursor));
+        int count = 0;
+        if (cursor != null) {
+            count = cursor.getCount();
+            cursor.close();
+        }
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, EventsAppWidget.class));

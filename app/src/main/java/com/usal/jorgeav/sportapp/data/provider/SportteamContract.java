@@ -41,6 +41,7 @@ public final class SportteamContract {
     public static final String PATH_EVENTS_REQUESTS = "eventRequests";
     public static final String PATH_EVENTS_REQUESTS_WITH_USER = "eventRequests_user";
     public static final String PATH_EVENTS_REQUESTS_WITH_EVENT = "eventRequests_event";
+    public static final String PATH_MY_EVENTS_AND_PARTICIPATION = "myEventAndParticipation";
     public static final String PATH_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND = "myEvent_friendUser";
     public static final String PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME = "cityEvent_myUser";
     public static final String PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME = "citySportEvent_myUser";
@@ -790,6 +791,29 @@ public final class SportteamContract {
 
     /* Inner class that defines parameters for especially complex queries with multiple joins */
     public static final class JoinQueryEntries {
+        /* The base CONTENT_URI used to query the event table looking for my events or my
+           participation ones from the content provider */
+        public static final Uri CONTENT_MY_EVENTS_AND_PARTICIPATION_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_MY_EVENTS_AND_PARTICIPATION)
+                .build();
+        /* JOIN for CONTENT_MY_EVENTS_AND_PARTICIPATION_URI */
+        public static final String TABLES_EVENTS_JOIN_PARTICIPATION =
+                TABLE_EVENT
+                        + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " ON ("
+                        + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " )";
+        /* WHERE for CONTENT_MY_EVENTS_AND_PARTICIPATION_URI */
+        public static final String WHERE_MY_EVENTS_AND_PARTICIPATION =
+                EventEntry.DATE_TABLE_PREFIX + " > ? "
+                        + "AND ( " + EventEntry.OWNER_TABLE_PREFIX + " = ? "
+                                   + "OR ( " + EventsParticipationEntry.USER_ID_TABLE_PREFIX + " = ? "
+                                             + "AND " + EventsParticipationEntry.PARTICIPATES_TABLE_PREFIX + " = 1 )) ";
+        /* Arguments fro JOIN and WHERE in CONTENT_MY_EVENTS_AND_PARTICIPATION_URI */
+        public static String[] queryMyEventsAndParticipationArguments(String ownerId) {
+            String currentTime = String.valueOf(System.currentTimeMillis());
+            return new String[]{currentTime, ownerId, ownerId};
+        }
+
+
         /* The base CONTENT_URI used to query the event table looking for my events or my
            participation ones without relation with one particular friend from the content provider */
         public static final Uri CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI = BASE_CONTENT_URI.buildUpon()

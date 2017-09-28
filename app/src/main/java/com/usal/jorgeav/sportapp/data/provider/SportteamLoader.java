@@ -529,4 +529,13 @@ public final class SportteamLoader {
                 new String[]{alarmId},
                 null);
     }
+
+    public static Cursor simpleQueryMyEventsAndEventsParticipation(Context context, String userID) {
+        return context.getContentResolver().query(
+                SportteamContract.JoinQueryEntries.CONTENT_MY_EVENTS_AND_PARTICIPATION_URI,
+                SportteamContract.EventEntry.EVENT_COLUMNS,
+                SportteamContract.JoinQueryEntries.WHERE_MY_EVENTS_AND_PARTICIPATION,
+                SportteamContract.JoinQueryEntries.queryMyEventsAndParticipationArguments(userID),
+                SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
+    }
 }
