@@ -46,7 +46,7 @@ public class EventListWidgetService extends RemoteViewsService {
 
         @Override
         public void onDestroy() {
-            mCursor.close();
+            if (mCursor != null) mCursor.close();
         }
 
         @Override
@@ -57,7 +57,7 @@ public class EventListWidgetService extends RemoteViewsService {
 
         @Override
         public RemoteViews getViewAt(int position) {
-            if (mCursor.moveToPosition(position)) {
+            if (mCursor != null && mCursor.moveToPosition(position)) {
                 RemoteViews listItem = new RemoteViews(mContext.getPackageName(), R.layout.event_item_app_widget);
 
                 // Set icon
@@ -94,6 +94,7 @@ public class EventListWidgetService extends RemoteViewsService {
                 Intent fillInIntent = new Intent();
                 fillInIntent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);
                 listItem.setOnClickFillInIntent(R.id.event_item_widget_container, fillInIntent);
+
                 return listItem;
             }
             return null;
