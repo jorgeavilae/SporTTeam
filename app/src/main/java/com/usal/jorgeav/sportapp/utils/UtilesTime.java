@@ -41,6 +41,13 @@ public class UtilesTime {
         return sdf.format(new Date(millis));
     }
 
+    public static String millisToDateTimeWidgetString(long millis) {
+        if (millis <= 0) return "";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM\tHH:mm", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("GTM")); /* https://stackoverflow.com/a/14400005/4235666 */
+        return sdf.format(new Date(millis));
+    }
+
     public static String millisToTimeString(long millis) {
         if (millis < 0) return "";
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());

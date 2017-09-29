@@ -73,8 +73,8 @@ public class EventsFirebaseSync {
                     FieldsFirebaseSync.loadAField(e.getField_id());
 
                     //Update widgets
-                    if (shouldUpdateWidget && !TextUtils.isEmpty(myUserID))
-                        UpdateEventsWidgetService.startActionUpdateEvents(MyApplication.getAppContext(), myUserID);
+                    if (shouldUpdateWidget)
+                        UpdateEventsWidgetService.startActionUpdateEvents(MyApplication.getAppContext());
 
                     // Load users participants with data
                     loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
@@ -268,9 +268,7 @@ public class EventsFirebaseSync {
                         new String[]{eventId});
 
                 //Update widgets
-                String myUserID = Utiles.getCurrentUserId();
-                if (TextUtils.isEmpty(myUserID)) return;
-                UpdateEventsWidgetService.startActionUpdateEvents(MyApplication.getAppContext(), myUserID);
+                UpdateEventsWidgetService.startActionUpdateEvents(MyApplication.getAppContext());
 
             }
 
@@ -328,7 +326,7 @@ public class EventsFirebaseSync {
                         new String[]{eventId, myUserID});
 
                 //Update widgets
-                UpdateEventsWidgetService.startActionUpdateEvents(MyApplication.getAppContext(), myUserID);
+                UpdateEventsWidgetService.startActionUpdateEvents(MyApplication.getAppContext());
 
             }
 

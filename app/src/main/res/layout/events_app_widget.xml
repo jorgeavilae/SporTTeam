@@ -1,21 +1,25 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
+    android:orientation="vertical"
     android:padding="@dimen/widget_margin">
 
-    <TextView
-        android:id="@+id/appwidget_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="8dp"
+    <ImageView
+        android:id="@+id/appwidget_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_one_line_height"
         android:background="@color/colorPrimary"
-        android:textColor="#ffffff"
-        android:textSize="24sp"
-        android:textStyle="bold|italic"
-        tools:text="Number of Events: 13" />
+        android:padding="@dimen/label_margin"
+        tools:src="@drawable/logo_name_white" />
 
-</RelativeLayout>
+    <ListView
+        android:id="@+id/appwidget_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorLighter"
+        android:gravity="center"
+        tools:listitem="@layout/events_item_list" />
+
+</LinearLayout>

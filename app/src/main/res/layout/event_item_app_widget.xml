@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/event_item_widget_sport"
+        android:layout_width="@dimen/list_item_icon_size"
+        android:layout_height="@dimen/list_item_icon_size"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginBottom="@dimen/list_item_vertical_margin"
+        android:layout_marginLeft="@dimen/list_item_vertical_margin"
+        android:layout_marginStart="@dimen/list_item_vertical_margin"
+        android:layout_marginTop="@dimen/list_item_vertical_margin"
+        tools:src="@drawable/basketball" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/list_item_vertical_margin"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/event_item_widget_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/colorPrimaryDark"
+            tools:text="Name of the event" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/event_item_widget_place"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/ListItemSubtitle"
+                android:textColor="@color/colorLight"
+                tools:text="Name of field, City" />
+
+            <TextView
+                android:id="@+id/event_item_widget_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+                android:layout_marginStart="@dimen/list_item_horizontal_margin"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/ListItemSubtitle"
+                android:textColor="@color/colorLight"
+                tools:text="10 Agosto 13:00" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/event_item_widget_player"
+        android:layout_width="@dimen/list_item_icon_two_size"
+        android:layout_height="@dimen/list_item_icon_two_size"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginBottom="@dimen/list_item_vertical_margin"
+        android:layout_marginEnd="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
+        android:layout_marginTop="@dimen/list_item_vertical_margin"
+        tools:src="@drawable/logo_half" />
+
+</LinearLayout>

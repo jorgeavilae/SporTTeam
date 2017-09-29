@@ -80,7 +80,7 @@
         <provider
             android:name=".data.provider.SportteamProvider"
             android:authorities="com.usal.jorgeav.sportapp"
-            android:exported="false" />
+            android:exported="true" />
 
         <receiver android:name=".widget.EventsAppWidget">
             <intent-filter>
@@ -94,6 +94,9 @@
         <service
             android:name=".widget.UpdateEventsWidgetService"
             android:exported="false"/>
+        <service
+            android:name=".widget.EventListWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
         <!-- https://stackoverflow.com/questions/10530760/android-stop-recreating-the-activity-on-orientation-change -->
         <activity
