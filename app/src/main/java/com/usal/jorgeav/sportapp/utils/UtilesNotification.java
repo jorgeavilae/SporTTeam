@@ -99,7 +99,7 @@ public class UtilesNotification {
                     .setContentText(fNotification.getMessage())
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
                     .setDefaults(Notification.DEFAULT_VIBRATE)
-                    .setContentIntent(contentEventIntent(context, event.getEvent_id()))
+                    .setContentIntent(contentDetailEventIntent(context, event.getEvent_id()))
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setAutoCancel(true);
 
@@ -111,8 +111,20 @@ public class UtilesNotification {
         }
     }
 
+
+    //Creates a PendingIntent to open EventFragment
+    public static PendingIntent contentEventIntent(Context context) {
+        /* https://stackoverflow.com/a/24927301/4235666 */
+        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, EventsActivity.class));
+        return PendingIntent.getActivity(
+                context,
+                (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */
+                startActivityIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
     //Creates a PendingIntent to open event's DetailEventFragment
-    private static PendingIntent contentEventIntent(Context context, String eventId) {
+    private static PendingIntent contentDetailEventIntent(Context context, String eventId) {
         /* https://stackoverflow.com/a/24927301/4235666 */
         Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, EventsActivity.class));
         startActivityIntent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);

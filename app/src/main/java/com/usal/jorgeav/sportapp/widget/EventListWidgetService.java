@@ -10,6 +10,7 @@ import android.widget.RemoteViewsService;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
+import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
@@ -88,6 +89,11 @@ public class EventListWidgetService extends RemoteViewsService {
                 if (playerIcon != -1)
                     listItem.setImageViewResource(R.id.event_item_widget_player, playerIcon);
 
+                //Set PendingIntent
+                String eventId = mCursor.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
+                Intent fillInIntent = new Intent();
+                fillInIntent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);
+                listItem.setOnClickFillInIntent(R.id.event_item_widget_container, fillInIntent);
                 return listItem;
             }
             return null;
