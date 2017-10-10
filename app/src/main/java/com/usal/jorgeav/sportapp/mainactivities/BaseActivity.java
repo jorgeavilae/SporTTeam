@@ -31,7 +31,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.fields.FieldsMapFragment;
 import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
 import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.preferences.SettingsActivity;
@@ -46,6 +45,7 @@ public class BaseActivity extends AppCompatActivity
         ActivityContracts.FragmentManagement {
     private final static String TAG = BaseActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
+    public static final String FRAGMENT_TAG_IS_MAP = "FRAGMENT_TAG_IS_MAP";
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -101,7 +101,7 @@ public class BaseActivity extends AppCompatActivity
                     // Displayed fragment is null on Initialization OR when FieldsMapFragment is
                     // displayed since FieldsMapFragment is not a BaseFragment.
                     if(mDisplayedFragment == null && getSupportFragmentManager()
-                            .findFragmentByTag(FieldsMapFragment.FRAGMENT_TAG) == null)
+                            .findFragmentByTag(FRAGMENT_TAG_IS_MAP) == null)
                         startMainFragment();
                 } else {
                     // User is signed out

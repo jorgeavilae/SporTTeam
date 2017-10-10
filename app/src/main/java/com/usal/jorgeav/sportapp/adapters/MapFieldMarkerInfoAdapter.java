@@ -15,12 +15,12 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
+public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
     private View mContent;
     private List<Field> mDataset;
 
-    public MapMarkerInfoAdapter(LayoutInflater layoutInflater, ArrayList<Field> fieldList) {
+    public MapFieldMarkerInfoAdapter(LayoutInflater layoutInflater, ArrayList<Field> fieldList) {
         this.mContent = layoutInflater.inflate(R.layout.field_marker, null);
         this.mDataset = fieldList;
     }

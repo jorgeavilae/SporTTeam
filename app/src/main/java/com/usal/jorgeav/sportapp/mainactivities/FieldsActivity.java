@@ -55,7 +55,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
         // If needed, start createNewField from fragment instead of from here
         boolean createNewField = false;
         if (getIntent().hasExtra(INTENT_EXTRA_CREATE_NEW_FIELD)) createNewField = true;
-        initFragment(FieldsMapFragment.newInstance(createNewField), false, FieldsMapFragment.FRAGMENT_TAG);
+        initFragment(FieldsMapFragment.newInstance(createNewField), false, BaseActivity.FRAGMENT_TAG_IS_MAP);
 
         mNavigationView.setCheckedItem(R.id.nav_fields);
     }

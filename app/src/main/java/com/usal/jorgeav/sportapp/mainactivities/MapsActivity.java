@@ -22,7 +22,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.MapMarkerInfoAdapter;
+import com.usal.jorgeav.sportapp.adapters.MapFieldMarkerInfoAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
 import com.usal.jorgeav.sportapp.network.HttpRequestTask;
@@ -140,7 +140,7 @@ public class MapsActivity extends AppCompatActivity implements
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMarkerClickListener(this);
-        mMap.setInfoWindowAdapter(new MapMarkerInfoAdapter(getLayoutInflater(), mFieldsList));
+        mMap.setInfoWindowAdapter(new MapFieldMarkerInfoAdapter(getLayoutInflater(), mFieldsList));
 
         //Populate map with Fields
         for (int i = 0; i < mFieldsList.size(); i++) {

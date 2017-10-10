@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.events.searchevent;
+package com.usal.jorgeav.sportapp.searchevent;
 
 import android.database.Cursor;
 import android.os.Bundle;

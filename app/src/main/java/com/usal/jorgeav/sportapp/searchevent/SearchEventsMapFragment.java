@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.fields;
+package com.usal.jorgeav.sportapp.searchevent;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -22,46 +22,38 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.MapFieldMarkerInfoAdapter;
-import com.usal.jorgeav.sportapp.data.Field;
-import com.usal.jorgeav.sportapp.fields.fielddetail.DetailFieldFragment;
+import com.usal.jorgeav.sportapp.adapters.MapEventMarkerInfoAdapter;
+import com.usal.jorgeav.sportapp.data.Event;
+import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
-import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unused")
-public class FieldsMapFragment extends SupportMapFragment
-        implements FieldsContract.View, OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener {
-    private static final String TAG = FieldsMapFragment.class.getSimpleName();
+public class SearchEventsMapFragment extends SupportMapFragment
+        implements SearchEventsContract.View,
+        OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnInfoWindowClickListener {
+    private static final String TAG = SearchEventsMapFragment.class.getSimpleName();
 
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
     protected ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     private GoogleMap mMap;
-    FieldsContract.Presenter mFieldsPresenter;
+    SearchEventsContract.Presenter mSearchEventsPresenter;
 
     ArrayList<Marker> mMarkersList;
-    ArrayList<Field> mFieldsList;
-    private static boolean sInitialize;
+    ArrayList<Event> mEventsList;
 
-    public FieldsMapFragment() {
+    public SearchEventsMapFragment() {
         // Required empty public constructor
     }
 
-    public static FieldsMapFragment newInstance(boolean createNewField) {
-        Bundle b = new Bundle();
-        //Is necessary a NewFieldFragment initialization programmatically?
-        if (createNewField)
-            b.putString(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD, "");
-        FieldsMapFragment fragment = new FieldsMapFragment();
-        fragment.setArguments(b);
-        sInitialize = false;
-        return fragment;
+    public static SearchEventsMapFragment newInstance() {
+        return new SearchEventsMapFragment();
     }
 
     @Override
@@ -69,22 +61,21 @@ public class FieldsMapFragment extends SupportMapFragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mFieldsPresenter = new FieldsPresenter(this);
+        mSearchEventsPresenter = new SearchEventsPresenter(this);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_add, menu);
+        menu.clear();
+        inflater.inflate(R.menu.menu_filters, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        hideSoftKeyboard();
-        if (item.getItemId() == R.id.action_add) {
-            if (mFieldsList != null)
-                ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList, true);
+        if (item.getItemId() == R.id.action_clear_filter) {
+            mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
             return true;
         }
         return false;
@@ -94,7 +85,7 @@ public class FieldsMapFragment extends SupportMapFragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.fields), null);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.search_events), null);
         mActionBarIconManagementListener.setToolbarAsNav();
     }
 
@@ -102,49 +93,41 @@ public class FieldsMapFragment extends SupportMapFragment
     public void onStart() {
         super.onStart();
 
-        mFieldsPresenter.loadNearbyFields(getLoaderManager(), getArguments());
+        mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
     }
 
     @Override
-    public void showFields(Cursor cursor) {
-        mFieldsList = UtilesContentProvider.cursorToMultipleField(cursor);
+    public void showEvents(Cursor cursor) {
+        mEventsList = UtilesContentProvider.cursorToMultipleEvent(cursor);
 
         // Remove markers from map with remove() and clear marker list with a new ArrayList
         if (mMarkersList != null) for (Marker m : mMarkersList) m.remove();
         mMarkersList = new ArrayList<>();
-
-        //Is necessary a NewFieldFragment initialization programmatically?
-        if (!sInitialize
-                && getArguments() != null && getArguments().containsKey(FieldsActivity.INTENT_EXTRA_CREATE_NEW_FIELD)) {
-            if (mFieldsList != null)
-                ((FieldsActivity)getActivity()).startMapActivityForResult(mFieldsList, true);
-            sInitialize = true;
-            return;
-        }
 
         getMapAsync(this);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         mMap.getUiSettings().setCompassEnabled(false);
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setTiltGesturesEnabled(false);
         mMap.setOnMarkerClickListener(this);
-        mMap.setInfoWindowAdapter(new MapFieldMarkerInfoAdapter(getActivity().getLayoutInflater(), mFieldsList));
+        mMap.setInfoWindowAdapter(new MapEventMarkerInfoAdapter(getActivity().getLayoutInflater(), mEventsList));
         mMap.setOnInfoWindowClickListener(this);
 
         //Populate map with Fields
-        for (int i = 0; i < mFieldsList.size(); i++) {
-            Field f = mFieldsList.get(i);
-            LatLng latLong = new LatLng(f.getCoord_latitude(), f.getCoord_longitude());
+        for (int i = 0; i < mEventsList.size(); i++) {
+            Event event = mEventsList.get(i);
+            LatLng latLong = new LatLng(event.getCoord_latitude(), event.getCoord_longitude());
 
             float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(latLong)
-                    .title(f.getName())
+                    .title(event.getName())
                     .icon(BitmapDescriptorFactory.defaultMarker(hue)));
             m.setTag(i);
             mMarkersList.add(m);
@@ -174,11 +157,11 @@ public class FieldsMapFragment extends SupportMapFragment
     public boolean onMarkerClick(Marker marker) {
         Integer position = (Integer) marker.getTag();
         if (position != null) {
-            Field f = mFieldsList.get(position);
+            Event event = mEventsList.get(position);
 
             // Move camera
-            LatLng southwest = new LatLng(f.getCoord_latitude()-0.00135, f.getCoord_longitude()-0.00135);
-            LatLng northeast = new LatLng(f.getCoord_latitude()+0.00135, f.getCoord_longitude()+0.00135);
+            LatLng southwest = new LatLng(event.getCoord_latitude()-0.00135, event.getCoord_longitude()-0.00135);
+            LatLng northeast = new LatLng(event.getCoord_latitude()+0.00135, event.getCoord_longitude()+0.00135);
             LatLngBounds llb = new LatLngBounds(southwest, northeast);
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
             marker.showInfoWindow();
@@ -192,10 +175,10 @@ public class FieldsMapFragment extends SupportMapFragment
     public void onInfoWindowClick(Marker marker) {
         Integer position = (Integer) marker.getTag();
         if (position != null) {
-            Field f = mFieldsList.get(position);
+            Event event = mEventsList.get(position);
 
             // Open Detail Field
-            Fragment newFragment = DetailFieldFragment.newInstance(f.getId(), false);
+            Fragment newFragment = DetailEventFragment.newInstance(event.getEvent_id());
             mFragmentManagementListener.initFragment(newFragment, true);
 
             marker.hideInfoWindow();

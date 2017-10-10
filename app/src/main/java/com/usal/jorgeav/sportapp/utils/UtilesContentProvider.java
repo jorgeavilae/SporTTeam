@@ -444,4 +444,31 @@ public class UtilesContentProvider {
         }
         return result;
     }
+
+    public static ArrayList<Event> cursorToMultipleEvent(Cursor c) {
+        ArrayList<Event> result = new ArrayList<>();
+        if (c != null) {
+            /* https://stackoverflow.com/questions/10723770/whats-the-best-way-to-iterate-an-android-cursor#comment33274077_10723771 */
+            //Move to first position to prevent errors
+            for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+                String eventId = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
+                String sport = c.getString(SportteamContract.EventEntry.COLUMN_SPORT);
+                String fieldId = c.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+                String address = c.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
+                double latitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
+                double longitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
+                LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+                String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
+                String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
+                Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
+                String owner = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
+                Long totalPl = c.getLong(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
+                Long emptyPl = c.getLong(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
+
+                result.add(new Event(eventId, sport, fieldId, address, coord, name, city, date,
+                        owner, totalPl, emptyPl, null, null));
+            }
+        }
+        return result;
+    }
 }
