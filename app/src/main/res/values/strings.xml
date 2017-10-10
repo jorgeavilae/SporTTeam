@@ -2,6 +2,7 @@
     <string name="app_name">SporTTeam</string>
 
     <string name="profile">Profile</string>
+    <string name="search_events">Search Events</string>
     <string name="notifications">Notifications</string>
     <string name="events">Events</string>
     <string name="fields">Fields</string>
@@ -19,7 +20,7 @@
     <string name="action_vote">Vote</string>
     <string name="action_create_event">New Event</string>
     <string name="action_event_requests">Event Requests Sent</string>
-    <string name="action_search_events">Search Events</string>
+    <!--<string name="action_search_events">Search Events</string>-->
     <string name="action_search_users">Search Users</string>
 
     <string name="pick_photo_from">Pick photo from…</string>

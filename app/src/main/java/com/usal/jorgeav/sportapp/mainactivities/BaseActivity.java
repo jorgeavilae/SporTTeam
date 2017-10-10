@@ -216,6 +216,8 @@ public class BaseActivity extends AppCompatActivity
             switch (item.getItemId()) {
                 default: case R.id.nav_profile:
                     intent = new Intent(this, ProfileActivity.class); break;
+                case R.id.nav_search_events:
+                    intent = new Intent(this, SearchEventsActivity.class); break;
                 case R.id.nav_notifications:
                     intent = new Intent(this, NotificationsActivity.class); break;
                 case R.id.nav_events:

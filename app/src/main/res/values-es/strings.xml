@@ -3,6 +3,7 @@
     <string name="app_name">SporTTeam</string>
 
     <string name="profile">Perfil</string>
+    <string name="search_events">Buscar partidos</string>
     <string name="notifications">Notificaciones</string>
     <string name="events">Partidos</string>
     <string name="fields">Campos</string>
@@ -17,7 +18,7 @@
     <string name="action_vote">Votar</string>
     <string name="action_create_event">Nuevo partido</string>
     <string name="action_event_requests">Peticiones de entrada enviadas</string>
-    <string name="action_search_events">Buscar partidos</string>
+    <!--<string name="action_search_events">Buscar partidos</string>-->
     <string name="action_search_users">Buscar usuarios</string>
 
     <string name="pick_photo_from">Elegir foto de…</string>

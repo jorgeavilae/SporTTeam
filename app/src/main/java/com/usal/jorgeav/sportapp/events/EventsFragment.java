@@ -24,7 +24,6 @@ import com.usal.jorgeav.sportapp.data.calendarevent.MyEventRenderer;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
 import com.usal.jorgeav.sportapp.events.eventrequest.EventRequestsFragment;
-import com.usal.jorgeav.sportapp.events.searchevent.SearchEventsFragment;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 import java.util.Calendar;
@@ -78,10 +77,11 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
             Fragment fragment = EventRequestsFragment.newInstance();
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
-        } else if (item.getItemId() == R.id.action_search_events) {
-            Fragment fragment = SearchEventsFragment.newInstance();
-            mFragmentManagementListener.initFragment(fragment, true);
-            return true;
+//        } else if (item.getItemId() == R.id.action_search_events) {
+            //TODO moved to another Activity
+//            Fragment fragment = SearchEventsFragment.newInstance();
+//            mFragmentManagementListener.initFragment(fragment, true);
+//            return true;
         }
         return false;
     }

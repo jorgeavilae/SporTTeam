@@ -12,9 +12,9 @@
         android:orderInCategory="101"
         android:title="@string/action_event_requests"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_search_events"
-        android:orderInCategory="102"
-        android:title="@string/action_search_events"
-        app:showAsAction="never" />
+    <!--<item-->
+        <!--android:id="@+id/action_search_events"-->
+        <!--android:orderInCategory="102"-->
+        <!--android:title="@string/action_search_events"-->
+        <!--app:showAsAction="never" />-->
 </menu>

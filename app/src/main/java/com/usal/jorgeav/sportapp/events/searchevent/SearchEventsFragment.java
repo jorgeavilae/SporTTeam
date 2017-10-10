@@ -161,8 +161,8 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.action_search_events), this);
-        mActionBarIconManagementListener.setToolbarAsUp();
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.search_events), this);
+        mActionBarIconManagementListener.setToolbarAsNav();
     }
 
     @Override
