@@ -32,28 +32,28 @@ import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 import java.util.ArrayList;
 
-public class SearchEventsMapFragment extends SupportMapFragment
-        implements SearchEventsContract.View,
+public class EventsMapFragment extends SupportMapFragment
+        implements EventsMapContract.View,
         OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
         GoogleMap.OnInfoWindowClickListener {
-    private static final String TAG = SearchEventsMapFragment.class.getSimpleName();
+    private static final String TAG = EventsMapFragment.class.getSimpleName();
 
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
     protected ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
 
     private GoogleMap mMap;
-    SearchEventsContract.Presenter mSearchEventsPresenter;
+    EventsMapContract.Presenter mEventsMapPresenter;
 
     ArrayList<Marker> mMarkersList;
     ArrayList<Event> mEventsList;
 
-    public SearchEventsMapFragment() {
+    public EventsMapFragment() {
         // Required empty public constructor
     }
 
-    public static SearchEventsMapFragment newInstance() {
-        return new SearchEventsMapFragment();
+    public static EventsMapFragment newInstance() {
+        return new EventsMapFragment();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class SearchEventsMapFragment extends SupportMapFragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mSearchEventsPresenter = new SearchEventsPresenter(this);
+        mEventsMapPresenter = new EventsMapPresenter(this);
     }
 
     @Override
@@ -75,9 +75,12 @@ public class SearchEventsMapFragment extends SupportMapFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_clear_filter) {
-            mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
+            mEventsMapPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
             return true;
         }
+        //TODO poner:
+        // add event (salta a EventsActivity)
+        // advanced search (cambia a Fragment para poner filtros que luego cambia a SearchEventsFragment)
         return false;
     }
 
@@ -95,7 +98,7 @@ public class SearchEventsMapFragment extends SupportMapFragment
 
         getMapAsync(this);
 
-        mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
+        mEventsMapPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
     }
 
     @Override

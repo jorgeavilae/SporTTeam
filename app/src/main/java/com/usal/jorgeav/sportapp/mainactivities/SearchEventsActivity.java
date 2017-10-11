@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.MenuItem;
 
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.searchevent.SearchEventsMapFragment;
+import com.usal.jorgeav.sportapp.searchevent.EventsMapFragment;
 
 public class SearchEventsActivity extends BaseActivity {
     public static final String TAG = SearchEventsActivity.class.getSimpleName();
@@ -13,7 +13,7 @@ public class SearchEventsActivity extends BaseActivity {
     public void startMainFragment() {
         super.startMainFragment();
 
-        initFragment(SearchEventsMapFragment.newInstance(), false);
+        initFragment(EventsMapFragment.newInstance(), false);
 
         mNavigationView.setCheckedItem(R.id.nav_search_events);
     }
