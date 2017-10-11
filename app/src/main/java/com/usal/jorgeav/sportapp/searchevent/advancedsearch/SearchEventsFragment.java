@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.searchevent;
+package com.usal.jorgeav.sportapp.searchevent.advancedsearch;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
