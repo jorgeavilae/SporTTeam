@@ -93,6 +93,8 @@ public class SearchEventsMapFragment extends SupportMapFragment
     public void onStart() {
         super.onStart();
 
+        getMapAsync(this);
+
         mSearchEventsPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
     }
 
@@ -104,22 +106,12 @@ public class SearchEventsMapFragment extends SupportMapFragment
         if (mMarkersList != null) for (Marker m : mMarkersList) m.remove();
         mMarkersList = new ArrayList<>();
 
-        getMapAsync(this);
+        //Populate map with Events
+        populateMap();
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        mMap.getUiSettings().setCompassEnabled(false);
-        mMap.getUiSettings().setZoomControlsEnabled(false);
-        mMap.getUiSettings().setTiltGesturesEnabled(false);
-        mMap.setOnMarkerClickListener(this);
+    private void populateMap() {
         mMap.setInfoWindowAdapter(new MapEventMarkerInfoAdapter(getActivity().getLayoutInflater(), mEventsList));
-        mMap.setOnInfoWindowClickListener(this);
-
-        //Populate map with Events
         for (int i = 0; i < mEventsList.size(); i++) {
             Event event = mEventsList.get(i);
             LatLng latLong = new LatLng(event.getCoord_latitude(), event.getCoord_longitude());
@@ -132,6 +124,17 @@ public class SearchEventsMapFragment extends SupportMapFragment
             m.setTag(i);
             mMarkersList.add(m);
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.getUiSettings().setCompassEnabled(false);
+        mMap.getUiSettings().setZoomControlsEnabled(false);
+        mMap.getUiSettings().setTiltGesturesEnabled(false);
+        mMap.setOnMarkerClickListener(this);
+        mMap.setOnInfoWindowClickListener(this);
 
         // Move Camera
         centerCameraOnInit();
