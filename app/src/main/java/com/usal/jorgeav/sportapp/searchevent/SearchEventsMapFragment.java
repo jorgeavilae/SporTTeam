@@ -119,7 +119,7 @@ public class SearchEventsMapFragment extends SupportMapFragment
         mMap.setInfoWindowAdapter(new MapEventMarkerInfoAdapter(getActivity().getLayoutInflater(), mEventsList));
         mMap.setOnInfoWindowClickListener(this);
 
-        //Populate map with Fields
+        //Populate map with Events
         for (int i = 0; i < mEventsList.size(); i++) {
             Event event = mEventsList.get(i);
             LatLng latLong = new LatLng(event.getCoord_latitude(), event.getCoord_longitude());

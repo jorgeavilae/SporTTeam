@@ -20,7 +20,7 @@ public class MapEventMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
     private List<Event> mDataset;
 
     public MapEventMarkerInfoAdapter(LayoutInflater layoutInflater, ArrayList<Event> eventList) {
-        this.mContent = layoutInflater.inflate(R.layout.field_marker, null);
+        this.mContent = layoutInflater.inflate(R.layout.event_marker, null);
         this.mDataset = eventList;
     }
 
@@ -40,14 +40,14 @@ public class MapEventMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
     }
 
     private void populate(View view, Event event) {
-        TextView textViewFieldName = (TextView) view.findViewById(R.id.field_marker_name);
-        textViewFieldName.setText(event.getName());
-
-        TextView textViewFieldAddress = (TextView) view.findViewById(R.id.field_marker_address);
-        textViewFieldAddress.setText(event.getAddress());
-
-        ImageView imageViewFieldSport1 = (ImageView) view.findViewById(R.id.field_marker_sport1);
+        ImageView imageViewFieldSport1 = (ImageView) view.findViewById(R.id.event_marker_sport);
         imageViewFieldSport1.setVisibility(View.VISIBLE);
         imageViewFieldSport1.setImageResource(Utiles.getSportIconFromResource(event.getSport_id()));
+
+        TextView textViewFieldName = (TextView) view.findViewById(R.id.event_marker_name);
+        textViewFieldName.setText(event.getName());
+
+        TextView textViewFieldAddress = (TextView) view.findViewById(R.id.event_marker_address);
+        textViewFieldAddress.setText(event.getAddress());
     }
 }
