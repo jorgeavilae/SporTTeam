@@ -62,14 +62,13 @@ public class SearchEventsFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.menu_filters, menu);
+        inflater.inflate(R.menu.menu_ok, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        if (item.getItemId() == R.id.action_clear_filter) {
-            clearFilters();
+        if (item.getItemId() == R.id.action_ok) {
             return true;
         }
         return false;
@@ -101,12 +100,19 @@ public class SearchEventsFragment extends BaseFragment {
                 R.layout.sport_spinner_item, sportsResources);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.pick_sport);
-        builder.setAdapter(listAdapter, new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.pick_sport)
+                .setAdapter(listAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String sportId = (String) listAdapter.getItem(i);
                 setSportSearched(sportId);
+            }
+        })
+                .setCancelable(true)
+                .setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                unsetSportSearched();
             }
         });
         builder.create().show();
@@ -124,7 +130,7 @@ public class SearchEventsFragment extends BaseFragment {
         Glide.with(this).load(sportDrawableResource).into(searchEventsIcon);
     }
 
-    private void clearFilters() {
+    private void unsetSportSearched() {
         mSportIdSelected = "";
 
         searchEventsSportName.setText(null);
