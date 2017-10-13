@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,14 +41,17 @@ public class MapEventMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
     }
 
     private void populate(View view, Event event) {
-        ImageView imageViewFieldSport1 = (ImageView) view.findViewById(R.id.event_marker_sport);
-        imageViewFieldSport1.setVisibility(View.VISIBLE);
-        imageViewFieldSport1.setImageResource(Utiles.getSportIconFromResource(event.getSport_id()));
+        ImageView imageViewEventSport = (ImageView) view.findViewById(R.id.event_marker_sport);
+        imageViewEventSport.setVisibility(View.VISIBLE);
+        imageViewEventSport.setImageResource(Utiles.getSportIconFromResource(event.getSport_id()));
 
-        TextView textViewFieldName = (TextView) view.findViewById(R.id.event_marker_name);
-        textViewFieldName.setText(event.getName());
+        TextView textViewEventName = (TextView) view.findViewById(R.id.event_marker_name);
+        textViewEventName.setText(event.getName());
 
-        TextView textViewFieldAddress = (TextView) view.findViewById(R.id.event_marker_address);
-        textViewFieldAddress.setText(event.getAddress());
+        TextView textViewEventAddress = (TextView) view.findViewById(R.id.event_marker_address);
+        textViewEventAddress.setText(event.getAddress());
+
+        TextView textViewEventDate = (TextView) view.findViewById(R.id.events_marker_date);
+        textViewEventDate.setText(UtilesTime.millisToDateTimeString(event.getDate()));
     }
 }
