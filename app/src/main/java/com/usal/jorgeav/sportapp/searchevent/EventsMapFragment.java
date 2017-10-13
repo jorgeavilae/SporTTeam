@@ -26,6 +26,7 @@ import com.usal.jorgeav.sportapp.adapters.MapEventMarkerInfoAdapter;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
+import com.usal.jorgeav.sportapp.searchevent.advancedsearch.SearchEventsFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
@@ -68,19 +69,19 @@ public class EventsMapFragment extends SupportMapFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.menu_filters, menu);
+        inflater.inflate(R.menu.menu_search_events, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        if (item.getItemId() == R.id.action_clear_filter) {
-            mEventsMapPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
+        if (item.getItemId() == R.id.action_advanced_search) {
+            mFragmentManagementListener.initFragment(SearchEventsFragment.newInstance(), true);
             return true;
         }
         //TODO poner:
         // add event (salta a EventsActivity)
-        // advanced search (cambia a Fragment para poner filtros que luego cambia a SearchEventsFragment)
+        // advanced search (cambia a SearchEventsFragment para poner filtros que luego vuelve al mapa )
         return false;
     }
 

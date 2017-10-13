@@ -18,12 +18,13 @@
     <string name="action_vote">Votar</string>
     <string name="action_create_event">Nuevo partido</string>
     <string name="action_event_requests">Peticiones de entrada enviadas</string>
+    <string name="action_advanced_search">Búsqueda Avanzada</string>
     <!--<string name="action_search_events">Buscar partidos</string>-->
     <string name="action_search_users">Buscar usuarios</string>
 
     <string name="pick_photo_from">Elegir foto de…</string>
     <string name="toast_need_write_permission">Se necesitan permisos para guardar la imagen</string>
-    <string name="dialog_msg_are_you_sure">Estas seguro?</string>
+    <string name="dialog_msg_are_you_sure">Estás seguro?</string>
 
     <string name="add">Añadir</string>
     <string name="delete">Borrar</string>
@@ -37,6 +38,7 @@
     <string name="title_activity_maps">Mapa</string>
 
     <!--Sports-->
+    <string name="sports">Deportes</string>
     <string name="running">Running</string>
     <string name="biking">Biking</string>
     <string name="basketball">Baloncesto</string>

@@ -20,6 +20,7 @@
     <string name="action_vote">Vote</string>
     <string name="action_create_event">New Event</string>
     <string name="action_event_requests">Event Requests Sent</string>
+    <string name="action_advanced_search">Advanced Search</string>
     <!--<string name="action_search_events">Search Events</string>-->
     <string name="action_search_users">Search Users</string>
 
@@ -39,6 +40,7 @@
     <string name="title_activity_maps">Map</string>
 
     <!--Sports-->
+    <string name="sports">Sports</string>
     <string name="running">Running</string>
     <string name="biking">Biking</string>
     <string name="basketball">Basketball</string>
