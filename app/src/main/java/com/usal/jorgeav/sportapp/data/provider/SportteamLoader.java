@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.CursorLoader;
+import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
@@ -210,7 +211,7 @@ public final class SportteamLoader {
 
 
     public static final int LOADER_EVENTS_FROM_CITY = 2300;
-    public static final int LOADER_EVENTS_WITH_SPORT = 2400;
+    public static final int LOADER_EVENTS_WITH_PARAMS = 2400;
     public static CursorLoader cursorLoaderEventsFromCity(Context context, String myUserId, String city) {
         // Return event data from events in city
         return new CursorLoader(
@@ -221,14 +222,50 @@ public final class SportteamLoader {
                 SportteamContract.JoinQueryEntries.queryCityEventsWithoutRelationWithMeArguments(myUserId, city),
                 SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
     }
-    public static CursorLoader cursorLoaderEventsWithSport(Context context, String myUserId, String city, String sportId) {
-        //Return event data from events with sportId
+    public static CursorLoader cursorLoaderEventsWithParams(Context context, String myUserId, String city,
+                                                            String sportId, Long dateFrom, Long dateTo,
+                                                            int totalFrom, int totalTo, int emptyFrom, int emptyTo) {
+        String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME;
+        ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCityEventsWithoutRelationWithMeArguments(myUserId, city)));
+
+        if (sportId != null && !TextUtils.isEmpty(sportId)) {
+            selection += "AND " + SportteamContract.EventEntry.SPORT_TABLE_PREFIX + " = ? ";
+            selectionArgs.add(sportId);
+        }
+
+        if (dateFrom != null && dateFrom > -1) {
+            selection += "AND " + SportteamContract.EventEntry.DATE_TABLE_PREFIX + " >= ? ";
+            selectionArgs.add(dateFrom.toString());
+        }
+        if (dateTo != null && dateTo > -1) {
+            selection += "AND " + SportteamContract.EventEntry.DATE_TABLE_PREFIX + " <= ? ";
+            selectionArgs.add(dateTo.toString());
+        }
+
+        if (totalFrom > -1) {
+            selection += "AND " + SportteamContract.EventEntry.TOTAL_PLAYERS_TABLE_PREFIX + " >= ? ";
+            selectionArgs.add(Integer.toString(totalFrom));
+        }
+        if (totalTo > -1) {
+            selection += "AND " + SportteamContract.EventEntry.TOTAL_PLAYERS_TABLE_PREFIX + " <= ? ";
+            selectionArgs.add(Integer.toString(totalTo));
+        }
+
+        if (emptyFrom > -1) {
+            selection += "AND " + SportteamContract.EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " >= ? ";
+            selectionArgs.add(Integer.toString(emptyFrom));
+        }
+        if (emptyTo > -1) {
+            selection += "AND " + SportteamContract.EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " <= ? ";
+            selectionArgs.add(Integer.toString(emptyTo));
+        }
+
         return new CursorLoader(
                 context,
-                SportteamContract.JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI,
+                SportteamContract.JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI,
                 SportteamContract.EventEntry.EVENT_COLUMNS,
-                SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME,
-                SportteamContract.JoinQueryEntries.queryCitySportEventsWithoutRelationWithMeArguments(myUserId, city, sportId),
+                selection,
+                selectionArgs.toArray(new String[selectionArgs.size()]),
                 SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
     }
 
@@ -308,8 +345,12 @@ public final class SportteamLoader {
         Alarm alarm = UtilesContentProvider.cursorToSingleAlarm(simpleQueryAlarmId(context, alarmId));
 
         if (alarm != null) {
-            String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
-            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCitySportEventsWithoutRelationWithMeArguments(myUserId, alarm.getCity(), alarm.getSport_id())));
+            String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME;
+            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCityEventsWithoutRelationWithMeArguments(myUserId, alarm.getCity())));
+
+            // sportId is always set
+            selection += "AND " + SportteamContract.EventEntry.SPORT_TABLE_PREFIX + " = ? ";
+            selectionArgs.add(alarm.getSport_id());
 
             // field could be null
             if (alarm.getField_id() != null) {
@@ -345,7 +386,7 @@ public final class SportteamLoader {
 
             return new CursorLoader(
                     context,
-                    SportteamContract.JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI,
+                    SportteamContract.JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI,
                     SportteamContract.EventEntry.EVENT_COLUMNS,
                     selection,
                     selectionArgs.toArray(new String[selectionArgs.size()]),
@@ -362,7 +403,7 @@ public final class SportteamLoader {
             WHERE (
                 event.city = ciudad AND
                 event.sport = basketball AND
-                event.owner <> XPs5mf8MZnXDAPjtyHkF0MqbzQ42 AND
+                event.owner <> XPs5... AND
                 eventsParticipation.eventId IS NULL AND
                 eventInvitations.eventId IS NULL AND
                 eventRequest.eventId IS NULL AND
@@ -378,8 +419,12 @@ public final class SportteamLoader {
     }
     public static Cursor cursorAlarmCoincidence(ContentResolver contentResolver, Alarm alarm, String myUserId) {
         if (alarm != null) {
-            String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
-            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCitySportEventsWithoutRelationWithMeArguments(myUserId, alarm.getCity(), alarm.getSport_id())));
+            String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME;
+            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCityEventsWithoutRelationWithMeArguments(myUserId, alarm.getCity())));
+
+            // sportId is always set
+            selection += "AND " + SportteamContract.EventEntry.SPORT_TABLE_PREFIX + " = ? ";
+            selectionArgs.add(alarm.getSport_id());
 
             // field could be null
             if (alarm.getField_id() != null) {
@@ -414,7 +459,7 @@ public final class SportteamLoader {
             }
 
             return contentResolver.query(
-                    SportteamContract.JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI,
+                    SportteamContract.JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI,
                     SportteamContract.EventEntry.EVENT_COLUMNS,
                     selection,
                     selectionArgs.toArray(new String[selectionArgs.size()]),

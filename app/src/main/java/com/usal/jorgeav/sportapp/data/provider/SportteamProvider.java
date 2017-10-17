@@ -25,7 +25,6 @@ import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.FriendRe
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.FriendsEntry;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_ALARMS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME;
-import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EMAIL_LOGGED;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS;
 import static com.usal.jorgeav.sportapp.data.provider.SportteamContract.PATH_EVENTS_PARTICIPATION;
@@ -163,8 +162,6 @@ public class SportteamProvider extends ContentProvider {
         matcher.addURI(authority, PATH_FRIENDS_WITHOUT_RELATION_WITH_MY_EVENTS, CODE_FRIENDS_WITHOUT_RELATION_WITH_EVENT);
         // This URI is content://com.usal.jorgeav.sportapp/cityEvent_myUser/
         matcher.addURI(authority, PATH_CITY_EVENTS_WITHOUT_RELATION_WITH_ME, CODE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME);
-        // This URI is content://com.usal.jorgeav.sportapp/citySportEvent_myUser/
-        matcher.addURI(authority, PATH_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME, CODE_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME);
         // This URI is content://com.usal.jorgeav.sportapp/notFriendsCity_users/
         matcher.addURI(authority, PATH_NOT_FRIENDS_USERS_FROM_CITY, CODE_NOT_FRIENDS_USERS_FROM_CITY);
         // This URI is content://com.usal.jorgeav.sportapp/notFriendsName_users/
@@ -299,7 +296,6 @@ public class SportteamProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_AND_PARTICIPATION_URI, null);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
-                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
                 break;
             case CODE_SIMULATED_PARTICIPANTS:
                 count = db.delete(TABLE_EVENT_SIMULATED_PARTICIPANT, selection, selectionArgs);
@@ -372,7 +368,6 @@ public class SportteamProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI, null);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_MY_EVENTS_AND_PARTICIPATION_URI, null);
                 getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
-                getContext().getContentResolver().notifyChange(JoinQueryEntries.CONTENT_CITY_SPORT_EVENTS_WITHOUT_RELATION_WITH_ME_URI, null);
                 break;
             case CODE_SIMULATED_PARTICIPANTS:
                 _id = db.insert(TABLE_EVENT_SIMULATED_PARTICIPANT, null, values);
