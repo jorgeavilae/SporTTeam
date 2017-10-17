@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,6 +25,7 @@ import com.usal.jorgeav.sportapp.adapters.MapEventMarkerInfoAdapter;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
+import com.usal.jorgeav.sportapp.mainactivities.SearchEventsActivity;
 import com.usal.jorgeav.sportapp.searchevent.advancedsearch.SearchEventsFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
@@ -38,6 +38,7 @@ public class EventsMapFragment extends SupportMapFragment
         OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
         GoogleMap.OnInfoWindowClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = EventsMapFragment.class.getSimpleName();
 
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -99,8 +100,35 @@ public class EventsMapFragment extends SupportMapFragment
 
         getMapAsync(this);
 
-        mEventsMapPresenter.loadNearbyEvents(getLoaderManager(), getArguments());
+        Bundle args = createBundleWithParams();
+        mEventsMapPresenter.loadNearbyEvents(getLoaderManager(), args);
     }
+
+    private Bundle createBundleWithParams() {
+        Bundle args = new Bundle();
+        if (getActivity() instanceof SearchEventsActivity) {
+            SearchEventsActivity searchEventsActivity = (SearchEventsActivity) getActivity();
+            if (searchEventsActivity.mSportId != null)
+                args.putString(SearchEventsActivity.INSTANCE_SPORTID_SELECTED, searchEventsActivity.mSportId);
+
+            if (searchEventsActivity.mDateFrom != null)
+                args.putLong(SearchEventsActivity.INSTANCE_DATE_FROM_SELECTED, searchEventsActivity.mDateFrom);
+            if (searchEventsActivity.mDateTo != null)
+                args.putLong(SearchEventsActivity.INSTANCE_DATE_TO_SELECTED, searchEventsActivity.mDateTo);
+
+            if (searchEventsActivity.mTotalFrom != null)
+                args.putInt(SearchEventsActivity.INSTANCE_TOTAL_FROM_SELECTED, searchEventsActivity.mTotalFrom);
+            if (searchEventsActivity.mTotalTo != null)
+                args.putInt(SearchEventsActivity.INSTANCE_TOTAL_TO_SELECTED, searchEventsActivity.mTotalTo);
+
+            if (searchEventsActivity.mEmptyFrom != null)
+                args.putInt(SearchEventsActivity.INSTANCE_EMPTY_FROM_SELECTED, searchEventsActivity.mEmptyFrom);
+            if (searchEventsActivity.mEmptyTo != null)
+                args.putInt(SearchEventsActivity.INSTANCE_EMPTY_TO_SELECTED, searchEventsActivity.mEmptyTo);
+        }
+        return args;
+    }
+
 
     @Override
     public void showEvents(Cursor cursor) {
@@ -222,12 +250,6 @@ public class EventsMapFragment extends SupportMapFragment
     public void hideContent() {
         if (mFragmentManagementListener != null)
             mFragmentManagementListener.hideContent();
-    }
-
-    public void resetBackStack() {
-        getActivity().getSupportFragmentManager().popBackStack(
-                getActivity().getSupportFragmentManager().getBackStackEntryAt(0).getId(),
-                FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     /* https://stackoverflow.com/a/1109108/4235666 */
