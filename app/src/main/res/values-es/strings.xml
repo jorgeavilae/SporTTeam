@@ -180,7 +180,7 @@
     <!-- https://stackoverflow.com/questions/1587056/how-to-keep-the-spaces-at-the-end-and-or-at-the-beginning-of-a-string#comment26178169_2206684 -->
     <string name="from">Desde:\u0020</string>
     <string name="until">Hasta:\u0020</string>
-    <string name="to">Desde:\u0020</string>
+    <string name="to">Hasta:\u0020</string>
     <string name="forever">Siempre</string>
     <string name="unspecified">Sin especificar</string>
     <string name="date_period">Periodo de fechas</string>

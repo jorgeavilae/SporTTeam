@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.SportSpinnerAdapter;
+import com.usal.jorgeav.sportapp.mainactivities.SearchEventsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
@@ -216,6 +217,36 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
             setSportSearched(savedInstanceState.getString(BUNDLE_SPORT));
 
         return root;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        displayPreviousFilters();
+    }
+
+    private void displayPreviousFilters() {
+        if (getActivity() instanceof SearchEventsActivity) {
+            SearchEventsActivity searchEventsActivity = (SearchEventsActivity) getActivity();
+            if (searchEventsActivity.mSportId != null && !TextUtils.isEmpty(searchEventsActivity.mSportId))
+                setSportSearched(searchEventsActivity.mSportId);
+
+            if (searchEventsActivity.mDateFrom != null && searchEventsActivity.mDateFrom > -1)
+                searchEventsDateFrom.setText(UtilesTime.millisToDateString(searchEventsActivity.mDateFrom));
+            if (searchEventsActivity.mDateTo != null && searchEventsActivity.mDateTo > -1)
+                searchEventsDateTo.setText(UtilesTime.millisToDateString(searchEventsActivity.mDateTo));
+
+            if (searchEventsActivity.mTotalFrom != null && searchEventsActivity.mTotalFrom > -1)
+                searchEventsTotalFrom.setText(Integer.toString(searchEventsActivity.mTotalFrom));
+            if (searchEventsActivity.mTotalTo != null && searchEventsActivity.mTotalTo > -1)
+                searchEventsTotalTo.setText(Integer.toString(searchEventsActivity.mTotalTo));
+
+            if (searchEventsActivity.mEmptyFrom != null && searchEventsActivity.mEmptyFrom > -1)
+                searchEventsEmptyFrom.setText(Integer.toString(searchEventsActivity.mEmptyFrom));
+            if (searchEventsActivity.mEmptyTo != null && searchEventsActivity.mEmptyTo > -1)
+                searchEventsEmptyTo.setText(Integer.toString(searchEventsActivity.mEmptyTo));
+        }
     }
 
     private void createPickSportDialog() {
