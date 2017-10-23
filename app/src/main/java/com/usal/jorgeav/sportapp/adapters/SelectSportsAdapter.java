@@ -82,11 +82,11 @@ public class SelectSportsAdapter  extends RecyclerView.Adapter<SelectSportsAdapt
 
         @Override
         public void onClick(View view) {
-            mClickListener.onSportClick(mDataset.get(getAdapterPosition()));
+            mClickListener.onSportClick(mDataset.get(getAdapterPosition()).getSportID());
         }
     }
 
     public interface OnSelectSportClickListener {
-        void onSportClick(Sport s);
+        void onSportClick(String sportId);
     }
 }

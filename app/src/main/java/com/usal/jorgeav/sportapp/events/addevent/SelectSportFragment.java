@@ -23,7 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SelectSportFragment extends BaseFragment {
+public class SelectSportFragment extends BaseFragment implements SelectSportsAdapter.OnSelectSportClickListener {
     private final static String TAG = SelectSportFragment.class.getSimpleName();
 
     @BindView(R.id.recycler_list)
@@ -56,12 +56,12 @@ public class SelectSportFragment extends BaseFragment {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.bind(this, root);
 
-        if (!(getActivity() instanceof SelectSportsAdapter.OnSelectSportClickListener)) {
-            Log.e(TAG, "onCreateView: getActivity() should implement SelectSportsAdapter.OnSelectSportClickListener");
+        if (!(getActivity() instanceof OnSportSelectedListener)) {
+            Log.e(TAG, "onCreateView: getActivity() should implement OnSportSelectedListener");
             getActivity().onBackPressed();
         }
         mSportAdapter = new SelectSportsAdapter(null,
-                ((SelectSportsAdapter.OnSelectSportClickListener)getActivity()),
+                this,
                 Glide.with(this));
         sportsRecyclerViewList.setAdapter(mSportAdapter);
         sportsRecyclerViewList.setHasFixedSize(true);
@@ -95,5 +95,15 @@ public class SelectSportFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         mSportAdapter.replaceData(null);
+    }
+
+    @Override
+    public void onSportClick(String sportId) {
+        if (getActivity() instanceof OnSportSelectedListener)
+            ((OnSportSelectedListener) getActivity()).onSportSelected(sportId);
+    }
+
+    public interface OnSportSelectedListener {
+        void onSportSelected(String sportId);
     }
 }

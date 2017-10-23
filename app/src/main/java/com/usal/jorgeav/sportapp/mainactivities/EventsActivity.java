@@ -12,16 +12,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.SelectSportsAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
-import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantContract;
 import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulateParticipantFragment;
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventContract;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
+import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.yalantis.ucrop.UCrop;
 
@@ -34,7 +33,7 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class EventsActivity extends BaseActivity implements SelectSportsAdapter.OnSelectSportClickListener {
+public class EventsActivity extends BaseActivity implements SelectSportFragment.OnSportSelectedListener {
     private final static String TAG = EventsActivity.class.getSimpleName();
 
     public static final String EVENTID_PENDING_INTENT_EXTRA = "EVENTID_PENDING_INTENT_EXTRA";
@@ -62,8 +61,8 @@ public class EventsActivity extends BaseActivity implements SelectSportsAdapter.
     }
 
     @Override
-    public void onSportClick(Sport sport) {
-        Fragment fragment = NewEventFragment.newInstance(null, sport.getSportID());
+    public void onSportSelected(String sportId) {
+        Fragment fragment = NewEventFragment.newInstance(null, sportId);
         initFragment(fragment, true);
     }
 

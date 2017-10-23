@@ -10,18 +10,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.adapters.SelectSportsAdapter;
 import com.usal.jorgeav.sportapp.alarms.AlarmsFragment;
 import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmContract;
 import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Field;
-import com.usal.jorgeav.sportapp.data.Sport;
+import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.ArrayList;
 
-public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.OnSelectSportClickListener {
+public class AlarmsActivity extends BaseActivity implements SelectSportFragment.OnSportSelectedListener {
     @SuppressWarnings("unused")
     private final static String TAG = AlarmsActivity.class.getSimpleName();
 
@@ -82,8 +81,8 @@ public class AlarmsActivity extends BaseActivity implements SelectSportsAdapter.
     }
 
     @Override
-    public void onSportClick(Sport sport) {
-        Fragment fragment = NewAlarmFragment.newInstance(null, sport.getSportID());
+    public void onSportSelected(String sportId) {
+        Fragment fragment = NewAlarmFragment.newInstance(null, sportId);
         initFragment(fragment, true);
     }
 
