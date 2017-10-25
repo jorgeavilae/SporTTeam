@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
@@ -22,6 +23,7 @@ import com.usal.jorgeav.sportapp.network.firebase.ExecutorChildEventListener;
 import com.usal.jorgeav.sportapp.network.firebase.ExecutorValueEventListener;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
@@ -39,6 +41,8 @@ public class FirebaseSync {
             String myUserID = Utiles.getCurrentUserId();
             if (TextUtils.isEmpty(myUserID)) return;
 
+            // Add current device token if needed
+            UserFirebaseActions.updateUserToken(myUserID, FirebaseInstanceId.getInstance().getToken());
             // Load current user profile and sports
             UsersFirebaseSync.loadAProfile(loginActivity, myUserID, true);
 

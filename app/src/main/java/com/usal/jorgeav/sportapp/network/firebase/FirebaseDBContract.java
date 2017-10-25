@@ -11,6 +11,7 @@ public final class FirebaseDBContract {
     public static final String TABLE_USERS = "users";
     public static final String TABLE_FIELDS = "fields";
     public static final String TABLE_EVENTS = "events";
+    public static final String TABLE_TOKENS = "tokens";
 
     public static final class User {
         public static final String ALIAS = "alias";

@@ -110,6 +110,11 @@ public class UserFirebaseActions {
                 .child(FirebaseDBContract.User.EMAIL).setValue(email);
     }
 
+    public static void updateUserToken(String myUid, String token) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_TOKENS)
+                .child(myUid).setValue(token);
+    }
+
     public static void deleteCurrentUser(String myUserId, final SettingsFragment settingsFragment, final boolean deleteUser) {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUserId);
 
@@ -120,6 +125,10 @@ public class UserFirebaseActions {
                     User myUser = dataSnapshot.child(FirebaseDBContract.DATA).getValue(User.class);
                     if (myUser == null) return;
                     myUser.setUid(dataSnapshot.getKey());
+
+                    //Delete User's token
+                    FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_TOKENS)
+                            .child(myUser.getUid()).removeValue();
 
                     //Delete User in Friends
                     for (DataSnapshot friendUid : dataSnapshot.child(FirebaseDBContract.User.FRIENDS).getChildren()) {
