@@ -16,6 +16,8 @@ allprojects {
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
+        /* Necessary: https://developers.google.com/android/guides/releases#august_2017_-_version_1120 */
+        google()
     }
 }
 
