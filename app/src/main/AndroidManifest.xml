@@ -23,7 +23,7 @@
 
         <activity
             android:name=".mainactivities.ProfileActivity"
-            android:label="@string/app_name"
+            android:label="@string/profile"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -35,42 +35,43 @@
         </activity>
         <activity
             android:name=".mainactivities.SearchEventsActivity"
-            android:label="@string/app_name"
+            android:label="@string/search_events"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".mainactivities.EventsActivity"
-            android:label="@string/app_name"
+            android:label="@string/events"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".mainactivities.FriendsActivity"
-            android:label="@string/app_name"
+            android:label="@string/friends"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".mainactivities.AlarmsActivity"
-            android:label="@string/app_name"
+            android:label="@string/alarms"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".mainactivities.FieldsActivity"
-            android:label="@string/app_name"
+            android:label="@string/fields"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".mainactivities.NotificationsActivity"
-            android:label="@string/app_name"
+            android:label="@string/notifications"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
+
         <activity
             android:name=".mainactivities.MapsActivity"
             android:label="@string/title_activity_maps"
