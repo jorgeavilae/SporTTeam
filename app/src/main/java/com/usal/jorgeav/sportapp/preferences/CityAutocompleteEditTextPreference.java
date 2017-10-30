@@ -99,6 +99,7 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
                             .setResultCallback(new ResultCallback<PlaceBuffer>() {
                                 @Override
                                 public void onResult(@NonNull PlaceBuffer places) {
+                                    // TODO stop UI until finish callback
                                     if (places.getStatus().isSuccess() && places.getCount() > 0) {
                                         Place myPlace = places.get(0);
                                         citySelectedName = myPlace.getName().toString();

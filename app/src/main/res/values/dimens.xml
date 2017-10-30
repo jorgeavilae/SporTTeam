@@ -5,6 +5,7 @@
     <dimen name="label_margin">8dp</dimen>
     <dimen name="fragment_map_indicator_height">200dp</dimen>
     <dimen name="card_view_media_area">80dp</dimen>
+    <dimen name="profile_image_size">140dp</dimen>
 
     <!-- Inside Spinner -->
     <dimen name="spinner_item_margin">8dp</dimen>

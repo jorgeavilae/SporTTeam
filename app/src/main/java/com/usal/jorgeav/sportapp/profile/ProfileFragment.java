@@ -41,8 +41,6 @@ import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
-import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.aprilapps.easyphotopicker.EasyImage;
@@ -425,9 +423,9 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
     @Override
     public void showUserAge(int age) {
-        if (age > -1) {
-            userAge.setText(String.format(Locale.getDefault(), "%2d", age));
-        }
+//        if (age > -1) {
+//            userAge.setText(String.format(Locale.getDefault(), "%2d", age));
+//        }
     }
 
     @Override

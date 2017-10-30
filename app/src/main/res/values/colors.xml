@@ -15,6 +15,7 @@
     <color name="colorAccent">#FF4081</color>
     <!-- Change according to number: hue_of_colorSportteam_logo -->
     <color name="colorSportteam_logo">#1D9DD9</color>
+    <color name="colorSportteam_logo_transparent">#001D9DD9</color>
 
     <color name="ucrop_color_toolbar" tools:override="true">#0f3b68</color>
     <color name="ucrop_color_statusbar" tools:override="true">#082543</color>
