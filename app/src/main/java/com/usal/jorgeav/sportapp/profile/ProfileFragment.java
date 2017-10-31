@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.profile;
 
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -408,6 +410,21 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)
                 .into(userImage);
+        userImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View dialogView = getActivity().getLayoutInflater().inflate(R.layout.image_dialog, null);
+                ImageView imageView = (ImageView) dialogView.findViewById(R.id.image_dialog_image);
+
+                if (userImage.getDrawable().getCurrent() instanceof GlideBitmapDrawable) {
+                    Bitmap bmp = ((GlideBitmapDrawable) userImage.getDrawable().getCurrent()).getBitmap();
+                    imageView.setImageBitmap(bmp);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setView(dialogView);
+                    builder.create().show();
+                }
+            }
+        });
     }
 
     @Override
