@@ -36,6 +36,7 @@
     <RatingBar
         android:id="@+id/sport_profile_item_level"
         style="@style/Base.Widget.AppCompat.RatingBar.Small"
+        android:theme="@style/CustomRatingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/list_item_vertical_margin"

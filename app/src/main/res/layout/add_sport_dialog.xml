@@ -56,6 +56,7 @@
 
     <RatingBar
         android:id="@+id/add_sport_dialog_rate"
+        android:theme="@style/CustomRatingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dialog_vertical_margin"
