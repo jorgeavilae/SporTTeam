@@ -17,10 +17,6 @@
             android:icon="@drawable/ic_nav_notifications"
             android:title="@string/notifications" />
         <item
-            android:id="@+id/nav_events"
-            android:icon="@drawable/ic_nav_events"
-            android:title="@string/events" />
-        <item
             android:id="@+id/nav_friends"
             android:icon="@drawable/ic_nav_friends"
             android:title="@string/friends" />

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -56,19 +55,12 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
         initFragment(EventsFragment.newInstance(), false);
         if (eventId != null)
             initFragment(DetailEventFragment.newInstance(eventId), true);
-
-        mNavigationView.setCheckedItem(R.id.nav_events);
     }
 
     @Override
     public void onSportSelected(String sportId) {
         Fragment fragment = NewEventFragment.newInstance(null, sportId);
         initFragment(fragment, true);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return item.getItemId() != R.id.nav_events && super.onNavigationItemSelected(item);
     }
 
     // Start MapActivity to pick a place for new Events

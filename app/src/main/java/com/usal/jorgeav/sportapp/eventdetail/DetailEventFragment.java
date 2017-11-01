@@ -253,6 +253,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         // Set menu actions
         if (mMenu != null) {
             mMenu.clear();
+            //TODO getActivity == null
             getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
             getActivity().getMenuInflater().inflate(R.menu.menu_detail_event, mMenu);
         }

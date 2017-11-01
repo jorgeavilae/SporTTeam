@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.profile;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -11,6 +12,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
@@ -30,14 +33,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.BaseFragment;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
+import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
@@ -67,6 +72,8 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     TextView userAge;
     @BindView(R.id.user_city)
     TextView userCity;
+    @BindView(R.id.user_calendar)
+    CardView userCalendarButton;
 
     @BindView(R.id.user_event_invitations)
     CardView userEventInvitationsButton;
@@ -165,6 +172,16 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
 
     private void setLayoutAsMyUser(boolean isMyProfile) {
         if (isMyProfile) {
+            userCalendarButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO
+//                    Toast.makeText(getActivity(), "Show Calendar", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getActivity(), EventsActivity.class);
+                    startActivity(intent);
+                }
+            });
+
             userEventInvitationsButtonText.setText(R.string.event_invitations);
             userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -183,6 +200,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 }
             });
         } else {
+            userCalendarButton.setVisibility(View.GONE);
             userEventInvitationsButton.setVisibility(View.INVISIBLE);
             userEventInvitationsButtonText.setText(R.string.send_invitation);
             userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
@@ -406,23 +424,35 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void showUserImage(String imageUrl) {
         userImage.setVisibility(View.VISIBLE);
-        Glide.with(this).load(imageUrl)
+//        Glide.with(this).load(imageUrl)
+//                .error(R.drawable.profile_picture_placeholder)
+//                .placeholder(R.drawable.profile_picture_placeholder)
+//                .into(userImage);
+        Glide.with(this).load(imageUrl).asBitmap()
                 .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)
-                .into(userImage);
-        userImage.setOnClickListener(new View.OnClickListener() {
+                .into(new BitmapImageViewTarget(userImage) {
             @Override
-            public void onClick(View v) {
-                View dialogView = getActivity().getLayoutInflater().inflate(R.layout.image_dialog, null);
-                ImageView imageView = (ImageView) dialogView.findViewById(R.id.image_dialog_image);
+            protected void setResource(Bitmap resource) {
+                RoundedBitmapDrawable circularBitmapDrawable =
+                        RoundedBitmapDrawableFactory.create(MyApplication.getAppContext().getResources(), resource);
+                circularBitmapDrawable.setCircular(true);
+                userImage.setImageDrawable(circularBitmapDrawable);
+                userImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.image_dialog, null);
+                        ImageView imageView = (ImageView) dialogView.findViewById(R.id.image_dialog_image);
 
-                if (userImage.getDrawable().getCurrent() instanceof GlideBitmapDrawable) {
-                    Bitmap bmp = ((GlideBitmapDrawable) userImage.getDrawable().getCurrent()).getBitmap();
-                    imageView.setImageBitmap(bmp);
+                        if (userImage.getDrawable().getCurrent() instanceof RoundedBitmapDrawable) {
+                            Bitmap bmp = ((RoundedBitmapDrawable) userImage.getDrawable().getCurrent()).getBitmap();
+                            imageView.setImageBitmap(bmp);
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setView(dialogView);
-                    builder.create().show();
-                }
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setView(dialogView);
+                            builder.create().show();
+                        }
+                    }
+                });
             }
         });
     }

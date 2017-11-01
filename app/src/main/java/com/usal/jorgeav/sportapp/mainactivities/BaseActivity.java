@@ -220,8 +220,6 @@ public class BaseActivity extends AppCompatActivity
                     intent = new Intent(this, SearchEventsActivity.class); break;
                 case R.id.nav_notifications:
                     intent = new Intent(this, NotificationsActivity.class); break;
-                case R.id.nav_events:
-                    intent = new Intent(this, EventsActivity.class); break;
                 case R.id.nav_friends:
                     intent = new Intent(this, FriendsActivity.class); break;
                 case R.id.nav_alarms:

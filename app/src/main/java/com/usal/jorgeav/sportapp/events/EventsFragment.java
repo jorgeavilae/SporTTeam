@@ -118,7 +118,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
-        mActionBarIconManagementListener.setToolbarAsNav();
+        mActionBarIconManagementListener.setToolbarAsUp();
     }
 
     @Override

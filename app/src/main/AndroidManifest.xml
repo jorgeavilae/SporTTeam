@@ -45,7 +45,13 @@
             android:label="@string/events"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:parentActivityName=".mainactivities.ProfileActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".mainactivities.ProfileActivity" />
+        </activity>
         <activity
             android:name=".mainactivities.FriendsActivity"
             android:label="@string/friends"
