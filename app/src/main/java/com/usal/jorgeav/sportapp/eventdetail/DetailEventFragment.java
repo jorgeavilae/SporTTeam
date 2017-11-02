@@ -55,7 +55,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     private String mOwnerId = "";
     private Boolean isFull = null;
     private Boolean isPast = null;
-    @DetailEventPresenter.EventRelationType int mRelation = -1;
+    @DetailEventPresenter.EventRelationType int mRelation = DetailEventPresenter.RELATION_TYPE_ERROR;
 
     private DetailEventContract.Presenter mPresenter;
 
@@ -201,28 +201,33 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             detailEventInvitation.setVisibility(View.GONE);
             return;
         }
-        switch (relation) {
-            case DetailEventPresenter.RELATION_TYPE_NONE:
-                setupForNone();
-                break;
-            case DetailEventPresenter.RELATION_TYPE_OWNER:
-                setupForOwner();
-                break;
-            case DetailEventPresenter.RELATION_TYPE_ASSISTANT:
-                setupForParticipant();
-                break;
-            case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
-                setupForRequestSent();
-                break;
-            case DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION:
-                setupForInvitationReceived();
-                break;
-            case DetailEventPresenter.RELATION_TYPE_BLOCKED:
-                setupForBlocked();
-                break;
-            default: case DetailEventPresenter.RELATION_TYPE_ERROR:
-                setupForError();
-                break;
+
+        if (getActivity() != null) {
+            MenuInflater menuInflater = getActivity().getMenuInflater();
+            switch (relation) {
+                case DetailEventPresenter.RELATION_TYPE_NONE:
+                    setupForNone();
+                    break;
+                case DetailEventPresenter.RELATION_TYPE_OWNER:
+                    setupForOwner(menuInflater);
+                    break;
+                case DetailEventPresenter.RELATION_TYPE_ASSISTANT:
+                    setupForParticipant(menuInflater);
+                    break;
+                case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
+                    setupForRequestSent();
+                    break;
+                case DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION:
+                    setupForInvitationReceived();
+                    break;
+                case DetailEventPresenter.RELATION_TYPE_BLOCKED:
+                    setupForBlocked();
+                    break;
+                default:
+                case DetailEventPresenter.RELATION_TYPE_ERROR:
+                    setupForError();
+                    break;
+            }
         }
     }
 
@@ -249,13 +254,12 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         detailEventInvitation.setVisibility(View.GONE);
     }
 
-    private void setupForOwner() {
+    private void setupForOwner(MenuInflater menuInflater) {
         // Set menu actions
         if (mMenu != null) {
             mMenu.clear();
-            //TODO getActivity == null
-            getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
-            getActivity().getMenuInflater().inflate(R.menu.menu_detail_event, mMenu);
+            menuInflater.inflate(R.menu.menu_edit_delete, mMenu);
+            menuInflater.inflate(R.menu.menu_detail_event, mMenu);
         }
 
         // Set user requests button
@@ -288,11 +292,11 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         detailEventStateButton.setVisibility(View.GONE);
     }
 
-    private void setupForParticipant() {
+    private void setupForParticipant(MenuInflater menuInflater) {
         // Set menu actions
         if (mMenu != null) {
             mMenu.clear();
-            getActivity().getMenuInflater().inflate(R.menu.menu_detail_event, mMenu);
+            menuInflater.inflate(R.menu.menu_detail_event, mMenu);
         }
 
         // Set state action
