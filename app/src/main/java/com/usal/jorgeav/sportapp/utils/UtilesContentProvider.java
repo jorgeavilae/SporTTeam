@@ -61,7 +61,7 @@ public class UtilesContentProvider {
         ArrayList<Alarm> result = new ArrayList<>();
         if (cursor != null)
             //Move to first position to prevent errors
-            for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
                 String alarmId = cursor.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID);
                 String sport = cursor.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
                 String field = cursor.getString(SportteamContract.AlarmEntry.COLUMN_FIELD);
@@ -96,7 +96,7 @@ public class UtilesContentProvider {
         if (cursor != null) {
             /* https://stackoverflow.com/questions/10723770/whats-the-best-way-to-iterate-an-android-cursor#comment33274077_10723771 */
             //Move to first position to prevent errors
-            for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()){
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
                 String fieldId = cursor.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
                 String name = cursor.getString(SportteamContract.FieldEntry.COLUMN_NAME);
                 String address = cursor.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
@@ -126,6 +126,7 @@ public class UtilesContentProvider {
             }
         return map;
     }
+
     public static HashMap<String, SimulatedUser> cursorToMultipleSimulatedParticipants(Cursor data) {
         HashMap<String, SimulatedUser> simulatedUserHashMap = new HashMap<>();
         if (data != null)
@@ -160,14 +161,15 @@ public class UtilesContentProvider {
 
                 u = new User(userId, email, name, city, latitude, longitude, age, photoUrl, null);
             } else if (c.getCount() == 0)
-                Log.e(TAG, "getUserFromContentProvider: User with ID "+userId+" not found");
+                Log.e(TAG, "getUserFromContentProvider: User with ID " + userId + " not found");
             else
-                Log.e(TAG, "getUserFromContentProvider: More than one user with ID "+userId+" ("+c.getCount()+")");
+                Log.e(TAG, "getUserFromContentProvider: More than one user with ID " + userId + " (" + c.getCount() + ")");
             c.close();
         } else
-            Log.e(TAG, "getUserFromContentProvider: Error with user "+userId);
+            Log.e(TAG, "getUserFromContentProvider: Error with user " + userId);
         return u;
     }
+
     public static String getUserPictureFromContentProvider(@NonNull String userId) {
         if (TextUtils.isEmpty(userId)) return null;
         Cursor c = SportteamLoader.simpleQueryUserIdPicture(MyApplication.getAppContext(), userId);
@@ -177,14 +179,15 @@ public class UtilesContentProvider {
                 c.close();
                 return result;
             } else if (c.getCount() == 0)
-                Log.e(TAG, "getUserPictureFromContentProvider: User with ID "+userId+" not found");
+                Log.e(TAG, "getUserPictureFromContentProvider: User with ID " + userId + " not found");
             else
-                Log.e(TAG, "getUserPictureFromContentProvider: More than one user with ID "+userId+" ("+c.getCount()+")");
+                Log.e(TAG, "getUserPictureFromContentProvider: More than one user with ID " + userId + " (" + c.getCount() + ")");
             c.close();
         } else
-            Log.e(TAG, "getUserPictureFromContentProvider: Error with user "+userId);
+            Log.e(TAG, "getUserPictureFromContentProvider: Error with user " + userId);
         return null;
     }
+
     public static String getUserNameFromContentProvider(@NonNull String userId) {
         if (TextUtils.isEmpty(userId)) return null;
         Cursor c = SportteamLoader.simpleQueryUserIdName(MyApplication.getAppContext(), userId);
@@ -194,12 +197,12 @@ public class UtilesContentProvider {
                 c.close();
                 return result;
             } else if (c.getCount() == 0)
-                Log.e(TAG, "getUserNameFromContentProvider: User with ID "+userId+" not found");
+                Log.e(TAG, "getUserNameFromContentProvider: User with ID " + userId + " not found");
             else
-                Log.e(TAG, "getUserNameFromContentProvider: More than one user with ID "+userId+" ("+c.getCount()+")");
+                Log.e(TAG, "getUserNameFromContentProvider: More than one user with ID " + userId + " (" + c.getCount() + ")");
             c.close();
         } else
-            Log.e(TAG, "getUserNameFromContentProvider: Error with user "+userId);
+            Log.e(TAG, "getUserNameFromContentProvider: Error with user " + userId);
         return null;
     }
 
@@ -252,7 +255,8 @@ public class UtilesContentProvider {
                 String address = c.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
                 double latitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
                 double longitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
-                LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+                LatLng coord = null;
+                if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
                 String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
                 String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
                 Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
@@ -262,14 +266,15 @@ public class UtilesContentProvider {
 
                 e = new Event(eventId, sport, field, address, coord, name, city, date, owner, totalPl, emptyPl, null, null);
             } else if (c.getCount() == 0)
-                Log.e(TAG, "getEventFromContentProvider: Event with ID "+eventId+" not found");
+                Log.e(TAG, "getEventFromContentProvider: Event with ID " + eventId + " not found");
             else
-                Log.e(TAG, "getEventFromContentProvider: More than one event with ID "+eventId+" ("+c.getCount()+")");
+                Log.e(TAG, "getEventFromContentProvider: More than one event with ID " + eventId + " (" + c.getCount() + ")");
             c.close();
         } else
-            Log.e(TAG, "getEventFromContentProvider: Error with event "+eventId);
+            Log.e(TAG, "getEventFromContentProvider: Error with event " + eventId);
         return e;
     }
+
     public static String getEventSportFromContentProvider(@NonNull String eventId) {
         if (TextUtils.isEmpty(eventId)) return null;
         Cursor c = SportteamLoader.simpleQueryEventIdSport(MyApplication.getAppContext(), eventId);
@@ -279,12 +284,12 @@ public class UtilesContentProvider {
                 c.close();
                 return result;
             } else if (c.getCount() == 0)
-                Log.e(TAG, "getEventSportFromContentProvider: Event with ID "+eventId+" not found");
+                Log.e(TAG, "getEventSportFromContentProvider: Event with ID " + eventId + " not found");
             else
-                Log.e(TAG, "getEventSportFromContentProvider: More than one event with ID "+eventId+" ("+c.getCount()+")");
+                Log.e(TAG, "getEventSportFromContentProvider: More than one event with ID " + eventId + " (" + c.getCount() + ")");
             c.close();
         } else
-            Log.e(TAG, "getEventSportFromContentProvider: Error with event "+eventId);
+            Log.e(TAG, "getEventSportFromContentProvider: Error with event " + eventId);
         return null;
     }
 
@@ -306,22 +311,23 @@ public class UtilesContentProvider {
 
                 f = new Field(fieldId, name, address, lat, lng, city,
                         openTime, closeTime, creator, sports);
-                } else if (cursorField.getCount() == 0)
-                Log.e(TAG, "getFieldFromContentProvider: Field with ID "+fieldId+" not found");
+            } else if (cursorField.getCount() == 0)
+                Log.e(TAG, "getFieldFromContentProvider: Field with ID " + fieldId + " not found");
             else
-                Log.e(TAG, "getFieldFromContentProvider: More than one field with ID "+fieldId+" ("+cursorField.getCount()+")");
+                Log.e(TAG, "getFieldFromContentProvider: More than one field with ID " + fieldId + " (" + cursorField.getCount() + ")");
             cursorField.close();
         } else
-            Log.e(TAG, "getFieldFromContentProvider: Error with field "+fieldId);
+            Log.e(TAG, "getFieldFromContentProvider: Error with field " + fieldId);
         return f;
     }
+
     private static ArrayList<SportCourt> getFieldSportFromContentProvider(@NonNull String fieldId) {
         ArrayList<SportCourt> result = new ArrayList<>();
         Cursor cursorFieldSport = SportteamLoader.simpleQuerySportsOfFieldId(MyApplication.getAppContext(), fieldId);
         if (cursorFieldSport != null) {
             if (cursorFieldSport.getCount() > 0)
                 //Move to first position to prevent errors
-                for(cursorFieldSport.moveToFirst(); !cursorFieldSport.isAfterLast(); cursorFieldSport.moveToNext()) {
+                for (cursorFieldSport.moveToFirst(); !cursorFieldSport.isAfterLast(); cursorFieldSport.moveToNext()) {
                     String sportId = cursorFieldSport.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
                     Double punctuation = cursorFieldSport.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
                     Long votes = cursorFieldSport.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);
@@ -329,12 +335,13 @@ public class UtilesContentProvider {
                     result.add(new SportCourt(sportId, punctuation, votes));
                 }
             else
-                Log.e(TAG, "getFieldSportFromContentProvider: Sports of Field with ID "+fieldId+" not found");
+                Log.e(TAG, "getFieldSportFromContentProvider: Sports of Field with ID " + fieldId + " not found");
             cursorFieldSport.close();
         } else
-            Log.e(TAG, "getFieldSportFromContentProvider: Error with Sports of Field "+fieldId);
+            Log.e(TAG, "getFieldSportFromContentProvider: Error with Sports of Field " + fieldId);
         return result;
     }
+
     public static String getFieldNameFromContentProvider(@NonNull String fieldId) {
         if (TextUtils.isEmpty(fieldId)) return null;
         Cursor cursorField = SportteamLoader.simpleQueryFieldIdName(MyApplication.getAppContext(), fieldId);
@@ -344,12 +351,12 @@ public class UtilesContentProvider {
                 cursorField.close();
                 return result;
             } else if (cursorField.getCount() == 0)
-                Log.e(TAG, "getFieldNameFromContentProvider: Field with ID "+fieldId+" not found");
+                Log.e(TAG, "getFieldNameFromContentProvider: Field with ID " + fieldId + " not found");
             else
-                Log.e(TAG, "getFieldNameFromContentProvider: More than one field with ID "+fieldId+" ("+cursorField.getCount()+")");
+                Log.e(TAG, "getFieldNameFromContentProvider: More than one field with ID " + fieldId + " (" + cursorField.getCount() + ")");
             cursorField.close();
         } else
-            Log.e(TAG, "getFieldNameFromContentProvider: Error with field "+fieldId);
+            Log.e(TAG, "getFieldNameFromContentProvider: Error with field " + fieldId);
         return null;
     }
 
@@ -361,14 +368,15 @@ public class UtilesContentProvider {
             if (c.getCount() == 1 && c.moveToFirst()) {
                 a = cursorToSingleAlarm(c);
             } else if (c.getCount() == 0)
-                Log.e(TAG, "getAlarmFromContentProvider: Alarm with ID "+alarmId+" not found");
+                Log.e(TAG, "getAlarmFromContentProvider: Alarm with ID " + alarmId + " not found");
             else
-                Log.e(TAG, "getAlarmFromContentProvider: More than one alarm with ID "+alarmId+" ("+c.getCount()+")");
+                Log.e(TAG, "getAlarmFromContentProvider: More than one alarm with ID " + alarmId + " (" + c.getCount() + ")");
             c.close();
         } else
-            Log.e(TAG, "getAlarmFromContentProvider: Error with alarm "+alarmId);
+            Log.e(TAG, "getAlarmFromContentProvider: Error with alarm " + alarmId);
         return a;
     }
+
     public static String getAlarmSportFromContentProvider(@NonNull String alarmId) {
         if (TextUtils.isEmpty(alarmId)) return null;
         Cursor c = SportteamLoader.simpleQueryAlarmIdSport(MyApplication.getAppContext(), alarmId);
@@ -378,12 +386,12 @@ public class UtilesContentProvider {
                 c.close();
                 return result;
             } else if (c.getCount() == 0)
-                Log.e(TAG, "getAlarmSportFromContentProvider: Alarm with ID "+alarmId+" not found");
+                Log.e(TAG, "getAlarmSportFromContentProvider: Alarm with ID " + alarmId + " not found");
             else
-                Log.e(TAG, "getAlarmSportFromContentProvider: More than one alarm with ID "+alarmId+" ("+c.getCount()+")");
+                Log.e(TAG, "getAlarmSportFromContentProvider: More than one alarm with ID " + alarmId + " (" + c.getCount() + ")");
             c.close();
         } else
-            Log.e(TAG, "getAlarmSportFromContentProvider: Error with alarm "+alarmId);
+            Log.e(TAG, "getAlarmSportFromContentProvider: Error with alarm " + alarmId);
         return null;
     }
 
@@ -410,7 +418,8 @@ public class UtilesContentProvider {
         if (alarm == null || myUserId == null || TextUtils.isEmpty(myUserId)) return null;
         Cursor c = SportteamLoader.cursorAlarmCoincidence(MyApplication.getAppContext().getContentResolver(), alarm, myUserId);
         if (c != null) {
-            if (c.getCount() > 0 && c.moveToFirst()) result = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
+            if (c.getCount() > 0 && c.moveToFirst())
+                result = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
             c.close();
         }
         return result;
@@ -420,7 +429,7 @@ public class UtilesContentProvider {
         ArrayList<MyCalendarEvent> result = new ArrayList<>();
         if (c != null) {
             //Move to first position to prevent errors
-            for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                 Field field = getFieldFromContentProvider(c.getString(SportteamContract.EventEntry.COLUMN_FIELD));
 
                 String eventId = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
@@ -429,7 +438,8 @@ public class UtilesContentProvider {
                 String address = c.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
                 double latitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
                 double longitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
-                LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+                LatLng coord = null;
+                if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
                 String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
                 String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
                 Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
@@ -450,14 +460,15 @@ public class UtilesContentProvider {
         if (c != null) {
             /* https://stackoverflow.com/questions/10723770/whats-the-best-way-to-iterate-an-android-cursor#comment33274077_10723771 */
             //Move to first position to prevent errors
-            for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                 String eventId = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
                 String sport = c.getString(SportteamContract.EventEntry.COLUMN_SPORT);
                 String fieldId = c.getString(SportteamContract.EventEntry.COLUMN_FIELD);
                 String address = c.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
                 double latitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
                 double longitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
-                LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+                LatLng coord = null;
+                if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
                 String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
                 String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
                 Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
