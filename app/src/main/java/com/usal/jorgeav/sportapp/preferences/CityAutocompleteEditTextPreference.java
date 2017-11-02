@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.preferences;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.preference.EditTextPreference;
 import android.support.annotation.NonNull;
@@ -95,11 +96,14 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
                 AutocompletePrediction item = adapter.getItem(position);
                 if (item != null) {
                     Log.i(TAG, "Autocomplete item selected: " + item.getPlaceId());
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext());
+                    progressDialog.show();
                     Places.GeoDataApi.getPlaceById(mGoogleApiClient, item.getPlaceId())
                             .setResultCallback(new ResultCallback<PlaceBuffer>() {
                                 @Override
                                 public void onResult(@NonNull PlaceBuffer places) {
-                                    // TODO stop UI until finish callback
+                                    // Stop UI until finish callback
+                                    progressDialog.dismiss();
                                     if (places.getStatus().isSuccess() && places.getCount() > 0) {
                                         Place myPlace = places.get(0);
                                         citySelectedName = myPlace.getName().toString();

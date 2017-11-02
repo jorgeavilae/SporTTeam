@@ -196,7 +196,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
                 //Update User and reload data
                 String myUid = Utiles.getCurrentUserId();
-                if (TextUtils.isEmpty(myUid)) return;
+                if (TextUtils.isEmpty(myUid)
+                        || cityPref.citySelectedName == null || cityPref.citySelectedCoord == null) {
+                    Toast.makeText(getActivity(), R.string.error_invalid_city, Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 UserFirebaseActions.updateUserCityAndReload(myUid, cityPref.citySelectedName, cityPref.citySelectedCoord);
 
                 // Set summary to be the user-description for the selected value
