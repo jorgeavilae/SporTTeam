@@ -45,16 +45,19 @@ public class EventsFirebaseActions {
         String userEventCreated = "/" + FirebaseDBContract.TABLE_USERS + "/" + event.getOwner() + "/"
                 + FirebaseDBContract.User.EVENTS_CREATED + "/" + event.getEvent_id();
 
-        //Set next Event in fieldId
-        String fieldNextEvent = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + event.getField_id() + "/"
-                + FirebaseDBContract.Field.NEXT_EVENTS + "/" + event.getEvent_id();
-
         long currentTime = System.currentTimeMillis();
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(eventInEventTable, event.toMap());
         childUpdates.put(userEventCreated, currentTime);
-        childUpdates.put(fieldNextEvent, currentTime);
+
+        /* If sport need a Field */
+        if (event.getField_id() != null) {
+            //Set next Event in fieldId
+            String fieldNextEvent = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + event.getField_id() + "/"
+                    + FirebaseDBContract.Field.NEXT_EVENTS + "/" + event.getEvent_id();
+            childUpdates.put(fieldNextEvent, currentTime);
+        }
 
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
@@ -68,16 +71,19 @@ public class EventsFirebaseActions {
         String userEventCreated = "/" + FirebaseDBContract.TABLE_USERS + "/" + event.getOwner() + "/"
                 + FirebaseDBContract.User.EVENTS_CREATED + "/" + event.getEvent_id();
 
-        //Set next Event in fieldId
-        String fieldNextEvent = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + event.getField_id() + "/"
-                + FirebaseDBContract.Field.NEXT_EVENTS + "/" + event.getEvent_id();
-
         long currentTime = System.currentTimeMillis();
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(eventInEventTable, event.toMap());
         childUpdates.put(userEventCreated, currentTime);
-        childUpdates.put(fieldNextEvent, currentTime);
+
+        /* If sport need a Field */
+        if (event.getField_id() != null) {
+            //Set next Event in fieldId
+            String fieldNextEvent = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + event.getField_id() + "/"
+                    + FirebaseDBContract.Field.NEXT_EVENTS + "/" + event.getEvent_id();
+            childUpdates.put(fieldNextEvent, currentTime);
+        }
 
         //Notify participants the event has changed
         if (event.getParticipants() != null && event.getParticipants().size() > 0) {
