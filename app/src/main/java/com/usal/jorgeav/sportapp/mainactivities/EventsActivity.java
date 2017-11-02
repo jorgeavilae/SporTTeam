@@ -51,6 +51,7 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
     @Override
     public void startMainFragment() {
         super.startMainFragment();
+
         String eventId = getIntent().getStringExtra(EVENTID_PENDING_INTENT_EXTRA);
 
         initFragment(EventsFragment.newInstance(), false);
@@ -177,5 +178,19 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
                 //The user can take pictures or pick an image
                 EasyImage.openChooserWithGallery(this, getString(R.string.pick_photo_from), SimulateParticipantFragment.RC_PHOTO_PICKER);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // This prevent from detach listeners on orientation changes and activity back transition
+        shouldDetachFirebaseListener(false);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // This prevent from detach listeners on orientation changes and activity back transition
+        shouldDetachFirebaseListener(true);
     }
 }

@@ -356,7 +356,7 @@ public class BaseActivity extends AppCompatActivity
         toolbarIconTransition.removeCallbacks(transitionToNav);
         toolbarIconTransition.removeCallbacks(transitionToUp);
 
-        // This prevent to detach listeners on orientation changes and activity transitions
+        // This prevent from detach listeners on orientation changes and activity transitions
         if (isFinishing() && shouldDetachFirebaseListener) FirebaseSync.detachListeners();
 
         if (mAuthListener != null) {
@@ -383,5 +383,9 @@ public class BaseActivity extends AppCompatActivity
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    protected void shouldDetachFirebaseListener(boolean shouldI) {
+        shouldDetachFirebaseListener = shouldI;
     }
 }

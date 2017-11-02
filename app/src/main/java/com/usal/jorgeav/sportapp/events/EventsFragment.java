@@ -119,7 +119,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     @Override
     public void onStart() {
         super.onStart();
-//        mEventsPresenter.loadEvents(getLoaderManager(), getArguments());
+        mEventsPresenter.loadEvents(getLoaderManager(), getArguments());
     }
 
     @Override
