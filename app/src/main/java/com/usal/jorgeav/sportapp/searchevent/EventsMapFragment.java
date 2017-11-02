@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.searchevent;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import com.usal.jorgeav.sportapp.adapters.MapEventMarkerInfoAdapter;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
+import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.mainactivities.SearchEventsActivity;
 import com.usal.jorgeav.sportapp.searchevent.advancedsearch.SearchEventsFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -79,10 +81,13 @@ public class EventsMapFragment extends SupportMapFragment
         if (item.getItemId() == R.id.action_advanced_search) {
             mFragmentManagementListener.initFragment(SearchEventsFragment.newInstance(), true);
             return true;
+        } else if (item.getItemId() == R.id.action_add_event) {
+            //TODO poner: add event (salta a EventsActivity)
+            Intent intent = new Intent(getActivity(), EventsActivity.class);
+            intent.putExtra(EventsActivity.CREATE_NEW_EVENT_INTENT_EXTRA, "dummy");
+            startActivity(intent);
+            return true;
         }
-        //TODO poner:
-        // add event (salta a EventsActivity)
-        // advanced search (cambia a SearchEventsFragment para poner filtros que luego vuelve al mapa )
         return false;
     }
 

@@ -77,11 +77,6 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
             Fragment fragment = EventRequestsFragment.newInstance();
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
-//        } else if (item.getItemId() == R.id.action_search_events) {
-            //TODO moved to another Activity
-//            Fragment fragment = SearchEventsFragment.newInstance();
-//            mFragmentManagementListener.initFragment(fragment, true);
-//            return true;
         }
         return false;
     }
@@ -124,7 +119,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     @Override
     public void onStart() {
         super.onStart();
-        mEventsPresenter.loadEvents(getLoaderManager(), getArguments());
+//        mEventsPresenter.loadEvents(getLoaderManager(), getArguments());
     }
 
     @Override

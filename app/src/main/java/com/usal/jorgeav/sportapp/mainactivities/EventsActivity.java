@@ -36,6 +36,7 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
     private final static String TAG = EventsActivity.class.getSimpleName();
 
     public static final String EVENTID_PENDING_INTENT_EXTRA = "EVENTID_PENDING_INTENT_EXTRA";
+    public static final String CREATE_NEW_EVENT_INTENT_EXTRA = "CREATE_NEW_EVENT_INTENT_EXTRA";
     public static final int REQUEST_CODE_ADDRESS = 23;
 
     private static final String INSTANCE_FIELD_ID_SELECTED = "INSTANCE_FIELD_ID_SELECTED";
@@ -55,6 +56,8 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
         initFragment(EventsFragment.newInstance(), false);
         if (eventId != null)
             initFragment(DetailEventFragment.newInstance(eventId), true);
+        else if (getIntent().hasExtra(CREATE_NEW_EVENT_INTENT_EXTRA))
+            initFragment(SelectSportFragment.newInstance(), true);
     }
 
     @Override

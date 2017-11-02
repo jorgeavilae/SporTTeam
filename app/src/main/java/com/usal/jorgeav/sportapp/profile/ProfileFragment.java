@@ -175,8 +175,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             userCalendarButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO
-//                    Toast.makeText(getActivity(), "Show Calendar", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getActivity(), EventsActivity.class);
                     startActivity(intent);
                 }
@@ -424,10 +422,6 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void showUserImage(String imageUrl) {
         userImage.setVisibility(View.VISIBLE);
-//        Glide.with(this).load(imageUrl)
-//                .error(R.drawable.profile_picture_placeholder)
-//                .placeholder(R.drawable.profile_picture_placeholder)
-//                .into(userImage);
         Glide.with(this).load(imageUrl).asBitmap()
                 .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)
