@@ -40,6 +40,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
@@ -62,6 +63,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     public static final String BUNDLE_ALARM_ID = "BUNDLE_ALARM_ID";
     public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
     public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
+    public static final String INSTANCE_SPORT_IMAGE_ID = "INSTANCE_SPORT_IMAGE_ID";
     ArrayList<Field> mFieldList;
 
     // Static prevent double initialization with same ID
@@ -75,6 +77,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @BindView(R.id.new_alarm_map)
     MapView newAlarmMap;
     private GoogleMap mMap;
+    private Marker mMarker;
     @BindView(R.id.new_alarm_sport)
     ImageView newAlarmSport;
     @BindView(R.id.new_alarm_field)
@@ -186,14 +189,31 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                 mMap = googleMap;
 
                 // Coordinates selected previously
-                Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity)getActivity()).mCoord);
+                if (mMarker != null) mMarker.remove();
+                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity)getActivity()).mCoord);
             }
         });
 
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
             mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
-            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_SPORT_IMAGE_ID))
+            setSportLayout(savedInstanceState.getString(INSTANCE_SPORT_IMAGE_ID));
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_ALARM_ID))
+            newAlarmSport.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle(R.string.pick_sport)
+                            .setItems(R.array.sport_id_entries, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int position) {
+                                    String[] sportIDs = getResources().getStringArray(R.array.sport_id_values);
+                                    showAlarmField(null, ((AlarmsActivity) getActivity()).mCity);
+                                    setSportLayout(sportIDs[position]);
+                                }
+                            });
+                    builder.create().show();
+                }
+            });
 
         newAlarmFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -367,24 +387,10 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         showContent();
 
         if (sInitialize) return;
+
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
         mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
-
-        newAlarmSport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(R.string.pick_sport)
-                        .setItems(R.array.sport_id_entries, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int position) {
-                                String[] sportIDs = getResources().getStringArray(R.array.sport_id_values);
-                                showAlarmField(null, ((AlarmsActivity) getActivity()).mCity);
-                                setSportLayout(sportIDs[position]);
-                            }
-                        });
-                builder.create().show();
-            }
-        });
-
         sInitialize = true;
     }
 
@@ -491,7 +497,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             ((AlarmsActivity) getActivity()).mCoord = null;
         }
 
-        Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity) getActivity()).mCoord);
+        if (mMarker != null) mMarker.remove();
+        mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity) getActivity()).mCoord);
     }
 
     @Override
@@ -550,6 +557,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         super.onSaveInstanceState(outState);
         if (mFieldList != null)
             outState.putParcelableArrayList(INSTANCE_FIELD_LIST_ID, mFieldList);
+        if (mSportId != null)
+            outState.putString(INSTANCE_SPORT_IMAGE_ID, mSportId);
     }
 
     @Override

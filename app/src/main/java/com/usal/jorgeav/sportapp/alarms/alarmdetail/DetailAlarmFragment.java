@@ -143,13 +143,13 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
             mAlarmId = getArguments().getString(BUNDLE_ALARM_ID);
 
         //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
-        alarmMap.onCreate(savedInstanceState);
+        if (alarmMap != null) alarmMap.onCreate(savedInstanceState);
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        alarmMap.getMapAsync(new OnMapReadyCallback() {
+        if (alarmMap != null) alarmMap.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
@@ -176,20 +176,20 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     @Override
     public void onStart() {
         super.onStart();
-        alarmMap.onStart();
+        if (alarmMap != null) alarmMap.onStart();
         mPresenter.openAlarm(getLoaderManager(), getArguments());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        alarmMap.onResume();
+        if (alarmMap != null) alarmMap.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        alarmMap.onPause();
+        if (alarmMap != null) alarmMap.onPause();
         eventsAdapter.replaceData(null);
     }
 
@@ -321,18 +321,18 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
     @Override
     public void onDestroy() {
         super.onDestroy();
-        alarmMap.onDestroy();
+        if (alarmMap != null) alarmMap.onDestroy();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        alarmMap.onStop();
+        if (alarmMap != null) alarmMap.onStop();
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        alarmMap.onLowMemory();
+        if (alarmMap != null) alarmMap.onLowMemory();
     }
 }

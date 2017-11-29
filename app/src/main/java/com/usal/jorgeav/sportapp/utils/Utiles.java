@@ -21,6 +21,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -254,7 +255,7 @@ public class Utiles {
         return !sportId.equals(arraySports[0]) && !sportId.equals(arraySports[1]) && !sportId.equals(arraySports[2]);
     }
 
-    public static void setCoordinatesInMap(Context context, GoogleMap map, LatLng coords) {
+    public static Marker setCoordinatesInMap(Context context, GoogleMap map, LatLng coords) {
         // Prevent null coords
         boolean coordsAreCurrentCity = false;
         if (coords == null) {
@@ -262,12 +263,13 @@ public class Utiles {
             coords = UtilesPreferences.getCurrentUserCityCoords(context);
         }
 
+        Marker marker = null;
         if (map != null && coords != null) {
             // Add a marker if coords aren't current city
             if (!coordsAreCurrentCity) {
                 Resources res = context.getResources();
                 float hue = Utiles.getFloatFromResources(res, R.dimen.hue_of_colorSportteam_logo);
-                map.addMarker(new MarkerOptions().position(coords)
+                marker = map.addMarker(new MarkerOptions().position(coords)
                         .icon(BitmapDescriptorFactory.defaultMarker(hue)));
             }
 
@@ -279,5 +281,7 @@ public class Utiles {
             LatLngBounds llb = new LatLngBounds(southwest, northeast);
             map.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
         }
+
+        return marker;
     }
 }
