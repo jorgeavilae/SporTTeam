@@ -17,12 +17,15 @@ public abstract class NewEventContract {
     public interface Presenter {
         void openEvent(LoaderManager loaderManager, Bundle b);
         void loadFields(LoaderManager loaderManager, Bundle b);
+        void loadFriends(LoaderManager loaderManager, Bundle b);
         void addEvent(String id, String sport, String field, String address, LatLng coord, String name, String city,
                       String date, String time, String total, String empty,
                       HashMap<String, Boolean> participants,
-                      HashMap<String, SimulatedUser> simulatedParticipants);
+                      HashMap<String, SimulatedUser> simulatedParticipants,
+                      ArrayList<String> friendsId);
 
         void stopLoadFields(LoaderManager loaderManager);
+        void stopLoadFriends(LoaderManager loaderManager);
     }
 
     public interface View {
@@ -35,6 +38,7 @@ public abstract class NewEventContract {
         void setParticipants(HashMap<String, Boolean> participants);
         void setSimulatedParticipants(HashMap<String, SimulatedUser> simulatedParticipants);
         void retrieveFields(ArrayList<Field> fieldList);
+        void retrieveFriendsID(ArrayList<String> friendsIdList);
         void clearUI();
         Context getActivityContext();
         BaseFragment getThis();

@@ -63,6 +63,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     private static GoogleApiClient mGoogleApiClient;
     public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
     ArrayList<Field> mFieldList;
+    public static final String INSTANCE_FRIENDS_LIST_ID = "INSTANCE_FRIENDS_LIST_ID";
+    ArrayList<String> mFriendsList;
 
     @BindView(R.id.new_event_map)
     MapView newEventMap;
@@ -176,7 +178,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
                     newEventEmpty.getText().toString(),
-                    mParticipants, mSimulatedParticipants);
+                    mParticipants, mSimulatedParticipants, mFriendsList);
             return true;
         }
         return false;
@@ -253,6 +255,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
             mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FRIENDS_LIST_ID))
+            mFriendsList = savedInstanceState.getStringArrayList(INSTANCE_FRIENDS_LIST_ID);
 
         //Show newField dialog on rotation if needed, after retrieveFields are called
         if (mFieldList != null && mFieldList.size() == 0 && Utiles.sportNeedsField(mSportId))
@@ -278,6 +282,9 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
             // Only need to show MapActivity on init once, not on rotation
             // Load Fields from ContentProvider and start MapActivity in retrieveFields()
             mNewEventPresenter.loadFields(getLoaderManager(), getArguments());
+
+            // Just load friends once
+            mNewEventPresenter.loadFriends(getLoaderManager(), getArguments());
 
             sInitialize = true;
         } else {
@@ -384,6 +391,14 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         mNewEventPresenter.stopLoadFields(getLoaderManager());
     }
 
+    @Override
+    public void retrieveFriendsID(ArrayList<String> friendsIdList) {
+        mFriendsList = friendsIdList;
+
+        //Since mFieldList are going to be retained in savedInstance there isn't need to be loaded again
+        mNewEventPresenter.stopLoadFriends(getLoaderManager());
+    }
+
     private void startNewFieldDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
         builder.setTitle(R.string.dialog_title_create_new_field)
@@ -423,6 +438,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         super.onSaveInstanceState(outState);
         if (mFieldList != null)
             outState.putParcelableArrayList(INSTANCE_FIELD_LIST_ID, mFieldList);
+        if (mFriendsList != null)
+            outState.putStringArrayList(INSTANCE_FRIENDS_LIST_ID, mFriendsList);
     }
 
     @Override

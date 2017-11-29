@@ -115,6 +115,17 @@ public class UtilesContentProvider {
         return result;
     }
 
+    public static ArrayList<String> cursorToMultipleFriendsID(Cursor cursor) {
+        ArrayList<String> result = new ArrayList<>();
+        if (cursor != null) {
+            /* https://stackoverflow.com/questions/10723770/whats-the-best-way-to-iterate-an-android-cursor#comment33274077_10723771 */
+            //Move to first position to prevent errors
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                result.add(cursor.getString(SportteamContract.UserEntry.COLUMN_USER_ID));
+        }
+        return result;
+    }
+
     public static HashMap<String, Boolean> cursorToMultipleParticipants(Cursor data) {
         HashMap<String, Boolean> map = new HashMap<>();
         if (data != null)

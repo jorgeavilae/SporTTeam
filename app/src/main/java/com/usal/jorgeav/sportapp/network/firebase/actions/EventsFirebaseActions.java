@@ -31,7 +31,7 @@ import java.util.Map;
 public class EventsFirebaseActions {
     private static final String TAG = EventsFirebaseActions.class.getSimpleName();
 
-    public static void addEvent(Event event) {
+    public static void addEvent(Event event, ArrayList<String> friendsId) {
         //Create eventId
         DatabaseReference eventTable = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS);
@@ -57,6 +57,30 @@ public class EventsFirebaseActions {
             String fieldNextEvent = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + event.getField_id() + "/"
                     + FirebaseDBContract.Field.NEXT_EVENTS + "/" + event.getEvent_id();
             childUpdates.put(fieldNextEvent, currentTime);
+        }
+
+        //Notify friend's owner that he has created an event
+        if (friendsId != null && friendsId.size() > 0) {
+            // Notification object
+            MyNotification n;
+            String notificationTitle = MyApplication.getAppContext()
+                    .getString(R.string.notification_title_event_create);
+            String notificationMessage = MyApplication.getAppContext()
+                    .getString(R.string.notification_msg_event_create);
+            @UtilesNotification.NotificationType
+            Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_CREATE;
+            @FirebaseDBContract.NotificationDataTypes
+            Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
+            n = new MyNotification(notificationType, false, notificationTitle,
+                    notificationMessage, event.getEvent_id(), null, type, currentTime);
+
+            //Set Event creation MyNotification in friend
+            String notificationId = event.getEvent_id() + FirebaseDBContract.Event.OWNER;
+            for (String friendID : friendsId) {
+                String eventCreateNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                        + friendID + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+                childUpdates.put(eventCreateNotification, n.toMap());
+            }
         }
 
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);

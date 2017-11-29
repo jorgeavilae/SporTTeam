@@ -100,6 +100,7 @@
     <string name="notification_title_event_request_declined">Petición de entrada rechazada</string>
     <string name="notification_title_event_complete">Partido completo</string>
     <string name="notification_title_event_someone_quit">Partido incompleto</string>
+    <string name="notification_title_event_create">Partido nuevo</string>
     <string name="notification_title_event_edit">Partido editado</string>
     <string name="notification_title_event_delete">Partido cancelado</string>
     <string name="notification_title_alarm_event">Partido encontrado!</string>
@@ -114,6 +115,7 @@
     <string name="notification_msg_event_request_declined">Tu petición de entrada a partido fue rechazada</string>
     <string name="notification_msg_event_complete">Uno de tus partidos se ha llenado de participantes</string>
     <string name="notification_msg_event_someone_quit">Uno de tus partidos ya no está completo</string>
+    <string name="notification_msg_event_create">Uno de tus amigos ha creado un partido</string>
     <string name="notification_msg_event_edit">Un partido ha sido cambiado</string>
     <string name="notification_msg_event_delete">El partido %1$s en %2$s el día %3$s ha sido cancelado</string>
     <string name="notification_msg_alarm_event">Se ha encontrado algún partido que coincide con tu alarma</string>

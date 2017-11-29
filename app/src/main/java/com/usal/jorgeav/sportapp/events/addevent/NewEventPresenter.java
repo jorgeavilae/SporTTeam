@@ -38,7 +38,8 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
     public void addEvent(String id, String sport, String field, String address, LatLng coord, String name, String city,
                          String date, String time, String total, String empty,
                          HashMap<String, Boolean> participants,
-                         HashMap<String, SimulatedUser> simulatedParticipants) {
+                         HashMap<String, SimulatedUser> simulatedParticipants,
+                         ArrayList<String> friendsId) {
 
         // Get owner
         String myUid = Utiles.getCurrentUserId();
@@ -60,7 +61,7 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
 
             Log.d(TAG, "addEvent: "+event);
             if(TextUtils.isEmpty(event.getEvent_id()))
-                EventsFirebaseActions.addEvent(event);
+                EventsFirebaseActions.addEvent(event, friendsId);
             else
                 EventsFirebaseActions.editEvent(event);
 
@@ -151,8 +152,19 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
     }
 
     @Override
+    public void loadFriends(LoaderManager loaderManager, Bundle b) {
+        if (b != null && b.containsKey(NewEventFragment.BUNDLE_SPORT_SELECTED_ID))
+            loaderManager.initLoader(SportteamLoader.LOADER_FRIENDS_ID, b, this);
+    }
+
+    @Override
     public void stopLoadFields(LoaderManager loaderManager) {
         loaderManager.destroyLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT);
+    }
+
+    @Override
+    public void stopLoadFriends(LoaderManager loaderManager) {
+        loaderManager.destroyLoader(SportteamLoader.LOADER_FRIENDS_ID);
     }
 
     @Override
@@ -176,6 +188,11 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
                 String sportId = args.getString(NewEventFragment.BUNDLE_SPORT_SELECTED_ID);
                 return SportteamLoader
                         .cursorLoaderFieldsFromCityWithSport(mNewEventView.getActivityContext(), city, sportId);
+            case SportteamLoader.LOADER_FRIENDS_ID:
+                String currentUserID = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(currentUserID)) return null;
+                return SportteamLoader
+                        .cursorLoaderFriends(mNewEventView.getActivityContext(), currentUserID);
         }
         return null;
     }
@@ -195,6 +212,10 @@ class NewEventPresenter implements NewEventContract.Presenter, LoaderManager.Loa
             case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
                 ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
                 mNewEventView.retrieveFields(dataList);
+                break;
+            case SportteamLoader.LOADER_FRIENDS_ID:
+                ArrayList<String> friendsList = UtilesContentProvider.cursorToMultipleFriendsID(data);
+                mNewEventView.retrieveFriendsID(friendsList);
                 break;
         }
     }
