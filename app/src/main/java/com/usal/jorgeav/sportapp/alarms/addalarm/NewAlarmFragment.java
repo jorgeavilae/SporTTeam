@@ -368,6 +368,23 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
         if (sInitialize) return;
         mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
+
+        newAlarmSport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.pick_sport)
+                        .setItems(R.array.sport_id_entries, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int position) {
+                                String[] sportIDs = getResources().getStringArray(R.array.sport_id_values);
+                                showAlarmField(null, ((AlarmsActivity) getActivity()).mCity);
+                                setSportLayout(sportIDs[position]);
+                            }
+                        });
+                builder.create().show();
+            }
+        });
+
         sInitialize = true;
     }
 
@@ -395,7 +412,9 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             newAlarmFieldButton.setVisibility(View.VISIBLE);
 
             // Sport needs a Field so load from ContentProvider and store it in retrieveFields()
-            mNewAlarmPresenter.loadFields(getLoaderManager(), getArguments());
+            Bundle b = new Bundle();
+            b.putString(BUNDLE_SPORT_SELECTED_ID, sportId);
+            mNewAlarmPresenter.loadFields(getLoaderManager(), b);
         }
     }
 
@@ -410,7 +429,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
              * Not necessary since isn't needed a Field to create a new Alarm
              */
 
-        //Since mFieldList are retain in savedInstance no need to load again
+        //Since mFieldList are retained in savedInstance no need to load again
         mNewAlarmPresenter.stopLoadFields(getLoaderManager());
     }
 
@@ -446,7 +465,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     public void showAlarmSport(String sport) {
         if (sport != null && !TextUtils.isEmpty(sport)) {
             mSportId = sport;
-            int sportResource = Utiles.getSportIconFromResource(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
+            int sportResource = Utiles.getSportIconFromResource(mSportId);
             Glide.with(this).load(sportResource).into(newAlarmSport);
         }
     }
@@ -457,13 +476,16 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             Field f = UtilesContentProvider.getFieldFromContentProvider(fieldId);
             if (f != null) {
                 newAlarmField.setText(f.getName() + ", " + f.getCity());
+                newAlarmCity.setText("");
 
                 ((AlarmsActivity) getActivity()).mFieldId = fieldId;
                 ((AlarmsActivity) getActivity()).mCity = f.getCity();
                 ((AlarmsActivity) getActivity()).mCoord = new LatLng(f.getCoord_latitude(), f.getCoord_longitude());
             }
         } else if (city != null && !TextUtils.isEmpty(city) && getActivity() instanceof AlarmsActivity) {
+            newAlarmField.setText("");
             newAlarmCity.setText(city);
+
             ((AlarmsActivity) getActivity()).mCity = city;
             ((AlarmsActivity) getActivity()).mFieldId = null;
             ((AlarmsActivity) getActivity()).mCoord = null;

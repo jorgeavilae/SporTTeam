@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Make sure these two arrays have same order-->
     <!--Sport ID for internal storage-->
     <string-array name="sport_id_values">
         <item>running</item>
         <item>biking</item>
-        <item>skating</item>
         <item>basketball</item>
+        <item>skating</item>
         <item>football_5</item>
         <item>football_7</item>
         <item>football_11</item>
