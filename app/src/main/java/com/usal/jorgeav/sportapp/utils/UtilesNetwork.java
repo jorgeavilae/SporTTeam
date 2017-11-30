@@ -1,9 +1,11 @@
 package com.usal.jorgeav.sportapp.utils;
 
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.MyPlace;
 
 import org.json.JSONArray;
@@ -119,17 +121,25 @@ public class UtilesNetwork {
         String placeId = jsonFirstResult.getString("place_id");
         String address = jsonFirstResult.getString("formatted_address");
         String shortNameLocality = "";
-        String longNameLocality = "";
+        String city = "";
         JSONArray jsonArrayAddresses = jsonFirstResult.getJSONArray("address_components");
         for (int i = 0; i < jsonArrayAddresses.length(); i++) {
             JSONObject addressComponent = jsonArrayAddresses.getJSONObject(i);
             JSONArray addressTypes = addressComponent.getJSONArray("types");
             for (int j = 0; j < addressTypes.length(); j++) {
-                if (addressTypes.getString(j).equals("locality")) {
-                    shortNameLocality = addressComponent.getString("short_name");
-                    longNameLocality = addressComponent.getString("long_name");
-                }
+                if (addressTypes.getString(j).equals("locality")) //Ciudad - Pueblo
+                    shortNameLocality = addressComponent.getString("long_name");
+                if (addressTypes.getString(j).equals("administrative_area_level_2")) //Provincia
+                    city = addressComponent.getString("long_name");
             }
+        }
+        if (TextUtils.isEmpty(city)) city = shortNameLocality;
+
+        String currentUserCity = UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext());
+        if (!TextUtils.equals(shortNameLocality, currentUserCity)
+                && !TextUtils.equals(city, currentUserCity)) {
+            Log.e(TAG, "getMyPlaceFromJson: Point out of city ("+currentUserCity+") bounds");
+            return new MyPlace("OUT_OF_BOUNDS");
         }
 
         double lat = jsonFirstResult.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
@@ -167,7 +177,7 @@ public class UtilesNetwork {
 //        },
 
         return new MyPlace(statusCode, placeId, address, shortNameLocality,
-                longNameLocality, coordinates, viewPortNortheast, viewPortSouthwest);
+                city, coordinates, viewPortNortheast, viewPortSouthwest);
     }
 
 }

@@ -95,7 +95,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                     MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
                     mFieldId = null;
                     mAddress = myPlace.getAddress();
-                    mCity = myPlace.getShortNameLocality();
+                    mCity = myPlace.getCity();
                     mCoord = myPlace.getCoordinates();
 
                     //When select a place from FieldsFragment's addFieldButton

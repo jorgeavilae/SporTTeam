@@ -176,6 +176,7 @@
     <string name="field_detail_title">Detalles del campo</string>
     <string name="dialog_msg_delete_field">El campo será borrado sólo si no hay próximos partidos en ninguna de sus pistas.</string>
     <string name="toast_place_error_zero_results">Quizás sea una localización remota</string>
+    <string name="toast_place_error_out_of_bounds">El punto seleccionado no está en tu ciudad actual</string>
     <string name="toast_place_error_bad_connection">Comprueba tu conexión a internet</string>
 
     <!-- Alarms -->

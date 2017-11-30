@@ -244,6 +244,9 @@ public class MapsActivity extends AppCompatActivity implements
                     /* Missing latlng or error in result_type */
                     Toast.makeText(this, R.string.toast_place_error_bad_connection, Toast.LENGTH_SHORT).show();
                     break;
+                case "OUT_OF_BOUNDS":
+                    Toast.makeText(this, R.string.toast_place_error_out_of_bounds, Toast.LENGTH_SHORT).show();
+                    break;
                 case "UNKNOWN_ERROR":
                     /* Probably a bad connection */
                     Toast.makeText(this, R.string.toast_place_error_bad_connection, Toast.LENGTH_SHORT).show();

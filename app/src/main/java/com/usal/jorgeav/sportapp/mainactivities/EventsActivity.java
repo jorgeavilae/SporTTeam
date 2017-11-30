@@ -123,7 +123,7 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
                     MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
                     mFieldId = null;
                     mAddress = myPlace.getAddress();
-                    mCity = myPlace.getShortNameLocality();
+                    mCity = myPlace.getCity();
                     mCoord = myPlace.getCoordinates();
                 } else if (data.hasExtra(MapsActivity.ADD_FIELD_SELECTED_EXTRA)) {
                     Utiles.startFieldsActivityAndNewField(this);

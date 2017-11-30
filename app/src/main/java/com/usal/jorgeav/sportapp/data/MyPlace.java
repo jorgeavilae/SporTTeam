@@ -10,19 +10,19 @@ public class MyPlace implements Parcelable {
     private String status;
     private String placeId;
     private String address;
-    private String shortNameLocality;
-    private String longNameLocality;
+    private String shortNameLocality; //Ciudad - Pueblo
+    private String city; //Provincia
     private LatLng coordinates;
     private LatLng viewPortNortheast;
     private LatLng viewPortSouthwest;
 
     public MyPlace(String status, String placeId, String address, String shortNameLocality,
-                   String longNameLocality, LatLng coordinates, LatLng viewPortNortheast, LatLng viewPortSouthwest) {
+                   String city, LatLng coordinates, LatLng viewPortNortheast, LatLng viewPortSouthwest) {
         this.status = status;
         this.placeId = placeId;
         this.address = address;
         this.shortNameLocality = shortNameLocality;
-        this.longNameLocality = longNameLocality;
+        this.city = city;
         this.coordinates = coordinates;
         this.viewPortNortheast = viewPortNortheast;
         this.viewPortSouthwest = viewPortSouthwest;
@@ -52,8 +52,8 @@ public class MyPlace implements Parcelable {
         return shortNameLocality;
     }
 
-    public String getLongNameLocality() {
-        return longNameLocality;
+    public String getCity() {
+        return city;
     }
 
     public LatLng getCoordinates() {
@@ -75,7 +75,7 @@ public class MyPlace implements Parcelable {
                 " placeId='" + placeId + '\'' +
                 ", address='" + address + '\'' +
                 ", shortNameLocality='" + shortNameLocality + '\'' +
-                ", longNameLocality='" + longNameLocality + '\'' +
+                ", city='" + city + '\'' +
                 ", coordinates=" + coordinates +
                 ", viewPortNortheast=" + viewPortNortheast +
                 ", viewPortSouthwest=" + viewPortSouthwest +
@@ -94,7 +94,7 @@ public class MyPlace implements Parcelable {
         dest.writeString(this.placeId);
         dest.writeString(this.address);
         dest.writeString(this.shortNameLocality);
-        dest.writeString(this.longNameLocality);
+        dest.writeString(this.city);
         dest.writeParcelable(this.coordinates, flags);
         dest.writeParcelable(this.viewPortNortheast, flags);
         dest.writeParcelable(this.viewPortSouthwest, flags);
@@ -105,7 +105,7 @@ public class MyPlace implements Parcelable {
         this.placeId = in.readString();
         this.address = in.readString();
         this.shortNameLocality = in.readString();
-        this.longNameLocality = in.readString();
+        this.city = in.readString();
         this.coordinates = in.readParcelable(LatLng.class.getClassLoader());
         this.viewPortNortheast = in.readParcelable(LatLng.class.getClassLoader());
         this.viewPortSouthwest = in.readParcelable(LatLng.class.getClassLoader());

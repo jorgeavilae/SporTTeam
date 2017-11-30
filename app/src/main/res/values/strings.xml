@@ -181,6 +181,7 @@
     <string name="field_detail_title">Field details</string>
     <string name="dialog_msg_delete_field">The field will be deleted only if there is not next event in any of his courts.</string>
     <string name="toast_place_error_zero_results">Maybe is a remote location</string>
+    <string name="toast_place_error_out_of_bounds">Point is out of current city\'s bounds</string>
     <string name="toast_place_error_bad_connection">Check internet connection</string>
 
     <!-- Alarms -->
