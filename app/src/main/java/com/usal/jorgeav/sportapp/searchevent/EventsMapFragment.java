@@ -82,7 +82,6 @@ public class EventsMapFragment extends SupportMapFragment
             mFragmentManagementListener.initFragment(SearchEventsFragment.newInstance(), true);
             return true;
         } else if (item.getItemId() == R.id.action_add_event) {
-            //TODO poner: add event (salta a EventsActivity)
             Intent intent = new Intent(getActivity(), EventsActivity.class);
             intent.putExtra(EventsActivity.CREATE_NEW_EVENT_INTENT_EXTRA, "dummy");
             startActivity(intent);

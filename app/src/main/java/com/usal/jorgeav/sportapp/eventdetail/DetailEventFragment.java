@@ -191,6 +191,8 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void uiSetupForEventRelation(@DetailEventPresenter.EventRelationType int relation) {
+        MenuInflater menuInflater = getActivity().getMenuInflater();
+
         mRelation = relation;
 
         // If event is in the past no action is allowed
@@ -199,11 +201,17 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             detailEventStateButton.setClickable(false);
             detailEventRequests.setVisibility(View.GONE);
             detailEventInvitation.setVisibility(View.GONE);
+
+            // Set menu actions
+            if (mMenu != null) {
+                mMenu.clear();
+                menuInflater.inflate(R.menu.menu_edit_delete, mMenu);
+                mMenu.findItem(R.id.action_delete).setVisible(false);
+            }
             return;
         }
 
         if (getActivity() != null) {
-            MenuInflater menuInflater = getActivity().getMenuInflater();
             switch (relation) {
                 case DetailEventPresenter.RELATION_TYPE_NONE:
                     setupForNone();
