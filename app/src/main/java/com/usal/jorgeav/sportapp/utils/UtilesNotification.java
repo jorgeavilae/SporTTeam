@@ -33,7 +33,8 @@ public class UtilesNotification {
             NOTIFICATION_ID_EVENT_INVITATION_DECLINED, NOTIFICATION_ID_EVENT_REQUEST_RECEIVED,
             NOTIFICATION_ID_EVENT_REQUEST_ACCEPTED, NOTIFICATION_ID_EVENT_REQUEST_DECLINED,
             NOTIFICATION_ID_EVENT_COMPLETE, NOTIFICATION_ID_EVENT_SOMEONE_QUIT,
-            NOTIFICATION_ID_EVENT_EDIT, NOTIFICATION_ID_EVENT_DELETE, NOTIFICATION_ID_ALARM_EVENT})
+            NOTIFICATION_ID_EVENT_EDIT, NOTIFICATION_ID_EVENT_DELETE, NOTIFICATION_ID_ALARM_EVENT,
+            NOTIFICATION_ID_EVENT_CREATE})
     public @interface NotificationType {}
     public static final int NOTIFICATION_ID_ERROR = 0;
     public static final int NOTIFICATION_ID_FRIEND_REQUEST_RECEIVED = 1;
@@ -49,6 +50,8 @@ public class UtilesNotification {
     public static final int NOTIFICATION_ID_EVENT_EDIT = 11;
     public static final int NOTIFICATION_ID_EVENT_DELETE = 12;
     public static final int NOTIFICATION_ID_ALARM_EVENT = 13;
+    public static final int NOTIFICATION_ID_EVENT_CREATE = 14;
+
 
     public static void clearAllNotifications(Context context) {
         NotificationManager notificationManager = (NotificationManager)
