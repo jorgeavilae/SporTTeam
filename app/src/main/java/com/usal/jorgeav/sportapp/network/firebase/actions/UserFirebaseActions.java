@@ -183,7 +183,7 @@ public class UserFirebaseActions {
 
                     //Delete User
                     if (settingsFragment != null)
-                        settingsFragment.userDataDeleted(myUser.getUid(), deleteUser);
+                        settingsFragment.userDataDeleted(myUser.getUid(), myUser.getProfile_picture(), deleteUser);
                 }
             }
 

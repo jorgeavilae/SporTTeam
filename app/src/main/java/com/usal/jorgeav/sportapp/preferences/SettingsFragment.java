@@ -152,7 +152,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         });
     }
 
-    public void userDataDeleted(final String myUserID, final boolean deleteUser) {
+    public void userDataDeleted(final String myUserID, final String profilePicture, final boolean deleteUser) {
         Log.i(TAG, "userDataDeleted: " + myUserID);
         /* https://stackoverflow.com/a/3875204/4235666
          * https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)
@@ -162,6 +162,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 @Override
                 public void run() {
                     if (deleteUser) {
+                        UserFirebaseActions.deleteOldUserPhoto(profilePicture);
                         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                                 .child(myUserID).removeValue();
                         getActivity().onBackPressed();

@@ -206,6 +206,7 @@ public class EventsFirebaseActions {
                 if (e == null) return Transaction.success(mutableData);
                 e.setEvent_id(eventId);
 
+                UserFirebaseActions.deleteOldUserPhoto(e.getSimulated_participants().get(simulatedUid).getProfile_picture());
                 e.deleteSimulatedParticipant(simulatedUid);
 
                 // If teams needed, empty players must be restored
@@ -268,6 +269,7 @@ public class EventsFirebaseActions {
                     for (Map.Entry<String, SimulatedUser> entry : map.entrySet()) {
                         if (entry.getValue().getOwner().equals(uid)) {
                             usersLeaving++;
+                            UserFirebaseActions.deleteOldUserPhoto(entry.getValue().getProfile_picture());
                             e.deleteSimulatedParticipant(entry.getKey());
                         }
                     }
