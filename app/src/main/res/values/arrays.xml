@@ -5,8 +5,8 @@
     <string-array name="sport_id_values">
         <item>running</item>
         <item>biking</item>
-        <item>basketball</item>
         <item>skating</item>
+        <item>basketball</item>
         <item>football_5</item>
         <item>football_7</item>
         <item>football_11</item>
@@ -16,8 +16,8 @@
     <string-array name="sport_id_entries">
         <item>@string/running</item>
         <item>@string/biking</item>
-        <item>@string/basketball</item>
         <item>@string/skating</item>
+        <item>@string/basketball</item>
         <item>@string/football_5</item>
         <item>@string/football_7</item>
         <item>@string/football_11</item>
