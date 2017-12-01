@@ -220,7 +220,7 @@
     <string name="friend_requests_received">Peticiones de amistad recibidas</string>
     <string name="send_user_request">Enviar petición de amistad</string>
     <string name="sports_practiced">Deportes que practica</string>
-    <string name="pick_sports_practiced">Deportes que practicas</string>
+    <string name="pick_sports">Elige deportes</string>
     <string name="toast_error_autocomplete_city">Error buscando ciudades</string>
     <string name="delete_friend">Borrar amigo</string>
     <string name="answer_request">Contestar petición amistad</string>

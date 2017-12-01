@@ -227,7 +227,7 @@
     <string name="friend_requests_received">Friend requests received</string>
     <string name="send_user_request">Send request</string>
     <string name="sports_practiced">Sports practiced</string>
-    <string name="pick_sports_practiced">Pick sports practiced</string>
+    <string name="pick_sports">Pick sports</string>
     <string name="toast_error_autocomplete_city">Error looking for cities</string>
     <string name="delete_friend">Delete friend</string>
     <string name="answer_request">Accept friend?</string>
