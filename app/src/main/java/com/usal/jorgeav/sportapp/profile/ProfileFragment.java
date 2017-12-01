@@ -428,10 +428,12 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 .into(new BitmapImageViewTarget(userImage) {
             @Override
             protected void setResource(Bitmap resource) {
+                // Set a rounded profile image
                 RoundedBitmapDrawable circularBitmapDrawable =
                         RoundedBitmapDrawableFactory.create(MyApplication.getAppContext().getResources(), resource);
                 circularBitmapDrawable.setCircular(true);
                 userImage.setImageDrawable(circularBitmapDrawable);
+                // Bigger profile image on clicks
                 userImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

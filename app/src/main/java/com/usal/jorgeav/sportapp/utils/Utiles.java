@@ -72,6 +72,13 @@ public class Utiles {
         return myUserEmail;
     }
 
+    public static String getCurrentUserPhoto() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        Uri myUserPhotoUri = null; if (fUser != null) myUserPhotoUri = fUser.getPhotoUrl();
+        String myUserPhoto = ""; if (myUserPhotoUri != null) myUserPhoto = myUserPhotoUri.toString();
+        return myUserPhoto;
+    }
+
     public static float getFloatFromResources(Resources resources, int resourceID) {
         TypedValue outValue = new TypedValue();
         resources.getValue(resourceID, outValue, true);

@@ -216,4 +216,16 @@ public class UserFirebaseActions {
             }
         }).addOnSuccessListener(listener);
     }
+
+    public static void deleteOldUserPhoto(String oldPhotoUrl) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference photoRef = storage.getReferenceFromUrl(oldPhotoUrl);
+        photoRef.delete().addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.e(TAG, "deleteOldUserPhoto:delete:onFailure: ", exception);
+            }
+        });
+    }
 }

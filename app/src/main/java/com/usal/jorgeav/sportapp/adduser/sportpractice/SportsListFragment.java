@@ -102,7 +102,7 @@ public class SportsListFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         hideSoftKeyboard();
-        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_sports_practiced), this);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_sports), this);
         if (mActionBarIconManagementListener != null) mActionBarIconManagementListener.setToolbarAsUp();
         mSportAdapter.replaceData(loadSports());
         showContent();

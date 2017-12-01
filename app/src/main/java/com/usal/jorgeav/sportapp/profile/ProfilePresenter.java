@@ -281,22 +281,30 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
                 // Handle successful uploads on complete
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 if (downloadUrl != null) {
+                    String oldPhotoUrl = Utiles.getCurrentUserPhoto();
+
                     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
                     if (fUser == null) return;
 
+                    // Update photo URL in Firebase Auth profile
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setPhotoUri(downloadUrl)
                             .build();
                     fUser.updateProfile(profileUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            // Update NavigationDrawer header
                             if (mUserView.getActivityContext() instanceof ActivityContracts.ActionBarIconManagement)
                                 ((ActivityContracts.ActionBarIconManagement) mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
                         }
                     });
 
+                    // Update photo URL in Firebase Database
                     UserFirebaseActions.updateUserPhoto(fUser.getUid(), downloadUrl.toString());
                     UsersFirebaseSync.loadAProfile(null, fUser.getUid(), false);
+
+                    // Delete old photo in Firebase Storage
+                    UserFirebaseActions.deleteOldUserPhoto(oldPhotoUrl);
                 }
             }
         });
