@@ -115,6 +115,11 @@ public class UserFirebaseActions {
                 .child(myUid).setValue(token);
     }
 
+    public static void deleteUserToken(String myUid) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_TOKENS)
+                .child(myUid).removeValue();
+    }
+
     public static void deleteCurrentUser(String myUserId, final SettingsFragment settingsFragment, final boolean deleteUser) {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS).child(myUserId);
 

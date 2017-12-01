@@ -32,8 +32,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
+import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.preferences.SettingsActivity;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
 import butterknife.BindView;
@@ -207,6 +209,9 @@ public class BaseActivity extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
                 mDisplayedFragment = null;
             }
+
+            // Delete token to stop receiving new notifications
+            UserFirebaseActions.deleteUserToken(Utiles.getCurrentUserId());
             mAuth.signOut();
         } else if (item.getItemId() == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
