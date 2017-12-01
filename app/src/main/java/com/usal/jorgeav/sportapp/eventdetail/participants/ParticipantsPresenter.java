@@ -27,7 +27,7 @@ class ParticipantsPresenter implements ParticipantsContract.Presenter, LoaderMan
     @Override
     public void quitEvent(String userId, String eventId, boolean deleteSimulatedParticipant) {
         if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(eventId))
-            EventsFirebaseActions.quitEvent(userId, eventId, deleteSimulatedParticipant);
+            EventsFirebaseActions.quitEvent(userId, eventId, deleteSimulatedParticipant, true);
     }
 
     @Override

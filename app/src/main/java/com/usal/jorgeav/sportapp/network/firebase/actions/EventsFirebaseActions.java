@@ -237,7 +237,11 @@ public class EventsFirebaseActions {
         });
     }
 
-    public static void quitEvent(final String uid, final String eventId, final boolean deleteSimulatedUsers) {
+    public static void quitEvent(String uid, String eventId, boolean deleteSimulatedUsers) {
+        quitEvent(uid, eventId, deleteSimulatedUsers, false);
+    }
+    public static void quitEvent(final String uid, final String eventId,
+                                 final boolean deleteSimulatedUsers, final boolean notifyUser) {
         //Delete Assistant User to that Event (uid can be another user, not the current one)
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -264,7 +268,7 @@ public class EventsFirebaseActions {
 
                 int usersLeaving = 0;
                 // Delete simulated participants added by User UID
-                if (deleteSimulatedUsers) {
+                if (deleteSimulatedUsers && e.getSimulated_participants() != null) {
                     Map<String, SimulatedUser> map = new HashMap<>(e.getSimulated_participants());
                     for (Map.Entry<String, SimulatedUser> entry : map.entrySet()) {
                         if (entry.getValue().getOwner().equals(uid)) {
@@ -298,6 +302,29 @@ public class EventsFirebaseActions {
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
+                if (notifyUser) {
+                    // Notification object
+                    MyNotification n;
+                    String notificationTitle = MyApplication.getAppContext()
+                            .getString(R.string.notification_title_event_expelled);
+                    String notificationMessage = MyApplication.getAppContext()
+                            .getString(R.string.notification_msg_event_expelled);
+                    @UtilesNotification.NotificationType
+                    Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_EXPELLED;
+                    @FirebaseDBContract.NotificationDataTypes
+                    Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
+                    long currentTime = System.currentTimeMillis();
+                    n = new MyNotification(notificationType, false, notificationTitle,
+                            notificationMessage, eventId, null, type, currentTime);
+
+                    //Set Event MyNotification in user expelled
+                    String notificationId = eventId + FirebaseDBContract.Event.PARTICIPANTS + false;
+                    String eventExpelledNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                            + uid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+                    FirebaseDatabase.getInstance().getReference()
+                            .child(eventExpelledNotification).setValue(n.toMap());
+                }
+
                 EventsFirebaseSync.loadAnEvent(eventId);
             }
         });

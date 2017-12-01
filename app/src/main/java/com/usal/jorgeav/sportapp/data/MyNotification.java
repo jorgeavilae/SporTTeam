@@ -68,6 +68,8 @@ public class MyNotification {
             return UtilesNotification.NOTIFICATION_ID_ALARM_EVENT;
         if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_CREATE)
             return UtilesNotification.NOTIFICATION_ID_EVENT_CREATE;
+        if (type == (long) UtilesNotification.NOTIFICATION_ID_EVENT_EXPELLED)
+            return UtilesNotification.NOTIFICATION_ID_EVENT_EXPELLED;
         return UtilesNotification.NOTIFICATION_ID_ERROR;
     }
 

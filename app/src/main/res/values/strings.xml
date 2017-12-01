@@ -106,6 +106,7 @@
     <string name="notification_title_event_create">New Event</string>
     <string name="notification_title_event_edit">Event edited</string>
     <string name="notification_title_event_delete">Event cancelled</string>
+    <string name="notification_title_event_expelled">Expelled from an Event</string>
     <string name="notification_title_alarm_event">Event coincidence</string>
 
     <string name="notification_msg_friend_request_received">You have a new friend request</string>
@@ -121,6 +122,7 @@
     <string name="notification_msg_event_create">An event have been created by your friend</string>
     <string name="notification_msg_event_edit">The event has been changed</string>
     <string name="notification_msg_event_delete">The %1$s event in %2$s on %3$s has been cancelled</string>
+    <string name="notification_msg_event_expelled">You have been expelled from an event by the owner</string>
     <string name="notification_msg_alarm_event">Some event coincidence in your area</string>
 
     <!-- Strings for preference Activity -->
