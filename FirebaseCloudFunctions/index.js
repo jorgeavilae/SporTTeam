@@ -2,18 +2,20 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
-// show notification in phone when new notifications are stored
-exports.notify = functions.database.ref('users/{userId}/notifications/{notificationId}').onWrite(event => {
+// API onWrite(): https://firebase.google.com/docs/reference/functions/functions.database.RefBuilder?hl=es-419#onWrite
 
-	// !event.data.val() is a deleted event
-	if (!event.data.val()) {
+// show notification in phone when new notifications are stored
+exports.notify = functions.database.ref('users/{userId}/notifications/{notificationId}').onWrite((change, context) => {
+
+	// If !change.after.val() is a deleted event
+	if (!change.after.val()) {
 		console.log("Not a new write event");
 		return;
 	}
 
-	const userID = event.params.userId;
-	const notificationRef = event.data.ref.toString();
-	const notificationStored = event.data.val();
+	const userID = context.params.userId;
+	const notificationRef = change.after.ref.toString();
+	const notificationStored = change.after.val();
 	console.log(notificationStored);
 	console.log(notificationRef);
 	console.log(userID);
@@ -38,11 +40,11 @@ exports.notify = functions.database.ref('users/{userId}/notifications/{notificat
 	const data_type = notificationStored.data_type.toString();
 	const date = notificationStored.date.toString();
 	var temp1 = "";
-	if (notificationStored.extra_data_one != null)
+	if (notificationStored.extra_data_one !== undefined)
 		temp1 = notificationStored.extra_data_one.toString();
 	const extra_data_one = temp1;
 	var temp2 = "";
-	if (notificationStored.extra_data_two != null)
+	if (notificationStored.extra_data_two !== undefined)
 		temp2 = notificationStored.extra_data_two.toString();
 	const extra_data_two = temp2;
 
