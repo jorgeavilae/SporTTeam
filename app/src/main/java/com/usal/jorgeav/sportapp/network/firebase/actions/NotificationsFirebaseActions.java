@@ -76,7 +76,7 @@ public class NotificationsFirebaseActions {
         String notificationId = event.getEvent_id() + FirebaseDBContract.Event.EMPTY_PLAYERS;
 
         Map<String, Object> childUpdates = new HashMap<>();
-        if (event.getParticipants() != null)
+        if (event.getParticipants() != null && event.getParticipants().size() > 0)
             for (Map.Entry<String, Boolean> entry : event.getParticipants().entrySet())
                 if (entry.getValue() && !entry.getKey().equals(myUserID)) {
                     String eventCompleteNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
@@ -90,7 +90,8 @@ public class NotificationsFirebaseActions {
             childUpdates.put(eventCompleteNotification, n.toMap());
         }
 
-        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
+        if (!childUpdates.isEmpty())
+            FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
     public static void checkAlarmsForNotifications() {

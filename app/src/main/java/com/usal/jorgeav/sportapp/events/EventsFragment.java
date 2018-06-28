@@ -157,10 +157,12 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
 
     @Override
     public void onEventSelected(CalendarEvent event) {
-        MyCalendarEvent myCalendarEvent = mEventList.getItemAtPosition((int) event.getId());
+        if (event instanceof MyCalendarEvent) {
+            MyCalendarEvent myCalendarEvent = mEventList.getItemAtPosition((int) event.getId());
 
-        Fragment newFragment = DetailEventFragment.newInstance(myCalendarEvent.getEvent_id());
-        mFragmentManagementListener.initFragment(newFragment, true);
+            Fragment newFragment = DetailEventFragment.newInstance(myCalendarEvent.getEvent_id());
+            mFragmentManagementListener.initFragment(newFragment, true);
+        }
     }
 
     @Override
