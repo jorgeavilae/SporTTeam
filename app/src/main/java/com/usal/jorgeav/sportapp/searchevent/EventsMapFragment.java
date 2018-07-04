@@ -152,14 +152,33 @@ public class EventsMapFragment extends SupportMapFragment
             Event event = mEventsList.get(i);
             LatLng latLong = new LatLng(event.getCoord_latitude(), event.getCoord_longitude());
 
+            // Add marker to map
             float hue = Utiles.getFloatFromResources(getResources(), R.dimen.hue_of_colorSportteam_logo);
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(latLong)
                     .title(event.getName())
                     .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+
+            // If there was already a marker in that position,
+            // the new one is offset so that it appears next to it.
+            // While loop: when there are multiple events in same position,
+            // should apply multiple offsets.
+            while (lookForMarkerInSamePosition(m, mMarkersList) > -1) {
+                LatLng newLatLong = new LatLng(m.getPosition().latitude, m.getPosition().longitude+0.00005);
+                m.setPosition(newLatLong);
+            }
+
+            // Store marker
             m.setTag(i);
             mMarkersList.add(m);
         }
+    }
+
+    private int lookForMarkerInSamePosition(Marker m, ArrayList<Marker> markersList) {
+        for (int i = 0; i < markersList.size(); i++)
+            if (markersList.get(i).getPosition().equals(m.getPosition()))
+                return i;
+        return -1;
     }
 
     @Override
@@ -216,7 +235,7 @@ public class EventsMapFragment extends SupportMapFragment
         if (position != null) {
             Event event = mEventsList.get(position);
 
-            // Open Detail Field
+            // Open event's details
             Fragment newFragment = DetailEventFragment.newInstance(event.getEvent_id());
             mFragmentManagementListener.initFragment(newFragment, true);
 
