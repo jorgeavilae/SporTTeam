@@ -161,6 +161,7 @@
     <string name="toast_sport_invalid">Sport invalid</string>
     <string name="created_by">Created by: %1$s</string>
     <string name="dialog_title_vote">Rate this court</string>
+    <string name="dialog_vote_error">Invalid vote</string>
     <string name="select_place">Select a place</string>
     <string name="select_field">Select field</string>
     <string name="open_24h">Open 24h</string>

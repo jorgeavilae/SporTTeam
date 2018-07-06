@@ -29,12 +29,14 @@ class DetailFieldPresenter implements DetailFieldContract.Presenter, LoaderManag
     }
 
     @Override
-    public void voteSportInField(String fieldId, String sportId, float rating) {
+    public boolean voteSportInField(String fieldId, String sportId, float rating) {
         if (fieldId != null && !TextUtils.isEmpty(fieldId)
                 && sportId != null && !TextUtils.isEmpty(sportId)
                 && rating > 0 && rating <= 5) {
             FieldsFirebaseActions.voteField(fieldId, sportId, rating);
+            return true;
         }
+        return false;
     }
 
     @Override

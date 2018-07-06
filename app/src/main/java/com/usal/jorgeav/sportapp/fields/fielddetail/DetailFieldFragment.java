@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.GoogleMap;
@@ -177,7 +178,8 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
                     public void onClick(DialogInterface dialog, int id) {
                         RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_for_vote);
                         String sportId = s.getSportID();
-                        mPresenter.voteSportInField(mFieldId, sportId, ratingBar.getRating());
+                        if (!mPresenter.voteSportInField(mFieldId, sportId, ratingBar.getRating()))
+                            Toast.makeText(getActivityContext(), R.string.dialog_vote_error, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null);

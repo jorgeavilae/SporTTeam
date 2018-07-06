@@ -158,6 +158,7 @@
     <string name="toast_sport_invalid">Deporte inválido</string>
     <string name="created_by">Creado por: %1$s</string>
     <string name="dialog_title_vote">Valora esta pista</string>
+    <string name="dialog_vote_error">Voto inválido</string>
     <string name="select_place">Selcciona un sitio</string>
     <string name="select_field">Selecciona un campo</string>
     <string name="open_24h">Abierto 24h</string>

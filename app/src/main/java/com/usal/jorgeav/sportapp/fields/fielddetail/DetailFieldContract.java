@@ -23,7 +23,7 @@ abstract class DetailFieldContract {
     public interface Presenter {
         void openField(LoaderManager loaderManager, Bundle b);
 
-        void voteSportInField(String fieldId, String sportId, float rating);
+        boolean voteSportInField(String fieldId, String sportId, float rating);
         void deleteField(String mFieldId);
     }
 
