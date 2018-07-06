@@ -135,6 +135,7 @@ public class UtilesNetwork {
         }
         if (TextUtils.isEmpty(city)) city = shortNameLocality;
 
+        // Check if address belongs to current user's city
         String currentUserCity = UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext());
         if (!TextUtils.equals(shortNameLocality, currentUserCity)
                 && !TextUtils.equals(city, currentUserCity)) {
