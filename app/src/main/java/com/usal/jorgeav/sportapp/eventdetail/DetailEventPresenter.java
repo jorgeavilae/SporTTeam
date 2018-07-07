@@ -248,7 +248,7 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
     public void acceptEventInvitation(String eventId, String sender) {
         String myUid = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(sender))
-            InvitationFirebaseActions.acceptEventInvitation(myUid, eventId, sender);
+            InvitationFirebaseActions.acceptEventInvitation(mView.getThis(), myUid, eventId, sender);
     }
 
     @Override

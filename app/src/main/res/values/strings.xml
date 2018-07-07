@@ -244,7 +244,7 @@
     <!-- Simulated User -->
     <string name="new_simulated_user">New simulated user</string>
     <string name="new_simulated_user_invalid_arg">Error validating data</string>
-    <string name="no_empty_players_for_sim_user">There is not empty slots for Simulated User</string>
+    <string name="no_empty_players_for_sim_user">There are no empty slots for Simulated Users</string>
 
     <!-- Events Strings-->
     <string name="simulated_participants">Simulated Participants</string>
@@ -272,4 +272,5 @@
     <string name="dialog_msg_accept_participant">Accept as participant?</string>
     <string name="dialog_msg_unblock_participant">Unblock user? The user will have to send another request.</string>
     <string name="pick_event">Pick event</string>
+    <string name="no_empty_players_for_user">Event complete. There are no more empty slots for Users</string>
 </resources>

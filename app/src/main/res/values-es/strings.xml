@@ -269,4 +269,5 @@
     <string name="dialog_msg_accept_participant">Aceptar como participante?</string>
     <string name="dialog_msg_unblock_participant">Desbloquear usuario? Tendrá que volver a mandar otra petición.</string>
     <string name="pick_event">Elegir partido</string>
+    <string name="no_empty_players_for_user">Partido completo. No hay puestos libres para más usuarios.</string>
 </resources>

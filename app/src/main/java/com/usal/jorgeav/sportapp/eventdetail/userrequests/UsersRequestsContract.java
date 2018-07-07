@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
-abstract class UsersRequestsContract {
+import com.usal.jorgeav.sportapp.BaseFragment;
+
+public abstract class UsersRequestsContract {
 
     public interface Presenter {
         void loadUsersRequests(LoaderManager loaderManager, Bundle b);
@@ -18,6 +20,8 @@ abstract class UsersRequestsContract {
     public interface View {
         void showUsersRequests(Cursor cursor);
         void showRejectedUsers(Cursor cursor);
+        void showMsgFromBackgroundThread(int msgResource);
+        BaseFragment getThis();
         Context getActivityContext();
     }
 }

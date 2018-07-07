@@ -8,10 +8,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.MyNotification;
+import com.usal.jorgeav.sportapp.eventdetail.userrequests.UsersRequestsContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
@@ -79,15 +81,15 @@ public class EventRequestFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
-    public static void acceptUserRequestToThisEvent(final String otherUid, final String eventId) {
+    public static void acceptUserRequestToThisEvent(final BaseFragment fragment, final String otherUid, final String eventId) {
         //Add Assistant User to my Event
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
-                .child(eventId);
+                .child(eventId).child(FirebaseDBContract.DATA);
         eventRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                Event e = mutableData.child(FirebaseDBContract.DATA).getValue(Event.class);
+                Event e = mutableData.getValue(Event.class);
                 if (e == null) return Transaction.success(mutableData);
                 e.setEvent_id(eventId);
 
@@ -99,9 +101,15 @@ public class EventRequestFirebaseActions {
                     e.addToParticipants(otherUid, true);
                     if (e.getEmpty_players() == 0)
                         NotificationsFirebaseActions.eventCompleteNotifications(true, e);
+                } else if (e.getEmpty_players() == 0) {
+                    displayMessage(R.string.no_empty_players_for_user);
+                    //Ignore retry and abort transaction
+                    return Transaction.abort();
                 }
 
-                mutableData.child(FirebaseDBContract.DATA).setValue(e);
+                // Set ID to null to not store ID under data in Event's tree in Firebase.
+                e.setEvent_id(null);
+                mutableData.setValue(e);
 
                 /* This actions must be performed in here https://stackoverflow.com/a/39608139/4235666 */
 
@@ -152,10 +160,43 @@ public class EventRequestFirebaseActions {
                 return Transaction.success(mutableData);
             }
 
+            private void displayMessage(int msgResource) {
+                if (fragment != null && fragment instanceof UsersRequestsContract.View)
+                    ((UsersRequestsContract.View) fragment).showMsgFromBackgroundThread(msgResource);
+                else
+                    Log.e(TAG, "acceptUserRequestToThisEvent: doTransaction: " +
+                            "fragment not instanceof UsersRequestsContract.View");
+            }
+
             @Override
-            public void onComplete(DatabaseError databaseError, boolean b,
+            public void onComplete(DatabaseError databaseError, boolean committed,
                                    DataSnapshot dataSnapshot) {
-                // Transaction completed
+
+                if (databaseError == null && !committed) { // Transaction aborted
+                    Map<String, Object> childUpdates = new HashMap<>();
+
+                    //Delete Event Request Sent in that User
+                    String userEventRequestsSentEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
+                            + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
+                    childUpdates.put(userEventRequestsSentEvent, null);
+
+                    //Delete Event Request Received in my Event
+                    String eventUserRequestsUser = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                            + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + otherUid;
+                    childUpdates.put(eventUserRequestsUser, null);
+
+                    // Delete User Request MyNotification in ownerId
+                    Event e = dataSnapshot.getValue(Event.class);
+                    if (e != null) {
+                        String notificationId = otherUid + FirebaseDBContract.User.EVENTS_REQUESTS + eventId;
+                        String userRequestsEventReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                                + e.getOwner() + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+                        childUpdates.put(userRequestsEventReceivedNotification, null);
+                    }
+
+                    FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
+                }
+
                 Log.i(TAG, "acceptUserRequestToThisEvent: onComplete:" + databaseError);
             }
         });

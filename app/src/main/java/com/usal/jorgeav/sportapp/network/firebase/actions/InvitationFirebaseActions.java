@@ -1,17 +1,21 @@
 package com.usal.jorgeav.sportapp.network.firebase.actions;
 
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
+import com.usal.jorgeav.sportapp.eventdetail.DetailEventContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
@@ -94,7 +98,7 @@ public class InvitationFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
-    public static void acceptEventInvitation(final String myUid, final String eventId, final String sender) {
+    public static void acceptEventInvitation(final BaseFragment fragment, final String myUid, final String eventId, final String sender) {
         //Add Assistant User to that Event
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -114,6 +118,10 @@ public class InvitationFirebaseActions {
                     e.addToParticipants(myUid, true);
                     if (e.getEmpty_players() == 0)
                         NotificationsFirebaseActions.eventCompleteNotifications(true, e);
+                } else if (e.getEmpty_players() == 0) {
+                    displayMessage(R.string.no_empty_players_for_user);
+                    //Ignore retry and abort transaction
+                    return Transaction.abort();
                 }
 
                 // Set ID to null to not store ID under data in Event's tree in Firebase.
@@ -123,6 +131,24 @@ public class InvitationFirebaseActions {
                 //Add Assistant Event to my User
                 String userParticipationEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                         + "/" + FirebaseDBContract.User.EVENTS_PARTICIPATION + "/" + eventId;
+
+                //Add Invitation Accept MyNotification in other User
+                String notificationAcceptedId = myUid + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + eventId;
+                String userInvitationAcceptedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                        + sender + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationAcceptedId;
+
+                // Notification object
+                long currentTime = System.currentTimeMillis();
+                String notificationTitle = MyApplication.getAppContext()
+                        .getString(R.string.notification_title_event_invitation_accepted);
+                String notificationMessage = MyApplication.getAppContext()
+                        .getString(R.string.notification_msg_event_invitation_accepted);
+                @FirebaseDBContract.NotificationDataTypes
+                Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
+                @UtilesNotification.NotificationType
+                Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED;
+                MyNotification n = new MyNotification(notificationType, false, notificationTitle,
+                        notificationMessage, eventId, null, type, currentTime);
 
                 //Delete Invitation Received in my User
                 String userInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
@@ -141,24 +167,6 @@ public class InvitationFirebaseActions {
                 String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                         + myUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
-                //Set Invitation Accept MyNotification in other User
-                String notificationAcceptedId = myUid + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + eventId;
-                String userInvitationAcceptedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
-                        + sender + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationAcceptedId;
-
-                // Notification object
-                long currentTime = System.currentTimeMillis();
-                String notificationTitle = MyApplication.getAppContext()
-                        .getString(R.string.notification_title_event_invitation_accepted);
-                String notificationMessage = MyApplication.getAppContext()
-                        .getString(R.string.notification_msg_event_invitation_accepted);
-                @FirebaseDBContract.NotificationDataTypes
-                Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_EVENT;
-                @UtilesNotification.NotificationType
-                Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED;
-                MyNotification n = new MyNotification(notificationType, false, notificationTitle,
-                        notificationMessage, eventId, null, type, currentTime);
-
                 Map<String, Object> childUpdates = new HashMap<>();
                 childUpdates.put(userParticipationEvent, true);
                 childUpdates.put(userInvitationReceived, null);
@@ -172,10 +180,46 @@ public class InvitationFirebaseActions {
                 return Transaction.success(mutableData);
             }
 
+            private void displayMessage(int msgResource) {
+                if (fragment != null && fragment instanceof DetailEventContract.View)
+                    ((DetailEventContract.View) fragment).showMsgFromBackgroundThread(msgResource);
+                else
+                    Log.e(TAG, "acceptEventInvitation: doTransaction: " +
+                            "fragment not instanceof DetailEventContract.View");
+            }
+
             @Override
-            public void onComplete(DatabaseError databaseError, boolean b,
+            public void onComplete(DatabaseError databaseError, boolean committed,
                                    DataSnapshot dataSnapshot) {
-                // Transaction completed
+
+                if (databaseError == null && !committed) { // Transaction aborted
+                    Map<String, Object> childUpdates = new HashMap<>();
+
+                    //Delete Invitation Received in my User
+                    String userInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
+                            + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED + "/" + eventId;
+                    childUpdates.put(userInvitationReceived, null);
+
+                    //Delete Invitation Sent in Event
+                    String eventInvitationSent = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
+                            + "/" + FirebaseDBContract.Event.INVITATIONS + "/" + myUid;
+                    childUpdates.put(eventInvitationSent, null);
+
+                    //Delete Invitation Sent in other User
+                    String userInvitationSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + sender
+                            + "/" + FirebaseDBContract.User.EVENTS_INVITATIONS_SENT + "/" + eventId;
+                    childUpdates.put(userInvitationSent, null);
+
+                    //Delete Invitation Received MyNotification in other User
+                    String notificationId = eventId + FirebaseDBContract.User.EVENTS_INVITATIONS_RECEIVED;
+                    String userInvitationReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
+                            + myUid + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
+                    childUpdates.put(userInvitationReceivedNotification, null);
+
+                    FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
+                }
+
+                Log.i(TAG, "acceptUserRequestToThisEvent: onComplete:" + databaseError);
             }
         });
     }

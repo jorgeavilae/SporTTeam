@@ -13,8 +13,8 @@ public abstract class SimulateParticipantContract {
 
     public interface View {
         void croppedResult(Uri photoCroppedUri);
-        void showResult(int msgResource);
-        void showError(int msgResource);
+        void showMsgFromBackgroundThread(int msgResource);
+        void showMsgFromUIThread(int msgResource);
         void showContent();
         void hideContent();
         BaseFragment getThis();

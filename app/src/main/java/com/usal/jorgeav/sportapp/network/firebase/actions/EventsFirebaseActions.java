@@ -152,30 +152,18 @@ public class EventsFirebaseActions {
                 String simulatedParticipantKey = eventRef
                         .child(FirebaseDBContract.Event.SIMULATED_PARTICIPANTS).push().getKey();
 
-
                 // If no teams needed, empty players doesn't count
                 if (!Utiles.sportNeedsTeams(e.getSport_id())) {
                     e.addToSimulatedParticipants(simulatedParticipantKey, su);
-                    if (fragment != null && fragment instanceof SimulateParticipantContract.View)
-                        ((SimulateParticipantContract.View) fragment).showResult(-1);
-                    else
-                        Log.e(TAG, "addSimulatedParticipant: doTransaction: " +
-                                "fragment not instanceof SimulateParticipantContract.View");
+                    displayMessage(-1);
                 } else if (e.getEmpty_players() > 0) {
                     e.setEmpty_players(e.getEmpty_players() - 1);
                     e.addToSimulatedParticipants(simulatedParticipantKey, su);
                     if (e.getEmpty_players() == 0)
                         NotificationsFirebaseActions.eventCompleteNotifications(true, e);
-                    if (fragment != null && fragment instanceof SimulateParticipantContract.View)
-                        ((SimulateParticipantContract.View) fragment).showResult(-1);
-                    else
-                        Log.e(TAG, "addSimulatedParticipant: doTransaction: " +
-                                "fragment not instanceof SimulateParticipantContract.View");
-                } else if (fragment != null && fragment instanceof SimulateParticipantContract.View)
-                    ((SimulateParticipantContract.View) fragment).showResult(R.string.no_empty_players_for_sim_user);
-                else
-                    Log.e(TAG, "addSimulatedParticipant: doTransaction: " +
-                            "fragment not instanceof SimulateParticipantContract.View");
+                    displayMessage(-1);
+                } else if (e.getEmpty_players() == 0)
+                    displayMessage(R.string.no_empty_players_for_sim_user);
 
                 // Set ID to null to not store ID under data in Event's tree in Firebase.
                 e.setEvent_id(null);
@@ -183,14 +171,19 @@ public class EventsFirebaseActions {
                 return Transaction.success(mutableData);
             }
 
+            private void displayMessage(int msgResource) {
+                if (fragment != null && fragment instanceof SimulateParticipantContract.View)
+                    ((SimulateParticipantContract.View) fragment).showMsgFromBackgroundThread(msgResource);
+                else
+                    Log.e(TAG, "addSimulatedParticipant: doTransaction: " +
+                            "fragment not instanceof SimulateParticipantContract.View");
+            }
+
             @Override
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
-                if (b)
-                    Log.d(TAG, "addSimulatedParticipant: onComplete: Transaction completed");
-                else
-                    Log.e(TAG, "addSimulatedParticipant: onComplete: Transaction error " + databaseError);
+                Log.i(TAG, "addSimulatedParticipant: onComplete:" + databaseError);
             }
         });
     }

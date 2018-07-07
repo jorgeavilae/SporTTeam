@@ -24,7 +24,7 @@ class UsersRequestsPresenter implements UsersRequestsContract.Presenter, LoaderM
     @Override
     public void acceptUserRequestToThisEvent(String eventId, String uid) {
         if (!TextUtils.isEmpty(eventId) && !TextUtils.isEmpty(uid))
-            EventRequestFirebaseActions.acceptUserRequestToThisEvent(uid, eventId);
+            EventRequestFirebaseActions.acceptUserRequestToThisEvent(mUsersRequestsView.getThis(), uid, eventId);
     }
 
     @Override

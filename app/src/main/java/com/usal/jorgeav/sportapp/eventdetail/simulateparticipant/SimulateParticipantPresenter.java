@@ -35,12 +35,12 @@ class SimulateParticipantPresenter implements SimulateParticipantContract.Presen
                 mAge = Long.parseLong(age);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-                mView.showError(R.string.new_simulated_user_invalid_arg);
+                mView.showMsgFromUIThread(R.string.new_simulated_user_invalid_arg);
                 return;
             }
 
             if (mAge <= 12 || mAge >= 100) {
-                mView.showError(R.string.error_incorrect_age);
+                mView.showMsgFromUIThread(R.string.error_incorrect_age);
                 return;
             }
 
@@ -56,7 +56,7 @@ class SimulateParticipantPresenter implements SimulateParticipantContract.Presen
             }
             mView.hideContent();
         } else
-            mView.showError(R.string.new_simulated_user_invalid_arg);
+            mView.showMsgFromUIThread(R.string.new_simulated_user_invalid_arg);
     }
 
     private void storePhotoOnFirebase(Uri photo) {

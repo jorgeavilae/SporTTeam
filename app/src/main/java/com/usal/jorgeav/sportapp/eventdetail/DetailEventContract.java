@@ -9,7 +9,7 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
 
-abstract class DetailEventContract {
+public abstract class DetailEventContract {
 
     public interface View {
         void showEventSport(String sport);
@@ -18,6 +18,7 @@ abstract class DetailEventContract {
         void showEventDate(long date);
         void showEventOwner(String city);
         void showEventPlayers(int emptyPlayers, int totalPlayers);
+        void showMsgFromBackgroundThread(int msgResource);
         void clearUI();
 
         Context getActivityContext();

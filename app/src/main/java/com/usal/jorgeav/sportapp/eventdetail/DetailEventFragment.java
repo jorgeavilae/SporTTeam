@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.GoogleMap;
@@ -254,8 +255,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                     mPresenter.sendEventRequest(mEventId);
                 }
             });
-        } else
+        } else {
+            detailEventStateButton.setVisibility(View.INVISIBLE);
             detailEventStateButton.setEnabled(false);
+        }
 
         // Hide other buttons
         detailEventRequests.setVisibility(View.GONE);
@@ -412,8 +415,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                     builder.create().show();
                 }
             });
-        } else
+        } else {
+            detailEventStateButton.setVisibility(View.INVISIBLE);
             detailEventStateButton.setEnabled(false);
+        }
 
         // Hide other buttons
         detailEventRequests.setVisibility(View.GONE);
@@ -535,6 +540,20 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             isFull = emptyPlayers == 0 && Utiles.sportNeedsTeams(mSportId);
             uiSetupForEventRelation(mRelation);
         }
+    }
+
+    @Override
+    public void showMsgFromBackgroundThread(final int msgResource) {
+        /* Perform UI actions (like display a Toast or press back) need to happen in UI thread
+         * https://stackoverflow.com/a/3875204/4235666
+         * https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)
+         */
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getActivity(), msgResource, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

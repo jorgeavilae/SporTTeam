@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.usal.jorgeav.sportapp.BaseFragment;
@@ -195,5 +196,19 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
             usersRejectedPlaceholder.setVisibility(View.VISIBLE);
         }
         mFragmentManagementListener.showContent();
+    }
+
+    @Override
+    public void showMsgFromBackgroundThread(final int msgResource) {
+        /* Perform UI actions (like display a Toast or press back) need to happen in UI thread
+         * https://stackoverflow.com/a/3875204/4235666
+         * https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)
+         */
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getActivity(), msgResource, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
