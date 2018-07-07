@@ -318,6 +318,7 @@ public class EventsFirebaseSync {
                 String myUserID = Utiles.getCurrentUserId();
                 if (TextUtils.isEmpty(myUserID)) return;
                 String eventId = dataSnapshot.getKey();
+                loadAnEvent(eventId);
 
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
@@ -422,6 +423,7 @@ public class EventsFirebaseSync {
                 String myUserID = Utiles.getCurrentUserId();
                 if (TextUtils.isEmpty(myUserID)) return;
                 String eventId = dataSnapshot.getKey();
+                loadAnEvent(eventId);
 
                 MyApplication.getAppContext().getContentResolver().delete(
                         SportteamContract.EventRequestsEntry.CONTENT_EVENTS_REQUESTS_URI,

@@ -74,12 +74,14 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 mUsersRequestsPresenter.acceptUserRequestToThisEvent(mEventId, uid);
+                                mUsersRequestsPresenter.loadUsersRequests(getLoaderManager(), getArguments());
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 mUsersRequestsPresenter.declineUserRequestToThisEvent(mEventId, uid);
+                                mUsersRequestsPresenter.loadUsersRequests(getLoaderManager(), getArguments());
                             }
                         })
                         .setNeutralButton(R.string.see_details, new DialogInterface.OnClickListener() {
@@ -96,6 +98,7 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
                 return false;
             }
         }, Glide.with(this));
+
         mUsersRejectedRecyclerAdapter = new UsersAdapter(null, new UsersAdapter.OnUserItemClickListener() {
             @Override
             public void onUserClick(final String uid) {
@@ -104,6 +107,7 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 mUsersRequestsPresenter.unblockUserParticipationRejectedToThisEvent(mEventId, uid);
+                                mUsersRequestsPresenter.loadUsersRequests(getLoaderManager(), getArguments());
                             }
                         })
                         .setNegativeButton(android.R.string.no, null)
@@ -208,6 +212,7 @@ public class UsersRequestsFragment extends BaseFragment implements UsersRequests
             @Override
             public void run() {
                 Toast.makeText(getActivity(), msgResource, Toast.LENGTH_SHORT).show();
+                mUsersRequestsPresenter.loadUsersRequests(getLoaderManager(), getArguments());
             }
         });
     }

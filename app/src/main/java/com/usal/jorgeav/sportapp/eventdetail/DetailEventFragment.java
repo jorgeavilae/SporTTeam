@@ -552,6 +552,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             @Override
             public void run() {
                 Toast.makeText(getActivity(), msgResource, Toast.LENGTH_SHORT).show();
+                mPresenter.openEvent(getLoaderManager(), getArguments());
             }
         });
     }
