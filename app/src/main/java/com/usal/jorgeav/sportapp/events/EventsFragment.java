@@ -92,16 +92,18 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     }
 
     private void initCalendar() {
-
         Calendar minDate = Calendar.getInstance();
         Calendar maxDate = Calendar.getInstance();
         Long minDateInMillis = mEventList.getMinDateInMillis();
         Long maxDateInMillis = mEventList.getMaxDateInMillis();
+        Long currentDateInMillis = System.currentTimeMillis();
 
-        if (minDateInMillis != null) minDate.setTimeInMillis(minDateInMillis);
+        if (minDateInMillis != null && minDateInMillis < currentDateInMillis)
+            minDate.setTimeInMillis(minDateInMillis);
         minDate.add(Calendar.MONTH, -2);
 
-        if (maxDateInMillis != null) maxDate.setTimeInMillis(maxDateInMillis);
+        if (maxDateInMillis != null && maxDateInMillis > currentDateInMillis)
+            maxDate.setTimeInMillis(maxDateInMillis);
         maxDate.add(Calendar.MONTH, 2);
 
         // Init is the only way to pass events to eventsCalendar
