@@ -420,7 +420,9 @@ public final class SportteamLoader {
     public static Cursor cursorAlarmCoincidence(ContentResolver contentResolver, Alarm alarm, String myUserId) {
         if (alarm != null) {
             String selection = SportteamContract.JoinQueryEntries.WHERE_CITY_EVENTS_WITHOUT_RELATION_WITH_ME;
-            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.JoinQueryEntries.queryCityEventsWithoutRelationWithMeArguments(myUserId, alarm.getCity())));
+            // Store as ArrayList to use add() method to complete selection arguments list.
+            ArrayList<String> selectionArgs = new ArrayList<>(Arrays.asList(SportteamContract.
+                    JoinQueryEntries.queryCityEventsWithoutRelationWithMeArguments(myUserId, alarm.getCity())));
 
             // sportId is always set
             selection += "AND " + SportteamContract.EventEntry.SPORT_TABLE_PREFIX + " = ? ";

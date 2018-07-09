@@ -94,7 +94,7 @@ public class NotificationsFirebaseActions {
             FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
-    public static void checkAlarmsForNotifications() {
+    public static void checkAlarmsAndNotify() {
         List<Alarm> alarms = UtilesContentProvider.getAllAlarmsFromContentProvider(MyApplication.getAppContext());
         if (alarms == null || alarms.size() < 1) return;
 
@@ -114,7 +114,7 @@ public class NotificationsFirebaseActions {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (!dataSnapshot.exists()) {
-                                    // Alarm a has some Event Coincidence (alarm and event in ContentProvider)
+                                    // Alarm "a" has some Event Coincidence (alarm and event in ContentProvider)
                                     // and notification doesn't exists
 
                                     // Create MyNotification
@@ -149,6 +149,59 @@ public class NotificationsFirebaseActions {
                             }
                         });
             }
+        }
+    }
+
+    public static void checkOneAlarmAndNotify(final Alarm finalAlarm) {
+        String myUserID = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUserID)) return;
+        final String finalMyUserID = myUserID;
+
+        final String eventId = UtilesContentProvider.
+                eventsCoincidenceAlarmFromContentProvider(finalAlarm, myUserID);
+        if (eventId != null) {
+            //Check if notification already exists
+            FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                    .child(myUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
+                    .child(finalAlarm.getId() + FirebaseDBContract.User.ALARMS)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()) {
+                                // Alarm "a" has some Event Coincidence (alarm and event in ContentProvider)
+                                // and notification doesn't exists
+
+                                // Create MyNotification
+                                long currentTime = System.currentTimeMillis();
+                                String notificationTitle = MyApplication.getAppContext()
+                                        .getString(R.string.notification_title_alarm_event);
+                                String notificationMessage = MyApplication.getAppContext()
+                                        .getString(R.string.notification_msg_alarm_event);
+                                @FirebaseDBContract.NotificationDataTypes
+                                Long type = (long) FirebaseDBContract.NOTIFICATION_TYPE_ALARM;
+                                @UtilesNotification.NotificationType
+                                Long notificationType = (long) UtilesNotification.NOTIFICATION_ID_ALARM_EVENT;
+                                MyNotification n = new MyNotification(
+                                        notificationType, true, notificationTitle,
+                                        notificationMessage, finalAlarm.getId(), eventId,
+                                        type, currentTime);
+
+                                // Store on Firebase
+                                FirebaseDatabase.getInstance().getReference().child(FirebaseDBContract.TABLE_USERS)
+                                        .child(finalMyUserID).child(FirebaseDBContract.User.NOTIFICATIONS)
+                                        .child(finalAlarm.getId() + FirebaseDBContract.User.ALARMS)
+                                        .setValue(n.toMap());
+
+                                // Notify
+                                n.setChecked(false); /* storing true in Firebase but changing false for show in StatusBar */
+                                UtilesNotification.createNotification(MyApplication.getAppContext(), n, finalAlarm);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
         }
     }
 }

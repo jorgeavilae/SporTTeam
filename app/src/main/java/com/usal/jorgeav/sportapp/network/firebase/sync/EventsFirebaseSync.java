@@ -212,7 +212,7 @@ public class EventsFirebaseSync {
                             loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
                         }
                     }
-                    NotificationsFirebaseActions.checkAlarmsForNotifications();
+                    NotificationsFirebaseActions.checkAlarmsAndNotify();
                 }
             }
 

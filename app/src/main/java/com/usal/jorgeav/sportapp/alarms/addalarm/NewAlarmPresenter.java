@@ -17,6 +17,7 @@ import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.actions.AlarmFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
@@ -101,10 +102,10 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
             return;
         }
 
-        Log.d(TAG, "addAlarm: "+a);
         String myUserId = Utiles.getCurrentUserId();
         if (myUserId == null || TextUtils.isEmpty(myUserId)) return;
         AlarmFirebaseActions.addAlarm(a, myUserId);
+        NotificationsFirebaseActions.checkOneAlarmAndNotify(a);
         ((AlarmsActivity)mNewAlarmView.getActivityContext()).mFieldId = null;
         ((AlarmsActivity)mNewAlarmView.getActivityContext()).mCity = null;
         ((AlarmsActivity)mNewAlarmView.getActivityContext()).mCoord = null;
