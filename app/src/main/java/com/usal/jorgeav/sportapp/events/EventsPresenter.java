@@ -24,8 +24,7 @@ class EventsPresenter implements EventsContract.Presenter, LoaderManager.LoaderC
     public void loadEvents(LoaderManager loaderManager, Bundle b) {
         FirebaseSync.loadEventsFromMyOwnEvents();
         FirebaseSync.loadEventsFromEventsParticipation();
-        loaderManager.initLoader(SportteamLoader.LOADER_MY_EVENTS_ID, b, this);
-        loaderManager.initLoader(SportteamLoader.LOADER_MY_EVENTS_PARTICIPATION_ID, b, this);
+        loaderManager.initLoader(SportteamLoader.LOADER_MY_EVENTS_AND_PARTICIPATION_ID, b, this);
     }
 
     @Override
@@ -33,12 +32,9 @@ class EventsPresenter implements EventsContract.Presenter, LoaderManager.LoaderC
         String currentUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(currentUserID)) return null;
         switch (id) {
-            case SportteamLoader.LOADER_MY_EVENTS_ID:
+            case SportteamLoader.LOADER_MY_EVENTS_AND_PARTICIPATION_ID:
                 return SportteamLoader
-                        .cursorLoaderMyEvents(mEventsView.getActivityContext(), currentUserID);
-            case SportteamLoader.LOADER_MY_EVENTS_PARTICIPATION_ID:
-                return SportteamLoader
-                        .cursorLoaderMyEventParticipation(mEventsView.getActivityContext(), currentUserID, true);
+                        .cursorLoaderMyEventsAndParticipation(mEventsView.getActivityContext(), currentUserID, true);
         }
         return null;
     }
@@ -47,11 +43,8 @@ class EventsPresenter implements EventsContract.Presenter, LoaderManager.LoaderC
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
-            case SportteamLoader.LOADER_MY_EVENTS_ID:
-                mEventsView.showMyOwnEvents(data);
-                break;
-            case SportteamLoader.LOADER_MY_EVENTS_PARTICIPATION_ID:
-                mEventsView.showParticipatesEvents(data);
+            case SportteamLoader.LOADER_MY_EVENTS_AND_PARTICIPATION_ID:
+                mEventsView.showCalendarEvents(data);
                 break;
         }
     }
@@ -59,11 +52,8 @@ class EventsPresenter implements EventsContract.Presenter, LoaderManager.LoaderC
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
-            case SportteamLoader.LOADER_MY_EVENTS_ID:
-                mEventsView.showMyOwnEvents(null);
-                break;
-            case SportteamLoader.LOADER_MY_EVENTS_PARTICIPATION_ID:
-                mEventsView.showParticipatesEvents(null);
+            case SportteamLoader.LOADER_MY_EVENTS_AND_PARTICIPATION_ID:
+                mEventsView.showCalendarEvents(null);
                 break;
         }
     }

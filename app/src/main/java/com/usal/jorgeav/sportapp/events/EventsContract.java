@@ -14,8 +14,7 @@ abstract class EventsContract {
     }
 
     public interface View {
-        void showMyOwnEvents(Cursor cursor);
-        void showParticipatesEvents(Cursor cursor);
+        void showCalendarEvents(Cursor cursor);
         Context getActivityContext();
         BaseFragment getThis();
     }

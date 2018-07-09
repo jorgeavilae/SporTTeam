@@ -6,107 +6,62 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyCalendarEventList {
-    private List<MyCalendarEvent> mOwnEventList;
-    private List<MyCalendarEvent> mParticipationEventList;
+    private List<MyCalendarEvent> mEventList;
 
-    public MyCalendarEventList(List<MyCalendarEvent> mOwnEventList, List<MyCalendarEvent> mParticipationEventList) {
-        this.mOwnEventList = mOwnEventList;
-        this.mParticipationEventList = mParticipationEventList;
+    public MyCalendarEventList(List<MyCalendarEvent> eventList) {
+        this.mEventList = eventList;
         notifyListChange();
     }
 
     public List<CalendarEvent> getAsCalendarEventList() {
         List<CalendarEvent> result = new ArrayList<>();
-        if (mOwnEventList != null)
-            for (MyCalendarEvent event : mOwnEventList)
-                result.add(event);
-        if (mParticipationEventList != null)
-            for (MyCalendarEvent event : mParticipationEventList)
-                result.add(event);
+        if (this.mEventList != null)
+                result.addAll(this.mEventList);
         return result;
     }
 
     public MyCalendarEvent getItemAtPosition(int position) {
-        int sizeOwn = 0, sizeParticipation = 0;
-        if (mOwnEventList != null) sizeOwn = mOwnEventList.size();
-        if (mParticipationEventList != null) sizeParticipation = mParticipationEventList.size();
-        if (position < 0 || position >= sizeOwn + sizeParticipation) return null;
-
-        List<MyCalendarEvent> result = new ArrayList<>();
-        if (mOwnEventList != null)
-            for (MyCalendarEvent event : mOwnEventList)
-                result.add(event);
-        if (mParticipationEventList != null)
-            for (MyCalendarEvent event : mParticipationEventList)
-                result.add(event);
-        return result.get(position);
+        if (mEventList != null && position >= 0 && position < mEventList.size())
+            return mEventList.get(position);
+        return null;
     }
 
     public Long getMinDateInMillis() {
-        List<MyCalendarEvent> result = new ArrayList<>();
-        if (mOwnEventList != null)
-            for (MyCalendarEvent event : mOwnEventList)
-                result.add(event);
-        if (mParticipationEventList != null)
-            for (MyCalendarEvent event : mParticipationEventList)
-                result.add(event);
-
         Long min = null;
-        for(MyCalendarEvent event : result)
-            min = (min == null || event.getStartTime().getTimeInMillis() < min) ? event.getStartTime().getTimeInMillis() : min;
+        if (mEventList != null)
+            for(MyCalendarEvent event : mEventList)
+                min = (min == null || event.getStartTime().getTimeInMillis() < min) ?
+                        event.getStartTime().getTimeInMillis() : min;
         return min;
     }
 
     public Long getMaxDateInMillis() {
-        List<MyCalendarEvent> result = new ArrayList<>();
-        if (mOwnEventList != null)
-            for (MyCalendarEvent event : mOwnEventList)
-                result.add(event);
-        if (mParticipationEventList != null)
-            for (MyCalendarEvent event : mParticipationEventList)
-                result.add(event);
-
         Long max = null;
-        for(MyCalendarEvent event : result)
-            max = (max == null || event.getStartTime().getTimeInMillis() > max) ? event.getStartTime().getTimeInMillis() : max;
+        if (mEventList != null)
+            for(MyCalendarEvent event : mEventList)
+                max = (max == null || event.getStartTime().getTimeInMillis() > max) ?
+                        event.getStartTime().getTimeInMillis() : max;
         return max;
     }
 
-    public void replaceOwnEvents(List<MyCalendarEvent> addList) {
-        this.mOwnEventList = new ArrayList<>();
+    public void replaceEvents(List<MyCalendarEvent> addList) {
+        this.mEventList = new ArrayList<>();
         if (addList != null)
-            this.mOwnEventList.addAll(addList);
-
-        notifyListChange();
-    }
-
-    public void replaceParticipationEvents(List<MyCalendarEvent> addList) {
-        this.mParticipationEventList = new ArrayList<>();
-        if (addList != null)
-            this.mParticipationEventList.addAll(addList);
+            this.mEventList.addAll(addList);
 
         notifyListChange();
     }
 
     public void clear(){
-        if (this.mOwnEventList != null)
-            this.mOwnEventList.clear();
-        if (this.mParticipationEventList != null)
-            this.mParticipationEventList.clear();
+        if (this.mEventList != null)
+            this.mEventList.clear();
     }
 
-    /* Set ID as the position number in List returned by getAsCalendarEventList() */
+    /* Set ID as the position number in List */
     private void notifyListChange() {
-        int i, j = 0;
-        if (mOwnEventList != null) {
-            j = mOwnEventList.size();
-            for (i = 0; i < mOwnEventList.size(); i++)
-                mOwnEventList.get(i).setId(i);
-        }
-
-        if (mParticipationEventList != null)
-            for (i = 0; i < mParticipationEventList.size(); i++, j++)
-                mParticipationEventList.get(i).setId(j);
+        if (mEventList != null)
+            for (int i = 0; i < mEventList.size(); i++)
+                mEventList.get(i).setId(i);
     }
 
     private List<String> getAllEventId(List<MyCalendarEvent> list) {
@@ -120,8 +75,7 @@ public class MyCalendarEventList {
     @Override
     public String toString() {
         return "MyCalendarEventList{" +
-                "mOwnEventList=" + mOwnEventList +
-                ", mParticipationEventList=" + mParticipationEventList +
+                "mEventList=" + mEventList +
                 '}';
     }
 }

@@ -655,8 +655,8 @@ public final class SportteamContract {
 
         /* Join for CONTENT_EVENTS_PARTICIPATION_WITH_EVENT_URI */
         public static final String TABLES_EVENTS_PARTICIPATION_JOIN_EVENT =
-                TABLE_EVENTS_PARTICIPATION + " INNER JOIN " + TABLE_EVENT + " ON "
-                    + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX + " = " + EventEntry.EVENT_ID_TABLE_PREFIX;
+                TABLE_EVENT + " LEFT JOIN " + TABLE_EVENTS_PARTICIPATION + " ON "
+                    + EventEntry.EVENT_ID_TABLE_PREFIX + " = " + EventsParticipationEntry.EVENT_ID_TABLE_PREFIX;
 
         /* URI for one event participation */
         public static Uri buildEventsParticipationUriWith(long id) {

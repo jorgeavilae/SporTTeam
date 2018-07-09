@@ -41,28 +41,18 @@ public final class SportteamLoader {
     }
 
 
-    public static final int LOADER_MY_EVENTS_ID = 2100;
-    public static final int LOADER_MY_EVENTS_PARTICIPATION_ID = 2200;
-    public static CursorLoader cursorLoaderMyEvents(Context context, String myUserID) {
-        // Return my events
-        return new CursorLoader(
-                context,
-                SportteamContract.EventEntry.CONTENT_EVENT_URI,
-                SportteamContract.EventEntry.EVENT_COLUMNS,
-                SportteamContract.EventEntry.OWNER + " = ?",
-                new String[]{myUserID},
-                SportteamContract.EventEntry.COLUMN_DATE + " ASC");
-    }
-    public static CursorLoader cursorLoaderMyEventParticipation(Context context, String myUserID, boolean participate) {
+    public static final int LOADER_MY_EVENTS_AND_PARTICIPATION_ID = 2100;
+    public static CursorLoader cursorLoaderMyEventsAndParticipation(Context context, String myUserID, boolean participate) {
         // Return my participation events
         return new CursorLoader(
                 context,
                 SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_WITH_EVENT_URI,
                 SportteamContract.EventEntry.EVENT_COLUMNS,
-                SportteamContract.EventsParticipationEntry.USER_ID_TABLE_PREFIX + " = ? AND "
-                        + SportteamContract.EventsParticipationEntry.PARTICIPATES_TABLE_PREFIX + " = ?",
-                new String[]{myUserID, String.valueOf(participate?1:0)},
-                SportteamContract.EventEntry.DATE_TABLE_PREFIX + " ASC");
+                SportteamContract.EventEntry.OWNER_TABLE_PREFIX + " = ? OR "
+                        + "(" + SportteamContract.EventsParticipationEntry.USER_ID_TABLE_PREFIX + " = ? AND "
+                        + SportteamContract.EventsParticipationEntry.PARTICIPATES_TABLE_PREFIX + " = ? )",
+                new String[]{myUserID, myUserID, String.valueOf(participate?1:0)},
+                SportteamContract.EventEntry.DATE_TABLE_PREFIX + " DESC LIMIT 50");
     }
 
     public static final int LOADER_EVENT_ID = 2010;

@@ -21,6 +21,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEvent;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEventList;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyEventRenderer;
+import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
 import com.usal.jorgeav.sportapp.events.eventrequest.EventRequestsFragment;
@@ -56,7 +57,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         setHasOptionsMenu(true);
 
         mEventsPresenter = new EventsPresenter(this);
-        mEventList = new MyCalendarEventList(null, null);
+        mEventList = new MyCalendarEventList(null);
     }
 
     @Override
@@ -86,8 +87,6 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         View root = inflater.inflate(R.layout.fragment_events, container, false);
         ButterKnife.bind(this, root);
 
-        initCalendar();
-
         return root;
     }
 
@@ -107,7 +106,8 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         maxDate.add(Calendar.MONTH, 2);
 
         // Init is the only way to pass events to eventsCalendar
-        eventsAgendaCalendarView.init(mEventList.getAsCalendarEventList(), minDate, maxDate, Locale.getDefault(), this);
+        eventsAgendaCalendarView.init(mEventList.getAsCalendarEventList(),
+                minDate, maxDate, Locale.getDefault(), this);
         eventsAgendaCalendarView.addEventRenderer(new MyEventRenderer());
     }
 
@@ -132,24 +132,11 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     }
 
     @Override
-    public void showMyOwnEvents(Cursor cursor) {
-        mEventList.replaceOwnEvents(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
+    public void showCalendarEvents(Cursor cursor) {
+        mEventList.replaceEvents(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
                 ContextCompat.getColor(getActivity(), R.color.colorLighter)));
 
-        if (cursor != null && cursor.getCount() > 0)
-            initCalendar();
-
-        showContent();
-    }
-
-    @Override
-    public void showParticipatesEvents(Cursor cursor) {
-        mEventList.replaceParticipationEvents(UtilesContentProvider.cursorToMultipleCalendarEvent(cursor,
-                ContextCompat.getColor(getActivity(), R.color.colorLighter)));
-
-        if (cursor != null && cursor.getCount() > 0)
-            initCalendar();
-
+        initCalendar();
         showContent();
     }
 
@@ -161,6 +148,8 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     public void onEventSelected(CalendarEvent event) {
         if (event instanceof MyCalendarEvent) {
             MyCalendarEvent myCalendarEvent = mEventList.getItemAtPosition((int) event.getId());
+
+            getLoaderManager().destroyLoader(SportteamLoader.LOADER_MY_EVENTS_AND_PARTICIPATION_ID);
 
             Fragment newFragment = DetailEventFragment.newInstance(myCalendarEvent.getEvent_id());
             mFragmentManagementListener.initFragment(newFragment, true);
