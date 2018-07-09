@@ -15,6 +15,7 @@ import com.usal.jorgeav.sportapp.network.firebase.AppExecutor;
 import com.usal.jorgeav.sportapp.network.firebase.ExecutorChildEventListener;
 import com.usal.jorgeav.sportapp.network.firebase.ExecutorValueEventListener;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
+import com.usal.jorgeav.sportapp.network.firebase.actions.FieldsFirebaseActions;
 import com.usal.jorgeav.sportapp.utils.UtilesContentValues;
 
 import java.util.List;
@@ -39,7 +40,15 @@ public class FieldsFirebaseSync {
                     }
                     field.setId(dataSnapshot.getKey());
 
-
+                    // Check and delete old events under "next_events" in this Field
+                    long currentTimeMillis = System.currentTimeMillis();
+                    for (DataSnapshot nextEventDataSnapshot :
+                            dataSnapshot.child(FirebaseDBContract.Field.NEXT_EVENTS).getChildren()) {
+                        Long nextEventTimeMillis = nextEventDataSnapshot.getValue(Long.class);
+                        if (nextEventTimeMillis != null && nextEventTimeMillis < currentTimeMillis)
+                            FieldsFirebaseActions.deleteNextEventInField
+                                    (dataSnapshot.getKey(), nextEventDataSnapshot.getKey());
+                    }
 
                     // Store Field in Content Provider
                     ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
