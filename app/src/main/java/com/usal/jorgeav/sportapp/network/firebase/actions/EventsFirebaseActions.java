@@ -56,7 +56,7 @@ public class EventsFirebaseActions {
             //Set next Event in fieldId
             String fieldNextEvent = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + event.getField_id() + "/"
                     + FirebaseDBContract.Field.NEXT_EVENTS + "/" + event.getEvent_id();
-            childUpdates.put(fieldNextEvent, currentTime);
+            childUpdates.put(fieldNextEvent, event.getDate());
         }
 
         //Notify friend's owner that he has created an event
@@ -106,7 +106,7 @@ public class EventsFirebaseActions {
             //Set next Event in fieldId
             String fieldNextEvent = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + event.getField_id() + "/"
                     + FirebaseDBContract.Field.NEXT_EVENTS + "/" + event.getEvent_id();
-            childUpdates.put(fieldNextEvent, currentTime);
+            childUpdates.put(fieldNextEvent, event.getDate());
         }
 
         //Notify participants the event has changed

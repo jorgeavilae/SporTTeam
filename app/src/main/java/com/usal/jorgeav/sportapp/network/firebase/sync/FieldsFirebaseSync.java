@@ -39,6 +39,8 @@ public class FieldsFirebaseSync {
                     }
                     field.setId(dataSnapshot.getKey());
 
+
+
                     // Store Field in Content Provider
                     ContentValues cvData = UtilesContentValues.fieldToContentValues(field);
                     MyApplication.getAppContext().getContentResolver()

@@ -41,9 +41,6 @@ public class FieldsFirebaseActions {
         fieldRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                //Update field
-                mutableData.child(FirebaseDBContract.DATA).setValue(field);
-
                 //Update field data in Events
                 Map<String, Object> childUpdates = new HashMap<>();
                 for (MutableData md : mutableData.child(FirebaseDBContract.Field.NEXT_EVENTS).getChildren()) {
@@ -57,6 +54,9 @@ public class FieldsFirebaseActions {
                 }
                 FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
 
+                //Update field
+                field.setId(null);
+                mutableData.child(FirebaseDBContract.DATA).setValue(field);
                 return Transaction.success(mutableData);
             }
 
@@ -86,8 +86,13 @@ public class FieldsFirebaseActions {
     }
 
     public static void deleteField(String fieldId) {
-        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS)
-                .child(fieldId).removeValue();
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS).child(fieldId)
+                .removeValue();
+    }
+
+    public static void deleteNextEventInField(String fieldId, String eventId) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS).child(fieldId)
+                .child(FirebaseDBContract.Field.NEXT_EVENTS).child(eventId).removeValue();
     }
 
     public static void voteField(final String fieldId, String sportId, final float rate) {
