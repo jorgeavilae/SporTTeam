@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.adduser;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -117,17 +118,19 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         if (item.getItemId() == R.id.action_ok) {
             hideSoftKeyboard();
 
-            if (!TextUtils.isEmpty(newUserEmail.getText())
-                    && TextUtils.isEmpty(newUserEmail.getError())
-                    && !TextUtils.isEmpty(newUserPassword.getText())
+            if (TextUtils.isEmpty(newUserEmail.getError())
                     && TextUtils.isEmpty(newUserPassword.getError())
-                    && !TextUtils.isEmpty(newUserName.getText())
                     && TextUtils.isEmpty(newUserName.getError())
+                    && TextUtils.isEmpty(newUserAge.getError())
+                    && !TextUtils.isEmpty(newUserEmail.getText())
+                    && !TextUtils.isEmpty(newUserPassword.getText())
+                    && !TextUtils.isEmpty(newUserName.getText())
                     && !TextUtils.isEmpty(newUserAge.getText())
-                    && newUserCitySelectedName != null
-                    && newUserCitySelectedCoord != null) {
+                    && !TextUtils.isEmpty(newUserAutocompleteCity.getText())) {
+
                 SportsListFragment slf = SportsListFragment.newInstance("", ((NewUserActivity) getActivity()).sports);
                 mFragmentManagementListener.initFragment(slf, true);
+
             } else {
                 Toast.makeText(getActivity(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
             }
@@ -207,6 +210,20 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         });
     }
 
+    private void setAgeEditText() {
+        newUserAge.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus)
+                    if (!TextUtils.isEmpty(newUserAge.getText())) {
+                        Long age = Long.parseLong(newUserAge.getText().toString());
+                        if (age <= 12 || age >= 100)
+                            newUserAge.setError(getString(R.string.error_invalid_age));
+                    }
+            }
+        });
+    }
+
     private void setAutocompleteTextView() {
         // Set up the adapter that will retrieve suggestions from
         // the Places Geo Data API that cover Spain
@@ -234,6 +251,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
             public void afterTextChanged(Editable editable) {
                     newUserCitySelectedName = null;
                     newUserCitySelectedCoord = null;
+                    newUserAutocompleteCity.setError(getString(R.string.error_invalid_city));
             }
         };
         newUserAutocompleteCity.addTextChangedListener(tw);
@@ -249,18 +267,25 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                 AutocompletePrediction item = mAdapter.getItem(position);
                 if (item != null) {
                     Log.i(TAG, "Autocomplete item selected: " + item.getPlaceId());
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext());
+                    progressDialog.show();
                     Places.GeoDataApi.getPlaceById(mGoogleApiClient, item.getPlaceId())
                             .setResultCallback(new ResultCallback<PlaceBuffer>() {
                                 @Override
                                 public void onResult(@NonNull PlaceBuffer places) {
+                                    // Stop UI until finish callback
+                                    progressDialog.dismiss();
                                     if (places.getStatus().isSuccess() && places.getCount() > 0) {
                                         Place myPlace = places.get(0);
                                         newUserCitySelectedName = myPlace.getName().toString();
                                         newUserCitySelectedCoord = myPlace.getLatLng();
+                                        newUserAutocompleteCity.setError(null);
                                         Log.i(TAG, "Place found: Name - " + myPlace.getName()
                                                 + " LatLng - " + myPlace.getLatLng());
                                     } else {
                                         Log.e(TAG, "Place not found");
+                                        Toast.makeText(getContext(),
+                                                R.string.error_check_conn, Toast.LENGTH_SHORT).show();
                                     }
                                     places.release();
                                 }
@@ -284,29 +309,25 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         setPasswordEditText();
         setPhotoButton();
         setNameEditText();
+        setAgeEditText();
         setAutocompleteTextView();
 
         if (((NewUserActivity)getActivity()).sports != null && ((NewUserActivity)getActivity()).sportsInitialize) {
             hideContent();
 
-            if (!TextUtils.isEmpty(newUserEmail.getText())
-                    && TextUtils.isEmpty(newUserEmail.getError())
-                    && !TextUtils.isEmpty(newUserPassword.getText())
+            if (TextUtils.isEmpty(newUserEmail.getError())
                     && TextUtils.isEmpty(newUserPassword.getError())
-                    && !TextUtils.isEmpty(newUserName.getText())
                     && TextUtils.isEmpty(newUserName.getError())
-                    && !TextUtils.isEmpty(newUserAge.getText())
-                    && newUserCitySelectedName != null
-                    && newUserCitySelectedCoord != null) {
+                    && TextUtils.isEmpty(newUserAge.getError())) {
 
                 ((NewUserActivity)getActivity()).sportsInitialize = mPresenter.createAuthUser(
                         newUserEmail.getText().toString(),
                         newUserPassword.getText().toString(),
                         newUserName.getText().toString(),
                         croppedImageUri,
+                        newUserAge.getText().toString(),
                         newUserCitySelectedName,
                         newUserCitySelectedCoord,
-                        Long.parseLong(newUserAge.getText().toString()),
                         ((NewUserActivity) getActivity()).sports);
             } else {
                 showContent();

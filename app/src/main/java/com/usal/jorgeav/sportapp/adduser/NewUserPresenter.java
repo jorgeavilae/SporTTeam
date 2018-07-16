@@ -44,12 +44,17 @@ class NewUserPresenter implements NewUserContract.Presenter {
 
     private NewUserContract.View mView;
 
+    // true if they are checked against database and unique
+    private Boolean isEmailUnique = null;
+    private Boolean isNameUnique = null;
+
     NewUserPresenter(NewUserContract.View mView) {
         this.mView = mView;
     }
 
     @Override
     public void checkUserEmailExists(String email) {
+        isEmailUnique = false;
         if (email != null && !TextUtils.isEmpty(email)) {
             if (isEmailValid(email))
                 UserFirebaseActions.getUserEmailReferenceEqualTo(email)
@@ -57,12 +62,15 @@ class NewUserPresenter implements NewUserContract.Presenter {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    mView.setEmailError(R.string.error_not_unique_email);
-                                }
+                                    if(mView.getThis().isAdded()) //check if Fragment its attached to Activity
+                                        mView.setEmailError(R.string.error_not_unique_email);
+                                } else isEmailUnique = true;
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(mView.getActivityContext(),
+                                        R.string.error_check_conn, Toast.LENGTH_SHORT).show();
                             }
                         });
             else
@@ -76,18 +84,22 @@ class NewUserPresenter implements NewUserContract.Presenter {
 
     @Override
     public void checkUserNameExists(String name) {
+        isNameUnique = false;
         if (name != null && !TextUtils.isEmpty(name))
             UserFirebaseActions.getUserNameReferenceEqualTo(name)
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                mView.setNameError(R.string.error_not_unique_name);
-                            }
+                                if(mView.getThis().isAdded()) //check if Fragment its attached to Activity
+                                    mView.setNameError(R.string.error_not_unique_name);
+                            } else isNameUnique = true;
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(mView.getActivityContext(),
+                                    R.string.error_check_conn, Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -95,9 +107,9 @@ class NewUserPresenter implements NewUserContract.Presenter {
 
     @Override
     public boolean createAuthUser(final String email, String pass, final String name,
-                               final Uri croppedImageFileSystemUri, final String city,
-                               final LatLng coords, final Long age, final ArrayList<Sport> sportsList) {
-        if (validateArguments(email, pass, name, croppedImageFileSystemUri, city, coords, age, sportsList)) {
+                                  final Uri croppedImageFileSystemUri, final String age,
+                                  final String city, final LatLng coords, final ArrayList<Sport> sportsList) {
+        if (validateArguments(email, pass, name, croppedImageFileSystemUri, age, city, coords, sportsList)) {
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
                     .addOnCompleteListener(mView.getHostActivity(), new OnCompleteListener<AuthResult>() {
                         @Override
@@ -137,57 +149,63 @@ class NewUserPresenter implements NewUserContract.Presenter {
                                         @Override
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                             // Handle successful uploads on complete
-                                /* https://stackoverflow.com/a/42616488/4235666 */
+                                            /* https://stackoverflow.com/a/42616488/4235666 */
                                             @SuppressWarnings("VisibleForTests")
                                             StorageMetadata metadata = taskSnapshot.getMetadata();
                                             if (metadata != null) {
                                                 final Uri downloadUrl = metadata.getDownloadUrl();
                                                 if (downloadUrl != null)
-                                                    storeUserDataAndFinish(downloadUrl, name, city, coords, age, sportsList);
+                                                    storeUserDataAndFinish(downloadUrl, name,
+                                                            city, coords, Long.parseLong(age), sportsList);
                                                 else
-                                                    storeUserDataAndFinish(null, name, city, coords, age, sportsList);
+                                                    storeUserDataAndFinish(null, name,
+                                                            city, coords, Long.parseLong(age), sportsList);
                                             } else
-                                                storeUserDataAndFinish(null, name, city, coords, age, sportsList);
+                                                storeUserDataAndFinish(null, name,
+                                                        city, coords, Long.parseLong(age), sportsList);
                                         }
                                     });
                                 } else {
-                                    storeUserDataAndFinish(null, name, city, coords, age, sportsList);
+                                    storeUserDataAndFinish(null, name,
+                                            city, coords, Long.parseLong(age), sportsList);
                                 }
                             } else {
                                 mView.showContent();
-                                Toast.makeText(mView.getActivityContext(), R.string.toast_login_failure, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mView.getActivityContext(),
+                                        R.string.toast_login_failure, Toast.LENGTH_SHORT).show();
                             }
                         }
                     }).addOnFailureListener(mView.getHostActivity(), new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(mView.getActivityContext(), R.string.toast_create_user_fail, Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(mView.getActivityContext(),
+                                    R.string.toast_create_user_fail, Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
             });
             return true;
         } else return false;
     }
 
     private boolean validateArguments(String email, String pass, String name,
-                                      Uri croppedImageFileSystemUri, String city, LatLng coords,
-                                      Long age, ArrayList<Sport> sportsList) {
+                                      Uri croppedImageFileSystemUri, String age,
+                                      String city, LatLng coords, ArrayList<Sport> sportsList) {
 
-        if (email == null || TextUtils.isEmpty(email)) {
+        if (!isEmailUnique || email == null || TextUtils.isEmpty(email)) {
             Toast.makeText(mView.getActivityContext(), R.string.error_invalid_email, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "validateArguments: Email error "+email);
+            Log.e(TAG, "validateArguments: Email error " + email);
             return false;
         }
 
         if (pass == null || TextUtils.isEmpty(pass) || pass.length() < 6) {
             Toast.makeText(mView.getActivityContext(), R.string.error_invalid_password, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "validateArguments: Password error "+pass);
+            Log.e(TAG, "validateArguments: Password error " + pass);
             return false;
         }
 
-        if (name == null || TextUtils.isEmpty(name)) {
+        if (!isNameUnique || name == null || TextUtils.isEmpty(name)) {
             Toast.makeText(mView.getActivityContext(), R.string.error_invalid_name, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "validateArguments: Name error "+name);
+            Log.e(TAG, "validateArguments: Name error " + name);
             return false;
         }
 
@@ -195,32 +213,32 @@ class NewUserPresenter implements NewUserContract.Presenter {
             File file = new File(croppedImageFileSystemUri.getPath());
             if (!file.exists()) {
                 Toast.makeText(mView.getActivityContext(), R.string.error_invalid_photo, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "validateArguments: Photo error "+croppedImageFileSystemUri);
+                Log.e(TAG, "validateArguments: Photo error " + croppedImageFileSystemUri);
                 return false;
             }
         }
 
         if (city == null || TextUtils.isEmpty(city)) {
             Toast.makeText(mView.getActivityContext(), R.string.error_invalid_city, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "validateArguments: City error "+city);
+            Log.e(TAG, "validateArguments: City error " + city);
             return false;
         }
 
         if (coords == null || (coords.latitude == 0 && coords.longitude == 0)) {
             Toast.makeText(mView.getActivityContext(), R.string.error_invalid_city, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "validateArguments: Coordinates error "+coords);
+            Log.e(TAG, "validateArguments: Coordinates error " + coords);
             return false;
         }
 
-        if (age == null || age <= 12 || age >= 100) {
+        if (age == null || Long.parseLong(age) <= 12 || Long.parseLong(age) >= 100) {
             Toast.makeText(mView.getActivityContext(), R.string.error_incorrect_age, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "validateArguments: Age error "+age);
+            Log.e(TAG, "validateArguments: Age error " + age);
             return false;
         }
 
         if (sportsList == null || sportsList.size() <= 0) {
             Toast.makeText(mView.getActivityContext(), R.string.error_invalid_sport_list, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "validateArguments: Sport list error "+sportsList);
+            Log.e(TAG, "validateArguments: Sport list error " + sportsList);
             return false;
         }
 
@@ -228,13 +246,13 @@ class NewUserPresenter implements NewUserContract.Presenter {
     }
 
     private void storeUserDataAndFinish(Uri photoUri, String name, String city, LatLng coords,
-                                      Long age, ArrayList<Sport> sportsList) {
+                                        Long age, ArrayList<Sport> sportsList) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         if (fUser == null) return;
 
         UserProfileChangeRequest.Builder profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(name);
-        if(photoUri != null) profileUpdates = profileUpdates.setPhotoUri(photoUri);
+        if (photoUri != null) profileUpdates = profileUpdates.setPhotoUri(photoUri);
         fUser.updateProfile(profileUpdates.build());
 
         fUser.sendEmailVerification()
@@ -259,7 +277,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
         mView.getHostActivity().finish();
     }
 
-    private Map<String,Double> sportsArrayToHashMap(List<Sport> sports) {
+    private Map<String, Double> sportsArrayToHashMap(List<Sport> sports) {
         HashMap<String, Double> result = new HashMap<>();
         for (Sport s : sports)
             result.put(s.getSportID(), (double) s.getPunctuation());

@@ -80,7 +80,7 @@
     <string name="error_incorrect_age">Age should be greater than 12 and less than 100</string>
     <string name="error_invalid_age">Not a valid number</string>
     <string name="toast_login_success">Log in successful</string>
-    <string name="toast_create_user_fail">User creation fails</string>
+    <string name="toast_create_user_fail">User creation failed</string>
     <string name="toast_login_failure">Log in failure</string>
     <string name="error_invalid_name">Name is invalid</string>
     <string name="error_invalid_photo">Photo is invalid</string>

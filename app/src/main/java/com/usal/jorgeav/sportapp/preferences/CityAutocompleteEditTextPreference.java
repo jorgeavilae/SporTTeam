@@ -14,6 +14,7 @@ import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -24,6 +25,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
+import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 
 public class CityAutocompleteEditTextPreference extends EditTextPreference {
@@ -112,6 +114,8 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
                                                 + " LatLng - " + myPlace.getLatLng());
                                     } else {
                                         Log.e(TAG, "Place not found");
+                                        Toast.makeText(getContext(),
+                                                R.string.error_check_conn, Toast.LENGTH_SHORT).show();
                                     }
                                     places.release();
                                 }
