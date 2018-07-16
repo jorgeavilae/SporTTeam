@@ -835,6 +835,7 @@ public final class SportteamContract {
         /* WHERE for CONTENT_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND_URI */
         public static final String WHERE_MY_EVENTS_WITHOUT_RELATION_WITH_FRIEND =
                 EventEntry.DATE_TABLE_PREFIX + " > ? "
+                    + "AND " + EventEntry.EMPTY_PLAYERS_TABLE_PREFIX + " > 0 "
                     + "AND ( " + EventEntry.OWNER_TABLE_PREFIX + " = ? OR p1." + EventsParticipationEntry.USER_ID + " = ? ) "
                     + "AND p2." + EventsParticipationEntry.EVENT_ID + " IS NULL "
                     + "AND " + EventsInvitationEntry.EVENT_ID_TABLE_PREFIX + " IS NULL "
@@ -855,7 +856,9 @@ public final class SportteamContract {
          *      LEFT JOIN eventRequest
          *          ON (event.eventId = eventRequest.eventId AND eventRequest.senderId = friendId )
          * WHERE (
-         *      ( event.owner = ownerId OR p1.userId = ownerId )
+         *      event.date > currentTime
+         *      AND event.emptyPlayers > 0
+         *      AND ( event.owner = ownerId OR p1.userId = ownerId )
          *      AND p2.eventId IS NULL
          *      AND eventInvitations.eventId IS NULL
          *      AND eventRequest.eventId IS NULL )
