@@ -239,8 +239,10 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(editText.getText().toString().length() > 20)
+                        if(editText.getText().toString().length() > 20) {
                             editText.setError(getString(R.string.error_incorrect_name));
+                            return;
+                        }
 
                         mProfilePresenter.checkUserName(editText.getText().toString(), new ValueEventListener() {
                             @Override
