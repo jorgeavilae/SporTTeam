@@ -200,12 +200,17 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     }
 
     private void setNameEditText() {
+        if (newUserName.getText().toString().length() > 20)
+            newUserName.setError(getString(R.string.error_incorrect_name));
         mPresenter.checkUserNameExists(newUserName.getText().toString());
         newUserName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus)
+                if (!hasFocus) {
+                    if (newUserName.getText().toString().length() > 20)
+                        newUserName.setError(getString(R.string.error_incorrect_name));
                     mPresenter.checkUserNameExists(newUserName.getText().toString());
+                }
             }
         });
     }

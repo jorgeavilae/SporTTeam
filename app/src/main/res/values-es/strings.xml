@@ -74,6 +74,7 @@
     <string name="prompt_city">Ciudad</string>
     <string name="error_not_unique_email">Este email ya existe</string>
     <string name="error_not_unique_name">Este nombre ya se está usando</string>
+    <string name="error_incorrect_name">Este nombre es demasiado largo</string>
     <string name="error_incorrect_age">La edad debe ser mayor de 12 y menor de 100</string>
     <string name="error_invalid_age">Número inválido</string>
     <string name="toast_login_success">Indentificado con éxito</string>

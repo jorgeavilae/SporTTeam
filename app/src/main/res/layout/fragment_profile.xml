@@ -46,35 +46,41 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/textView31"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Name" />
 
                 <TextView
                     android:id="@+id/textView31"
-                    android:layout_width="wrap_content"
+                    android:layout_width="7dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text=", "
-                    android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                    android:visibility="gone"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:visibility="visible"
                     app:layout_constraintBaseline_toBaselineOf="@id/user_name"
-                    app:layout_constraintLeft_toRightOf="@id/user_name" />
+                    app:layout_constraintEnd_toStartOf="@+id/user_age"
+                    app:layout_constraintStart_toEndOf="@+id/user_name" />
 
                 <TextView
                     android:id="@+id/user_age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintBaseline_toBaselineOf="@id/user_name"
-                    app:layout_constraintLeft_toRightOf="@id/textView31"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/textView31"
                     tools:text="24" />
 
                 <TextView
@@ -163,8 +169,8 @@
                         android:id="@+id/user_event_invitations_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_gravity="center"
+                        android:layout_weight="1"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/event_invitations"
@@ -181,10 +187,10 @@
                 android:layout_height="0dp"
                 android:layout_marginLeft="@dimen/label_margin"
                 android:layout_marginRight="@dimen/label_margin"
+                app:layout_constraintBottom_toBottomOf="@id/user_event_invitations"
                 app:layout_constraintLeft_toLeftOf="@+id/guideline11"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/user_event_invitations"
-                app:layout_constraintBottom_toBottomOf="@id/user_event_invitations">
+                app:layout_constraintTop_toTopOf="@id/user_event_invitations">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -205,8 +211,8 @@
                         android:id="@+id/user_friend_requests_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_gravity="center"
+                        android:layout_weight="1"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/delete_friend"
