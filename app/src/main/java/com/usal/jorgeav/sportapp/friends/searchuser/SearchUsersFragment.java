@@ -66,18 +66,11 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.menu_filters, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        if (item.getItemId() == R.id.action_clear_filter) {
-            searchUsersEditText.setText("");
-            mSearchUsersPresenter.loadNearbyUsers(getLoaderManager(), getArguments());
-            hideSoftKeyboard();
-            return true;
-        }
         return false;
     }
 
@@ -92,6 +85,7 @@ public class SearchUsersFragment extends BaseFragment implements SearchUsersCont
         searchUsersList.setLayoutManager(new GridLayoutManager(getActivityContext(),
                 Utiles.calculateNoOfColumns(getActivityContext())));
 
+        // Search users when click on GO_Button in keyboard
         searchUsersEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
