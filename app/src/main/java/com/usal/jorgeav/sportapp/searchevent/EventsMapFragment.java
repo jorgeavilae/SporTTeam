@@ -143,7 +143,7 @@ public class EventsMapFragment extends SupportMapFragment
         mMarkersList = new ArrayList<>();
 
         //Populate map with Events
-        populateMap();
+        if (mMap != null) populateMap();
     }
 
     private void populateMap() {

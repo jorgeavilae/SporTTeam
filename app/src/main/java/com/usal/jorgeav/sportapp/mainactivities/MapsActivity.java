@@ -29,6 +29,7 @@ import com.usal.jorgeav.sportapp.network.HttpRequestTask;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class MapsActivity extends AppCompatActivity implements
@@ -182,18 +183,35 @@ public class MapsActivity extends AppCompatActivity implements
             // latLng are too near from a Field
             onMarkerClick(mMarkersList.get(position));
         } else if (!mOnlyField) { /* Only allow MyPlace when mOnlyFields it set false */
-            new AsyncTask<LatLng, Void, MyPlace>() {
-                @Override
-                protected MyPlace doInBackground(LatLng... latLng) {
-                    String apiKey = getResources().getString(R.string.google_maps_key);
-                    return HttpRequestTask.placeInLatLngLocation(apiKey, latLng[0]);
-                }
+            new MyAsyncTask(this).execute(latLng);
+        }
+    }
 
-                @Override
-                protected void onPostExecute(MyPlace place) {
-                    updateSelectedPlace(place);
-                }
-            }.execute(latLng);
+    // Use custom static AsyncTask class instead of create AsyncTask inside
+    // onMapLongClick() to avoid memory leak problem
+    private static class MyAsyncTask extends AsyncTask<LatLng, Void, MyPlace> {
+
+        // https://developer.android.com/reference/java/lang/ref/WeakReference
+        // The View with a weak reference could be collected by GC.
+        private WeakReference<MapsActivity> mActivity;
+
+        MyAsyncTask(MapsActivity mapsActivity) {
+            mActivity = new WeakReference<>(mapsActivity);
+        }
+
+        @Override
+        protected MyPlace doInBackground(LatLng... latLng) {
+            // Check if MapsActivity still exists
+            MapsActivity mapsActivity = mActivity.get();
+            if (mapsActivity == null || mapsActivity.isFinishing()) return null;
+
+            String apiKey = mapsActivity.getResources().getString(R.string.google_maps_key);
+            return HttpRequestTask.placeInLatLngLocation(apiKey, latLng[0]);
+        }
+
+        @Override
+        protected void onPostExecute(MyPlace place) {
+            mActivity.get().updateSelectedPlace(place);
         }
     }
 

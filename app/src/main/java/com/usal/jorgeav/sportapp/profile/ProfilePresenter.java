@@ -28,12 +28,13 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.ref.WeakReference;
 
 class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     @SuppressWarnings("unused")
     private static final String TAG = ProfilePresenter.class.getSimpleName();
 
-    private ProfileContract.View mUserView;
+    ProfileContract.View mUserView;
     private ContentObserver mContentObserver;
 
     ProfilePresenter(ProfileContract.View userView) {
@@ -118,80 +119,95 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
     static final int RELATION_TYPE_I_RECEIVE_REQUEST = 4;
     @Override
     public void getRelationTypeBetweenThisUserAndI() {
-        AsyncTask<Void, Void, Integer> task = new AsyncTask<Void, Void, Integer>() {
-            @Override
-            protected Integer doInBackground(Void... voids) {
-                try {
-                    String myUid = Utiles.getCurrentUserId();
-                    if (TextUtils.isEmpty(myUid)) return RELATION_TYPE_ERROR;
+        new MyAsyncTask(mUserView).execute();
+    }
 
-                    //Me?
-                    if (myUid.equals(mUserView.getUserID())) return RELATION_TYPE_ME;
+    // Use custom static AsyncTask class instead of create AsyncTask inside
+    // getRelationTypeBetweenThisUserAndI() to avoid memory leak problem
+    private static class MyAsyncTask extends AsyncTask<Void, Void, Integer> {
 
-                    //Friends?
-                    Cursor cursorFriends = mUserView.getActivityContext().getContentResolver().query(
-                            SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI,
-                            new String[]{SportteamContract.FriendsEntry.USER_ID_TABLE_PREFIX},
-                            SportteamContract.FriendsEntry.MY_USER_ID + " = ? AND "
-                                    + SportteamContract.FriendsEntry.USER_ID + " = ?",
-                            new String[]{myUid, mUserView.getUserID()},
-                            null);
-                    if (cursorFriends != null) {
-                        if(cursorFriends.getCount() > 0) {
-                            cursorFriends.close();
-                            return RELATION_TYPE_FRIENDS;
-                        }
+        // https://developer.android.com/reference/java/lang/ref/WeakReference
+        // The View with a weak reference could be collected by GC.
+        private WeakReference<ProfileContract.View> mView;
+
+        MyAsyncTask(ProfileContract.View view) {
+            mView = new WeakReference<>(view);
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            // Check if ProfileView still exists
+            ProfileContract.View usersView = mView.get();
+            if (usersView == null) return RELATION_TYPE_ERROR;
+
+            try {
+                String myUid = Utiles.getCurrentUserId();
+                if (TextUtils.isEmpty(myUid)) return RELATION_TYPE_ERROR;
+
+                //Me?
+                if (myUid.equals(usersView.getUserID())) return RELATION_TYPE_ME;
+
+                //Friends?
+                Cursor cursorFriends = usersView.getActivityContext().getContentResolver().query(
+                        SportteamContract.FriendsEntry.CONTENT_FRIENDS_URI,
+                        new String[]{SportteamContract.FriendsEntry.USER_ID_TABLE_PREFIX},
+                        SportteamContract.FriendsEntry.MY_USER_ID + " = ? AND "
+                                + SportteamContract.FriendsEntry.USER_ID + " = ?",
+                        new String[]{myUid, usersView.getUserID()},
+                        null);
+                if (cursorFriends != null) {
+                    if (cursorFriends.getCount() > 0) {
                         cursorFriends.close();
+                        return RELATION_TYPE_FRIENDS;
                     }
-
-                    //I have received a FriendRequest?
-                    Cursor cursorReceiver = mUserView.getActivityContext().getContentResolver().query(
-                            SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
-                            new String[]{SportteamContract.FriendRequestEntry.SENDER_ID_TABLE_PREFIX},
-                            SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND "
-                                    + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
-                            new String[]{mUserView.getUserID(), myUid},
-                            null);
-                    if (cursorReceiver != null) {
-                        if(cursorReceiver.getCount() > 0) {
-                            cursorReceiver.close();
-                            return RELATION_TYPE_I_RECEIVE_REQUEST;
-                        }
-                        cursorReceiver.close();
-                    }
-
-                    //I have sent a FriendRequest?
-                    Cursor cursorSender = mUserView.getActivityContext().getContentResolver().query(
-                            SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
-                            new String[]{SportteamContract.FriendRequestEntry.RECEIVER_ID_TABLE_PREFIX},
-                            SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND "
-                                    + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
-                            new String[]{myUid, mUserView.getUserID()},
-                            null);
-                    if (cursorSender != null) {
-                        if(cursorSender.getCount() > 0) {
-                            cursorSender.close();
-                            return RELATION_TYPE_I_SEND_REQUEST;
-                        }
-                        cursorSender.close();
-                    }
-
-                    //No relation
-                    return RELATION_TYPE_NONE;
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                    return RELATION_TYPE_ERROR;
+                    cursorFriends.close();
                 }
-            }
 
-            @Override
-            protected void onPostExecute(Integer integer) {
-                super.onPostExecute(integer);
-                mUserView.uiSetupForUserRelation(integer);
-            }
-        };
+                //I have received a FriendRequest?
+                Cursor cursorReceiver = usersView.getActivityContext().getContentResolver().query(
+                        SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
+                        new String[]{SportteamContract.FriendRequestEntry.SENDER_ID_TABLE_PREFIX},
+                        SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND "
+                                + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
+                        new String[]{usersView.getUserID(), myUid},
+                        null);
+                if (cursorReceiver != null) {
+                    if (cursorReceiver.getCount() > 0) {
+                        cursorReceiver.close();
+                        return RELATION_TYPE_I_RECEIVE_REQUEST;
+                    }
+                    cursorReceiver.close();
+                }
 
-        task.execute();
+                //I have sent a FriendRequest?
+                Cursor cursorSender = usersView.getActivityContext().getContentResolver().query(
+                        SportteamContract.FriendRequestEntry.CONTENT_FRIEND_REQUESTS_URI,
+                        new String[]{SportteamContract.FriendRequestEntry.RECEIVER_ID_TABLE_PREFIX},
+                        SportteamContract.FriendRequestEntry.SENDER_ID + " = ? AND "
+                                + SportteamContract.FriendRequestEntry.RECEIVER_ID + " = ?",
+                        new String[]{myUid, usersView.getUserID()},
+                        null);
+                if (cursorSender != null) {
+                    if (cursorSender.getCount() > 0) {
+                        cursorSender.close();
+                        return RELATION_TYPE_I_SEND_REQUEST;
+                    }
+                    cursorSender.close();
+                }
+
+                //No relation
+                return RELATION_TYPE_NONE;
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                return RELATION_TYPE_ERROR;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            mView.get().uiSetupForUserRelation(integer);
+        }
     }
 
     @Override
