@@ -187,6 +187,11 @@ public class NewUserActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void signOut() {
+        Log.e(TAG, "signOut: User is not logged yet.");
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mDisplayedFragment != null && getSupportFragmentManager() != null)

@@ -15,6 +15,7 @@ public abstract class ActivityContracts {
         void setCurrentDisplayedFragment(String title, BaseFragment fragment);
         void showContent();
         void hideContent();
+        void signOut();
     }
 
     public interface ActionBarIconManagement {

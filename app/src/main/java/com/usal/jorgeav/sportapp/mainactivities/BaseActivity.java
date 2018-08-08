@@ -79,9 +79,10 @@ public class BaseActivity extends AppCompatActivity
 
         mToggle = new ActionBarDrawerToggle(
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawer.addDrawerListener(mToggle);
+        //TODO estas lineas pueden no ser necesarias. Se necesita mas test.
+//        mDrawer.addDrawerListener(mToggle);
         //https://stackoverflow.com/questions/17025957/disable-gesture-listener-on-drawerlayout
-        mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+//        mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
@@ -205,14 +206,7 @@ public class BaseActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_sign_out) {
-            if (mDisplayedFragment != null) {
-                getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
-                mDisplayedFragment = null;
-            }
-
-            // Delete token to stop receiving new notifications
-            UserFirebaseActions.deleteUserToken(Utiles.getCurrentUserId());
-            mAuth.signOut();
+            signOut();
         } else if (item.getItemId() == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
@@ -251,6 +245,18 @@ public class BaseActivity extends AppCompatActivity
         super.onNewIntent(intent);
         /* https://stackoverflow.com/a/6357330/4235666 */
         setIntent(intent);
+    }
+
+    @Override
+    public void signOut() {
+        if (mDisplayedFragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
+            mDisplayedFragment = null;
+        }
+
+        // Delete token to stop receiving new notifications
+        UserFirebaseActions.deleteUserToken(Utiles.getCurrentUserId());
+        mAuth.signOut();
     }
 
     @Override

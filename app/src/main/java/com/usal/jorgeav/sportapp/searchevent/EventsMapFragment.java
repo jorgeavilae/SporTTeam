@@ -203,11 +203,13 @@ public class EventsMapFragment extends SupportMapFragment
         if (myUserId != null) {
             LatLng myCityLatLong = UtilesPreferences.getCurrentUserCityCoords(getActivityContext());
 
-            if (myCityLatLong.latitude == 0 && myCityLatLong.longitude == 0)
-                myCityLatLong = new LatLng(UtilesPreferences.CACERES_LATITUDE, UtilesPreferences.CACERES_LONGITUDE);
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
-            mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
+            /* Error on login and current user city coordinates aren't in Content Provider */
+            if (myCityLatLong == null ||(myCityLatLong.latitude == 0 && myCityLatLong.longitude == 0))
+                mFragmentManagementListener.signOut();
+            else {
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
+            }
         }
     }
 
