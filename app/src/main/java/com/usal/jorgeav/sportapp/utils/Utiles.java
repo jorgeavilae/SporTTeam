@@ -108,16 +108,30 @@ public class Utiles {
 
     /* https://stackoverflow.com/a/123305/4235666 */
     /* https://en.wikipedia.org/wiki/Haversine_formula */
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private static double distanceHaversine(double lat1, double lng1, double lat2, double lng2) {
         double earthRadius = 6371000; // in meters
-        double dLat = Math.toRadians(lat2-lat1);
-        double dLng = Math.toRadians(lng2-lng1);
-        double sindLat = Math.sin(dLat / 2);
-        double sindLng = Math.sin(dLng / 2);
-        double a = sindLat * sindLat + sindLng * sindLng
-                * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return (earthRadius * c);
+
+        double latitude1_radians = Math.toRadians(lat1);
+        double latitude2_radians = Math.toRadians(lat2);
+
+        double latitude_difference_radians = Math.toRadians(lat2-lat1);
+        double sinOf_latitude_difference = Math.sin(latitude_difference_radians / 2);
+        double haversine_latitude_difference = sinOf_latitude_difference * sinOf_latitude_difference;
+
+        double longitude_difference_radians = Math.toRadians(lng2-lng1);
+        double sinOf_longitude_difference = Math.sin(longitude_difference_radians / 2);
+        double haversine_longitude_difference = sinOf_longitude_difference * sinOf_longitude_difference;
+
+        double haversine_dR = haversine_latitude_difference +
+                Math.cos(latitude1_radians) * Math.cos(latitude2_radians) * haversine_longitude_difference;
+
+        double arcosinOf_haversine_dR = Math.asin(Math.sqrt(haversine_dR));
+
+        // Distance in earthRadius's units.
+        double distance = 2*earthRadius * arcosinOf_haversine_dR;
+
+        return distance;
     }
 
     /* http://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns */
