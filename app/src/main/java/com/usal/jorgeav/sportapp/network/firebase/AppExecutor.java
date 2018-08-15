@@ -24,23 +24,16 @@ public class AppExecutor {
 
     // A pool of background threads
     private final Executor mExecutor;
-    private static AppExecutor sInstance = null;
-
-    static  {
-        // Creates a single static instance of AppExecutor
-        sInstance = new AppExecutor();
-    }
-
-    public static AppExecutor getInstance() { return sInstance; }
     public Executor getExecutor() { return mExecutor; }
+
+    // Creates a single static instance of AppExecutor. Every execution uses the instance.
+    private static AppExecutor sInstance = new AppExecutor();
+    public static AppExecutor getInstance() { return sInstance; }
 
     // Constructs the thread pool used to decode dataSnapshot and insert in Content Provider.
     private AppExecutor() {
-        mExecutor = provideAppExecutor();
-    }
-    private Executor provideAppExecutor() {
         final int fixed = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
-        return Executors.newFixedThreadPool(fixed, new ThreadFactory() {
+        mExecutor = Executors.newFixedThreadPool(fixed, new ThreadFactory() {
             @Override
             public Thread newThread(@NonNull final Runnable runnable) {
                 return new PrioritizedThread(COMPUTE_THREAD_PRIORITY, runnable);
@@ -65,3 +58,7 @@ public class AppExecutor {
         }
     }
 }
+
+
+
+

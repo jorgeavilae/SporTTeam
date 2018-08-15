@@ -1000,7 +1000,7 @@ public final class SportteamContract {
          * FROM user
          *      LEFT JOIN friends
          *          ON (user.uid = friend.userId AND friend.myuid = ? )
-         * WHERE (user.name = ? AND user.userId <> ? AND friends.myUserId IS NULL )
+         * WHERE (user.name LIKE ? AND user.userId <> ? AND friends.myUserId IS NULL )
          * ORDER BY user.name ASC
          */
     }
