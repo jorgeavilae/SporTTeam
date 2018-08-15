@@ -126,7 +126,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                     && !TextUtils.isEmpty(newUserPassword.getText())
                     && !TextUtils.isEmpty(newUserName.getText())
                     && !TextUtils.isEmpty(newUserAge.getText())
-                    && !TextUtils.isEmpty(newUserAutocompleteCity.getText())) {
+                    && newUserCitySelectedName != null && newUserCitySelectedCoord != null) {
 
                 SportsListFragment slf = SportsListFragment.newInstance("", ((NewUserActivity) getActivity()).sports);
                 mFragmentManagementListener.initFragment(slf, true);
@@ -149,7 +149,6 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     }
 
     private void setEmailEditText() {
-        mPresenter.checkUserEmailExists(newUserEmail.getText().toString());
         newUserEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
@@ -200,9 +199,6 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     }
 
     private void setNameEditText() {
-        if (newUserName.getText().toString().length() > 20)
-            newUserName.setError(getString(R.string.error_incorrect_name));
-        mPresenter.checkUserNameExists(newUserName.getText().toString());
         newUserName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
