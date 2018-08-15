@@ -146,8 +146,8 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
             if (mCreator == null || TextUtils.isEmpty(mCreator))
                 mCreator = Utiles.getCurrentUserId();
             if (newFieldAllDayTime.isChecked()) {
-                newFieldOpenTime.setText(UtilesTime.millisToTimeString(0));
-                newFieldCloseTime.setText(UtilesTime.millisToTimeString(0));
+                newFieldOpenTime.setText("00:00");
+                newFieldCloseTime.setText("00:00");
             }
             mNewFieldPresenter.addField(
                     fieldId,
