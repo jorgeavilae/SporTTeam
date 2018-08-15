@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -108,8 +107,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         public void onTimeSet(TimePicker timePicker, int hour, int minute) {
             myCalendar.set(Calendar.HOUR_OF_DAY, hour);
             myCalendar.set(Calendar.MINUTE, minute);
-            long time = TimeUnit.HOURS.toMillis(hour) + TimeUnit.MINUTES.toMillis(minute);
-            newEventTime.setText(UtilesTime.millisToTimeString(time));
+            newEventTime.setText(String.format(Locale.getDefault(), "%02d:%02d", hour, minute));
         }
     };
 

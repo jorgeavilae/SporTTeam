@@ -192,6 +192,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     @Override
     public void uiSetupForEventRelation(@DetailEventPresenter.EventRelationType int relation) {
+        if (getActivity() == null) return;
         MenuInflater menuInflater = getActivity().getMenuInflater();
 
         mRelation = relation;
@@ -212,31 +213,29 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             return;
         }
 
-        if (getActivity() != null) {
-            switch (relation) {
-                case DetailEventPresenter.RELATION_TYPE_NONE:
-                    setupForNone();
-                    break;
-                case DetailEventPresenter.RELATION_TYPE_OWNER:
-                    setupForOwner(menuInflater);
-                    break;
-                case DetailEventPresenter.RELATION_TYPE_ASSISTANT:
-                    setupForParticipant(menuInflater);
-                    break;
-                case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
-                    setupForRequestSent();
-                    break;
-                case DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION:
-                    setupForInvitationReceived();
-                    break;
-                case DetailEventPresenter.RELATION_TYPE_BLOCKED:
-                    setupForBlocked();
-                    break;
-                default:
-                case DetailEventPresenter.RELATION_TYPE_ERROR:
-                    setupForError();
-                    break;
-            }
+        switch (relation) {
+            case DetailEventPresenter.RELATION_TYPE_NONE:
+                setupForNone();
+                break;
+            case DetailEventPresenter.RELATION_TYPE_OWNER:
+                setupForOwner(menuInflater);
+                break;
+            case DetailEventPresenter.RELATION_TYPE_ASSISTANT:
+                setupForParticipant(menuInflater);
+                break;
+            case DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST:
+                setupForRequestSent();
+                break;
+            case DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION:
+                setupForInvitationReceived();
+                break;
+            case DetailEventPresenter.RELATION_TYPE_BLOCKED:
+                setupForBlocked();
+                break;
+            default:
+            case DetailEventPresenter.RELATION_TYPE_ERROR:
+                setupForError();
+                break;
         }
     }
 
