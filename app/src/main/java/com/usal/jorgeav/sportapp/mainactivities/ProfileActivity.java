@@ -33,7 +33,6 @@ public class ProfileActivity extends BaseActivity implements SportsListFragment.
 
     @Override
     public void startMainFragment() {
-        super.startMainFragment();
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
 

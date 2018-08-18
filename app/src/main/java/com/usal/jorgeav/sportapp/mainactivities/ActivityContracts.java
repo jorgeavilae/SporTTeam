@@ -18,10 +18,12 @@ public abstract class ActivityContracts {
         void signOut();
     }
 
+    //todo refactor to nav management or something
     public interface ActionBarIconManagement {
         void setToolbarAsNav();
         void setToolbarAsUp();
         void setActionBarTitle(String title);
         void setUserInfoInNavigationDrawer();
+        void simulateNavigationItemSelected(int menuItemId, String intentExtraKey, String intentExtraValue);
     }
 }

@@ -1,7 +1,6 @@
 package com.usal.jorgeav.sportapp.searchevent;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -82,9 +81,8 @@ public class EventsMapFragment extends SupportMapFragment
             mFragmentManagementListener.initFragment(SearchEventsFragment.newInstance(), true);
             return true;
         } else if (item.getItemId() == R.id.action_add_event) {
-            Intent intent = new Intent(getActivity(), EventsActivity.class);
-            intent.putExtra(EventsActivity.CREATE_NEW_EVENT_INTENT_EXTRA, "dummy");
-            startActivity(intent);
+            mActionBarIconManagementListener.simulateNavigationItemSelected(R.id.nav_events,
+                    EventsActivity.CREATE_NEW_EVENT_INTENT_EXTRA, "dummy");
             return true;
         }
         return false;

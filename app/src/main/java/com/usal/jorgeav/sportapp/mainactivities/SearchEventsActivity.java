@@ -29,8 +29,6 @@ public class SearchEventsActivity extends BaseActivity implements SearchEventsFr
 
     @Override
     public void startMainFragment() {
-        super.startMainFragment();
-
         initFragment(EventsMapFragment.newInstance(), false);
 
         mNavigationView.setCheckedItem(R.id.nav_search_events);

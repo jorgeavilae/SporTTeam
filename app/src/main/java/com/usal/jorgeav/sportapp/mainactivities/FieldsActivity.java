@@ -50,8 +50,6 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
 
     @Override
     public void startMainFragment() {
-        super.startMainFragment();
-
         // If needed, start createNewField from fragment instead of from here
         boolean createNewField = false;
         if (getIntent().hasExtra(INTENT_EXTRA_CREATE_NEW_FIELD)) createNewField = true;

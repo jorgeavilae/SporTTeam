@@ -2,7 +2,6 @@ package com.usal.jorgeav.sportapp.profile;
 
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -42,7 +41,6 @@ import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
 import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
-import com.usal.jorgeav.sportapp.mainactivities.EventsActivity;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
@@ -177,8 +175,8 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             userCalendarButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getActivity(), EventsActivity.class);
-                    startActivity(intent);
+                    mActionBarIconManagementListener.simulateNavigationItemSelected(R.id.nav_events,
+                            null, null);
                 }
             });
 

@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,10 +42,13 @@ import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class BaseActivity extends AppCompatActivity
+public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ActivityContracts.ActionBarIconManagement,
         ActivityContracts.FragmentManagement {
+
+    public abstract void startMainFragment();
+
     private final static String TAG = BaseActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
     public static final String FRAGMENT_TAG_IS_MAP = "FRAGMENT_TAG_IS_MAP";
@@ -79,10 +83,6 @@ public class BaseActivity extends AppCompatActivity
 
         mToggle = new ActionBarDrawerToggle(
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        //TODO estas lineas pueden no ser necesarias. Se necesita mas test.
-//        mDrawer.addDrawerListener(mToggle);
-        //https://stackoverflow.com/questions/17025957/disable-gesture-listener-on-drawerlayout
-//        mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
@@ -211,33 +211,42 @@ public class BaseActivity extends AppCompatActivity
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else {
-            Intent intent;
-            switch (item.getItemId()) {
-                default: case R.id.nav_profile:
-                    intent = new Intent(this, ProfileActivity.class); break;
-                case R.id.nav_search_events:
-                    intent = new Intent(this, SearchEventsActivity.class); break;
-                case R.id.nav_notifications:
-                    intent = new Intent(this, NotificationsActivity.class); break;
-                case R.id.nav_friends:
-                    intent = new Intent(this, FriendsActivity.class); break;
-                case R.id.nav_alarms:
-                    intent = new Intent(this, AlarmsActivity.class); break;
-                case R.id.nav_fields:
-                    intent = new Intent(this, FieldsActivity.class); break;
-            }
-            // Do not invoke detachListeners in onPause if it's a
-            // navigation between activities
-            shouldDetachFirebaseListener = false;
-
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
+            simulateNavigationItemSelected(item.getItemId(), null, null);
         }
 
         mNavigationView.setCheckedItem(item.getItemId());
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void simulateNavigationItemSelected(int menuItemId, String intentExtraKey, String intentExtraValue) {
+        Intent intent;
+        switch (menuItemId) {
+            default: case R.id.nav_profile:
+                intent = new Intent(this, ProfileActivity.class); break;
+            case R.id.nav_events:
+                intent = new Intent(this, EventsActivity.class); break;
+            case R.id.nav_search_events:
+                intent = new Intent(this, SearchEventsActivity.class); break;
+            case R.id.nav_notifications:
+                intent = new Intent(this, NotificationsActivity.class); break;
+            case R.id.nav_friends:
+                intent = new Intent(this, FriendsActivity.class); break;
+            case R.id.nav_alarms:
+                intent = new Intent(this, AlarmsActivity.class); break;
+            case R.id.nav_fields:
+                intent = new Intent(this, FieldsActivity.class); break;
+        }
+        // Do not invoke detachListeners in onPause if it's a
+        // navigation between activities
+        shouldDetachFirebaseListener = false;
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (intentExtraKey != null && !TextUtils.isEmpty(intentExtraKey))
+            intent.putExtra(intentExtraKey, intentExtraValue);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -257,11 +266,6 @@ public class BaseActivity extends AppCompatActivity
         // Delete token to stop receiving new notifications
         UserFirebaseActions.deleteUserToken(Utiles.getCurrentUserId());
         mAuth.signOut();
-    }
-
-    @Override
-    public void startMainFragment() {
-        // Activities must implement this
     }
 
     @Override

@@ -36,7 +36,6 @@ public class AlarmsActivity extends BaseActivity implements SelectSportFragment.
 
     @Override
     public void startMainFragment() {
-        super.startMainFragment();
         String alarmId = getIntent().getStringExtra(ALARMID_PENDING_INTENT_EXTRA);
 
         initFragment(AlarmsFragment.newInstance(), false);

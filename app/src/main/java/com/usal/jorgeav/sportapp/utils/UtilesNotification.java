@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 
 import com.usal.jorgeav.sportapp.R;
@@ -57,7 +56,8 @@ public class UtilesNotification {
     public static void clearAllNotifications(Context context) {
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+        if (notificationManager != null)
+            notificationManager.cancelAll();
     }
 
     //Creates and display a notification with an User information
@@ -78,7 +78,8 @@ public class UtilesNotification {
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             // Pass in a unique ID of your choosing for the notification
-            notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
+            if (notificationManager != null)
+                notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
         }
     }
 
@@ -112,51 +113,31 @@ public class UtilesNotification {
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             // Pass in a unique ID of your choosing for the notification
-            notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
+            if (notificationManager != null)
+                notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
         }
-    }
-
-
-    //Creates a PendingIntent to open EventFragment
-    public static PendingIntent contentEventIntent(Context context) {
-        /* https://stackoverflow.com/a/24927301/4235666 */
-//        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, EventsActivity.class));
-//        return PendingIntent.getActivity(
-//                context,
-//                (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */
-//                startActivityIntent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
-        Intent intent = new Intent(context, EventsActivity.class);
-
-        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
-        taskStackBuilder.addParentStack(EventsActivity.class);
-        taskStackBuilder.addNextIntent(intent);
-
-        return taskStackBuilder.getPendingIntent(
-                (int) System.currentTimeMillis(),
-                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //Creates a PendingIntent to open event's DetailEventFragment
     private static PendingIntent contentDetailEventIntent(Context context, String eventId) {
         /* https://stackoverflow.com/a/24927301/4235666 */
-//        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, EventsActivity.class));
-//        startActivityIntent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);
-//        return PendingIntent.getActivity(
-//                context,
-//                (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */
-//                startActivityIntent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
-        Intent intent = new Intent(context, EventsActivity.class);
-        intent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);
-
-        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
-        taskStackBuilder.addParentStack(EventsActivity.class);
-        taskStackBuilder.addNextIntent(intent);
-
-        return taskStackBuilder.getPendingIntent(
-                (int) System.currentTimeMillis(),
+        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, EventsActivity.class));
+        startActivityIntent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);
+        return PendingIntent.getActivity(
+                context,
+                (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */
+                startActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
+//        Intent intent = new Intent(context, EventsActivity.class);
+//        intent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);
+//
+//        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
+//        taskStackBuilder.addParentStack(EventsActivity.class);
+//        taskStackBuilder.addNextIntent(intent);
+//
+//        return taskStackBuilder.getPendingIntent(
+//                (int) System.currentTimeMillis(),
+//                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //Creates and display a notification with an Alarm information
@@ -177,7 +158,8 @@ public class UtilesNotification {
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             // Pass in a unique ID of your choosing for the notification
-            notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
+            if (notificationManager != null)
+                notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
         }
     }
 
@@ -203,7 +185,7 @@ public class UtilesNotification {
                     .setContentText(fNotification.getMessage())
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
                     .setDefaults(Notification.DEFAULT_VIBRATE)
-                    .setContentIntent(contentIntent(context))
+                    .setContentIntent(contentEventIntent(context))
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setAutoCancel(true);
 
@@ -211,27 +193,28 @@ public class UtilesNotification {
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             // Pass in a unique ID of your choosing for the notification
-            notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
+            if (notificationManager != null)
+                notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
         }
     }
 
-    //Creates a PendingIntent to open EventsActivity
-    private static PendingIntent contentIntent(Context context) {
+    //Creates a PendingIntent to open EventFragment
+    public static PendingIntent contentEventIntent(Context context) {
         /* https://stackoverflow.com/a/24927301/4235666 */
-//        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, EventsActivity.class));
-//        return PendingIntent.getActivity(
-//                context,
-//                (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */
-//                startActivityIntent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
-        Intent intent = new Intent(context, EventsActivity.class);
-
-        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
-        taskStackBuilder.addParentStack(EventsActivity.class);
-        taskStackBuilder.addNextIntent(intent);
-
-        return taskStackBuilder.getPendingIntent(
-                (int) System.currentTimeMillis(),
+        Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, EventsActivity.class));
+        return PendingIntent.getActivity(
+                context,
+                (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */
+                startActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
+//        Intent intent = new Intent(context, EventsActivity.class);
+//
+//        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
+//        taskStackBuilder.addParentStack(EventsActivity.class);
+//        taskStackBuilder.addNextIntent(intent);
+//
+//        return taskStackBuilder.getPendingIntent(
+//                (int) System.currentTimeMillis(),
+//                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

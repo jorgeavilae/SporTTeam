@@ -10,8 +10,6 @@ public class NotificationsActivity extends BaseActivity {
 
     @Override
     public void startMainFragment() {
-        super.startMainFragment();
-
         initFragment(NotificationsFragment.newInstance(), false);
         mNavigationView.setCheckedItem(R.id.nav_notifications);
     }

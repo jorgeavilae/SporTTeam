@@ -13,7 +13,6 @@ public class FriendsActivity extends BaseActivity {
 
     @Override
     public void startMainFragment() {
-        super.startMainFragment();
         String userId = getIntent().getStringExtra(USERID_PENDING_INTENT_EXTRA);
 
         initFragment(FriendsFragment.newInstance(), false);

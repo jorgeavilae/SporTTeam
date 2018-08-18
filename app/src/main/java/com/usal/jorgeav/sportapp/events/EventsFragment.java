@@ -87,6 +87,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
         View root = inflater.inflate(R.layout.fragment_events, container, false);
         ButterKnife.bind(this, root);
 
+        initCalendar();
         return root;
     }
 
@@ -115,7 +116,7 @@ public class EventsFragment extends BaseFragment implements EventsContract.View,
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.events), this);
-        mActionBarIconManagementListener.setToolbarAsUp();
+        mActionBarIconManagementListener.setToolbarAsNav();
     }
 
     @Override
