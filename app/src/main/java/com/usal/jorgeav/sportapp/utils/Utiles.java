@@ -47,7 +47,7 @@ public class Utiles {
 
     /* Request code for ask permissions to gallery and camera */
     public static final int RC_GALLERY_CAMERA_PERMISSIONS = 3;
-    private static final double DISTANCE_ALLOWED = 50;
+    private static final double DISTANCE_ALLOWED = 100;
 
     public static String getFirebaseStorageRootReference() {
         /* https://firebase.google.com/docs/storage/android/create-reference?hl=es-419 */

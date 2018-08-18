@@ -164,7 +164,7 @@ public class EventsMapFragment extends SupportMapFragment
             // While loop: when there are multiple events in same position,
             // should apply multiple offsets.
             while (lookForMarkerInSamePosition(m, mMarkersList) > -1) {
-                LatLng newLatLong = new LatLng(m.getPosition().latitude, m.getPosition().longitude+0.00005);
+                LatLng newLatLong = new LatLng(m.getPosition().latitude, m.getPosition().longitude+0.0005);
                 m.setPosition(newLatLong);
             }
 
