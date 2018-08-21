@@ -44,7 +44,7 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
 
     private static String mEventId = "";
     @DetailEventPresenter.EventRelationType
-    private static int mRelation = -1;
+    private static int mRelation = DetailEventPresenter.RELATION_TYPE_ERROR;
     private static Boolean isPast = null;
     private static Boolean isFull = null;
     ParticipantsContract.Presenter mParticipantsPresenter;
@@ -178,7 +178,7 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.event_participants), this);
-        mActionBarIconManagementListener.setToolbarAsUp();
+        mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
     @Override

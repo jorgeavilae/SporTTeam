@@ -40,7 +40,7 @@ public class FieldsMapFragment extends SupportMapFragment
     private static final String TAG = FieldsMapFragment.class.getSimpleName();
 
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
-    protected ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
+    protected ActivityContracts.NavigationDrawerManagement mNavigationDrawerManagementListener;
 
     private GoogleMap mMap;
     FieldsContract.Presenter mFieldsPresenter;
@@ -95,7 +95,7 @@ public class FieldsMapFragment extends SupportMapFragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.fields), null);
-        mActionBarIconManagementListener.setToolbarAsNav();
+        mNavigationDrawerManagementListener.setToolbarAsNav();
     }
 
     @Override
@@ -216,8 +216,8 @@ public class FieldsMapFragment extends SupportMapFragment
         super.onAttach(context);
         if (context instanceof ActivityContracts.FragmentManagement)
             mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.NavigationDrawerManagement)
+            mNavigationDrawerManagementListener = (ActivityContracts.NavigationDrawerManagement) context;
     }
 
     @Override
@@ -225,7 +225,7 @@ public class FieldsMapFragment extends SupportMapFragment
         super.onDetach();
         hideSoftKeyboard();
         mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
+        mNavigationDrawerManagementListener = null;
     }
 
     public void showContent() {

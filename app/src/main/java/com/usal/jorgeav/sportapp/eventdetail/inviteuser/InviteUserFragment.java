@@ -89,7 +89,7 @@ public class InviteUserFragment extends BaseFragment implements InviteUserContra
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.invite_user), this);
-        mActionBarIconManagementListener.setToolbarAsUp();
+        mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
     @Override

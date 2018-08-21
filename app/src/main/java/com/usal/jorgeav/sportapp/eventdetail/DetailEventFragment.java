@@ -456,7 +456,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.event_details), this);
-        mActionBarIconManagementListener.setToolbarAsUp();
+        mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
     @Override
@@ -501,7 +501,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
     public void showEventName(String name) {
         showContent();
         if (name != null && !TextUtils.isEmpty(name))
-            mActionBarIconManagementListener.setActionBarTitle(name);
+            mNavigationDrawerManagementListener.setActionBarTitle(name);
     }
 
     @Override
@@ -562,7 +562,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         this.detailEventPlace.setText("");
         this.detailEventPlaceIcon.setVisibility(View.INVISIBLE);
         this.detailEventPlace.setOnClickListener(null);
-        this.mActionBarIconManagementListener.setActionBarTitle(getString(R.string.event_details));
+        this.mNavigationDrawerManagementListener.setActionBarTitle(getString(R.string.event_details));
         this.detailEventDate.setText("");
         this.detailEventOwner.setText("");
         this.detailEventTotal.setText("");

@@ -88,7 +88,7 @@ public class SendInvitationFragment extends BaseFragment implements SendInvitati
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_event), this);
-        mActionBarIconManagementListener.setToolbarAsUp();
+        mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
     @Override

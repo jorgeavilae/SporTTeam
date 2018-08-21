@@ -86,7 +86,7 @@ public class SelectSportFragment extends BaseFragment implements SelectSportsAda
         super.onStart();
         hideSoftKeyboard();
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_sport), this);
-        if (mActionBarIconManagementListener != null) mActionBarIconManagementListener.setToolbarAsUp();
+        if (mNavigationDrawerManagementListener != null) mNavigationDrawerManagementListener.setToolbarAsUp();
         mSportAdapter.replaceData(loadSports());
         showContent();
     }

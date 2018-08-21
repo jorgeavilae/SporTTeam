@@ -104,7 +104,7 @@ public class NotificationsFragment extends BaseFragment implements Notifications
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.notifications), this);
-        mActionBarIconManagementListener.setToolbarAsNav();
+        mNavigationDrawerManagementListener.setToolbarAsNav();
     }
 
     @Override

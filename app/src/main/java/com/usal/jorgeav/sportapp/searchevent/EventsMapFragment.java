@@ -43,7 +43,7 @@ public class EventsMapFragment extends SupportMapFragment
     private static final String TAG = EventsMapFragment.class.getSimpleName();
 
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
-    protected ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
+    protected ActivityContracts.NavigationDrawerManagement mNavigationDrawerManagementListener;
 
     private GoogleMap mMap;
     EventsMapContract.Presenter mEventsMapPresenter;
@@ -81,7 +81,7 @@ public class EventsMapFragment extends SupportMapFragment
             mFragmentManagementListener.initFragment(SearchEventsFragment.newInstance(), true);
             return true;
         } else if (item.getItemId() == R.id.action_add_event) {
-            mActionBarIconManagementListener.simulateNavigationItemSelected(R.id.nav_events,
+            mNavigationDrawerManagementListener.simulateNavigationItemSelected(R.id.nav_events,
                     EventsActivity.CREATE_NEW_EVENT_INTENT_EXTRA, "dummy");
             return true;
         }
@@ -93,7 +93,7 @@ public class EventsMapFragment extends SupportMapFragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.search_events), null);
-        mActionBarIconManagementListener.setToolbarAsNav();
+        mNavigationDrawerManagementListener.setToolbarAsNav();
     }
 
     @Override
@@ -253,8 +253,8 @@ public class EventsMapFragment extends SupportMapFragment
         super.onAttach(context);
         if (context instanceof ActivityContracts.FragmentManagement)
             mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.NavigationDrawerManagement)
+            mNavigationDrawerManagementListener = (ActivityContracts.NavigationDrawerManagement) context;
     }
 
     @Override
@@ -262,7 +262,7 @@ public class EventsMapFragment extends SupportMapFragment
         super.onDetach();
         hideSoftKeyboard();
         mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
+        mNavigationDrawerManagementListener = null;
     }
 
     public void showContent() {

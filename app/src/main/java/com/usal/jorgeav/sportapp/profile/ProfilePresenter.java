@@ -271,8 +271,8 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
         fUser.updateProfile(profileUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                if (mUserView.getActivityContext() instanceof ActivityContracts.ActionBarIconManagement)
-                    ((ActivityContracts.ActionBarIconManagement)mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
+                if (mUserView.getActivityContext() instanceof ActivityContracts.NavigationDrawerManagement)
+                    ((ActivityContracts.NavigationDrawerManagement)mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
             }
         });
 
@@ -310,8 +310,8 @@ class ProfilePresenter implements ProfileContract.Presenter, LoaderManager.Loade
                         @Override
                         public void onSuccess(Void aVoid) {
                             // Update NavigationDrawer header
-                            if (mUserView.getActivityContext() instanceof ActivityContracts.ActionBarIconManagement)
-                                ((ActivityContracts.ActionBarIconManagement) mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
+                            if (mUserView.getActivityContext() instanceof ActivityContracts.NavigationDrawerManagement)
+                                ((ActivityContracts.NavigationDrawerManagement) mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
                         }
                     });
 

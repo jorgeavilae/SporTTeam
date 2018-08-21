@@ -175,7 +175,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             userCalendarButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mActionBarIconManagementListener.simulateNavigationItemSelected(R.id.nav_events,
+                    mNavigationDrawerManagementListener.simulateNavigationItemSelected(R.id.nav_events,
                             null, null);
                 }
             });
@@ -413,9 +413,9 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.profile), this);
         if (mUserUid.equals(Utiles.getCurrentUserId()))
-            mActionBarIconManagementListener.setToolbarAsNav();
+            mNavigationDrawerManagementListener.setToolbarAsNav();
         else
-            mActionBarIconManagementListener.setToolbarAsUp();
+            mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
     @Override
@@ -461,7 +461,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     @Override
     public void showUserName(String name) {
         userName.setText(name);
-        mActionBarIconManagementListener.setActionBarTitle(name);
+        mNavigationDrawerManagementListener.setActionBarTitle(name);
     }
 
     @Override
@@ -498,7 +498,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     public void clearUI() {
         this.userImage.setVisibility(View.INVISIBLE);
         this.userName.setText("");
-        this.mActionBarIconManagementListener.setActionBarTitle("");
+        this.mNavigationDrawerManagementListener.setActionBarTitle("");
         this.userCity.setText("");
         this.userAge.setText("");
     }

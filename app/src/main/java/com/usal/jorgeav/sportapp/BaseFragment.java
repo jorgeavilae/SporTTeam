@@ -13,15 +13,15 @@ public abstract class BaseFragment extends Fragment {
     private static final String TAG = BaseFragment.class.getSimpleName();
 
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
-    protected ActivityContracts.ActionBarIconManagement mActionBarIconManagementListener;
+    protected ActivityContracts.NavigationDrawerManagement mNavigationDrawerManagementListener;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof ActivityContracts.FragmentManagement)
             mFragmentManagementListener = (ActivityContracts.FragmentManagement) context;
-        if (context instanceof ActivityContracts.ActionBarIconManagement)
-            mActionBarIconManagementListener = (ActivityContracts.ActionBarIconManagement) context;
+        if (context instanceof ActivityContracts.NavigationDrawerManagement)
+            mNavigationDrawerManagementListener = (ActivityContracts.NavigationDrawerManagement) context;
     }
 
     @Override
@@ -29,7 +29,7 @@ public abstract class BaseFragment extends Fragment {
         super.onDetach();
         hideSoftKeyboard();
         mFragmentManagementListener = null;
-        mActionBarIconManagementListener = null;
+        mNavigationDrawerManagementListener = null;
     }
 
     public Context getActivityContext() {

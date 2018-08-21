@@ -44,7 +44,7 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ActivityContracts.ActionBarIconManagement,
+        ActivityContracts.NavigationDrawerManagement,
         ActivityContracts.FragmentManagement {
 
     public abstract void startMainFragment();

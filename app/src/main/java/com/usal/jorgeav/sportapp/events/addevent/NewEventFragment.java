@@ -267,7 +267,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.action_create_event), this);
-        mActionBarIconManagementListener.setToolbarAsUp();
+        mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
     @Override
@@ -332,10 +332,8 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
 
     @Override
     public void showEventName(String name) {
-        if (name != null && !TextUtils.isEmpty(name)) {
+        if (name != null && !TextUtils.isEmpty(name))
             newEventName.setText(name);
-            mActionBarIconManagementListener.setActionBarTitle(name);
-        }
     }
 
     @Override

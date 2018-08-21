@@ -18,8 +18,7 @@ public abstract class ActivityContracts {
         void signOut();
     }
 
-    //todo refactor to nav management or something
-    public interface ActionBarIconManagement {
+    public interface NavigationDrawerManagement {
         void setToolbarAsNav();
         void setToolbarAsUp();
         void setActionBarTitle(String title);

@@ -190,7 +190,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.field_detail_title), this);
-        mActionBarIconManagementListener.setToolbarAsUp();
+        mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
     @Override
@@ -203,7 +203,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
     @Override
     public void showFieldName(String name) {
         showContent();
-        mActionBarIconManagementListener.setActionBarTitle(name);
+        mNavigationDrawerManagementListener.setActionBarTitle(name);
     }
 
     @Override
@@ -267,7 +267,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
     @Override
     public void clearUI() {
-        this.mActionBarIconManagementListener.setActionBarTitle(getString(R.string.field_detail_title));
+        this.mNavigationDrawerManagementListener.setActionBarTitle(getString(R.string.field_detail_title));
         this.detailFieldAddress.setText("");
         this.detailFieldOpening.setText("");
         this.detailFieldClosing.setText("");
