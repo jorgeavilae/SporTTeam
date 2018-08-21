@@ -65,7 +65,7 @@ public class UtilesNotification {
         if (!fNotification.getChecked()) {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                    .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
+                    .setSmallIcon(R.drawable.ic_logo_white)  /* Notification icons must be entirely white */
                     .setContentTitle(fNotification.getTitle())
                     .setContentText(fNotification.getMessage())
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
@@ -85,7 +85,6 @@ public class UtilesNotification {
 
     //Creates a PendingIntent to open user's ProfileFragment
     private static PendingIntent contentProfileIntent(Context context, String userId) {
-        /* https://stackoverflow.com/a/24927301/4235666 */
         Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, FriendsActivity.class));
         startActivityIntent.putExtra(FriendsActivity.USERID_PENDING_INTENT_EXTRA, userId);
         return PendingIntent.getActivity(
@@ -100,7 +99,7 @@ public class UtilesNotification {
         if (!fNotification.getChecked()) {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                    .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
+                    .setSmallIcon(R.drawable.ic_logo_white)  /* Notification icons must be entirely white */
                     .setContentTitle(fNotification.getTitle())
                     .setContentText(fNotification.getMessage())
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
@@ -120,7 +119,6 @@ public class UtilesNotification {
 
     //Creates a PendingIntent to open event's DetailEventFragment
     private static PendingIntent contentDetailEventIntent(Context context, String eventId) {
-        /* https://stackoverflow.com/a/24927301/4235666 */
         Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, EventsActivity.class));
         startActivityIntent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);
         return PendingIntent.getActivity(
@@ -128,16 +126,6 @@ public class UtilesNotification {
                 (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */
                 startActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-//        Intent intent = new Intent(context, EventsActivity.class);
-//        intent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);
-//
-//        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
-//        taskStackBuilder.addParentStack(EventsActivity.class);
-//        taskStackBuilder.addNextIntent(intent);
-//
-//        return taskStackBuilder.getPendingIntent(
-//                (int) System.currentTimeMillis(),
-//                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //Creates and display a notification with an Alarm information
@@ -145,7 +133,7 @@ public class UtilesNotification {
         if (!fNotification.getChecked()) {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                    .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
+                    .setSmallIcon(R.drawable.ic_logo_white)  /* Notification icons must be entirely white */
                     .setContentTitle(fNotification.getTitle())
                     .setContentText(fNotification.getMessage())
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
@@ -165,7 +153,6 @@ public class UtilesNotification {
 
     //Creates a PendingIntent to open alarm's DetailAlarmFragment
     private static PendingIntent contentAlarmIntent(Context context, String alarmId) {
-        /* https://stackoverflow.com/a/24927301/4235666 */
         Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, AlarmsActivity.class));
         startActivityIntent.putExtra(AlarmsActivity.ALARMID_PENDING_INTENT_EXTRA, alarmId);
         return PendingIntent.getActivity(
@@ -175,12 +162,12 @@ public class UtilesNotification {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    //Creates and display a notification without information (event deleted)
+    //Creates and display a notification without information (e.g. event deleted)
     public static void createNotification(Context context, MyNotification fNotification) {
         if (!fNotification.getChecked()) {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                    .setSmallIcon(R.drawable.ic_logo_white) /* https://stackoverflow.com/a/30795471/4235666 */
+                    .setSmallIcon(R.drawable.ic_logo_white) /* Notification icons must be entirely white */
                     .setContentTitle(fNotification.getTitle())
                     .setContentText(fNotification.getMessage())
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(fNotification.getMessage()))
@@ -200,21 +187,11 @@ public class UtilesNotification {
 
     //Creates a PendingIntent to open EventFragment
     public static PendingIntent contentEventIntent(Context context) {
-        /* https://stackoverflow.com/a/24927301/4235666 */
         Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, EventsActivity.class));
         return PendingIntent.getActivity(
                 context,
                 (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */
                 startActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-//        Intent intent = new Intent(context, EventsActivity.class);
-//
-//        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
-//        taskStackBuilder.addParentStack(EventsActivity.class);
-//        taskStackBuilder.addNextIntent(intent);
-//
-//        return taskStackBuilder.getPendingIntent(
-//                (int) System.currentTimeMillis(),
-//                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
