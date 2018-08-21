@@ -17,8 +17,8 @@ import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 
 import java.util.concurrent.TimeUnit;
 
-public class SportteamSyncUtils {
-    public static final String TAG = SportteamSyncUtils.class.getSimpleName();
+public class SportteamSyncInitialization {
+    public static final String TAG = SportteamSyncInitialization.class.getSimpleName();
 
     private static boolean sScheduled = false;
     private static final String SPORTTEAM_SYNC_TAG = "SPORTTEAM_SYNC_TAG";

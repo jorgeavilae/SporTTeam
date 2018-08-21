@@ -39,7 +39,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamDBHelper;
-import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
+import com.usal.jorgeav.sportapp.network.SportteamSyncInitialization;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +161,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         //If Activity rotate while downloading Firebase data
         if (mAuth.getCurrentUser() != null) showProgress(true);
             //If the user is no logged yet
-        else SportteamSyncUtils.finalize(this);
+        else SportteamSyncInitialization.finalize(this);
 
     }
 
@@ -241,7 +241,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             // The user is logged and his data is in Firebase. Retrieve that data and
             // populate Content Provider. Later finishLoadMyProfile() will be invoked
-            SportteamSyncUtils.initialize(LoginActivity.this);
+            SportteamSyncInitialization.initialize(LoginActivity.this);
 //            } else {
 //                showProgress(false);
 //                AlertDialog.Builder builder = new AlertDialog.Builder(this)

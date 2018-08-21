@@ -32,7 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
-import com.usal.jorgeav.sportapp.network.SportteamSyncUtils;
+import com.usal.jorgeav.sportapp.network.SportteamSyncInitialization;
 import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.preferences.SettingsActivity;
@@ -99,7 +99,7 @@ public abstract class BaseActivity extends AppCompatActivity
                     setUserInfoInNavigationDrawer();
 
                     // Initialization for populate Content Provider and init Service if needed
-                    SportteamSyncUtils.initialize(BaseActivity.this);
+                    SportteamSyncInitialization.initialize(BaseActivity.this);
 
                     // Displayed fragment is null on Initialization OR when FieldsMapFragment is
                     // displayed since FieldsMapFragment is not a BaseFragment.
@@ -111,7 +111,7 @@ public abstract class BaseActivity extends AppCompatActivity
                     Log.i(TAG, "FirebaseUser logged ID: null");
 
                     // Finalize service
-                    SportteamSyncUtils.finalize(BaseActivity.this);
+                    SportteamSyncInitialization.finalize(BaseActivity.this);
 
                     UtilesNotification.clearAllNotifications(BaseActivity.this);
 
