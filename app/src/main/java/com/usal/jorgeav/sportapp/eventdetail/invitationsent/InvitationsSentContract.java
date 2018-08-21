@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.eventdetail.unansweredinvitation;
+package com.usal.jorgeav.sportapp.eventdetail.invitationsent;
 
 import android.content.Context;
 import android.database.Cursor;

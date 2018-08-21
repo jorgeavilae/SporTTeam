@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.profile.eventinvitations;
+package com.usal.jorgeav.sportapp.profile.invitationreceived;
 
 
 import android.database.Cursor;
@@ -23,11 +23,11 @@ import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EventInvitationsFragment extends BaseFragment implements EventInvitationsContract.View, EventsAdapter.OnEventItemClickListener {
+public class InvitationsReceivedFragment extends BaseFragment implements InvitationsReceivedContract.View, EventsAdapter.OnEventItemClickListener {
     @SuppressWarnings("unused")
-    private static final String TAG = EventInvitationsFragment.class.getSimpleName();
+    private static final String TAG = InvitationsReceivedFragment.class.getSimpleName();
 
-    EventInvitationsContract.Presenter mEventInvitationsPresenter;
+    InvitationsReceivedContract.Presenter mInvitationsReceivedPresenter;
 
     @BindView(R.id.recycler_list)
     RecyclerView eventInvitationsList;
@@ -35,12 +35,12 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
     @BindView(R.id.list_placeholder)
     ConstraintLayout eventInvitationsPlaceholder;
 
-    public EventInvitationsFragment() {
+    public InvitationsReceivedFragment() {
         // Required empty public constructor
     }
 
-    public static EventInvitationsFragment newInstance() {
-        return new EventInvitationsFragment();
+    public static InvitationsReceivedFragment newInstance() {
+        return new InvitationsReceivedFragment();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mEventInvitationsPresenter = new EventInvitationsPresenter(this);
+        mInvitationsReceivedPresenter = new InvitationsReceivedPresenter(this);
         mEventsRecyclerAdapter = new EventsAdapter(null, this, Glide.with(this));
     }
 
@@ -81,7 +81,7 @@ public class EventInvitationsFragment extends BaseFragment implements EventInvit
     @Override
     public void onStart() {
         super.onStart();
-        mEventInvitationsPresenter.loadEventInvitations(getLoaderManager(), getArguments());
+        mInvitationsReceivedPresenter.loadEventInvitations(getLoaderManager(), getArguments());
     }
 
     @Override

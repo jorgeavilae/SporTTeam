@@ -40,8 +40,8 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
-import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
+import com.usal.jorgeav.sportapp.profile.invitationreceived.InvitationsReceivedFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
 import com.usal.jorgeav.sportapp.sportselection.SportsListFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
@@ -184,7 +184,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
             userEventInvitationsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Fragment fragment = EventInvitationsFragment.newInstance();
+                    Fragment fragment = InvitationsReceivedFragment.newInstance();
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
             });

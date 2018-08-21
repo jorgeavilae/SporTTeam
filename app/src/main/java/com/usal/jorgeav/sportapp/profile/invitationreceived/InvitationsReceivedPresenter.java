@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.profile.eventinvitations;
+package com.usal.jorgeav.sportapp.profile.invitationreceived;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -10,14 +10,14 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
-class EventInvitationsPresenter implements EventInvitationsContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+class InvitationsReceivedPresenter implements InvitationsReceivedContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
     @SuppressWarnings("unused")
-    private static final String TAG = EventInvitationsPresenter.class.getSimpleName();
+    private static final String TAG = InvitationsReceivedPresenter.class.getSimpleName();
 
-    private EventInvitationsContract.View mEventInvitationsView;
+    private InvitationsReceivedContract.View mInvitationsReceivedView;
 
-    EventInvitationsPresenter(EventInvitationsContract.View mEventInvitationsView) {
-        this.mEventInvitationsView = mEventInvitationsView;
+    InvitationsReceivedPresenter(InvitationsReceivedContract.View mEventInvitationsView) {
+        this.mInvitationsReceivedView = mEventInvitationsView;
     }
 
     @Override
@@ -33,19 +33,19 @@ class EventInvitationsPresenter implements EventInvitationsContract.Presenter, L
         switch (id) {
             case SportteamLoader.LOADER_EVENT_INVITATIONS_RECEIVED_ID:
                 return SportteamLoader
-                        .cursorLoaderEventsForEventInvitationsReceived(mEventInvitationsView.getActivityContext(), currentUserID);
+                        .cursorLoaderEventsForEventInvitationsReceived(mInvitationsReceivedView.getActivityContext(), currentUserID);
         }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mEventInvitationsView.showEventInvitations(data);
+        mInvitationsReceivedView.showEventInvitations(data);
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
-        mEventInvitationsView.showEventInvitations(null);
+        mInvitationsReceivedView.showEventInvitations(null);
     }
 
 }

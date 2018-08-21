@@ -1,11 +1,11 @@
-package com.usal.jorgeav.sportapp.profile.eventinvitations;
+package com.usal.jorgeav.sportapp.profile.invitationreceived;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
-abstract class EventInvitationsContract {
+abstract class InvitationsReceivedContract {
 
     public interface Presenter {
         void loadEventInvitations(LoaderManager loaderManager, Bundle b);
