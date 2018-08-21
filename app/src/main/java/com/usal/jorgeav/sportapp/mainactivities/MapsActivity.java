@@ -25,7 +25,7 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.MapFieldMarkerInfoAdapter;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
-import com.usal.jorgeav.sportapp.network.HttpRequestTask;
+import com.usal.jorgeav.sportapp.network.GeocodingTask;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
@@ -206,7 +206,7 @@ public class MapsActivity extends AppCompatActivity implements
             if (mapsActivity == null || mapsActivity.isFinishing()) return null;
 
             String apiKey = mapsActivity.getResources().getString(R.string.google_maps_key);
-            return HttpRequestTask.placeInLatLngLocation(apiKey, latLng[0]);
+            return GeocodingTask.getMyPlaceObjectFromLatLngLocation(apiKey, latLng[0]);
         }
 
         @Override

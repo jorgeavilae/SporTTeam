@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.utils;
+package com.usal.jorgeav.sportapp.network;
 
 import android.net.Uri;
 import android.text.TextUtils;
@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.MyPlace;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,29 +22,45 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 // https://developers.google.com/maps/documentation/geocoding/intro?hl=es-419#ReverseGeocoding
-public class UtilesNetwork {
-    public static final String TAG = UtilesNetwork.class.getSimpleName();
+public class GeocodingTask {
+    public static final String TAG = GeocodingTask.class.getSimpleName();
 
     // https://maps.googleapis.com/maps/api/geocode/
     private static final String BASE_URL = "https://maps.googleapis.com/maps/api/geocode/";
     private static final String RESPONSE_TYPE = "json";
-
-    private static final String LATLNG_PARAM = "latlng";
-
-    // result_type street_address https://developers.google.com/maps/documentation/geocoding/intro?hl=es-419#Types
-    private static final String RESULT_TYPE_PARAM = "result_type";
+    private static final String PARAM_LATLNG = "latlng";
+    private static final String PARAM_KEY = "key";
+    /* https://developers.google.com/maps/documentation/geocoding/intro?hl=es-419#Types */
+    private static final String PARAM_RESULT_TYPE = "result_type";
     private static final String RESULT_TYPE = "street_address"+"|"+"route"+"|"+"intersection";
 
-    private static final String KEY_PARAM = "key";
+    // Performs the network request for Google Places near by a given LatLng Object
+    // and parses the JSON from that request
+    synchronized public static MyPlace getMyPlaceObjectFromLatLngLocation(String apiKey, LatLng point) {
+        try {
+            /* The getUrl method will return the URL that we need to get the Places in JSON. */
+            URL requestUrl = buildGeocodingUrl(apiKey, point.latitude, point.longitude);
+            if (requestUrl == null) return null;
 
-    private static final String STATUS_CODE = "status";
+            /* Use the URL to retrieve the JSON */
+            String jsonResponse = getResponseFromHttpUrl(requestUrl);
 
-    public static URL getUrl(String apiKey, Double latitude, Double longitude) {
+            /* Parse the JSON into a MyPlaces object */
+            return jsonStringToMyPlace(jsonResponse);
+
+        } catch (Exception e) {
+            /* Server probably invalid */
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static URL buildGeocodingUrl(String apiKey, Double latitude, Double longitude) {
         Uri queryUri = Uri.parse(BASE_URL).buildUpon()
                 .appendPath(RESPONSE_TYPE)
-                .appendQueryParameter(LATLNG_PARAM, latitude+","+longitude)
-                .appendQueryParameter(RESULT_TYPE_PARAM, RESULT_TYPE)
-                .appendQueryParameter(KEY_PARAM, apiKey)
+                .appendQueryParameter(PARAM_LATLNG, latitude+","+longitude)
+                .appendQueryParameter(PARAM_RESULT_TYPE, RESULT_TYPE)
+                .appendQueryParameter(PARAM_KEY, apiKey)
                 .build();
 
         try {
@@ -56,7 +73,7 @@ public class UtilesNetwork {
         }
     }
 
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
+    private static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
             InputStream in = urlConnection.getInputStream();
@@ -79,14 +96,14 @@ public class UtilesNetwork {
         }
     }
 
-    public static MyPlace getMyPlaceFromJson(String jsonStr)
+    private static MyPlace jsonStringToMyPlace(String jsonStr)
             throws JSONException {
 
         JSONObject json = new JSONObject(jsonStr);
 
         /* Is there an error? */
-        if (!json.has(STATUS_CODE)) return new MyPlace("UNKNOWN_ERROR");
-        String statusCode = json.getString(STATUS_CODE);
+        if (!json.has("status")) return new MyPlace("UNKNOWN_ERROR");
+        String statusCode = json.getString("status");
 
         // https://developers.google.com/maps/documentation/geocoding/intro?hl=es-419#reverse-response
         switch (statusCode) {
