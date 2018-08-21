@@ -137,7 +137,7 @@
 
         <!-- To allow Firebase Cloud Messaging -->
         <service
-            android:name=".MyFirebaseMessagingService">
+            android:name=".network.firebase.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

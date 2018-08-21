@@ -1,14 +1,14 @@
-package com.usal.jorgeav.sportapp;
+package com.usal.jorgeav.sportapp.network.firebase;
 
 import android.text.TextUtils;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
-import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.sync.AlarmsFirebaseSync;
 import com.usal.jorgeav.sportapp.network.firebase.sync.EventsFirebaseSync;
@@ -72,9 +72,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationsFirebaseActions.checkNotification(notificationID);
     }
 
-    /**
-     * Convert map into a MyNotification object.
-     * @param data map from Firebase Cloud Functions, should look like this:
+    /* Convert map into a MyNotification object.
+       data map from Firebase Cloud Functions, should look like this:
         data: {
             notificationID: notificationID,
             title: title,
@@ -85,7 +84,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             extra_data_one: extra_data_one,
             date: date
         }
-     * @return MyNotification object from Database.
      */
     private MyNotification parseNotificationFromMap(Map<String, String> data) {
         Long notification_type = null;
