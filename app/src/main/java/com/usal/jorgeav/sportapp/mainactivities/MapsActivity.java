@@ -205,7 +205,7 @@ public class MapsActivity extends AppCompatActivity implements
             MapsActivity mapsActivity = mActivity.get();
             if (mapsActivity == null || mapsActivity.isFinishing()) return null;
 
-            String apiKey = mapsActivity.getResources().getString(R.string.google_maps_key);
+            String apiKey = mapsActivity.getResources().getString(R.string.google_maps_and_geocoding_key);
             return GeocodingTask.getMyPlaceObjectFromLatLngLocation(apiKey, latLng[0]);
         }
 
