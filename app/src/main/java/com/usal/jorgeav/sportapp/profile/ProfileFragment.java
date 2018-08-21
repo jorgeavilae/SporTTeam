@@ -40,10 +40,10 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
-import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.profile.eventinvitations.EventInvitationsFragment;
 import com.usal.jorgeav.sportapp.profile.friendrequests.FriendRequestsFragment;
 import com.usal.jorgeav.sportapp.profile.sendinvitation.SendInvitationFragment;
+import com.usal.jorgeav.sportapp.sportselection.SportsListFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.Locale;

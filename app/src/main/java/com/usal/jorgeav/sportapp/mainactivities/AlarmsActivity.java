@@ -15,7 +15,7 @@ import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmContract;
 import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Field;
-import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
+import com.usal.jorgeav.sportapp.sportselection.SelectSportFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.ArrayList;

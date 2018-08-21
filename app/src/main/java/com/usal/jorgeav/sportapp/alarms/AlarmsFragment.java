@@ -19,7 +19,7 @@ import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.AlarmAdapter;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
-import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
+import com.usal.jorgeav.sportapp.sportselection.SelectSportFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

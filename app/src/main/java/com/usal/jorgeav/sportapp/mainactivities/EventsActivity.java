@@ -20,7 +20,7 @@ import com.usal.jorgeav.sportapp.eventdetail.simulateparticipant.SimulatePartici
 import com.usal.jorgeav.sportapp.events.EventsFragment;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventContract;
 import com.usal.jorgeav.sportapp.events.addevent.NewEventFragment;
-import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
+import com.usal.jorgeav.sportapp.sportselection.SelectSportFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.yalantis.ucrop.UCrop;
 

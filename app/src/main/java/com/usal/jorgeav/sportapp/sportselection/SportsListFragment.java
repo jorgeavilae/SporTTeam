@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.adduser.sportpractice;
+package com.usal.jorgeav.sportapp.sportselection;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

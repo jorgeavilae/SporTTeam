@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.SportSpinnerAdapter;
-import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.MyPlace;
 import com.usal.jorgeav.sportapp.data.Sport;
@@ -25,6 +24,7 @@ import com.usal.jorgeav.sportapp.fields.FieldsMapFragment;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldContract;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
 import com.usal.jorgeav.sportapp.network.firebase.actions.FieldsFirebaseActions;
+import com.usal.jorgeav.sportapp.sportselection.SportsListFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;

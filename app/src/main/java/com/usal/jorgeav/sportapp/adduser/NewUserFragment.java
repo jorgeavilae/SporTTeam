@@ -38,8 +38,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
-import com.usal.jorgeav.sportapp.adduser.sportpractice.SportsListFragment;
 import com.usal.jorgeav.sportapp.mainactivities.NewUserActivity;
+import com.usal.jorgeav.sportapp.sportselection.SportsListFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import butterknife.BindView;

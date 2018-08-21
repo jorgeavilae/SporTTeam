@@ -1,4 +1,4 @@
-package com.usal.jorgeav.sportapp.events.addevent;
+package com.usal.jorgeav.sportapp.sportselection;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

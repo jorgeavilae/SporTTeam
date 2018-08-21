@@ -23,8 +23,8 @@ import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEventList;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyEventRenderer;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
-import com.usal.jorgeav.sportapp.events.addevent.SelectSportFragment;
 import com.usal.jorgeav.sportapp.events.eventrequest.EventRequestsFragment;
+import com.usal.jorgeav.sportapp.sportselection.SelectSportFragment;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
 import java.util.Calendar;
