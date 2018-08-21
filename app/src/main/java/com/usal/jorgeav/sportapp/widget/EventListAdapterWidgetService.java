@@ -15,9 +15,9 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
-public class EventListWidgetService extends RemoteViewsService {
+public class EventListAdapterWidgetService extends RemoteViewsService {
     @SuppressWarnings("unused")
-    private static final String TAG = EventListWidgetService.class.getSimpleName();
+    private static final String TAG = EventListAdapterWidgetService.class.getSimpleName();
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         return new EventListRemoteViewsFactory(this.getApplicationContext());

@@ -32,7 +32,7 @@ public class EventsAppWidget extends AppWidgetProvider {
         PendingIntent pendingIntentList = UtilesNotification.contentEventIntent(context);
 
         //Widget list, set adapter
-        Intent intent = new Intent(context, EventListWidgetService.class);
+        Intent intent = new Intent(context, EventListAdapterWidgetService.class);
         views.setRemoteAdapter(R.id.appwidget_list, intent);
         views.setPendingIntentTemplate(R.id.appwidget_list, pendingIntentList);
 
