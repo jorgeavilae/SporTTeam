@@ -32,7 +32,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.ProfileSportsAdapter;
-import com.usal.jorgeav.sportapp.data.Sport;
 import com.usal.jorgeav.sportapp.fields.addfield.NewFieldFragment;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.sportselection.SportsListFragment;
@@ -157,8 +156,8 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
 
         sportsAdapter = new ProfileSportsAdapter(null, new ProfileSportsAdapter.OnProfileSportClickListener() {
             @Override
-            public void onProfileSportClick(final Sport s) {
-                displayVoteCourtDialog(s);
+            public void onProfileSportClick(String sportId) {
+                displayVoteCourtDialog(sportId);
             }
         }, Glide.with(this));
         detailFieldSportList.setAdapter(sportsAdapter);
@@ -168,7 +167,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         return root;
     }
 
-    private void displayVoteCourtDialog(final Sport s) {
+    private void displayVoteCourtDialog(final String sportId) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.vote_dialog, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
@@ -177,7 +176,6 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
                 .setPositiveButton(R.string.action_vote, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_for_vote);
-                        String sportId = s.getSportID();
                         if (!mPresenter.voteSportInField(mFieldId, sportId, ratingBar.getRating()))
                             Toast.makeText(getActivityContext(), R.string.dialog_vote_error, Toast.LENGTH_SHORT).show();
                     }

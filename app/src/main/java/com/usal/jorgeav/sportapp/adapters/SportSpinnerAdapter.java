@@ -17,14 +17,33 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adaptador para la lista de deportes de un {@link android.widget.Spinner}
+ */
 public class SportSpinnerAdapter extends ArrayAdapter {
+    /**
+     * Alamacena la coleccion de deportes que maneja este adapter.
+     */
     ArrayList<String> mDataset;
 
+    /**
+     *
+     * @param context Context de la Actividad que contiene el Spinner
+     * @param resource Identificador de layout para cada celda
+     * @param objects Conjunto de deportes
+     */
     public SportSpinnerAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<String> objects) {
         super(context, resource, objects);
         this.mDataset = (ArrayList<String>) objects;
     }
 
+    /**
+     * Establece los valores que deben mostrar los elementos de cada celda del Spinner
+     * @param position posicion de la celda
+     * @param convertView View en la que emplazar los elementos. Puede reusarse si no es null
+     * @param parent View padre de la View que representa la celda
+     * @return View con los datos emplazados en cada elemento
+     */
     private View getCustomView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
         String sportId = mDataset.get(position);
 

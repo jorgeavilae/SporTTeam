@@ -29,19 +29,57 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Adaptador para la lista de notificaciones
+ */
 public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotificationsAdapter.ViewHolder> {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = MyNotificationsAdapter.class.getSimpleName();
 
-    /* LinkedHasMap to reference a notification by position instead of by key */
+    /**
+     * Alamacena la coleccion de {@link MyNotification} que maneja este adapter mediante
+     * {@link LinkedHashMap} para mantener el orden a lo largo de la ejecucion
+     */
     private LinkedHashMap<String, MyNotification> mDataset;
+    /**
+     * Referencia al objeto que implementa {@link OnMyNotificationItemClickListener}
+     */
     private OnMyNotificationItemClickListener mClickListener;
+    /**
+     * Referencia a la libreria
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
+     *     Glide
+     * </a>}
+     * , concretamente al objeto
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista.
+     */
     private RequestManager mGlide;
 
-    public MyNotificationsAdapter(Map<String, MyNotification> dataset, OnMyNotificationItemClickListener listener, RequestManager glide) {
+    /**
+     *
+     * @param dataset Conjunto de notificaciones alamacenadas en un {@link Map}
+     * @param mClickListener Referencia al Listener que implementa esta interfaz
+     * @param glide Referencia a
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista
+     */
+    public MyNotificationsAdapter(Map<String, MyNotification> dataset,
+                                  OnMyNotificationItemClickListener mClickListener,
+                                  RequestManager glide) {
         if (dataset != null) this.mDataset = new LinkedHashMap<>(dataset);
         else this.mDataset = null;
-        this.mClickListener = listener;
+        this.mClickListener = mClickListener;
         this.mGlide = glide;
     }
 
@@ -115,8 +153,11 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         }
     }
 
-    /* Look for value in position. Value is always the same since
-     * mDataset is a LinkedHasMap (ordered) not a simple HashMap */
+    /**
+     * Devuelve la entrada del Map para la posicion indicada
+     * @param position posicion de la entrada buscada
+     * @return Entrada de Map en la posicion indicada
+     */
     private Map.Entry<String, MyNotification> getEntry(int position) {
         if (position > -1 && position < mDataset.size()) {
             int i = 0;
@@ -126,14 +167,14 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         return null;
     }
 
+    /**
+     * Setter para actualizar la coleccion de notificaciones que maneja este adapter
+     * @param notifications Colección de notificacion
+     */
     public void replaceData(LinkedHashMap<String, MyNotification> notifications) {
-        setDataset(notifications);
-        notifyDataSetChanged();
-    }
-
-    private void setDataset(LinkedHashMap<String, MyNotification> mDataset) {
-        if (mDataset != null) this.mDataset = new LinkedHashMap<>(mDataset);
+        if (notifications != null) this.mDataset = new LinkedHashMap<>(notifications);
         else this.mDataset = null;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -142,16 +183,37 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         else return 0;
     }
 
+    /**
+     * Representa cada una de las celdas que el adaptador mantiene para la coleccion
+     */
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener, AdapterView.OnLongClickListener {
+        /**
+         * Imagen de la notificacion
+         */
         @BindView(R.id.notification_item_icon)
         ImageView imageViewNotificationIcon;
+        /**
+         * Titulo de la notificacion
+         */
         @BindView(R.id.notification_item_title)
         TextView textViewNotificationTitle;
+        /**
+         * Mensaje de la notificacion
+         */
         @BindView(R.id.notification_item_message)
         TextView textViewNotificationMessage;
+        /**
+         * Fecha de la notificacion
+         */
         @BindView(R.id.notification_item_date)
         TextView textViewNotificationDate;
 
+        /**
+         * Se establece como {@link android.view.View.OnClickListener} y como
+         * {@link android.view.View.OnLongClickListener} a sí mismo para la View
+         *
+         * @param itemView View de una celda de la lista
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -159,6 +221,12 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
             itemView.setOnLongClickListener(this);
         }
 
+        /**
+         * Obtiene la notificacion de la posicion de la celda pulsada y
+         * lo envia a {@link OnMyNotificationItemClickListener}
+         *
+         * @param view View pulsada
+         */
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
@@ -167,19 +235,38 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
                 mClickListener.onMyNotificationClick(entry.getKey(), entry.getValue());
         }
 
+        /**
+         * Obtiene la notificacion de la posicion de la celda pulsada y
+         * lo envia a {@link OnMyNotificationItemClickListener}
+         *
+         * @param view View pulsada
+         */
         @Override
         public boolean onLongClick(View view) {
             int position = getAdapterPosition();
             Map.Entry<String, MyNotification> entry = getEntry(position);
-            //noinspection SimplifiableIfStatement
-            if (entry != null)
-                return mClickListener.onMyNotificationLongClick(entry.getKey(), entry.getValue());
-            return false;
+            return entry != null
+                    && mClickListener.onMyNotificationLongClick(entry.getKey(), entry.getValue());
         }
     }
 
+    /**
+     * Interfaz para las pulsaciones sobre las notificaciones
+     */
     public interface OnMyNotificationItemClickListener {
+        /**
+         * Avisa al Listener de que se produjo una pulsación sobre una notificacion
+         *
+         * @param key Indentificador de la notificacion
+         * @param notification notificacion seleccionada
+         */
         void onMyNotificationClick(String key, MyNotification notification);
+        /**
+         * Avisa al Listener de que se produjo una pulsación larga sobre una notificacion
+         *
+         * @param key Indentificador de la notificacion
+         * @param notification notificacion seleccionada
+         */
         boolean onMyNotificationLongClick(String key, MyNotification notification);
     }
 }

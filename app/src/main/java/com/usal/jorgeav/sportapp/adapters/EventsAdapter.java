@@ -20,15 +20,50 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Adaptador para la lista de partidos
+ */
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = EventsAdapter.class.getSimpleName();
 
+    /**
+     * Alamacena la coleccion de {@link com.usal.jorgeav.sportapp.data.Event} que maneja este adapter
+     */
     private Cursor mDataset;
+    /**
+     * Referencia al objeto que implementa {@link OnEventItemClickListener}
+     */
     private OnEventItemClickListener mClickListener;
-    // To use Glide with hosted Fragment Context (https://stackoverflow.com/a/32887693/4235666)
+    /**
+     * Referencia a la libreria
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
+     *     Glide
+     * </a>}
+     * , concretamente al objeto
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista.
+     */
     private final RequestManager mGlide;
 
+    /**
+     *
+     * @param mDataset Conjunto de partidos
+     * @param clickListener Referencia al Listener que implementa esta interfaz
+     * @param glide Referencia a
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista
+     */
     public EventsAdapter(Cursor mDataset, OnEventItemClickListener clickListener, RequestManager glide) {
         this.mDataset = mDataset;
         this.mClickListener = clickListener;
@@ -75,13 +110,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         }
     }
 
+    /**
+     * Setter para actualizar la coleccion de partidos que maneja este adapter
+     * @param events Colección de partidos
+     */
     public void replaceData(Cursor events) {
-        setDataset(events);
+        this.mDataset = events;
         notifyDataSetChanged();
-    }
-
-    private void setDataset(Cursor mDataset) {
-        this.mDataset = mDataset;
     }
 
     @Override
@@ -90,33 +125,72 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         else return 0;
     }
 
+    /**
+     * Representa cada una de las celdas que el adaptador mantiene para la coleccion
+     */
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
+        /**
+         * Imagen del deporte del partido
+         */
         @BindView(R.id.events_item_sport)
         ImageView imageViewEventSport;
+        /**
+         * Nombre del partido
+         */
         @BindView(R.id.events_item_name)
         TextView textViewEventName;
+        /**
+         * Nombre del lugar del partido
+         */
         @BindView(R.id.events_item_place)
         TextView textViewEventPlace;
+        /**
+         * Fecha y hora del partido
+         */
         @BindView(R.id.events_item_date)
         TextView textViewEventDate;
+        /**
+         * Icono de los puestos vacantes
+         */
         @BindView(R.id.events_item_player)
         ImageView imageViewEventPlayer;
 
+        /**
+         * Se establece como {@link android.view.View.OnClickListener} a sí mismo para la View
+         *
+         * @param itemView View de una celda de la lista
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
 
+        /**
+         * Obtiene la Alarma de la posicion de la celda pulsada y
+         * la envia a {@link OnEventItemClickListener}
+         *
+         * @param view View pulsada
+         */
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
             mDataset.moveToPosition(position);
-            mClickListener.onEventClick(mDataset.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
+            if (mClickListener != null)
+                mClickListener.onEventClick(
+                        mDataset.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID));
         }
     }
 
+    /**
+     * Interfaz para las pulsaciones sobre los partidos
+     */
     public interface OnEventItemClickListener {
+        /**
+         * Avisa al Listener de que un partido fue pulsado
+         *
+         * @param eventId Identificador del Partido seleccionado
+         */
         void onEventClick(String eventId);
     }
 }

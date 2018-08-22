@@ -19,13 +19,45 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Adaptador para la lista de seleccion multiple de deportes mediante {@link RatingBar}.
+ */
 public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.ViewHolder> {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = AddSportsAdapter.class.getSimpleName();
 
+    /**
+     * Alamacena la lista de {@link Sport} que maneja este adapter.
+     */
     private List<Sport> mDataset;
+    /**
+     * Referencia a la libreria
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
+     *     Glide
+     * </a>}
+     * , concretamente al objeto
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista.
+     */
     private RequestManager mGlide;
 
+    /**
+     *
+     * @param mDataset Conjunto de deportes a mostrar
+     * @param glide Referencia a
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista.
+     */
     public AddSportsAdapter(List<Sport> mDataset, RequestManager glide) {
         this.mDataset = mDataset;
         this.mGlide = glide;
@@ -56,15 +88,19 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
         else return 0;
     }
 
+    /**
+     * Setter para actualizar la coleccion de deportes que maneja este adapter.
+     * @param sports Colección de deportes
+     */
     public void replaceData(List<Sport> sports) {
-        setDataset(sports);
+        this.mDataset = sports;
         notifyDataSetChanged();
     }
 
-    private void setDataset(List<Sport> mDataset) {
-        this.mDataset = mDataset;
-    }
-
+    /**
+     * Getter para la coleccion de deportes que maneja este adapter.
+     * @return Lista de {@link Sport} que maneja este adapter.
+     */
     public List<Sport> getDataAsArrayList() {
         if (mDataset == null) return null;
         ArrayList<Sport> result = new ArrayList<>();
@@ -74,15 +110,33 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
         return result;
     }
 
+    /**
+     * Representa cada una de las celdas que el adaptador mantiene para la coleccion
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
+        /**
+         * Imagen del deporte
+         */
         @BindView(R.id.sport_add_item_icon)
         ImageView imageViewSportIcon;
+        /**
+         * Nombre del deporte
+         */
         @BindView(R.id.sport_add_item_name)
         TextView textViewSportName;
+        /**
+         * Puntuacion del deporte
+         */
         @BindView(R.id.sport_add_item_level)
         RatingBar ratingBarSportLevel;
 
-        public ViewHolder(final View itemView) {
+        /**
+         * Establece un {@link android.widget.RatingBar.OnRatingBarChangeListener} para actualizar
+         * la puntuacion de los deportes de la coleccion
+         *
+         * @param itemView View de una celda de la lista
+         */
+        public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 

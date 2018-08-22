@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.RequestManager;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
+import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
@@ -21,15 +22,50 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Adaptador para la lista de alarmas
+ */
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = AlarmAdapter.class.getSimpleName();
 
+    /**
+     * Alamacena la coleccion de {@link Alarm} que maneja este adapter
+     */
     private Cursor mDataset;
+    /**
+     * Referencia al objeto que implementa {@link OnAlarmItemClickListener}
+     */
     private OnAlarmItemClickListener mClickListener;
-    // To use Glide with hosted Fragment Context (https://stackoverflow.com/a/32887693/4235666)
+    /**
+     * Referencia a la libreria
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
+     *     Glide
+     * </a>}
+     * , concretamente al objeto
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista.
+     */
     private final RequestManager mGlide;
 
+    /**
+     *
+     * @param mDataset Conjunto de alarmas
+     * @param clickListener Referencia al Listener que implementa esta interfaz
+     * @param glide Referencia a
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista
+     */
     public AlarmAdapter(Cursor mDataset, OnAlarmItemClickListener clickListener, RequestManager glide) {
         this.mDataset = mDataset;
         this.mClickListener = clickListener;
@@ -68,13 +104,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         }
     }
 
-    public void replaceData(Cursor events) {
-        setDataset(events);
+    /**
+     * Setter para actualizar la coleccion de alarmas que maneja este adapter
+     * @param alarms Colección de alarmas
+     */
+    public void replaceData(Cursor alarms) {
+        this.mDataset = alarms;
         notifyDataSetChanged();
-    }
-
-    private void setDataset(Cursor mDataset) {
-        this.mDataset = mDataset;
     }
 
     @Override
@@ -83,31 +119,67 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         else return 0;
     }
 
+    /**
+     * Representa cada una de las celdas que el adaptador mantiene para la coleccion
+     */
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
+        /**
+         * Imagen del deporte de la alarma
+         */
         @BindView(R.id.alarm_item_sport)
         ImageView imageViewAlarmSport;
+        /**
+         * Lugar de la alarma
+         */
         @BindView(R.id.alarm_item_place)
         TextView textViewAlarmPlace;
+        /**
+         * Limite de fecha superior
+         */
         @BindView(R.id.alarm_item_date_from)
         TextView textViewAlarmDateFrom;
+        /**
+         * Limite de fecha inferior
+         */
         @BindView(R.id.alarm_item_date_to)
         TextView textViewAlarmDateTo;
 
+        /**
+         * Se establece como {@link android.view.View.OnClickListener} a sí mismo para la View
+         *
+         * @param itemView View de una celda de la lista
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
 
+        /**
+         * Obtiene la Alarma de la posicion de la celda pulsada y
+         * la envia a {@link OnAlarmItemClickListener}
+         *
+         * @param view View pulsada
+         */
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
             mDataset.moveToPosition(position);
-            mClickListener.onAlarmClick(mDataset.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID));
+            if (mClickListener != null)
+                mClickListener.onAlarmClick(
+                        mDataset.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID));
         }
     }
 
+    /**
+     * Interfaz para las pulsaciones sobre la alarmas
+     */
     public interface OnAlarmItemClickListener {
+        /**
+         * Avisa al Listener de que una Alarma fue pulsada
+         *
+         * @param alarmId Identificador de la Alarma seleccionada
+         */
         void onAlarmClick(String alarmId);
     }
 }

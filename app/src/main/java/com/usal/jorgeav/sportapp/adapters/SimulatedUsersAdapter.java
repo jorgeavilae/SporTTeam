@@ -24,17 +24,53 @@ import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Adaptador para la lista de usuario simulados
+ */
 public class SimulatedUsersAdapter extends RecyclerView.Adapter<SimulatedUsersAdapter.ViewHolder> {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = SimulatedUsersAdapter.class.getSimpleName();
 
+    /**
+     * Alamacena la coleccion de usuarios simulados que maneja este adapter.
+     */
     private Cursor mDataset;
+    /**
+     * Referencia al objeto que implementa {@link OnSimulatedUserItemClickListener}
+     */
     private OnSimulatedUserItemClickListener mClickListener;
+    /**
+     * Referencia a la libreria
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
+     *     Glide
+     * </a>}
+     * , concretamente al objeto
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista.
+     */
     private RequestManager mGlide;
 
-    public SimulatedUsersAdapter(Cursor mDataset, OnSimulatedUserItemClickListener listener, RequestManager glide) {
+    /**
+     *
+     * @param mDataset Conjunto de usuario simulados
+     * @param mClickListener Referencia al Listener que implementa esta interfaz
+     * @param glide Referencia a
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista
+     */
+    public SimulatedUsersAdapter(Cursor mDataset, OnSimulatedUserItemClickListener mClickListener, RequestManager glide) {
         this.mDataset = mDataset;
-        this.mClickListener = listener;
+        this.mClickListener = mClickListener;
         this.mGlide = glide;
     }
 
@@ -77,13 +113,13 @@ public class SimulatedUsersAdapter extends RecyclerView.Adapter<SimulatedUsersAd
         }
     }
 
+    /**
+     * Setter para actualizar la coleccion de usuarios simulados que maneja este adapter
+     * @param users Colección de usuarios simulados
+     */
     public void replaceData(Cursor users) {
-        setDataset(users);
+        this.mDataset = users;
         notifyDataSetChanged();
-    }
-
-    private void setDataset(Cursor mDataset) {
-        this.mDataset = mDataset;
     }
 
     @Override
@@ -92,20 +128,43 @@ public class SimulatedUsersAdapter extends RecyclerView.Adapter<SimulatedUsersAd
         else return 0;
     }
 
+    /**
+     * Representa cada una de las celdas que el adaptador mantiene para la coleccion
+     */
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
+        /**
+         * Imagen del usuario simulado
+         */
         @BindView(R.id.simulated_user_item_photo)
         ImageView imageViewSimulatedUserPhoto;
+        /**
+         * Nombre del usuario simulados
+         */
         @BindView(R.id.simulated_user_item_name)
         TextView textViewSimulatedUserName;
+        /**
+         * Creador del usuario simulado
+         */
         @BindView(R.id.simulated_user_item_owner)
         TextView textViewSimulatedUserOwner;
 
+        /**
+         * Se establece como {@link android.view.View.OnClickListener} a sí mismo para la View
+         *
+         * @param itemView View de una celda de la lista
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
 
+        /**
+         * Obtiene el usuario simulado de la posicion de la celda pulsada y
+         * lo envia a {@link OnSimulatedUserItemClickListener}
+         *
+         * @param view View pulsada
+         */
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
@@ -117,7 +176,16 @@ public class SimulatedUsersAdapter extends RecyclerView.Adapter<SimulatedUsersAd
         }
     }
 
+    /**
+     * Interfaz para las pulsaciones sobre los usuarios simulados
+     */
     public interface OnSimulatedUserItemClickListener {
+        /**
+         * Avisa al Listener de que un usuario fue pulsado
+         *
+         * @param ownerId Identificador del usuario creador
+         * @param simulatedUserId Identificador del usuario simulado
+         */
         void onSimulatedUserClick(String ownerId, String simulatedUserId);
     }
 }

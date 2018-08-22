@@ -29,20 +29,58 @@ import com.usal.jorgeav.sportapp.R;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Adaptador para la lista de sugerencias de ciudades. Utiliza la interfaz {@link Filterable}
+ * para filtrar las busquedas. Para las busquedas utiliza
+ * {@link
+ * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+ *     Google Places API
+ * </a>}
+ */
 public class PlaceAutocompleteAdapter
         extends ArrayAdapter<AutocompletePrediction> implements Filterable {
+    /**
+     * Nombre de la clase
+     */
     private static final String TAG = PlaceAutocompleteAdapter.class.getSimpleName();
+    /**
+     * Estilo de texto para la celda
+     */
     private static final CharacterStyle STYLE_BOLD = new StyleSpan(Typeface.BOLD);
 
-    // Current results returned by this adapter.
+    /**
+     * Coleccion de resultados una vez efectuada la busqueda
+     */
     private ArrayList<AutocompletePrediction> mResultList;
-    // Handles autocomplete requests.
+    /**
+     * Objeto
+     * {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient">
+     *     GoogleApiClient
+     * </a>}
+     *  necesario para utilizar
+     * {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     *     Google Places API
+     * </a>}
+     */
     private GoogleApiClient mGoogleApiClient;
-    // The bounds used for Places Geo Data autocomplete API requests.
+    /**
+     * Limites en coordenadas sobre los que efectuar la busqueda de lugares
+     */
     private LatLngBounds mBounds;
-    // The autocomplete filter used to restrict queries to a specific set of place types.
+    /**
+     * Filtro usado para restringir la busqueda a solo el nombre de ciudades
+     */
     private AutocompleteFilter mPlaceFilter;
 
+    /**
+     *
+     * @param context Contexto de la Actividad que aloja el adaptador
+     * @param googleApiClient necesario para acceder a las funciones de la API
+     * @param bounds limites sobre los que efectuar la busqueda
+     * @param filter filtro de lugares para restringir la busqueda
+     */
     public PlaceAutocompleteAdapter(Context context, GoogleApiClient googleApiClient,
                                     LatLngBounds bounds, AutocompleteFilter filter) {
         super(context, android.R.layout.simple_expandable_list_item_2, android.R.id.text1);
@@ -51,16 +89,33 @@ public class PlaceAutocompleteAdapter
         this.mPlaceFilter = filter;
     }
 
+    /**
+     *
+     * @return el tamaño de la lista de ciudades
+     */
     @Override
     public int getCount() {
         return mResultList.size();
     }
 
+    /**
+     *
+     * @param position posicion dentro de la lista
+     * @return el elemento situado en esa posicion
+     */
     @Override
     public AutocompletePrediction getItem(int position) {
         return mResultList.get(position);
     }
 
+    /**
+     * Rellena los elementos de la celda con los datos de la ciudad de la posicion indicada
+     *
+     * @param position posicion de la celda
+     * @param convertView View de la celda
+     * @param parent View del padre donde se situa la celda
+     * @return la celda con los datos emplazados
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -77,6 +132,16 @@ public class PlaceAutocompleteAdapter
         return row;
     }
 
+    /**
+     * Crea el {@link Filter} que realiza las  busquedas.
+     * <p>
+     * El filtro creado utiliza una lista para almacenar los resultados de la consulta a Google
+     * en {@link Filter#performFiltering(CharSequence)} y luego los almacena
+     * en {@link #mResultList} en el metodo
+     * {@link Filter#publishResults(CharSequence, Filter.FilterResults)}
+     * <p>
+     * @return el filtro creado
+     */
     @NonNull
     @Override
     public Filter getFilter() {
@@ -127,11 +192,38 @@ public class PlaceAutocompleteAdapter
         };
     }
 
+    /**
+     * Metodo encargado de realizar la consulta asincrona a
+     * {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     *     Google Places API
+     * </a>}
+     * con la cadena de texto introducida por el usuario
+     * <p>
+     * Utiliza el metodo
+     * {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi.html#getAutocompletePredictions(com.google.android.gms.common.api.GoogleApiClient,%20java.lang.String,%20com.google.android.gms.maps.model.LatLngBounds,%20com.google.android.gms.location.places.AutocompleteFilter)">
+     *     GeoDataApi.getAutocompletePredictions()
+     * </a>}
+     *  para hacer las consultas.
+     * <p>
+     * A continuacion, espera por el resultado, comprueba el codigo de error y cierra el
+     * {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompletePredictionBuffer">
+     *     AutocompletePredictionBuffer
+     * </a>}
+     *  por el que recibia la respuesta.
+     * <p>
+     * Si el codigo es correcto devuelve una lista con los resultados que coinciden con la
+     * busqueda
+     *
+     * @param constraint cadena de texto con la que se realiza la busqueda
+     * @return ArrayList con los resultados de la busqueda
+     */
     private ArrayList<AutocompletePrediction> getAutocomplete(CharSequence constraint) {
         if (mGoogleApiClient.isConnected()) {
             // Submit the query to the autocomplete API and retrieve a PendingResult that will
             // contain the results when the query completes.
-            /*https://developers.google.com/android/reference/com/google/android/gms/common/api/PendingResult*/
             PendingResult<AutocompletePredictionBuffer> results = Places.GeoDataApi
                     .getAutocompletePredictions(mGoogleApiClient, constraint.toString(),
                             mBounds, mPlaceFilter);

@@ -235,7 +235,7 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
     @Override
     public boolean onUserLongClick(final String uid) {
         String myUid = Utiles.getCurrentUserId();
-        if (TextUtils.isEmpty(myUid)) return false;
+        if (TextUtils.isEmpty(myUid)) return true;
 
         if (!myUid.equals(uid) && mRelation == DetailEventPresenter.RELATION_TYPE_OWNER && !isPast) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
@@ -265,9 +265,8 @@ public class ParticipantsFragment extends BaseFragment implements ParticipantsCo
                         }
                     });
             builder.create().show();
-            return true;
         }
-        return false;
+        return true;
     }
 
     @Override

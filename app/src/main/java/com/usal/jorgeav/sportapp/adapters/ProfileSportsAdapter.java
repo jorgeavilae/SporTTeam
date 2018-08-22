@@ -21,17 +21,55 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Adaptador para la lista indicadora de deportes mediante {@link RatingBar}.
+ */
 public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdapter.ViewHolder> {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = ProfileSportsAdapter.class.getSimpleName();
 
+    /**
+     * Alamacena la coleccion de deportes que maneja este adapter.
+     */
     private Cursor mDataset;
-    private OnProfileSportClickListener mListener;
+    /**
+     * Referencia al objeto que implementa {@link OnProfileSportClickListener}
+     */
+    private OnProfileSportClickListener mClickListener;
+    /**
+     * Referencia a la libreria
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
+     *     Glide
+     * </a>}
+     * , concretamente al objeto
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista.
+     */
     private RequestManager mGlide;
 
-    public ProfileSportsAdapter(Cursor mDataset, OnProfileSportClickListener listener, RequestManager glide) {
+    /**
+     *
+     * @param mDataset Conjunto de deportes
+     * @param mClickListener Referencia al Listener que implementa esta interfaz
+     * @param glide Referencia a
+     * {@link
+     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     *     RequestManager
+     * </a>}
+     * para cargar el icono correspondiente a cada item de la lista
+     */
+    public ProfileSportsAdapter(Cursor mDataset,
+                                OnProfileSportClickListener mClickListener,
+                                RequestManager glide) {
         this.mDataset = mDataset;
-        this.mListener = listener;
+        this.mClickListener = mClickListener;
         this.mGlide = glide;
     }
 
@@ -67,15 +105,19 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         else return 0;
     }
 
+    /**
+     * Setter para actualizar la coleccion de deportes que maneja este adapter
+     * @param sports Colección de deportes
+     */
     public void replaceData(Cursor sports) {
-        setDataset(sports);
+        this.mDataset = sports;
         notifyDataSetChanged();
     }
 
-    private void setDataset(Cursor mDataset) {
-        this.mDataset = mDataset;
-    }
-
+    /**
+     * Getter para la coleccion de deportes que maneja este adapter.
+     * @return Lista de {@link Sport}
+     */
     public ArrayList<Sport> getDataAsArrayList() {
         if (mDataset == null) return null;
         ArrayList<Sport> result = new ArrayList<>();
@@ -87,34 +129,63 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         return result;
     }
 
+    /**
+     * Representa cada una de las celdas que el adaptador mantiene para la coleccion
+     */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        /**
+         * Imagen del deporte
+         */
         @BindView(R.id.sport_profile_item_icon)
         ImageView imageViewSportIcon;
+        /**
+         * Nombre del deporte
+         */
         @BindView(R.id.sport_profile_item_name)
         TextView textViewSportName;
+        /**
+         * Puntuacion del deporte
+         */
         @BindView(R.id.sport_profile_item_level)
         RatingBar ratingBarSportLevel;
 
+        /**
+         * Se establece como {@link android.view.View.OnClickListener} a sí mismo para la View
+         *
+         * @param itemView View de una celda de la lista
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
 
+        /**
+         * Obtiene el deporte de la posicion de la celda pulsada y
+         * la envia a {@link OnProfileSportClickListener}
+         *
+         * @param view View pulsada
+         */
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
             mDataset.moveToPosition(position);
-            String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
-            float punctuation = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);
-
-            if (mListener != null)
-                mListener.onProfileSportClick(new Sport(name, punctuation, 1));
+            if (mClickListener != null)
+                mClickListener.onProfileSportClick(
+                        mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT));
         }
     }
 
+    /**
+     * Interfaz para las pulsaciones sobre los deportes
+     */
     public interface OnProfileSportClickListener {
-        void onProfileSportClick(Sport s);
+        /**
+         * Avisa al Listener de que un deporte fue pulsado
+         *
+         * @param sportId Identificador del Deporte seleccionado
+         */
+        void onProfileSportClick(String sportId);
     }
 }
 

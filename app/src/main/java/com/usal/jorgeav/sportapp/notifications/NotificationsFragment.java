@@ -158,7 +158,7 @@ public class NotificationsFragment extends BaseFragment implements Notifications
     @Override
     public boolean onMyNotificationLongClick(final String key, MyNotification notification) {
         String myUid = Utiles.getCurrentUserId();
-        if (TextUtils.isEmpty(myUid)) return false;
+        if (TextUtils.isEmpty(myUid)) return true;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
                 .setTitle(R.string.dialog_msg_are_you_sure)

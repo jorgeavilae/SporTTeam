@@ -15,21 +15,60 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adaptador para la coleccion de marcas que se posicionan sobre el mapa representando
+ * instalaciones.
+ * <p>
+ *
+ * Mas informacion en
+ * {@link
+ * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter">
+ *     GoogleMap.InfoWindowAdapter
+ * </a>}
+ */
 public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
+    /**
+     * Representa el cuadro que se abre al pulsar sobre cada marca
+     */
     private View mContent;
+    /**
+     * Almacena la coleccion de instalaciones que maneja este adapter
+     */
     private List<Field> mDataset;
 
+    /**
+     *
+     * @param layoutInflater Necesario para crear la View del cuadro de cada marca
+     * @param fieldList Conjunto de instalaciones
+     */
     public MapFieldMarkerInfoAdapter(LayoutInflater layoutInflater, ArrayList<Field> fieldList) {
         this.mContent = layoutInflater.inflate(R.layout.field_marker, null);
         this.mDataset = fieldList;
     }
 
+    /**
+     * Mas informacion en
+     * {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoWindow(com.google.android.gms.maps.model.Marker)">
+     *     GoogleMap.InfoWindowAdapter.getInfoWindow(Marker)
+     * </a>}
+     */
     @Override
     public View getInfoWindow(Marker marker) {
         return null;
     }
 
+    /**
+     * Obtiene la instalacion correspondiente a la marca seleccionada y la emplaza en la View.
+     * <p>
+     *
+     * Mas informacion en
+     * {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoContents(com.google.android.gms.maps.model.Marker)">
+     *     GoogleMap.InfoWindowAdapter.getInfoContents(Marker)
+     * </a>}
+     */
     @Override
     public View getInfoContents(Marker marker) {
         Integer position = (Integer) marker.getTag();
@@ -40,6 +79,11 @@ public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
         return null;
     }
 
+    /**
+     * Emplaza los atributos de cada instalacion dentro de la View
+     * @param view View del cuadro que aparece sobre cada marca
+     * @param field Instalacion de la que extraer los datos
+     */
     private void populate(View view, Field field) {
         TextView textViewFieldName = (TextView) view.findViewById(R.id.field_marker_name);
         textViewFieldName.setText(field.getName());
