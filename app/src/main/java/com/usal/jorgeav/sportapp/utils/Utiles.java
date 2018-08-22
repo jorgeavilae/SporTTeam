@@ -159,7 +159,7 @@ public class Utiles {
             if (!fUserEmail.equals(myUserDatabase.getEmail())) {
                 //Update email in FirebaseDatabase
                 UserFirebaseActions.updateUserEmail(myUserDatabase.getUid(), fUserEmail);
-
+                //Update email in object
                 myUserDatabase.setEmail(fUserEmail);
             }
         }
