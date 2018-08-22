@@ -7,17 +7,69 @@ import com.usal.jorgeav.sportapp.data.Field;
 
 import java.util.Calendar;
 
+/**
+ * Objeto de datos que representa un {@link Event} situado en el calendario de la interfaz
+ * <p></p>
+ * Mas informacion en (Github) {@link
+ * <a href= "https://github.com/Tibolte/AgendaCalendarView/tree/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview">
+ *     AgendaCalendarView implementation
+ * </a>}
+ *  y {@link
+ * <a href= "https://github.com/Tibolte/AgendaCalendarView/blob/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview/models/BaseCalendarEvent.java">
+ *     BaseCalendarEvent implementation
+ * </a>}
+ */
 public class MyCalendarEvent extends BaseCalendarEvent {
+    /**
+     * Identificador del partido
+     */
     private String event_id;
+    /**
+     * Identificador del deporte del partido
+     */
     private String sport_id;
+    /**
+     * Identificador de la instalacion donde se juega el partido
+     */
     private String field_name;
+    /**
+     * Nombre de la ciudad donde se juega el partido
+     */
     private String city;
+    /**
+     * Componente latitud de la coordenada donde se juega el partido
+     */
     private Double coord_latitude;
+    /**
+     * Componente longitud de la coordenada donde se juega el partido
+     */
     private Double coord_longitude;
+    /**
+     * Identificador del creador del partido
+     */
     private String owner;
+    /**
+     * Numero total de puestos para jugadores en el partido
+     */
     private Long total_players;
+    /**
+     * Numero de puestos vacantes en el partido
+     */
     private Long empty_players;
 
+    /**
+     * Initializes the event
+     *
+     * @param id          The id of the event.
+     * @param color       The color of the event.
+     * @param title       The title of the event.
+     * @param description The description of the event.
+     * @param location    The location of the event.
+     * @param dateStart   The start date of the event.
+     * @param dateEnd     The end date of the event.
+     * @param allDay      Int that can be equal to 0 or 1.
+     * @param duration    The duration of the event in RFC2445 format.
+     */
     private MyCalendarEvent(long id, int color, String title, String description, String location, long dateStart, long dateEnd, int allDay, String duration) {
         super(id, color, title, description, location, dateStart, dateEnd, allDay, duration);
     }
@@ -94,12 +146,29 @@ public class MyCalendarEvent extends BaseCalendarEvent {
         return empty_players;
     }
 
+    /**
+     * Copia este {@link MyCalendarEvent} en una instancia nueva.
+     *
+     * @return la nueva instancia con los mismo datos
+     */
     @Override
     public CalendarEvent copy() {
         return Builder.copyInstance(this);
     }
 
+    /**
+     * Clase interna que permite asociar a {@link MyCalendarEvent} un partido de la base
+     * de datos
+     */
     public static class Builder {
+        /**
+         * Crea una nueva instancia de {@link MyCalendarEvent} a partir de un partido
+         * y una instalacion donde se juega
+         * @param event partido
+         * @param field instalacion
+         * @param color color de fondo de la celda
+         * @return nueva instancia de MyCalendarEvent
+         */
         public static MyCalendarEvent newInstance(Event event, Field field, int color) {
 
             // Set field name or event address
@@ -130,6 +199,11 @@ public class MyCalendarEvent extends BaseCalendarEvent {
             return myCalendarEvent;
         }
 
+        /**
+         * Copia un {@link MyCalendarEvent} en una instancia nueva.
+         * @param myCalendarEvent partido a copiar
+         * @return la nueva instancia con los mismo datos
+         */
         private static MyCalendarEvent copyInstance(MyCalendarEvent myCalendarEvent) {
             MyCalendarEvent result = new MyCalendarEvent(myCalendarEvent.getId(), myCalendarEvent.getColor(),
                     myCalendarEvent.getTitle(), myCalendarEvent.getDescription(), myCalendarEvent.getLocation(),
