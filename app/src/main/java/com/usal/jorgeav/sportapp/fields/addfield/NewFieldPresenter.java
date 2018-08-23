@@ -38,16 +38,19 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
                          String openTime, String closeTime, String userId, List<SportCourt> sports) {
         // Store in DDBB times in millis (without day) needs a baseDay to parse back to String properly
         Long baseDay = UtilesTime.stringDateToMillis("11/07/92");
-        Long openMillis = baseDay + UtilesTime.stringTimeToMillis(openTime);
-        Long closeMillis = baseDay + UtilesTime.stringTimeToMillis(closeTime);
+        Long openMillis = UtilesTime.stringTimeToMillis(openTime);
+        if (openMillis != null) openMillis += baseDay;
+        Long closeMillis = UtilesTime.stringTimeToMillis(closeTime);
+        if (closeMillis != null) closeMillis += baseDay;
 
         if (isValidAddress(address, city) && isValidName(name) && isValidCoords(coords)
                 && isTimesCorrect(openMillis, closeMillis) && isValidCreator(userId)) {
 
             //If are equals means "all day" so: from 0:00 to 0:00
-            if (openMillis.longValue() == closeMillis.longValue()) {
-                openMillis = baseDay + 0L;
-                closeMillis = baseDay + 0L;
+            if (openMillis != null && closeMillis != null
+                    && openMillis.longValue() == closeMillis.longValue()) {
+                openMillis = baseDay;
+                closeMillis = baseDay;
             }
 
             Field field = new Field(id, name, address, coords.latitude, coords.longitude, city,

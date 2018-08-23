@@ -122,7 +122,8 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
             builder.create().show();
             return true;
         } else if (item.getItemId() == R.id.action_add) {
-            Fragment fragment = SportsListFragment.newInstance(mFieldId, sportsAdapter.getDataAsArrayList());
+            Fragment fragment = SportsListFragment.newInstance(mFieldId,
+                    sportsAdapter.getDataAsSportArrayListWithVotes());
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         }

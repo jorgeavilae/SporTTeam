@@ -39,7 +39,8 @@ public class SportsListFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    public static SportsListFragment newInstance(@NonNull String id, ArrayList<Sport> sportsList) {
+    public static SportsListFragment newInstance(@NonNull String id,
+                                                 ArrayList<Sport> sportsList) {
         SportsListFragment fragment = new SportsListFragment();
         Bundle args = new Bundle();
         if (sportsList != null)
@@ -123,6 +124,7 @@ public class SportsListFragment extends BaseFragment {
                     for (Sport sportFromResources : result)
                         if (isTheSameSport(sportFromActivity, sportFromResources)) {
                             sportFromResources.setPunctuation(sportFromActivity.getPunctuation());
+                            sportFromResources.setVotes(sportFromActivity.getVotes());
                             break;
                         }
             }

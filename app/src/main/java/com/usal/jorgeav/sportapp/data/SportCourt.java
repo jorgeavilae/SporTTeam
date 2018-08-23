@@ -15,8 +15,9 @@ import java.util.HashMap;
  * {@link com.usal.jorgeav.sportapp.mainactivities.FieldsActivity#onSaveInstanceState(Bundle)}
  * se recupera en lista
  * {@link com.usal.jorgeav.sportapp.mainactivities.FieldsActivity#onRestoreInstanceState(Bundle)}
- * necesita q se mantenga para usarlo en el newFielFragment, en en la creacion
- * no necesita q se mantenga en la creacion de nuevo usuario pq la creacion es justo despues de indicar los deportes
+ * si necesita q se mantenga para la creacion de nueva instalc, primero introducir deportes - segundo introducir datos - tercero envia a firebase
+ * no necesita q se mantenga para la creacion de nuevo usuario, primero introducir datos - segundo introducir deportes - tercero envia a firebase
+ * si durante el segundo paso se cambia de app y se vuelve, los deportes se perderian en la creacion de instalacion si no se guardan en parcelable
  *
  * Serializable
  * {@link Field#writeToParcel(Parcel, int)} en {@link Parcel#writeSerializable(Serializable)}

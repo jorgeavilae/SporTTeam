@@ -13,6 +13,7 @@ import com.bumptech.glide.RequestManager;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Sport;
+import com.usal.jorgeav.sportapp.data.SportCourt;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
@@ -22,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Adaptador para la lista indicadora de deportes mediante {@link RatingBar}.
+ * Adaptador para mostrar la lista indicadora de deportes mediante {@link RatingBar}.
  */
 public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdapter.ViewHolder> {
     /**
@@ -32,7 +33,11 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
     private static final String TAG = ProfileSportsAdapter.class.getSimpleName();
 
     /**
-     * Alamacena la coleccion de deportes que maneja este adapter.
+     * Alamacena la coleccion de deportes que muestra este adapter.
+     * Puede ser un {@link Cursor}
+     * de deportes que practica el usuario ({@link java.util.Map<String, Double>}) o
+     * de deportes que respresenten pistas de una instalación y que lleven un número de votos
+     * asociado ({@link SportCourt})
      */
     private Cursor mDataset;
     /**
@@ -116,15 +121,38 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
 
     /**
      * Getter para la coleccion de deportes que maneja este adapter.
+     * Se utiliza este para obtener los deportes que muestra el adapter cuando es usado para
+     * un usuario
+     *
      * @return Lista de {@link Sport}
      */
-    public ArrayList<Sport> getDataAsArrayList() {
+    public ArrayList<Sport> getDataAsSportArrayList() {
         if (mDataset == null) return null;
         ArrayList<Sport> result = new ArrayList<>();
         for(mDataset.moveToFirst(); !mDataset.isAfterLast(); mDataset.moveToNext()) {
             String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
-            double level = mDataset.getDouble(SportteamContract.UserSportEntry.COLUMN_LEVEL);
+            Double level = mDataset.getDouble(SportteamContract.UserSportEntry.COLUMN_LEVEL);
+
             result.add(new Sport(name, level, 0));
+        }
+        return result;
+    }
+
+    /**
+     * Getter para la coleccion de deportes que maneja este adapter, incluyendo los votos.
+     * Se utiliza este para obtener las pistas que muestra el adapter cuando es usado para
+     * una instalación
+     *
+     * @return Lista de {@link Sport} con votos
+     */
+    public ArrayList<Sport> getDataAsSportArrayListWithVotes() {
+        if (mDataset == null) return null;
+        ArrayList<Sport> result = new ArrayList<>();
+        for(mDataset.moveToFirst(); !mDataset.isAfterLast(); mDataset.moveToNext()) {
+            String name = mDataset.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
+            Double punctuation = mDataset.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
+            Integer votes = mDataset.getInt(SportteamContract.FieldSportEntry.COLUMN_VOTES);
+            result.add(new Sport(name, punctuation, votes));
         }
         return result;
     }

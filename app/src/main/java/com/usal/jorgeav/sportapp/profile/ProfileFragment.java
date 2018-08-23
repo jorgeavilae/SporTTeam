@@ -126,7 +126,8 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit_sports) {
-            Fragment fragment = SportsListFragment.newInstance(mUserUid, sportsAdapter.getDataAsArrayList());
+            Fragment fragment = SportsListFragment.newInstance(mUserUid,
+                    sportsAdapter.getDataAsSportArrayList());
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_change_image) {
