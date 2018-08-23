@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.data;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.MenuItem;
@@ -8,25 +9,76 @@ import android.view.MenuItem;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
- * Parcelable
- * se guarda
- * {@link com.usal.jorgeav.sportapp.mainactivities.MapsActivity#onOptionsItemSelected(MenuItem)}
- * se recupera
- * {@link com.usal.jorgeav.sportapp.mainactivities.EventsActivity#onActivityResult(int, int, Intent)}
- * {@link com.usal.jorgeav.sportapp.mainactivities.FieldsActivity#onActivityResult(int, int, Intent)}
- * Para pasarlo de la actividad map a la actividad event y field: en la seleccion de direccion
+ * Representa un lugar del mapa. Utilizado en la selección manual de direcciones en el mapa,
+ * durante la geocodificación inversa.
+ * <p></p>
+ *
+ * Se crea a partir de la respuesta obtenida de la consulta a
+ * {@link
+ * <a href= "https://developers.google.com/maps/documentation/geocoding/start">
+ *     Google Geocoding API
+ * </a>}. Mas información en
+ * {@link
+ * <a href= "https://developers.google.com/maps/documentation/geocoding/intro#GeocodingResponses">
+ *     Geocoding Responses
+ * </a>}
+ * <p></p>
+ *
+ * Implementa la interfaz Parcelable para poder guardar este {@link Object} en variables de
+ * estado entre cambios de configuración
+ * ({@link android.app.Activity#onConfigurationChanged(Configuration)}, o en {@link Intent}
+ * para enviarla a otra {@link android.app.Activity}
+ *
+ * @see com.usal.jorgeav.sportapp.mainactivities.MapsActivity#onOptionsItemSelected(MenuItem)
+ * @see com.usal.jorgeav.sportapp.mainactivities.EventsActivity#onActivityResult(int, int, Intent)
  */
 @SuppressWarnings("unused")
 public class MyPlace implements Parcelable {
+    /**
+     * Código de la respuesta obtenida del servidor a realizar geocodificación inversa
+     */
     private String status;
+    /**
+     * Identificador del lugar, obtenido de la respuesta del servidor
+     */
     private String placeId;
+    /**
+     * Dirección del lugar
+     */
     private String address;
+    /**
+     * Nombre de la ciudad o pueblo en la que se encuentra este lugar
+     */
     private String shortNameLocality; //Ciudad - Pueblo
+    /**
+     * Nombre de la provincia en la que se encuentra este lugar
+     */
     private String city; //Provincia
+    /**
+     * Coordenadas de este lugar
+     */
     private LatLng coordinates;
+    /**
+     * Coordenadas del noreste del marco recomendado por el servidor para mostrar la dirección
+     */
     private LatLng viewPortNortheast;
+    /**
+     * Coordenadas del sudoeste del marco recomendado por el servidor para mostrar la dirección
+     */
     private LatLng viewPortSouthwest;
 
+    /**
+     * Constructor con argumentos
+     *
+     * @param status código de estado de la respuesta del servidor
+     * @param placeId identificador del lugar
+     * @param address dirección del lugar
+     * @param shortNameLocality nombre de la ciudad o pueblo
+     * @param city nombre de la provincia
+     * @param coordinates coordenadas del lugar
+     * @param viewPortNortheast coordenadas del noreste del marco para mostrar el lugar
+     * @param viewPortSouthwest coordenadas del sudoeste del marco para mostrar el lugar
+     */
     public MyPlace(String status, String placeId, String address, String shortNameLocality,
                    String city, LatLng coordinates, LatLng viewPortNortheast, LatLng viewPortSouthwest) {
         this.status = status;
@@ -39,6 +91,11 @@ public class MyPlace implements Parcelable {
         this.viewPortSouthwest = viewPortSouthwest;
     }
 
+    /**
+     * Constructor con un sólo argumento. Usado cuando el código de la respuesta es error
+     *
+     * @param status código del estado de la respuesta obtenida del servidor
+     */
     public MyPlace(String status) {
         this.status = status;
     }
@@ -47,6 +104,11 @@ public class MyPlace implements Parcelable {
         return status;
     }
 
+    /**
+     * Comprueba si la respuesta, y por tanto el {@link MyPlace} creado, son correctos
+     *
+     * @return true si el código del estado de la respuesta es correcto, falso en otro caso
+     */
     public boolean isSucceed(){
         return this.status.equals("OK");
     }
@@ -79,6 +141,11 @@ public class MyPlace implements Parcelable {
         return viewPortSouthwest;
     }
 
+    /**
+     * Representación del objeto en cadena de texto
+     *
+     * @return la cadena de texto con los datos del objeto
+     */
     @Override
     public String toString() {
         return "MyPlace{" +
@@ -93,12 +160,22 @@ public class MyPlace implements Parcelable {
                 '}';
     }
 
-
+    /**
+     * Describe los contenidos del objeto mediante un entero que representa una máscara de bits
+     *
+     * @return 0 (máscara de bits)
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * Escribe este {@link MyPlace} en un {@link Parcel}
+     *
+     * @param dest Destino de la operación
+     * @param flags opcional
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.status);
@@ -111,6 +188,11 @@ public class MyPlace implements Parcelable {
         dest.writeParcelable(this.viewPortSouthwest, flags);
     }
 
+    /**
+     * Constructor que ejecuta una operación inversa a {@link #writeToParcel(Parcel, int)}
+     *
+     * @param in Parcel del que extraer los datos para {@link MyPlace}
+     */
     private MyPlace(Parcel in) {
         this.status = in.readString();
         this.placeId = in.readString();
@@ -122,6 +204,10 @@ public class MyPlace implements Parcelable {
         this.viewPortSouthwest = in.readParcelable(LatLng.class.getClassLoader());
     }
 
+    /**
+     * Variable estática usada para crear instancias de {@link MyPlace} a partir del
+     * {@link Parcel} creado en {@link #writeToParcel(Parcel, int)}
+     */
     public static final Creator<MyPlace> CREATOR = new Creator<MyPlace>() {
         @Override
         public MyPlace createFromParcel(Parcel source) {

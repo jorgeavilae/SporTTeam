@@ -6,26 +6,104 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Representa un Partido del modelo
+ */
 public class Event {
+    /**
+     * Identificador único del partido
+     */
     private String event_id;
+    /**
+     * Identificador único del deporte del partido
+     */
     private String sport_id;
+    /**
+     * Identificador único de la instalación dónde se juega, si lo hay
+     */
     private String field_id;
+    /**
+     * Nombre del partido
+     */
     private String name;
+    /**
+     * Dirección dónde se juega el partido. Si hay una instalación en {@link #field_id},
+     * coincide con la dirección de la instalación.
+     */
     private String address;
+    /**
+     * Ciudad dónde se juega el partido. Si hay una instalación en {@link #field_id},
+     * coincide con la ciudad de la instalación.
+     */
     private String city;
+    /**
+     * Componente latitud de la dirección dónde se juega el partido. Si hay una instalación
+     * en {@link #field_id}, coincide con la componente latitud de la dirección de la instalación.
+     */
     private Double coord_latitude;
+    /**
+     * Componente longitud de la dirección dónde se juega el partido. Si hay una instalación
+     * en {@link #field_id}, coincide con la componente longitud de la dirección de la instalación.
+     */
     private Double coord_longitude;
+    /**
+     * Fecha y hora a la que empieza el partido
+     */
     private Long date;
+    /**
+     * Identificador del usuario creador del partido
+     */
     private String owner;
+    /**
+     * Número total de jugadores del partido
+     */
     private Long total_players;
+    /**
+     * Número de puestos vacantes para el partido
+     */
     private Long empty_players;
+    /**
+     * Colección de participantes al evento. Cada participante representa un usuario registrado
+     * en la aplicación, mediante su identificador de usuario. El valor es true si
+     * participa en el partido y false si está bloqueado.
+     */
     private HashMap<String, Boolean> participants;
+    /**
+     * Colección de participantes simulados. Cada {@link SimulatedUser} representa una persona
+     * invitada por alguno de los participantes. Se guardan bajo su identificador único de
+     * usuario simulado.
+     */
     private HashMap<String, SimulatedUser> simulated_participants;
 
+    /**
+     * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
+     * Realtime Database con
+     * {@link
+     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
+     *     DataSnapshot.getValue(Class)
+     * </a>}
+     */
     public Event() {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
+    /**
+     * Constructor con argumentos
+     *
+     * @param mId Identificador del partido
+     * @param mSport Identificador del deporte
+     * @param mField Identificador de la instalación o null
+     * @param address Dirección del partido
+     * @param coord Coordenadas de la dirección partido
+     * @param mName Nombre del partido
+     * @param mCity Ciudad del partido
+     * @param mDate Fecha y hora del partido en milisegundos
+     * @param mOwner Identificador del usuario creador del partido
+     * @param mTotalPlayers Puestos totales en el partido
+     * @param mEmptyPlayers Puestos vacantes para el partido
+     * @param participants Map de participantes
+     * @param simulated_participants Map de participantes simulados
+     */
     public Event(String mId, String mSport, String mField, String address, LatLng coord, String mName,
                  String mCity, Long mDate, String mOwner, Long mTotalPlayers, Long mEmptyPlayers,
                  HashMap<String, Boolean> participants, HashMap<String, SimulatedUser> simulated_participants) {
@@ -114,11 +192,22 @@ public class Event {
         return simulated_participants;
     }
 
+    /**
+     * Añade un participante a la lista
+     *
+     * @param userId identificador del usuario participante
+     * @param participates true si participa, false si está bloqueado
+     */
     public void addToParticipants(String userId, Boolean participates) {
         if (this.participants == null) this.participants = new HashMap<>();
         this.participants.put(userId, participates);
     }
 
+    /**
+     * Elimina uno de los participantes de la lista
+     *
+     * @param userId Ientificador del participante a eliminar
+     */
     public void deleteParticipant(String userId) {
         if (this.participants != null) {
             this.participants.remove(userId);
@@ -126,11 +215,22 @@ public class Event {
         }
     }
 
+    /**
+     * Añade un participante simulado a su lista
+     *
+     * @param key identificador del usuario simulado
+     * @param participant usuario simulado que se añade
+     */
     public void addToSimulatedParticipants(String key, SimulatedUser participant) {
         if (this.simulated_participants == null) this.simulated_participants = new HashMap<>();
         this.simulated_participants.put(key, participant);
     }
 
+    /**
+     * Elimina uno de los participantes simulados de la lista
+     *
+     * @param key Ientificador del participante simulado a eliminar
+     */
     public void deleteSimulatedParticipant(String key) {
         if (this.simulated_participants != null) {
             this.simulated_participants.remove(key);
@@ -138,7 +238,13 @@ public class Event {
         }
     }
 
-    // Need to be under DATA in Event's tree
+    /**
+     * Introduce los datos de este objeto en un Map para Firebase Realtime Database.
+     * La clave se obtiene de la clase diccionario {@link FirebaseDBContract} y como valor se
+     * utilizan las variables de la clase.
+     *
+     * @return Map con los datos de {@link Event}
+     */
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put(FirebaseDBContract.Event.SPORT, this.sport_id);
@@ -157,6 +263,11 @@ public class Event {
         return result;
     }
 
+    /**
+     * Representación del objeto en cadena de texto
+     *
+     * @return la cadena de texto con los datos del objeto
+     */
     @Override
     public String toString() {
         return "Event{" +
@@ -177,6 +288,12 @@ public class Event {
                 '}';
     }
 
+    /**
+     * Comprueba si este partido es igual a un {@link Object} dado
+     *
+     * @param o Presumiblemente, el partido con el que comparar este
+     * @return true si son iguales, false en cualquier otro caso
+     */
     @SuppressWarnings("RedundantIfStatement")
     @Override
     public boolean equals(Object o) {
@@ -208,24 +325,5 @@ public class Event {
             return false;
 
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = event_id != null ? event_id.hashCode() : 0;
-        result = 31 * result + (sport_id != null ? sport_id.hashCode() : 0);
-        result = 31 * result + (field_id != null ? field_id.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + (city != null ? city.hashCode() : 0);
-        result = 31 * result + (coord_latitude != null ? coord_latitude.hashCode() : 0);
-        result = 31 * result + (coord_longitude != null ? coord_longitude.hashCode() : 0);
-        result = 31 * result + (date != null ? date.hashCode() : 0);
-        result = 31 * result + (owner != null ? owner.hashCode() : 0);
-        result = 31 * result + (total_players != null ? total_players.hashCode() : 0);
-        result = 31 * result + (empty_players != null ? empty_players.hashCode() : 0);
-        result = 31 * result + (participants != null ? participants.hashCode() : 0);
-        result = 31 * result + (simulated_participants != null ? simulated_participants.hashCode() : 0);
-        return result;
     }
 }

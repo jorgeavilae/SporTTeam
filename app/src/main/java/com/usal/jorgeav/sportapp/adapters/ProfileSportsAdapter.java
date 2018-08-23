@@ -35,7 +35,7 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
     /**
      * Alamacena la coleccion de deportes que muestra este adapter.
      * Puede ser un {@link Cursor}
-     * de deportes que practica el usuario ({@link java.util.Map<String, Double>}) o
+     * de deportes que practica el usuario ({@link java.util.Map<> Map<String, Double}) o
      * de deportes que respresenten pistas de una instalación y que lleven un número de votos
      * asociado ({@link SportCourt})
      */

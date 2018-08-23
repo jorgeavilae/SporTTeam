@@ -20,18 +20,11 @@ public class FieldsFirebaseActions {
     private static final String TAG = FieldsFirebaseActions.class.getSimpleName();
 
     public static void addField(Field field) {
-        //Create fieldId
         DatabaseReference fieldTable = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_FIELDS);
         field.setId(fieldTable.push().getKey());
 
-        //Set Field in Field Table
-        String fieldInFieldTable = "/" + FirebaseDBContract.TABLE_FIELDS + "/" + field.getId();
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(fieldInFieldTable, field.toMap());
-
-        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
+        fieldTable.child(field.getId()).child(FirebaseDBContract.DATA).setValue(field.toMap());
     }
 
     public static void updateField(final Field field) {

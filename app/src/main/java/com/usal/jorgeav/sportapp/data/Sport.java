@@ -9,20 +9,41 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import java.util.ArrayList;
 
 /**
- * Parcelable
- * se guarda en lista
- * {@link SportsListFragment#newInstance(String, ArrayList)}
- * se recupera en lista
- * {@link SportsListFragment#loadSports()}
- * se pasa como argumento al fragment para poner sus puntuaciones en las rating bar
+ * Representa una Deporte del modelo.
+ * <p></p>
+ * Implementa la interfaz Parcelable para poder guardar este {@link Object} en
+ * el {@link android.os.Bundle} que se asocia a {@link SportsListFragment} en su creación y se
+ * utiliza para pasarle deportes.
+ *
+ * @see SportsListFragment#newInstance(String, ArrayList)
  */
 @SuppressWarnings("unused")
 public class Sport implements Parcelable {
+    /**
+     * Identificador único del deporte
+     */
     private String sportID;
+    /**
+     * Referencia de la imagen que representa el deporte.
+     * Recurso de {@link com.usal.jorgeav.sportapp.R}
+     */
     private Integer iconDrawableId;
+    /**
+     * Puntuación del deporte
+     */
     private Double punctuation;
+    /**
+     * Número de votos. Usado cuando esta clase se utiliza como {@link SportCourt}
+     */
     private Integer votes;
 
+    /**
+     * Constructor con argumentos
+     *
+     * @param sportID identificador del deporte
+     * @param punctuation puntuación del deporte
+     * @param votes número de votos
+     */
     public Sport(String sportID, Double punctuation, Integer votes) {
         this.sportID = sportID;
         this.iconDrawableId = Utiles.getSportIconFromResource(sportID);
@@ -54,6 +75,11 @@ public class Sport implements Parcelable {
         this.votes = votes;
     }
 
+    /**
+     * Representación del objeto en cadena de texto
+     *
+     * @return la cadena de texto con los datos del objeto
+     */
     @Override
     public String toString() {
         return "Sport{" +
@@ -64,11 +90,22 @@ public class Sport implements Parcelable {
                 '}';
     }
 
+    /**
+     * Describe los contenidos del objeto mediante un entero que representa una máscara de bits
+     *
+     * @return 0 (máscara de bits)
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * Escribe este {@link Sport} en un {@link Parcel}
+     *
+     * @param dest Destino de la operación
+     * @param flags opcional
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.sportID);
@@ -77,6 +114,11 @@ public class Sport implements Parcelable {
         dest.writeValue(this.votes);
     }
 
+    /**
+     * Constructor que ejecuta una operación inversa a {@link #writeToParcel(Parcel, int)}
+     *
+     * @param in Parcel del que extraer los datos para {@link Sport}
+     */
     protected Sport(Parcel in) {
         this.sportID = in.readString();
         this.iconDrawableId = (Integer) in.readValue(Integer.class.getClassLoader());
@@ -84,6 +126,10 @@ public class Sport implements Parcelable {
         this.votes = (Integer) in.readValue(Integer.class.getClassLoader());
     }
 
+    /**
+     * Variable estática usada para crear instancias de {@link Sport} a partir del
+     * {@link Parcel} creado en {@link #writeToParcel(Parcel, int)}
+     */
     public static final Parcelable.Creator<Sport> CREATOR = new Parcelable.Creator<Sport>() {
         @Override
         public Sport createFromParcel(Parcel source) {
