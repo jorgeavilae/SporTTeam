@@ -177,7 +177,7 @@ public abstract class BaseActivity extends AppCompatActivity
                 mDisplayedFragment = (BaseFragment) getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
             } catch (IllegalStateException e) { e.printStackTrace(); }
         } else {
-            onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_profile));
+            onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_search_events));
         }
     }
 

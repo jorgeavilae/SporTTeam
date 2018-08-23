@@ -21,12 +21,14 @@ public abstract class BaseFragment extends Fragment {
 
     /**
      * Referencia a la interfaz {@link ActivityContracts.FragmentManagement} posiblemente
-     * implementada por Actividad contenedora del Fragmento
+     * implementada por Actividad contenedora del Fragmento. Usada para controlar las
+     * transacciones entre Fragmentos.
      */
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
     /**
      * Referencia a la interfaz {@link ActivityContracts.NavigationDrawerManagement} posiblemente
-     * implementada por Actividad contenedora del Fragmento
+     * implementada por Actividad contenedora del Fragmento. Usada para controlar el aspecto
+     * y comportamiento del menú lateral de navegación y la Toolbar.
      */
     protected ActivityContracts.NavigationDrawerManagement mNavigationDrawerManagementListener;
 
