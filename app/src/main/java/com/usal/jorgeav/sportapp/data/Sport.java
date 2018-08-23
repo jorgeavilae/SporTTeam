@@ -3,16 +3,27 @@ package com.usal.jorgeav.sportapp.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.usal.jorgeav.sportapp.sportselection.SportsListFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
+import java.util.ArrayList;
+
+/**
+ * Parcelable
+ * se guarda en lista
+ * {@link SportsListFragment#newInstance(String, ArrayList)}
+ * se recupera en lista
+ * {@link SportsListFragment#loadSports()}
+ * se pasa como argumento al fragment para poner sus puntuaciones en las rating bar
+ */
 @SuppressWarnings("unused")
 public class Sport implements Parcelable {
     private String sportID;
-    private int iconDrawableId;
-    private float punctuation;
-    private int votes;
+    private Integer iconDrawableId;
+    private Double punctuation;
+    private Integer votes;
 
-    public Sport(String sportID, float punctuation, int votes) {
+    public Sport(String sportID, Double punctuation, Integer votes) {
         this.sportID = sportID;
         this.iconDrawableId = Utiles.getSportIconFromResource(sportID);
         this.punctuation = punctuation;
@@ -23,23 +34,23 @@ public class Sport implements Parcelable {
         return sportID;
     }
 
-    public int getIconDrawableId() {
+    public Integer getIconDrawableId() {
         return iconDrawableId;
     }
 
-    public float getPunctuation() {
+    public Double getPunctuation() {
         return punctuation;
     }
 
-    public int getVotes() {
+    public Integer getVotes() {
         return votes;
     }
 
-    public void setPunctuation(float punctuation) {
+    public void setPunctuation(Double punctuation) {
         this.punctuation = punctuation;
     }
 
-    public void setVotes(int votes) {
+    public void setVotes(Integer votes) {
         this.votes = votes;
     }
 
@@ -61,19 +72,19 @@ public class Sport implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.sportID);
-        dest.writeInt(this.iconDrawableId);
-        dest.writeFloat(this.punctuation);
-        dest.writeInt(this.votes);
+        dest.writeValue(this.iconDrawableId);
+        dest.writeValue(this.punctuation);
+        dest.writeValue(this.votes);
     }
 
     protected Sport(Parcel in) {
         this.sportID = in.readString();
-        this.iconDrawableId = in.readInt();
-        this.punctuation = in.readFloat();
-        this.votes = in.readInt();
+        this.iconDrawableId = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.punctuation = (Double) in.readValue(Double.class.getClassLoader());
+        this.votes = (Integer) in.readValue(Integer.class.getClassLoader());
     }
 
-    public static final Creator<Sport> CREATOR = new Creator<Sport>() {
+    public static final Parcelable.Creator<Sport> CREATOR = new Parcelable.Creator<Sport>() {
         @Override
         public Sport createFromParcel(Parcel source) {
             return new Sport(source);

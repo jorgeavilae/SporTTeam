@@ -1,15 +1,12 @@
 package com.usal.jorgeav.sportapp.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Event implements Parcelable {
+public class Event {
     private String event_id;
     private String sport_id;
     private String field_id;
@@ -180,6 +177,7 @@ public class Event implements Parcelable {
                 '}';
     }
 
+    @SuppressWarnings("RedundantIfStatement")
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -206,8 +204,10 @@ public class Event implements Parcelable {
         if (owner != null ? !owner.equals(event.owner) : event.owner != null) return false;
         if (participants != null ? !participants.equals(event.participants) : event.participants != null)
             return false;
-        return simulated_participants != null ? simulated_participants.equals(event.simulated_participants) : event.simulated_participants == null;
+        if (simulated_participants != null ? !simulated_participants.equals(event.simulated_participants) : event.simulated_participants != null)
+            return false;
 
+        return true;
     }
 
     @Override
@@ -228,57 +228,4 @@ public class Event implements Parcelable {
         result = 31 * result + (simulated_participants != null ? simulated_participants.hashCode() : 0);
         return result;
     }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.event_id);
-        dest.writeString(this.sport_id);
-        dest.writeString(this.field_id);
-        dest.writeString(this.name);
-        dest.writeString(this.address);
-        dest.writeString(this.city);
-        dest.writeValue(this.coord_latitude);
-        dest.writeValue(this.coord_longitude);
-        dest.writeValue(this.date);
-        dest.writeString(this.owner);
-        dest.writeValue(this.total_players);
-        dest.writeValue(this.empty_players);
-        dest.writeSerializable(this.participants);
-        dest.writeSerializable(this.simulated_participants);
-    }
-
-    protected Event(Parcel in) {
-        this.event_id = in.readString();
-        this.sport_id = in.readString();
-        this.field_id = in.readString();
-        this.name = in.readString();
-        this.address = in.readString();
-        this.city = in.readString();
-        this.coord_latitude = (Double) in.readValue(Double.class.getClassLoader());
-        this.coord_longitude = (Double) in.readValue(Double.class.getClassLoader());
-        this.date = (Long) in.readValue(Long.class.getClassLoader());
-        this.owner = in.readString();
-        this.total_players = (Long) in.readValue(Long.class.getClassLoader());
-        this.empty_players = (Long) in.readValue(Long.class.getClassLoader());
-        this.participants = (HashMap<String, Boolean>) in.readSerializable();
-        this.simulated_participants = (HashMap<String, SimulatedUser>) in.readSerializable();
-    }
-
-    public static final Creator<Event> CREATOR = new Creator<Event>() {
-        @Override
-        public Event createFromParcel(Parcel source) {
-            return new Event(source);
-        }
-
-        @Override
-        public Event[] newArray(int size) {
-            return new Event[size];
-        }
-    };
 }

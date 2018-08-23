@@ -123,7 +123,7 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
         ArrayList<Sport> result = new ArrayList<>();
         for(mDataset.moveToFirst(); !mDataset.isAfterLast(); mDataset.moveToNext()) {
             String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
-            float level = mDataset.getFloat(SportteamContract.UserSportEntry.COLUMN_LEVEL);
+            double level = mDataset.getDouble(SportteamContract.UserSportEntry.COLUMN_LEVEL);
             result.add(new Sport(name, level, 0));
         }
         return result;

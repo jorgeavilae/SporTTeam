@@ -1,10 +1,21 @@
 package com.usal.jorgeav.sportapp.data;
 
+import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.view.MenuItem;
 
 import com.google.android.gms.maps.model.LatLng;
 
+/**
+ * Parcelable
+ * se guarda
+ * {@link com.usal.jorgeav.sportapp.mainactivities.MapsActivity#onOptionsItemSelected(MenuItem)}
+ * se recupera
+ * {@link com.usal.jorgeav.sportapp.mainactivities.EventsActivity#onActivityResult(int, int, Intent)}
+ * {@link com.usal.jorgeav.sportapp.mainactivities.FieldsActivity#onActivityResult(int, int, Intent)}
+ * Para pasarlo de la actividad map a la actividad event y field: en la seleccion de direccion
+ */
 @SuppressWarnings("unused")
 public class MyPlace implements Parcelable {
     private String status;

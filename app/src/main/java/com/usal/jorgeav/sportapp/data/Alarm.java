@@ -5,22 +5,83 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Esta clase representa a una Alarma del modelo.
+ */
 public class Alarm {
+    /**
+     * Identificador único
+     */
     private String id;
+    /**
+     * Identificador del deportes que busca esta alarma
+     */
     private String sport_id;
+    /**
+     * Identificador de la instalación que observa esta alarma o null
+     */
     private String field_id;
+    /**
+     * Identificador de la ciudad donde está puesta esta alarma
+     */
     private String city;
+    /**
+     * Limite inferior del periodo de fechas en el que deben jugarse los partidos que busca
+     * esta alarma
+     */
     private Long date_from;
+    /**
+     * Limite inferior del periodo de fechas en el que deben jugarse los partidos que busca
+     * esta alarma
+     */
     private Long date_to;
+    /**
+     * Limite inferior del número de jugadores totales que deben tener los partidos que busca
+     * esta alarma
+     */
     private Long total_players_from;
+    /**
+     * Limite superior del número de jugadores totales que deben tener los partidos que busca
+     * esta alarma
+     */
     private Long total_players_to;
+    /**
+     * Limite inferior del número de puestos vacantes que deben tener los partidos que busca
+     * esta alarma
+     */
     private Long empty_players_from;
+    /**
+     * Limite superior del número de jugadores totales que deben tener los partidos que busca
+     * esta alarma
+     */
     private Long empty_players_to;
 
+    /**
+     * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
+     * Realtime Database con
+     * {@link
+     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
+     *     DataSnapshot.getValue(Class)
+     * </a>}
+     */
     public Alarm(){
         // Default constructor required for calls to DataSnapshot.getValue(Alarm.class)
     }
 
+    /**
+     * Constructor con argumentos
+     *
+     * @param id identificador de alarma
+     * @param sport_id identificador de deporte
+     * @param field_id identificador de instalacion o null
+     * @param city nombre de ciudad
+     * @param date_from limite inferior del periodo de fechas
+     * @param date_to limite superior del periodo de fechas
+     * @param total_players_from limite inferior de puestos totales
+     * @param total_players_to limite superior de puestos totales
+     * @param empty_players_from limite inferior de puestos vacantes
+     * @param empty_players_to limite superior de puestos vacantes
+     */
     public Alarm(String id, String sport_id, String field_id, String city,
                  Long date_from, Long date_to,
                  Long total_players_from, Long total_players_to,
@@ -117,6 +178,13 @@ public class Alarm {
         this.empty_players_to = empty_players_to;
     }
 
+    /**
+     * Introduce los datos de este objeto en un Map para Firebase Realtime Database.
+     * La clave se obtiene de la clase diccionario {@link FirebaseDBContract} y como valor se
+     * utilizan las variables de la clase.
+     *
+     * @return Map con los datos de {@link Alarm}
+     */
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put(FirebaseDBContract.Alarm.SPORT, this.sport_id);
@@ -131,6 +199,10 @@ public class Alarm {
         return result;
     }
 
+    /**
+     * Representación del objeto en cadena de texto
+     * @return la cadena de texto con los datos del objeto
+     */
     @Override
     public String toString() {
         return "Alarm{" +

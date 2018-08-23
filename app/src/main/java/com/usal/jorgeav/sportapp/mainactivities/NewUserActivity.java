@@ -205,9 +205,7 @@ public class NewUserActivity extends AppCompatActivity implements
         if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
             try {
                 mDisplayedFragment = getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            }
+            } catch (IllegalStateException e) { e.printStackTrace(); }
         }
     }
 

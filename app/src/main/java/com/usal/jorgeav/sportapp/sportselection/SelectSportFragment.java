@@ -75,7 +75,7 @@ public class SelectSportFragment extends BaseFragment implements SelectSportsAda
 
         String[] sportsNameArray = getResources().getStringArray(R.array.sport_id_values);
         for (String aSportsNameArray : sportsNameArray) {
-            result.add(new Sport(aSportsNameArray, 0f, 0));
+            result.add(new Sport(aSportsNameArray, (double) 0f, 0));
         }
 
         return result;

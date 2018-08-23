@@ -1,14 +1,48 @@
 package com.usal.jorgeav.sportapp.data;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.ViewGroup;
 
+import com.usal.jorgeav.sportapp.mainactivities.MapsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Parcelable
+ * se guarda en lista
+ * {@link com.usal.jorgeav.sportapp.events.addevent.NewEventFragment#onSaveInstanceState(Bundle)}
+ * se recupera en lista
+ * {@link com.usal.jorgeav.sportapp.events.addevent.NewEventFragment#onCreateView(LayoutInflater, ViewGroup, Bundle)}
+ * Para recordar la instalacion seleccionada
+ *
+ * se guarda en lista
+ * {@link com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment#onSaveInstanceState(Bundle)}
+ * se recupera en lista
+ * {@link com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment#onCreateView(LayoutInflater, ViewGroup, Bundle)}
+ * Para recodar la instalacion seleccionada
+ *
+ * se guarda en lista
+ * {@link com.usal.jorgeav.sportapp.mainactivities.EventsActivity#startMapActivityForResult(ArrayList, boolean)}}
+ * {@link com.usal.jorgeav.sportapp.mainactivities.FieldsActivity#startMapActivityForResult(ArrayList, boolean)}
+ * {@link com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity#startMapActivityForResult(ArrayList)}
+ * se recupera en lista
+ * {@link MapsActivity#startMapFragment()}
+ * se guarda
+ * {@link MapsActivity#onOptionsItemSelected(MenuItem)}
+ * se recupera
+ * {@link com.usal.jorgeav.sportapp.mainactivities.EventsActivity#onActivityResult(int, int, Intent)}
+ * {@link com.usal.jorgeav.sportapp.mainactivities.FieldsActivity#onActivityResult(int, int, Intent)}
+ * {@link com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity#onActivityResult(int, int, Intent)}
+ */
 public class Field implements Parcelable {
     private String id;
     private String name;

@@ -48,10 +48,10 @@ public class UserFirebaseActions {
 
     public static void addUser(User user) {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
-                .child(user.getUid()).setValue(user.toMap());
+                .child(user.getUid()).child(FirebaseDBContract.DATA).setValue(user.toMap());
     }
 
-    public static void updateSports(String myUid, HashMap<String, Float> sportsMap) {
+    public static void updateSports(String myUid, HashMap<String, Double> sportsMap) {
         FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
                 .child(myUid).child(FirebaseDBContract.DATA)
                 .child(FirebaseDBContract.User.SPORTS_PRACTICED).setValue(sportsMap);

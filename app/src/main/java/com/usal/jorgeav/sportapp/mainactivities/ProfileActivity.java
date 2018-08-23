@@ -48,7 +48,7 @@ public class ProfileActivity extends BaseActivity implements SportsListFragment.
     @Override
     public void retrieveSportsSelected(String myUserID, List<Sport> sportsSelected) {
         if (myUserID != null && !TextUtils.isEmpty(myUserID)) {
-            HashMap<String, Float> sportsMap = new HashMap<>();
+            HashMap<String, Double> sportsMap = new HashMap<>();
             if (sportsSelected != null)
                 for (Sport sport : sportsSelected)
                     sportsMap.put(sport.getSportID(), sport.getPunctuation());

@@ -188,7 +188,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
         mSports = new ArrayList<>();
         if (sportsSelected != null) {
             for (Sport s : sportsSelected) {
-                SportCourt sc = new SportCourt(s.getSportID(), (double) s.getPunctuation(), (long) s.getVotes());
+                SportCourt sc = new SportCourt(s.getSportID(), s.getPunctuation(), (long) s.getVotes());
                 sportsMap.put(s.getSportID(), sc.toMap());
                 mSports.add(sc);
             }

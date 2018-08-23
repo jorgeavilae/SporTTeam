@@ -78,7 +78,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
             int nameResource = MyApplication.getAppContext().getResources()
                     .getIdentifier(s.getSportID() , "string", MyApplication.getAppContext().getPackageName());
             holder.textViewSportName.setText(nameResource);
-            holder.ratingBarSportLevel.setRating(s.getPunctuation());
+            holder.ratingBarSportLevel.setRating(s.getPunctuation().floatValue());
         }
     }
 
@@ -143,7 +143,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
             ratingBarSportLevel.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                    mDataset.get(getAdapterPosition()).setPunctuation(v);
+                    mDataset.get(getAdapterPosition()).setPunctuation((double) v);
                 }
             });
         }

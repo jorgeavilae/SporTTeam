@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.data;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,6 +9,18 @@ import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import java.io.Serializable;
 import java.util.HashMap;
 
+/**
+ * Parcelable
+ * se guarda en lista
+ * {@link com.usal.jorgeav.sportapp.mainactivities.FieldsActivity#onSaveInstanceState(Bundle)}
+ * se recupera en lista
+ * {@link com.usal.jorgeav.sportapp.mainactivities.FieldsActivity#onRestoreInstanceState(Bundle)}
+ * necesita q se mantenga para usarlo en el newFielFragment, en en la creacion
+ * no necesita q se mantenga en la creacion de nuevo usuario pq la creacion es justo despues de indicar los deportes
+ *
+ * Serializable
+ * {@link Field#writeToParcel(Parcel, int)} en {@link Parcel#writeSerializable(Serializable)}
+ */
 public class SportCourt implements Parcelable, Serializable {
     private String sport_id;
     private Double punctuation;
