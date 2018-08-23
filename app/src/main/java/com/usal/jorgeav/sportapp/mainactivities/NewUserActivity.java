@@ -29,6 +29,7 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -130,7 +131,8 @@ public class NewUserActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void retrieveSportsSelected(String id, List<Sport> sportsSelected) {
+    public void retrieveSportsSelected(String id, List<Sport> sportsSelected,
+                                       HashMap<String, Long> votesList) {
         this.sports.clear();
         this.sports.addAll(sportsSelected);
         sportsInitialize = true;

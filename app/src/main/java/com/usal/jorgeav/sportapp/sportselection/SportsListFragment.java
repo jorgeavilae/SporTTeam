@@ -19,7 +19,9 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.AddSportsAdapter;
 import com.usal.jorgeav.sportapp.data.Sport;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -28,8 +30,9 @@ import butterknife.ButterKnife;
 
 public class SportsListFragment extends BaseFragment {
     private final static String TAG = SportsListFragment.class.getSimpleName();
-    public static final String BUNDLE_INSTANCE_SPORT_LIST = "BUNDLE_INSTANCE_SPORT_LIST";
     public static final String BUNDLE_INSTANCE_OBJECT_ID = "BUNDLE_INSTANCE_OBJECT_ID";
+    public static final String BUNDLE_INSTANCE_SPORT_LIST = "BUNDLE_INSTANCE_SPORT_LIST";
+    public static final String BUNDLE_INSTANCE_VOTES_LIST = "BUNDLE_INSTANCE_VOTES_LIST";
 
     @BindView(R.id.recycler_list)
     RecyclerView sportsRecyclerViewList;
@@ -40,12 +43,19 @@ public class SportsListFragment extends BaseFragment {
     }
 
     public static SportsListFragment newInstance(@NonNull String id,
-                                                 ArrayList<Sport> sportsList) {
+                                                 ArrayList<Sport> sportsList,
+                                                 HashMap<String, Long> votesList) {
         SportsListFragment fragment = new SportsListFragment();
         Bundle args = new Bundle();
+
+        args.putString(BUNDLE_INSTANCE_OBJECT_ID, id);
+
         if (sportsList != null)
             args.putParcelableArrayList(BUNDLE_INSTANCE_SPORT_LIST, sportsList);
-        args.putString(BUNDLE_INSTANCE_OBJECT_ID, id);
+
+        if (votesList != null)
+            args.putSerializable(BUNDLE_INSTANCE_VOTES_LIST, votesList);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,7 +82,8 @@ public class SportsListFragment extends BaseFragment {
                 if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_OBJECT_ID))
                     id = getArguments().getString(BUNDLE_INSTANCE_OBJECT_ID);
 
-                ((OnSportsSelected) getActivity()).retrieveSportsSelected(id, mSportAdapter.getDataAsArrayList());
+                ((OnSportsSelected) getActivity()).retrieveSportsSelected(id,
+                        mSportAdapter.getDataAsArrayList(), extractHashMapVotesFromBundle());
             } else {
                 Log.e(TAG, "onOptionsItemSelected: Activity does not implement OnSportsSelected");
             }
@@ -114,23 +125,33 @@ public class SportsListFragment extends BaseFragment {
 
         String[] sportsNameArray = getResources().getStringArray(R.array.sport_id_values);
         for (String aSportsNameArray : sportsNameArray) {
-            result.add(new Sport(aSportsNameArray, (double) 0f, 1));
+            result.add(new Sport(aSportsNameArray, (double) 0f));
         }
 
         if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_SPORT_LIST)) {
-            ArrayList<Sport> sportsListFromActivity = getArguments().getParcelableArrayList(BUNDLE_INSTANCE_SPORT_LIST);
+            ArrayList<Sport> sportsListFromActivity = getArguments()
+                    .getParcelableArrayList(BUNDLE_INSTANCE_SPORT_LIST);
             if (sportsListFromActivity != null) {
                 for (Sport sportFromActivity : sportsListFromActivity)
                     for (Sport sportFromResources : result)
                         if (isTheSameSport(sportFromActivity, sportFromResources)) {
                             sportFromResources.setPunctuation(sportFromActivity.getPunctuation());
-                            sportFromResources.setVotes(sportFromActivity.getVotes());
                             break;
                         }
             }
         }
 
         return result;
+    }
+
+    private HashMap<String, Long> extractHashMapVotesFromBundle() {
+        HashMap votesListFromActivity = null;
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_VOTES_LIST)) {
+            Serializable serializable = getArguments().getSerializable(BUNDLE_INSTANCE_VOTES_LIST);
+            if (serializable instanceof HashMap)
+                votesListFromActivity = (HashMap) serializable;
+        }
+        return votesListFromActivity;
     }
 
     @Override
@@ -140,6 +161,8 @@ public class SportsListFragment extends BaseFragment {
     }
 
     public interface OnSportsSelected {
-        void retrieveSportsSelected(String id, List<Sport> sportsSelected);
+        void retrieveSportsSelected(String id,
+                                    List<Sport> sportsSelected,
+                                    HashMap<String, Long> votesList);
     }
 }

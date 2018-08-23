@@ -123,7 +123,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
             return true;
         } else if (item.getItemId() == R.id.action_add) {
             Fragment fragment = SportsListFragment.newInstance(mFieldId,
-                    sportsAdapter.getDataAsSportArrayListWithVotes());
+                    sportsAdapter.getDataAsSportArrayList(), sportsAdapter.getVotesAsHashMap());
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         }
@@ -160,7 +160,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
             public void onProfileSportClick(String sportId) {
                 displayVoteCourtDialog(sportId);
             }
-        }, Glide.with(this));
+        }, Glide.with(this), true);
         detailFieldSportList.setAdapter(sportsAdapter);
         detailFieldSportList.setHasFixedSize(true);
         detailFieldSportList.setLayoutManager(new GridLayoutManager(getActivityContext(), 2, LinearLayoutManager.VERTICAL, false));

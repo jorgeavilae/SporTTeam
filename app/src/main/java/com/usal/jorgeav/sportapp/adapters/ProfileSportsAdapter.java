@@ -18,12 +18,15 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * Adaptador para mostrar la lista indicadora de deportes mediante {@link RatingBar}.
+ * Principalmente usado para mostrar los deportes practicados por el usuario, pero también
+ * puede usarse para representar pistas de instalaciones.
  */
 public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdapter.ViewHolder> {
     /**
@@ -58,8 +61,14 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
      * para cargar el icono correspondiente a cada item de la lista.
      */
     private RequestManager mGlide;
+    /**
+     * True si el adapter se esta usando para una lista de pistas de una instalacion, false si se
+     * esta usando para otra cosa, como para los deportes practicados por un usuario
+     */
+    private boolean isSportCourtsAdapter;
 
     /**
+     * Constructor con argumentos
      *
      * @param mDataset Conjunto de deportes
      * @param mClickListener Referencia al Listener que implementa esta interfaz
@@ -69,13 +78,16 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
      *     RequestManager
      * </a>}
      * para cargar el icono correspondiente a cada item de la lista
+     * @param isSportCourtsAdapter indicador de si los deportes son pistas de una instalacion
      */
     public ProfileSportsAdapter(Cursor mDataset,
                                 OnProfileSportClickListener mClickListener,
-                                RequestManager glide) {
+                                RequestManager glide,
+                                boolean isSportCourtsAdapter) {
         this.mDataset = mDataset;
         this.mClickListener = mClickListener;
         this.mGlide = glide;
+        this.isSportCourtsAdapter = isSportCourtsAdapter;
     }
 
     @Override
@@ -133,26 +145,25 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
             String name = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
             Double level = mDataset.getDouble(SportteamContract.UserSportEntry.COLUMN_LEVEL);
 
-            result.add(new Sport(name, level, 0));
+            result.add(new Sport(name, level));
         }
         return result;
     }
 
     /**
-     * Getter para la coleccion de deportes que maneja este adapter, incluyendo los votos.
-     * Se utiliza este para obtener las pistas que muestra el adapter cuando es usado para
-     * una instalación
+     * Getter para la coleccion de votos sobre las pistas de deportes que maneja este adapter.
      *
-     * @return Lista de {@link Sport} con votos
+     * @return Map de pista (representada por identificador de deporte) con sus respectivos votos
      */
-    public ArrayList<Sport> getDataAsSportArrayListWithVotes() {
-        if (mDataset == null) return null;
-        ArrayList<Sport> result = new ArrayList<>();
+    public HashMap<String, Long> getVotesAsHashMap() {
+        if (mDataset == null || !isSportCourtsAdapter) return null;
+        HashMap<String, Long> result = new HashMap<>();
         for(mDataset.moveToFirst(); !mDataset.isAfterLast(); mDataset.moveToNext()) {
-            String name = mDataset.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
-            Double punctuation = mDataset.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
-            Integer votes = mDataset.getInt(SportteamContract.FieldSportEntry.COLUMN_VOTES);
-            result.add(new Sport(name, punctuation, votes));
+            if (mDataset.getColumnCount() == SportteamContract.FieldSportEntry.COLUMN_VOTES+1) {
+                String name = mDataset.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
+                Long votes = mDataset.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);
+                result.put(name, votes);
+            }
         }
         return result;
     }

@@ -99,7 +99,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                     //When select a place from FieldsFragment's addFieldButton
                     if (requestCode == REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT) {
                         //Select sports and later, in retrieveFields(), start new Field fragment flow
-                        Fragment fragment = SportsListFragment.newInstance("", null);
+                        Fragment fragment = SportsListFragment.newInstance("", null, null);
                         initFragment(fragment, true);
                     } else { //When edit Field's place from NewFieldFragment's button
                         if (mDisplayedFragment instanceof NewFieldContract.View)
@@ -183,12 +183,20 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
     }
 
     @Override
-    public void retrieveSportsSelected(String fieldId, List<Sport> sportsSelected) {
+    public void retrieveSportsSelected(String fieldId, List<Sport> sportsSelected,
+                                       HashMap<String, Long> votesList) {
         HashMap<String, Object> sportsMap = new HashMap<>();
+        Long votes;
         mSports = new ArrayList<>();
+
         if (sportsSelected != null) {
             for (Sport s : sportsSelected) {
-                SportCourt sc = new SportCourt(s.getSportID(), s.getPunctuation(), (long) s.getVotes());
+
+                /* Extract votes cached in SportListFragment from DetailFieldFragment when editing*/
+                if (votesList == null || !votesList.containsKey(s.getSportID())) votes = 1L;
+                else votes = votesList.get(s.getSportID());
+
+                SportCourt sc = new SportCourt(s.getSportID(), s.getPunctuation(), votes);
                 sportsMap.put(s.getSportID(), sc.toMap());
                 mSports.add(sc);
             }

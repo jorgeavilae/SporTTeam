@@ -127,7 +127,7 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit_sports) {
             Fragment fragment = SportsListFragment.newInstance(mUserUid,
-                    sportsAdapter.getDataAsSportArrayList());
+                    sportsAdapter.getDataAsSportArrayList(), null);
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_change_image) {
@@ -156,7 +156,8 @@ public class ProfileFragment extends BaseFragment implements ProfileContract.Vie
         if (getArguments() != null && getArguments().containsKey(BUNDLE_INSTANCE_UID))
             mUserUid = getArguments().getString(BUNDLE_INSTANCE_UID);
 
-        sportsAdapter = new ProfileSportsAdapter(null, null, Glide.with(this));
+        sportsAdapter = new ProfileSportsAdapter(null, null,
+                Glide.with(this), false);
         userSportList.setAdapter(sportsAdapter);
         userSportList.setHasFixedSize(true);
         userSportList.setLayoutManager(new GridLayoutManager(getActivityContext(), 2, LinearLayoutManager.VERTICAL, false));

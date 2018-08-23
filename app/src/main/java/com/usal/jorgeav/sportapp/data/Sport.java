@@ -7,6 +7,7 @@ import com.usal.jorgeav.sportapp.sportselection.SportsListFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Representa una Deporte del modelo.
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  * el {@link android.os.Bundle} que se asocia a {@link SportsListFragment} en su creación y se
  * utiliza para pasarle deportes.
  *
- * @see SportsListFragment#newInstance(String, ArrayList)
+ * @see SportsListFragment#newInstance(String, ArrayList, HashMap)
  */
 @SuppressWarnings("unused")
 public class Sport implements Parcelable {
@@ -32,23 +33,17 @@ public class Sport implements Parcelable {
      * Puntuación del deporte
      */
     private Double punctuation;
-    /**
-     * Número de votos. Usado cuando esta clase se utiliza como {@link SportCourt}
-     */
-    private Integer votes;
 
     /**
      * Constructor con argumentos
      *
      * @param sportID identificador del deporte
      * @param punctuation puntuación del deporte
-     * @param votes número de votos
      */
-    public Sport(String sportID, Double punctuation, Integer votes) {
+    public Sport(String sportID, Double punctuation) {
         this.sportID = sportID;
         this.iconDrawableId = Utiles.getSportIconFromResource(sportID);
         this.punctuation = punctuation;
-        this.votes = votes;
     }
 
     public String getSportID() {
@@ -63,16 +58,8 @@ public class Sport implements Parcelable {
         return punctuation;
     }
 
-    public Integer getVotes() {
-        return votes;
-    }
-
     public void setPunctuation(Double punctuation) {
         this.punctuation = punctuation;
-    }
-
-    public void setVotes(Integer votes) {
-        this.votes = votes;
     }
 
     /**
@@ -86,7 +73,6 @@ public class Sport implements Parcelable {
                 "sportID='" + sportID + '\'' +
                 ", iconDrawableId=" + iconDrawableId +
                 ", punctuation=" + punctuation +
-                ", votes=" + votes +
                 '}';
     }
 
@@ -111,7 +97,6 @@ public class Sport implements Parcelable {
         dest.writeString(this.sportID);
         dest.writeValue(this.iconDrawableId);
         dest.writeValue(this.punctuation);
-        dest.writeValue(this.votes);
     }
 
     /**
@@ -123,7 +108,6 @@ public class Sport implements Parcelable {
         this.sportID = in.readString();
         this.iconDrawableId = (Integer) in.readValue(Integer.class.getClassLoader());
         this.punctuation = (Double) in.readValue(Double.class.getClassLoader());
-        this.votes = (Integer) in.readValue(Integer.class.getClassLoader());
     }
 
     /**

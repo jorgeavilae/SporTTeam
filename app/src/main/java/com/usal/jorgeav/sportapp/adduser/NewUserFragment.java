@@ -128,7 +128,8 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                     && !TextUtils.isEmpty(newUserAge.getText())
                     && newUserCitySelectedName != null && newUserCitySelectedCoord != null) {
 
-                SportsListFragment slf = SportsListFragment.newInstance("", ((NewUserActivity) getActivity()).sports);
+                SportsListFragment slf = SportsListFragment.newInstance("",
+                        ((NewUserActivity) getActivity()).sports, null);
                 mFragmentManagementListener.initFragment(slf, true);
 
             } else {
