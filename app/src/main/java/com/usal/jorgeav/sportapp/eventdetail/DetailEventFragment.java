@@ -286,17 +286,26 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
         // Set send invitation button
         detailEventInvitation.setVisibility(View.VISIBLE);
+        detailEventInvitation.setEnabled(true);
+        View.OnClickListener sendIntvitationClickListener = null;
         if (isFull == null || !isFull) {
-            detailEventInvitation.setEnabled(true);
-            detailEventInvitation.setOnClickListener(new View.OnClickListener() {
+            sendIntvitationClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Fragment fragment = InviteUserFragment.newInstance(mEventId);
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
-            });
-        } else
-            detailEventInvitation.setEnabled(false);
+            };
+        } else {
+            sendIntvitationClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getContext(), R.string.no_empty_players_for_user,
+                            Toast.LENGTH_SHORT).show();
+                }
+            };
+        }
+        detailEventInvitation.setOnClickListener(sendIntvitationClickListener);
 
         // Hide other buttons
         detailEventStateButton.setVisibility(View.GONE);
