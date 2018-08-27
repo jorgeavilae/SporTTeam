@@ -36,7 +36,8 @@ import java.util.ArrayList;
 @SuppressWarnings("unused")
 public class FieldsMapFragment extends SupportMapFragment
         implements FieldsContract.View, OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener {
+        GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
+        /*todo , OnMapLoadedCallback*/ {
     private static final String TAG = FieldsMapFragment.class.getSimpleName();
 
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -124,8 +125,8 @@ public class FieldsMapFragment extends SupportMapFragment
             return;
         }
 
-        //Populate map with Fields
-        populateMap();
+        //Populate map with Fields. Field's list not empty. Check if map is ready
+        if (mMap != null) populateMap();
     }
 
     private void populateMap() {
@@ -156,6 +157,9 @@ public class FieldsMapFragment extends SupportMapFragment
 
         // Move Camera
         centerCameraOnInit();
+
+        //Populate map with Fields. Map is ready. Check if Field's list are empty
+        if (mFieldsList != null && mFieldsList.size() > 0) populateMap();
     }
 
     private void centerCameraOnInit() {

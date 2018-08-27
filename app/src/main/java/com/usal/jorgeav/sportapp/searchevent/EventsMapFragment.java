@@ -38,7 +38,8 @@ public class EventsMapFragment extends SupportMapFragment
         implements EventsMapContract.View,
         OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
-        GoogleMap.OnInfoWindowClickListener {
+        GoogleMap.OnInfoWindowClickListener
+/*todo , OnMapLoadedCallback*/ {
     @SuppressWarnings("unused")
     private static final String TAG = EventsMapFragment.class.getSimpleName();
 
@@ -140,7 +141,7 @@ public class EventsMapFragment extends SupportMapFragment
         if (mMarkersList != null) for (Marker m : mMarkersList) m.remove();
         mMarkersList = new ArrayList<>();
 
-        //Populate map with Events
+        //Populate map with Events. Events's list not empty. Check if map is ready
         if (mMap != null) populateMap();
     }
 
@@ -191,6 +192,9 @@ public class EventsMapFragment extends SupportMapFragment
 
         // Move Camera
         centerCameraOnInit();
+
+        //Populate map with Events. Map is ready. Check if Events's list are empty
+        if (mEventsList != null && mEventsList.size() > 0) populateMap();
     }
 
     private void centerCameraOnInit() {
