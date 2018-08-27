@@ -53,7 +53,7 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
         // If needed, start createNewField from fragment instead of from here
         boolean createNewField = false;
         if (getIntent().hasExtra(INTENT_EXTRA_CREATE_NEW_FIELD)) createNewField = true;
-        initFragment(FieldsMapFragment.newInstance(createNewField), false, BaseActivity.FRAGMENT_TAG_IS_MAP);
+        initFragment(FieldsMapFragment.newInstance(createNewField), false, BaseActivity.FRAGMENT_TAG_IS_FIELDS_MAP);
 
         mNavigationView.setCheckedItem(R.id.nav_fields);
     }
@@ -136,7 +136,6 @@ public class FieldsActivity extends BaseActivity implements SportsListFragment.O
                         float punctuation = ratingBar.getRating();
                         FieldsFirebaseActions.addFieldSport(field.getId(), new SportCourt(sportId, (double) punctuation, 1L));
                         Toast.makeText(FieldsActivity.this, getString(R.string.toast_add_sport_success), Toast.LENGTH_SHORT).show();
-                        if (mDisplayedFragment != null) mDisplayedFragment.resetBackStack();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)

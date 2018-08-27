@@ -80,7 +80,8 @@ public class NewUserActivity extends AppCompatActivity implements
         sportsInitialize = false;
         sports = new ArrayList<>();
 
-        startMainFragment();
+        // Start Main Fragment
+        initFragment(NewUserFragment.newInstance(), false);
     }
 
     @Override
@@ -137,11 +138,6 @@ public class NewUserActivity extends AppCompatActivity implements
         this.sports.addAll(sportsSelected);
         sportsInitialize = true;
         onBackPressed();
-    }
-
-    @Override
-    public void startMainFragment() {
-        initFragment(NewUserFragment.newInstance(), false);
     }
 
     @Override

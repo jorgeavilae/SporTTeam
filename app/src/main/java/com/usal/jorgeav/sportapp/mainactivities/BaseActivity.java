@@ -51,7 +51,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
     private final static String TAG = BaseActivity.class.getSimpleName();
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
-    public static final String FRAGMENT_TAG_IS_MAP = "FRAGMENT_TAG_IS_MAP";
+    public static final String FRAGMENT_TAG_IS_FIELDS_MAP = "FRAGMENT_TAG_IS_FIELDS_MAP";
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -68,6 +68,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private boolean mIsFragmentOnSavedInstance;
 
     // False when changing Activity to not detach listeners in that cases
     private Boolean shouldDetachFirebaseListener;
@@ -88,40 +89,11 @@ public abstract class BaseActivity extends AppCompatActivity
 
         hideContent();
 
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser fuser = firebaseAuth.getCurrentUser();
-                if (fuser != null) {
-                    // User is signed in
-                    Log.i(TAG, "FirebaseUser logged ID: "+fuser.getUid());
-                    setUserInfoInNavigationDrawer();
-
-                    // Initialization for populate Content Provider and init Service if needed
-                    SportteamSyncInitialization.initialize(BaseActivity.this);
-
-                    // Displayed fragment is null on Initialization OR when FieldsMapFragment is
-                    // displayed since FieldsMapFragment is not a BaseFragment.
-                    if(mDisplayedFragment == null && getSupportFragmentManager()
-                            .findFragmentByTag(FRAGMENT_TAG_IS_MAP) == null)
-                        startMainFragment();
-                } else {
-                    // User is signed out
-                    Log.i(TAG, "FirebaseUser logged ID: null");
-
-                    // Finalize service
-                    SportteamSyncInitialization.finalize(BaseActivity.this);
-
-                    UtilesNotification.clearAllNotifications(BaseActivity.this);
-
-                    Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        };
+        // To know if onRestoreInstance() are going to init a Fragment before
+        // onStart() method attach the FirebaseAuth listener and start a main Fragment
+        mIsFragmentOnSavedInstance = (savedInstanceState != null &&
+                (savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)
+                        || savedInstanceState.containsKey(FRAGMENT_TAG_IS_FIELDS_MAP)));
 
         shouldDetachFirebaseListener = true;
     }
@@ -161,21 +133,47 @@ public abstract class BaseActivity extends AppCompatActivity
                 .build());
     }
 
+    /**
+     * Guarda el BaseFragment que se esté mostrando en este momento para mostrarlo en la
+     * recreación. Si el que se está mostrando es el Fragmento de las Instalaciones, se guarda
+     * un TAG que lo indica. Si el que se está mostrando es el Fragmento de la búsqueda de
+     * partidos o cualquier otro no mencionado, no guarda nada y en la recreación muestra el de
+     * la búsqueda de partidos.
+     *
+     * @param outState
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        if (getSupportFragmentManager() != null) {
+            if (mDisplayedFragment != null)
+                getSupportFragmentManager().putFragment(outState,
+                    BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
+            else if (getSupportFragmentManager()
+                    .findFragmentByTag(FRAGMENT_TAG_IS_FIELDS_MAP) != null)
+                outState.putInt(FRAGMENT_TAG_IS_FIELDS_MAP, 1);
+        }
         super.onSaveInstanceState(outState);
-        if (mDisplayedFragment != null && getSupportFragmentManager() != null)
-            getSupportFragmentManager().putFragment(outState, BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
     }
 
+    /**
+     * Sólo se ejecuta si savedInstanceState es != null. Es el mismo savedInstanceState de
+     * onCreate(Bundle savedInstanceState). Es un metodo para separar la restauracion
+     * del estado, sacando este codigo del metodo onCreate.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+
         mDisplayedFragment = null;
-        if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
+        if (savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)) {
             try {
-                mDisplayedFragment = (BaseFragment) getSupportFragmentManager().getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
+                mDisplayedFragment = (BaseFragment) getSupportFragmentManager()
+                        .getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
             } catch (IllegalStateException e) { e.printStackTrace(); }
+        } else if(savedInstanceState.containsKey(FRAGMENT_TAG_IS_FIELDS_MAP)) {
+            onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_fields));
         } else {
             onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_search_events));
         }
@@ -362,6 +360,40 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser fuser = firebaseAuth.getCurrentUser();
+                if (fuser != null) {
+                    // User is signed in
+                    Log.i(TAG, "FirebaseUser logged ID: "+fuser.getUid());
+                    setUserInfoInNavigationDrawer();
+
+                    // Initialization for populate Content Provider and init Service if needed
+                    SportteamSyncInitialization.initialize(BaseActivity.this);
+
+                    // Prevent from create main Fragment on configuration changes
+                    Log.d(TAG, "startMainFragment: mDisplayedFragment "+mDisplayedFragment);
+                    if (!mIsFragmentOnSavedInstance)
+                        startMainFragment();
+                } else {
+                    // User is signed out
+                    Log.i(TAG, "FirebaseUser logged ID: null");
+
+                    // Finalize service
+                    SportteamSyncInitialization.finalize(BaseActivity.this);
+
+                    UtilesNotification.clearAllNotifications(BaseActivity.this);
+
+                    Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        };
         mAuth.addAuthStateListener(mAuthListener);
     }
 
