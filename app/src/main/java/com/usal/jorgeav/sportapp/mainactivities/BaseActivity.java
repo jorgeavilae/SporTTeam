@@ -269,21 +269,21 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     @Override
-    public void initFragment(@NonNull Fragment fragment, boolean isOnBackStack) {
+    public void initFragment(@NonNull Fragment fragment, boolean addToBackStack) {
         hideContent();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.contentFrame, fragment);
-        if (isOnBackStack) transaction.addToBackStack(null);
+        if (addToBackStack) transaction.addToBackStack(null);
         transaction.commitAllowingStateLoss();
     }
     @Override
-    public void initFragment(@NonNull Fragment fragment, boolean isOnBackStack, String tag) {
+    public void initFragment(@NonNull Fragment fragment, boolean addToBackStack, String tag) {
         hideContent();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.contentFrame, fragment, tag);
-        if (isOnBackStack) transaction.addToBackStack(null);
+        if (addToBackStack) transaction.addToBackStack(null);
         transaction.commitAllowingStateLoss();
     }
 

@@ -10,14 +10,18 @@ public abstract class ActivityContracts {
 
     public interface FragmentManagement {
         void startMainFragment();
-        void initFragment(@NotNull Fragment fragment, boolean isOnBackStack);
-        void initFragment(@NotNull Fragment fragment, boolean isOnBackStack, String tag);
+        void initFragment(@NotNull Fragment fragment, boolean addToBackStack);
+        void initFragment(@NotNull Fragment fragment, boolean addToBackStack, String tag);
         void setCurrentDisplayedFragment(String title, BaseFragment fragment);
         void showContent();
         void hideContent();
         void signOut();
     }
 
+    /**
+     * Esta interfaz porporciona control sobre el menú lateral de navegación. Establece su
+     * aspecto o actualiza la información que muestra.
+     */
     public interface NavigationDrawerManagement {
         void setToolbarAsNav();
         void setToolbarAsUp();

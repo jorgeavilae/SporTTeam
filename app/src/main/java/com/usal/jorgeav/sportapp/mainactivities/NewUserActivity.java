@@ -145,21 +145,21 @@ public class NewUserActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void initFragment(@NonNull Fragment fragment, boolean isOnBackStack) {
+    public void initFragment(@NonNull Fragment fragment, boolean addToBackStack) {
         hideContent();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.new_user_content, fragment);
-        if (isOnBackStack) transaction.addToBackStack(null);
+        if (addToBackStack) transaction.addToBackStack(null);
         transaction.commit();
     }
     @Override
-    public void initFragment(@NonNull Fragment fragment, boolean isOnBackStack, String tag) {
+    public void initFragment(@NonNull Fragment fragment, boolean addToBackStack, String tag) {
         hideContent();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.new_user_content, fragment, tag);
-        if (isOnBackStack) transaction.addToBackStack(null);
+        if (addToBackStack) transaction.addToBackStack(null);
         transaction.commit();
     }
 
