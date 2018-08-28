@@ -70,6 +70,13 @@ public class SelectSportFragment extends BaseFragment implements SelectSportsAda
         return root;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_sport), this);
+        mNavigationDrawerManagementListener.setToolbarAsUp();
+    }
+
     private List<Sport> loadSports() {
         ArrayList<Sport> result = new ArrayList<>();
 
@@ -85,8 +92,8 @@ public class SelectSportFragment extends BaseFragment implements SelectSportsAda
     public void onStart() {
         super.onStart();
         hideSoftKeyboard();
-        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_sport), this);
-        if (mNavigationDrawerManagementListener != null) mNavigationDrawerManagementListener.setToolbarAsUp();
+//        mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_sport), this);
+//        if (mNavigationDrawerManagementListener != null) mNavigationDrawerManagementListener.setToolbarAsUp();
         mSportAdapter.replaceData(loadSports());
         showContent();
     }
