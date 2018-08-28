@@ -91,9 +91,44 @@ public abstract class BaseActivity extends AppCompatActivity
 
         // To know if onRestoreInstance() are going to init a Fragment before
         // onStart() method attach the FirebaseAuth listener and start a main Fragment
+        // Repeat this onRestoreInstance() when onCreate() are not 
         mIsFragmentOnSavedInstance = (savedInstanceState != null &&
                 (savedInstanceState.containsKey(BUNDLE_SAVE_FRAGMENT_INSTANCE)
                         || savedInstanceState.containsKey(FRAGMENT_TAG_IS_FIELDS_MAP)));
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser fuser = firebaseAuth.getCurrentUser();
+                if (fuser != null) {
+                    // User is signed in
+                    Log.i(TAG, "FirebaseUser logged ID: "+fuser.getUid());
+                    setUserInfoInNavigationDrawer();
+
+                    // Initialization for populate Content Provider and init Service if needed
+                    SportteamSyncInitialization.initialize(BaseActivity.this);
+
+                    // Prevent from create main Fragment on configuration changes
+                    // or if there was a fragment already
+                    if (!mIsFragmentOnSavedInstance && mDisplayedFragment == null)
+                        startMainFragment();
+                } else {
+                    // User is signed out
+                    Log.i(TAG, "FirebaseUser logged ID: null");
+
+                    // Finalize service
+                    SportteamSyncInitialization.finalize(BaseActivity.this);
+
+                    UtilesNotification.clearAllNotifications(BaseActivity.this);
+
+                    Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        };
 
         shouldDetachFirebaseListener = true;
     }
@@ -360,39 +395,6 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser fuser = firebaseAuth.getCurrentUser();
-                if (fuser != null) {
-                    // User is signed in
-                    Log.i(TAG, "FirebaseUser logged ID: "+fuser.getUid());
-                    setUserInfoInNavigationDrawer();
-
-                    // Initialization for populate Content Provider and init Service if needed
-                    SportteamSyncInitialization.initialize(BaseActivity.this);
-
-                    // Prevent from create main Fragment on configuration changes
-                    if (!mIsFragmentOnSavedInstance)
-                        startMainFragment();
-                } else {
-                    // User is signed out
-                    Log.i(TAG, "FirebaseUser logged ID: null");
-
-                    // Finalize service
-                    SportteamSyncInitialization.finalize(BaseActivity.this);
-
-                    UtilesNotification.clearAllNotifications(BaseActivity.this);
-
-                    Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        };
         mAuth.addAuthStateListener(mAuthListener);
     }
 
