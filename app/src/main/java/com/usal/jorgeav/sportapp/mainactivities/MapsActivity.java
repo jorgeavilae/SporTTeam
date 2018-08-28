@@ -32,9 +32,10 @@ import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class MapsActivity extends AppCompatActivity implements
-        OnMapReadyCallback,
-        GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
+public class MapsActivity extends AppCompatActivity
+        implements OnMapReadyCallback,
+        GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMarkerClickListener {
     public static final String TAG = MapsActivity.class.getSimpleName();
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
     public static final String INTENT_EXTRA_ONLY_FIELDS = "INTENT_EXTRA_ONLY_FIELDS";
@@ -55,10 +56,11 @@ public class MapsActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /* NotFoundException: Resource ID #0x7f07000e */
         setContentView(R.layout.activity_maps);
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -139,10 +141,25 @@ public class MapsActivity extends AppCompatActivity implements
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setIndoorEnabled(false);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(false);
+        mMap.getUiSettings().setTiltGesturesEnabled(false);
+        mMap.getUiSettings().setZoomControlsEnabled(false);
+        mMap.setMaxZoomPreference(19);
+        mMap.setMinZoomPreference(10);
+
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMarkerClickListener(this);
-        mMap.setInfoWindowAdapter(new MapFieldMarkerInfoAdapter(getLayoutInflater(), mFieldsList));
 
+        populateMap();
+
+        // Move Camera
+        centerCameraOnInit();
+    }
+
+    private void populateMap() {
+        mMap.setInfoWindowAdapter(new MapFieldMarkerInfoAdapter(getLayoutInflater(), mFieldsList));
         //Populate map with Fields
         for (int i = 0; i < mFieldsList.size(); i++) {
             Field f = mFieldsList.get(i);
@@ -156,14 +173,9 @@ public class MapsActivity extends AppCompatActivity implements
             m.setTag(i);
             mMarkersList.add(m);
         }
-
-        // Move Camera
-        centerCameraOnInit();
     }
 
     private void centerCameraOnInit() {
-        mMap.setMinZoomPreference(20); //Buildings
-        mMap.setMinZoomPreference(5); //Continent
         String myUserId = Utiles.getCurrentUserId();
         if (myUserId != null) {
             LatLng myCityLatLong = UtilesPreferences.getCurrentUserCityCoords(this);
@@ -172,8 +184,30 @@ public class MapsActivity extends AppCompatActivity implements
                 myCityLatLong = new LatLng(UtilesPreferences.CACERES_LATITUDE, UtilesPreferences.CACERES_LONGITUDE);
 
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
-            mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Integer position = (Integer) marker.getTag();
+        if (position != null) {
+            //Field selected: invalid MyPlace selected
+            if (mMarkerSelectedPlace != null) mMarkerSelectedPlace.remove();
+            mMarkerSelectedPlace = null;
+            mPlaceSelected = null;
+
+            mFieldSelected = mFieldsList.get(position);
+
+            // Move camera
+            LatLng southwest = new LatLng(mFieldSelected.getCoord_latitude()-0.00135, mFieldSelected.getCoord_longitude()-0.00135);
+            LatLng northeast = new LatLng(mFieldSelected.getCoord_latitude()+0.00135, mFieldSelected.getCoord_longitude()+0.00135);
+            LatLngBounds llb = new LatLngBounds(southwest, northeast);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
+            marker.showInfoWindow();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -274,27 +308,5 @@ public class MapsActivity extends AppCompatActivity implements
                     break;
             }
         }
-    }
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        Integer position = (Integer) marker.getTag();
-        if (position != null) {
-            //Field selected: invalid MyPlace selected
-            if (mMarkerSelectedPlace != null) mMarkerSelectedPlace.remove();
-            mMarkerSelectedPlace = null;
-            mPlaceSelected = null;
-
-            mFieldSelected = mFieldsList.get(position);
-
-            // Move camera
-            LatLng southwest = new LatLng(mFieldSelected.getCoord_latitude()-0.00135, mFieldSelected.getCoord_longitude()-0.00135);
-            LatLng northeast = new LatLng(mFieldSelected.getCoord_latitude()+0.00135, mFieldSelected.getCoord_longitude()+0.00135);
-            LatLngBounds llb = new LatLngBounds(southwest, northeast);
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
-            marker.showInfoWindow();
-            return true;
-        }
-        return false;
     }
 }

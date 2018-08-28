@@ -36,8 +36,7 @@ import java.util.ArrayList;
 @SuppressWarnings("unused")
 public class FieldsMapFragment extends SupportMapFragment
         implements FieldsContract.View, OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
-        /*todo , OnMapLoadedCallback*/ {
+        GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener {
     private static final String TAG = FieldsMapFragment.class.getSimpleName();
 
     protected ActivityContracts.FragmentManagement mFragmentManagementListener;
@@ -149,9 +148,14 @@ public class FieldsMapFragment extends SupportMapFragment
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setIndoorEnabled(false);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
-        mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setTiltGesturesEnabled(false);
+        mMap.getUiSettings().setZoomControlsEnabled(false);
+        mMap.setMaxZoomPreference(19);
+        mMap.setMinZoomPreference(10);
+
         mMap.setOnMarkerClickListener(this);
         mMap.setOnInfoWindowClickListener(this);
 
@@ -163,9 +167,6 @@ public class FieldsMapFragment extends SupportMapFragment
     }
 
     private void centerCameraOnInit() {
-        showContent();
-        mMap.setMinZoomPreference(20); //Buildings
-        mMap.setMinZoomPreference(5); //Continent
         String myUserId = Utiles.getCurrentUserId();
         if (myUserId != null) {
             LatLng myCityLatLong = UtilesPreferences.getCurrentUserCityCoords(getActivityContext());
@@ -174,8 +175,9 @@ public class FieldsMapFragment extends SupportMapFragment
                 myCityLatLong = new LatLng(UtilesPreferences.CACERES_LATITUDE, UtilesPreferences.CACERES_LONGITUDE);
 
             mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
-            mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
         }
+        showContent();
     }
 
     @Override

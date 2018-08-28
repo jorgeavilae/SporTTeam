@@ -38,8 +38,7 @@ public class EventsMapFragment extends SupportMapFragment
         implements EventsMapContract.View,
         OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
-        GoogleMap.OnInfoWindowClickListener
-/*todo , OnMapLoadedCallback*/ {
+        GoogleMap.OnInfoWindowClickListener {
     @SuppressWarnings("unused")
     private static final String TAG = EventsMapFragment.class.getSimpleName();
 
@@ -184,9 +183,14 @@ public class EventsMapFragment extends SupportMapFragment
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setIndoorEnabled(false);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
-        mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setTiltGesturesEnabled(false);
+        mMap.getUiSettings().setZoomControlsEnabled(false);
+        mMap.setMaxZoomPreference(19);
+        mMap.setMinZoomPreference(10);
+
         mMap.setOnMarkerClickListener(this);
         mMap.setOnInfoWindowClickListener(this);
 
@@ -198,9 +202,6 @@ public class EventsMapFragment extends SupportMapFragment
     }
 
     private void centerCameraOnInit() {
-        showContent();
-        mMap.setMinZoomPreference(20); //Buildings
-        mMap.setMinZoomPreference(5); //Continent
         String myUserId = Utiles.getCurrentUserId();
         if (myUserId != null) {
             LatLng myCityLatLong = UtilesPreferences.getCurrentUserCityCoords(getActivityContext());
@@ -210,9 +211,10 @@ public class EventsMapFragment extends SupportMapFragment
                 mFragmentManagementListener.signOut();
             else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(myCityLatLong));
-                mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
             }
         }
+        showContent();
     }
 
     @Override

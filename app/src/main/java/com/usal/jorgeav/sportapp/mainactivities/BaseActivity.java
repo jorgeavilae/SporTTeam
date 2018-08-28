@@ -375,7 +375,6 @@ public abstract class BaseActivity extends AppCompatActivity
                     SportteamSyncInitialization.initialize(BaseActivity.this);
 
                     // Prevent from create main Fragment on configuration changes
-                    Log.d(TAG, "startMainFragment: mDisplayedFragment "+mDisplayedFragment);
                     if (!mIsFragmentOnSavedInstance)
                         startMainFragment();
                 } else {
