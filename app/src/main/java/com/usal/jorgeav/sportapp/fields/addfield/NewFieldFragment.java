@@ -2,10 +2,8 @@ package com.usal.jorgeav.sportapp.fields.addfield;
 
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,9 +17,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
@@ -51,8 +46,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     NewFieldContract.Presenter mNewFieldPresenter;
     private static boolean sInitialize;
 
-    // Static prevent double initialization with same ID
-    private static GoogleApiClient mGoogleApiClient;
     private String mCreator = "";
     private ArrayList<Field> mFieldList;
 
@@ -111,18 +104,6 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        if (mGoogleApiClient == null)
-            mGoogleApiClient = new GoogleApiClient
-                    .Builder(getActivity())
-                    .addApi(Places.GEO_DATA_API)
-                    .enableAutoManage(getActivity(), new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                            Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
-                        }
-                    })
-                    .build();
 
         mNewFieldPresenter = new NewFieldPresenter(this);
     }

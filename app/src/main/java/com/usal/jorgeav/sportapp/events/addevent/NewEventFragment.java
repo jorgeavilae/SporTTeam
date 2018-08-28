@@ -5,10 +5,8 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,9 +23,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
@@ -59,7 +54,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     private static boolean sInitialize;
 
     // Static prevent double initialization with same ID
-    private static GoogleApiClient mGoogleApiClient;
     public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
     ArrayList<Field> mFieldList;
     public static final String INSTANCE_FRIENDS_LIST_ID = "INSTANCE_FRIENDS_LIST_ID";
@@ -132,19 +126,6 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        if (mGoogleApiClient == null)
-            mGoogleApiClient = new GoogleApiClient
-                    .Builder(getActivity())
-                    .addApi(Places.GEO_DATA_API)
-                    .enableAutoManage(getActivity(), new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                            Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
-                        }
-                    })
-                    .build();
-        else mGoogleApiClient.connect();
-
         mNewEventPresenter = new NewEventPresenter(this);
     }
 
@@ -209,8 +190,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
         newEventFieldButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean onlyFields = true;
-                if (!Utiles.sportNeedsField(mSportId)) onlyFields = false;
+                boolean onlyFields = Utiles.sportNeedsField(mSportId);
                 ((EventsActivity) getActivity()).startMapActivityForResult(mFieldList, onlyFields);
             }
         });
@@ -361,6 +341,7 @@ public class NewEventFragment extends BaseFragment implements NewEventContract.V
     public void setParticipants(HashMap<String, Boolean> map) {
         mParticipants = map;
     }
+
     @Override
     public void setSimulatedParticipants(HashMap<String, SimulatedUser> map) {
         mSimulatedParticipants = map;
