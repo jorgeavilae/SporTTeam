@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -42,38 +43,138 @@ import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Actividad principal dónde se desarrolla la mayoría de la funcionalidad de la aplicación.
+ * Casi todas las Actividades derivan de esta para, de esta forma, alojar en BaseActivity
+ * el código común a todas.
+ * <p></p><p></p>
+ * Inicializa las referencias a la interfaz común a la mayoría de las Actividades. Configura la
+ * barra superior y el menú lateral de navegación. Implementa la interfaz de
+ * {@link ActivityContracts.NavigationDrawerManagement} para controlar estos elementos desde
+ * los Fragmentos.
+ * <p></p>
+ * Implementa también, {@link ActivityContracts.FragmentManagement} para resolver transiciones
+ * entre Fragmentos y establecer cuál de ellos está siendo mostrado, almacenando ese estado.
+ * <p></p>
+ * Inicializa los listeners de
+ * {@link
+ * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+ *     FirebaseAuth
+ * </a>}
+ * . Invoca la incialización y la finalización, según corresponda, de la carga de datos desde
+ * {@link
+ * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+ *     FirebaseDatabase
+ * </a>}
+ */
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ActivityContracts.NavigationDrawerManagement,
         ActivityContracts.FragmentManagement {
-
+    /**
+     * Método abstracto que deben implementar las Actividades que hereden de esta para
+     * establecer cúal será el Fragmento principal que mostrarán al iniciarse.
+     */
     public abstract void startMainFragment();
 
+    /**
+     * Nombre de la clase
+     */
     private final static String TAG = BaseActivity.class.getSimpleName();
+    /**
+     * Nombre de la clave usada para almacenar el Fragmento actual durante rotaciones.
+     */
     private final static String BUNDLE_SAVE_FRAGMENT_INSTANCE = "BUNDLE_SAVE_FRAGMENT_INSTANCE";
+    /**
+     * Nombre del tag usado para el Fragmento de mapa de Instalaciones. Al ser un mapa no
+     * puede almacenarse como {@link BaseFragment} por lo que no se almacena durante rotaciones.
+     * Se usa esta constante para indicar que ese era el Fragmento mostrado antes de la rotación.
+     */
     public static final String FRAGMENT_TAG_IS_FIELDS_MAP = "FRAGMENT_TAG_IS_FIELDS_MAP";
 
+    /**
+     * Barra superior de la interfaz
+     */
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    /**
+     * Contenedor del menú lateral de navegación de la interfaz
+     */
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawer;
+    /**
+     * Menú lateral de navegación
+     */
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
+    /**
+     * Contenedor de la interfaz donde se muestra el Fragmento
+     */
     @BindView(R.id.contentFrame)
     FrameLayout mContentFrame;
+    /**
+     * Barra de progreso mostrada mientras el contenedor del Fragmento está oculto
+     */
     @BindView(R.id.main_activity_progressbar)
     ProgressBar mProgressbar;
+    /**
+     * Referencia al Fragmento que se está mostrando actualmente, o null si es un Fragmento
+     * no derivado de {@link BaseFragment} como
+     * {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
+     *     SupportMapFragment
+     * </a>}
+     */
     BaseFragment mDisplayedFragment;
+    /**
+     * Establece la unión entre el menú lateral de navegación y la barra superior. Se usa para
+     * modificar la apariencia y el comportamiento de estos elementos
+     */
     ActionBarDrawerToggle mToggle;
 
+    /**
+     * Referencia a
+     * {@link
+     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+     *     FirebaseAuth
+     * </a>}
+     * para establecer el listener del inicio y cierre de sesión
+     */
     private FirebaseAuth mAuth;
+    /**
+     * Listener del inicio y cierre de sesión.
+     */
     private FirebaseAuth.AuthStateListener mAuthListener;
+    /**
+     * Es posible que se inicie la carga de un nuevo Fragmento principal desde el Listener
+     * {@link #mAuthListener}, en {@link #onStart()}, antes de que se obtenga el posible Fragmento
+     * guardado en la rotación de la pantalla en {@link #onRestoreInstanceState(Bundle)}.
+     * <code>mIsFragmentOnSavedInstance</code> se inicia con este mismo {@link Bundle} obtenido en
+     * {@link #onCreate(Bundle)}, y es true para indicar que hay un Fragmento guardado esperando
+     * a ser cargado y false en caso contrario.
+     *
+     * <p><b>Más información:</b><br>
+     * {@link
+     * <a href= "https://developer.android.com/guide/components/activities/activity-lifecycle#restore-activity-ui-state-using-saved-instance-state">
+     *     Restore activity UI state using saved instance state
+     * </a>}</p>
+     */
     private boolean mIsFragmentOnSavedInstance;
 
-    // False when changing Activity to not detach listeners in that cases
+    /**
+     * True cuando la Actividad está finalizando para cambiar a otra del menú lateral de
+     * navegación, false en otro caso. Esta variable es necesaria para iniciar el proceso de
+     * cierre de la aplicación y, por tanto, desvincular los Listener de la base de datos de Firebase.
+     */
     private Boolean shouldDetachFirebaseListener;
 
 
+    /**
+     * En este método se carga la interfaz y se inicializan todas las variables
+     *
+     * @param savedInstanceState estado de la Actividad guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,6 +234,14 @@ public abstract class BaseActivity extends AppCompatActivity
         shouldDetachFirebaseListener = true;
     }
 
+    /**
+     * Extrae la información del usuario almacenada en su perfil de
+     * {@link
+     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser">
+     *     FirebaseUser
+     * </a>}
+     * y la coloca sobre la cabecera del menú lateral de navegación
+     */
     @Override
     public void setUserInfoInNavigationDrawer() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -150,10 +259,17 @@ public abstract class BaseActivity extends AppCompatActivity
                 .into(image);
     }
 
-    // Method used to debug some not enough verbose errors
+    /**
+     * Método usado para mostra más detalles de algunos errores que pueden suceder durante el
+     * desarrollo. TODO Decidir si borrar este método
+     *
+     * @see
+     * <a href= "https://developer.android.com/reference/android/os/StrictMode">
+     *     Enable StrictMode for Debug Version
+     * </a>
+     */
     @SuppressWarnings("unused")
     private void debugTrickyErrors() {
-        /* https://stackoverflow.com/a/29846562/4235666 */
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads()
                 .detectDiskWrites()
@@ -169,13 +285,15 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     /**
-     * Guarda el BaseFragment que se esté mostrando en este momento para mostrarlo en la
-     * recreación. Si el que se está mostrando es el Fragmento de las Instalaciones, se guarda
-     * un TAG que lo indica. Si el que se está mostrando es el Fragmento de la búsqueda de
-     * partidos o cualquier otro no mencionado, no guarda nada y en la recreación muestra el de
-     * la búsqueda de partidos.
+     * Se invoca este método al destruir la Actividad. Guarda el {@link BaseFragment} que se
+     * esté mostrando en ese momento para mostrarlo en la recreación de la Actividad. Si el
+     * que se está mostrando es {@link com.usal.jorgeav.sportapp.fields.FieldsMapFragment},
+     * se guarda un TAG que lo indica. Si el que se está mostrando es
+     * {@link com.usal.jorgeav.sportapp.searchevent.EventsMapFragment} o cualquier otro no
+     * mencionado, no guarda nada y en la recreación muestra
+     * {@link com.usal.jorgeav.sportapp.searchevent.EventsMapFragment}.
      *
-     * @param outState
+     * @param outState Bundle para guardar el estado de la Actividad
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -191,11 +309,14 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     /**
-     * Sólo se ejecuta si savedInstanceState es != null. Es el mismo savedInstanceState de
-     * onCreate(Bundle savedInstanceState). Es un metodo para separar la restauracion
-     * del estado, sacando este codigo del metodo onCreate.
+     * Se ejecuta en la recreación de la Actividad, después de {@link #onStart()}. Sólo se
+     * ejecuta si <code>savedInstanceState != null</code>. Es el mismo {@link Bundle} de
+     * {@link #onCreate(Bundle)}. Usado para extraer el Fragmento guardado, si lo hubiese,
+     * o para iniciar {@link com.usal.jorgeav.sportapp.fields.FieldsMapFragment} si la
+     * etiqueta lo indica, o para iniciar
+     * {@link com.usal.jorgeav.sportapp.searchevent.EventsMapFragment} en cualquier otro caso.
      *
-     * @param savedInstanceState
+     * @param savedInstanceState Bundle para extraer el estado de la Actividad
      */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -214,12 +335,22 @@ public abstract class BaseActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Método sobreescrito para poder introducir la llamada a
+     * {@link ActionBarDrawerToggle#syncState()} que {@link #mToggle} necesita.
+     *
+     * @param savedInstanceState Bundle de estado
+     */
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mToggle.syncState();
     }
 
+    /**
+     * Método sobreescrito para cerrar el menú lateral de navegación al invocar la navegación
+     * hacia atrás, en caso de que estuviese abierto.
+     */
     @Override
     public void onBackPressed() {
         if (mDrawer.isDrawerOpen(GravityCompat.START)) {
@@ -229,6 +360,13 @@ public abstract class BaseActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Método sobreescrito para poder introducir la llamada a
+     * {@link ActionBarDrawerToggle#onConfigurationChanged(Configuration)}
+     * que {@link #mToggle} necesita.
+     *
+     * @param newConfig nueva configuración
+     */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -236,6 +374,15 @@ public abstract class BaseActivity extends AppCompatActivity
         mToggle.onConfigurationChanged(newConfig);
     }
 
+    /**
+     * Se invoca cuando se pulsa sobre una de las entradas del menú lateral de navegación.
+     * Se distingue entre el inicio de la Actividad de preferencias {@link SettingsActivity},
+     * el cierre de sesión, y el cambio de Actividad por otra de las principales.<br>
+     *     En este último caso se invoca {@link #simulateNavigationItemSelected(int, String, String)}
+     *
+     * @param item elemento del menú pulsado
+     * @return true para mostrar el ítem del parámetro como seleccionado
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_sign_out) {
@@ -252,8 +399,22 @@ public abstract class BaseActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Invocado cuando se pulsa (o se simula la pulsación) sobre una entrada de las principales
+     * del menú lateral de navegación. Implementa el cambio de una Actividad principal por otra.
+     * Comienza una Actividad con un {@link Intent} e inicia el proceso de finalización
+     * de la Actividad actual.
+     *
+     * @param menuItemId identificador de la entrada del menú que simula ser pulsada
+     * @param intentExtraKey clave del valor pasado a la nueva Actividad mediante el Intent.
+     *                      También puede ser null.
+     * @param intentExtraValue valor pasado a la nueva Actividad mediante el Intent. También
+     *                         puede ser null.
+     */
     @Override
-    public void simulateNavigationItemSelected(int menuItemId, String intentExtraKey, String intentExtraValue) {
+    public void simulateNavigationItemSelected(int menuItemId,
+                                               String intentExtraKey,
+                                               String intentExtraValue) {
         Intent intent;
         switch (menuItemId) {
             default: case R.id.nav_profile:
@@ -282,6 +443,20 @@ public abstract class BaseActivity extends AppCompatActivity
         finish();
     }
 
+    /**
+     * Cuando una notificación inicia una Actividad que estaba parada en segundo plano, el
+     * {@link Intent} con el que esa Actividad dice que fue iniciada ({@link Activity#getIntent()})
+     * no es el mismo que el que se establece en la notificación. Para cambiarlo un Intent por otro
+     * y así pasar datos en él, se sobreescribe este método para establecer el Intent nuevo de la
+     * notificación.
+     *
+     * @see
+     * <a href= "https://stackoverflow.com/a/6357330/4235666">
+     *     StackOverflow: getIntent() Extras always NULL
+     * </a>
+     *
+     * @param intent el Intent nuevo que abre la Actividad
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -289,6 +464,10 @@ public abstract class BaseActivity extends AppCompatActivity
         setIntent(intent);
     }
 
+    /**
+     * Borra el Fragmento mostrado y cierra la sesión del usuario actual, lo que provoca
+     * que finalice la Actividad y se inicie {@link LoginActivity}
+     */
     @Override
     public void signOut() {
         if (mDisplayedFragment != null) {
@@ -301,15 +480,24 @@ public abstract class BaseActivity extends AppCompatActivity
         mAuth.signOut();
     }
 
+    /**
+     * Invoca {@link #initFragment(Fragment, boolean, String)} con un tag nulo.
+     */
     @Override
     public void initFragment(@NonNull Fragment fragment, boolean addToBackStack) {
-        hideContent();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.contentFrame, fragment);
-        if (addToBackStack) transaction.addToBackStack(null);
-        transaction.commitAllowingStateLoss();
+        initFragment(fragment, addToBackStack, null);
     }
+
+    /**
+     * Inicia la transición hacia el Fragmento especificado y lo almacena en
+     * la pila de de Fragmentos si corresponde. Asocia una etiqueta al Fragmento para
+     * poder ser encontrado posteriormente con
+     * {@link android.support.v4.app.FragmentManager#findFragmentByTag(String)}
+     *
+     * @param fragment Fragmento que va a mostrarse
+     * @param addToBackStack true si debe almacenarse en la pila de Fragmentos
+     * @param tag etiqueta asociada al Fragmento en la transición
+     */
     @Override
     public void initFragment(@NonNull Fragment fragment, boolean addToBackStack, String tag) {
         hideContent();
@@ -320,19 +508,34 @@ public abstract class BaseActivity extends AppCompatActivity
         transaction.commitAllowingStateLoss();
     }
 
+    /**
+     * Establece el titulo en la Toolbar y almacena la referencia al Fragmento mostrado actualmente
+     *
+     * @param title título del Fragmento
+     * @param fragment referencia al Fragmento
+     */
     @Override
     public void setCurrentDisplayedFragment(String title, BaseFragment fragment) {
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setTitle(title);
+        setActionBarTitle(title);
         mDisplayedFragment = fragment;
     }
 
+    /**
+     * Establece el titulo en la Toolbar
+     *
+     * @param title título del Fragmento
+     */
     @Override
     public void setActionBarTitle(String title) {
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(title);
     }
 
+    /**
+     * Establece como comportamiento de la Toolbar abrir el menú lateral de navegación y
+     * establece la animación del icono de la Toolbar a este estado. Esto ocurre cuando
+     * se muestra el Fragmento principal de las opciones del menú lateral de navegación.
+     */
     @Override
     public void setToolbarAsNav() {
         if (mToolbar != null) {
@@ -346,6 +549,11 @@ public abstract class BaseActivity extends AppCompatActivity
         toolbarIconTransition.postDelayed(transitionToNav, 0);
     }
 
+    /**
+     * Establece como comportamiento de la Toolbar la navegación hacia atrás y
+     * establece la animación del icono de la Toolbar a este estado. Esto ocurre cuando
+     * se muestran los Fragmentos secundario de las opciones del menú lateral de navegación.
+     */
     @Override
     public void setToolbarAsUp() {
         if (mToolbar != null) {
@@ -359,8 +567,23 @@ public abstract class BaseActivity extends AppCompatActivity
         toolbarIconTransition.postDelayed(transitionToUp, 0);
     }
 
+    /**
+     * Handler para ejecutar la animación del icono de la Toolbar. Se va a simular la
+     * apertura o cierre del menú mediante el aumento o disminición del desfase en la posición
+     * del menú. Para que se produzca este cambio del desfase de manera continua e incremental,
+     * se establece esa tarea recursivamente sobre este Handler, cambiando sucesivamente el
+     * desfase hasta la apertura (1) o cierre (0) total.
+     */
     Handler toolbarIconTransition = new Handler();
+    /**
+     * Decimal para indicar el desfase en el estado del proceso de animación del icono. Puede
+     * variar entre 1 abierto y 0 cerrado.
+     */
     float currentOffset = 0;
+    /**
+     * Código para transformar el icono en el correspondiente para cuando se establece
+     * la navegación hacia atrás
+     */
     Runnable transitionToUp = new Runnable() {
         @Override
         public void run() {
@@ -376,6 +599,10 @@ public abstract class BaseActivity extends AppCompatActivity
             }
         }
     };
+    /**
+     * Código para transformar el icono en el correspondiente para cuando se establece
+     * la apertura del menú lateral de navegación
+     */
     Runnable transitionToNav = new Runnable() {
         @Override
         public void run() {
@@ -392,12 +619,28 @@ public abstract class BaseActivity extends AppCompatActivity
         }
     };
 
+    /**
+     * Establece el Listener para los inicios y cierres de sesión de
+     * {@link
+     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+     *     FirebaseAuth
+     * </a>}
+     */
     @Override
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
     }
 
+    /**
+     * Inicia el proceso de finalización de los Listener de
+     * {@link
+     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+     *     FirebaseDatabase
+     * </a>}
+     * si corresponde. También borra el Listener sobre el inicio y cierre de sesión. Y elimina las
+     * animaciones que pudieran estar en proceso sobre el icono de la Toolbar.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -412,19 +655,33 @@ public abstract class BaseActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Oculta la barra de progreso de la interfaz y muestra el contenido del Fragemento
+     */
     @Override
     public void showContent() {
         mContentFrame.setVisibility(View.VISIBLE);
         mProgressbar.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Muestra la barra de progreso de la interfaz y oculta el contenido del Fragmento
+     */
     @Override
     public void hideContent() {
         mContentFrame.setVisibility(View.INVISIBLE);
         mProgressbar.setVisibility(View.VISIBLE);
     }
 
-    /* https://stackoverflow.com/a/1109108/4235666 */
+    /**
+     * Obtiene una referencia a la {@link View} que tiene el foco de la interfaz y, si esta
+     * mostrando el teclado flotante en la pantalla, lo esconde
+     *
+     * @see
+     * <a href= "https://stackoverflow.com/a/17789187/4235666">
+     *     StackOverflow: Close/hide the Android Soft Keyboard
+     * </a>
+     */
     public void hideSoftKeyboard() {
         View view = getCurrentFocus();
         if (view != null) {
@@ -433,6 +690,12 @@ public abstract class BaseActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Setter para {@link #shouldDetachFirebaseListener}. Establece cuando se debe
+     * iniciar el proceso de finalización al ejecutar {@link #onPause()}
+     *
+     * @param shouldI nuevo valor de {@link #shouldDetachFirebaseListener}
+     */
     protected void shouldDetachFirebaseListener(boolean shouldI) {
         shouldDetachFirebaseListener = shouldI;
     }

@@ -156,7 +156,8 @@ public class GeocodingTask {
         String currentUserCity = UtilesPreferences.getCurrentUserCity(MyApplication.getAppContext());
         if (!TextUtils.equals(shortNameLocality, currentUserCity)
                 && !TextUtils.equals(city, currentUserCity)) {
-            Log.e(TAG, "getMyPlaceFromJson: Point out of city ("+currentUserCity+") bounds");
+            Log.e(TAG, "getMyPlaceFromJson: Point out of current city ("+currentUserCity+") bounds."
+                    + " Point in " + shortNameLocality + ", " + city);
             return new MyPlace("OUT_OF_BOUNDS");
         }
 
