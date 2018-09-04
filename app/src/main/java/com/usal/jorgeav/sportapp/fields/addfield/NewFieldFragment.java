@@ -169,7 +169,7 @@ public class NewFieldFragment extends BaseFragment implements NewFieldContract.V
         newFieldMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mFieldList != null) // Wait till all Fields from city are loaded
+                if (mFieldList != null) // Only if all Fields from city are loaded
                     ((FieldsActivity) getActivity()).startMapActivityForResult(mFieldList, false);
             }
         });

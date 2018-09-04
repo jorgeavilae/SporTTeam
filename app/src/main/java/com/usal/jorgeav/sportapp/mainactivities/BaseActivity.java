@@ -297,6 +297,7 @@ public abstract class BaseActivity extends AppCompatActivity
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         if (getSupportFragmentManager() != null) {
             if (mDisplayedFragment != null)
                 getSupportFragmentManager().putFragment(outState,
@@ -305,7 +306,6 @@ public abstract class BaseActivity extends AppCompatActivity
                     .findFragmentByTag(FRAGMENT_TAG_IS_FIELDS_MAP) != null)
                 outState.putInt(FRAGMENT_TAG_IS_FIELDS_MAP, 1);
         }
-        super.onSaveInstanceState(outState);
     }
 
     /**
@@ -656,7 +656,7 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     /**
-     * Oculta la barra de progreso de la interfaz y muestra el contenido del Fragemento
+     * Oculta la barra de progreso de la interfaz y muestra el contenido del Fragmento
      */
     @Override
     public void showContent() {

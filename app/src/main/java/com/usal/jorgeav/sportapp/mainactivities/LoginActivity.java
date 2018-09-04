@@ -10,6 +10,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -47,31 +48,86 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Actividad para el inicio de sesión. Se encarga de comprobar el email de usuario y su
+ * contraseña.
+ * <p>Incorpora una opción de autocompletado para las direcciones de email que ya hayan sido
+ * utilizadas para iniciar sesión.
+ * <p>También contiene la funcionalidad que permite recibir un email para recuperar contraseñas
+ * olvidadas
+ * <p>Por útlimo, contiene un botón para acceder a la pantalla de creación de usuarios.ç
+ *
+ * <p>Implementa {@link LoaderCallbacks} para permitir consultar, al Proveedor de Contenido,
+ * el email de los usuarios que ya hayan iniciado sesión en alguna ocasión.
+ */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+    /**
+     * Nombre de la clase
+     */
     private static final String TAG = LoginActivity.class.getSimpleName();
 
-
+    /**
+     * Imagen del logo de la aplicación
+     */
     @BindView(R.id.login_logo_name)
     ImageView loginLogo;
+    /**
+     * Cajón de edición de texto para la dirección de email
+     */
     @BindView(R.id.email)
     AutoCompleteTextView mEmailView;
+    /**
+     * Cajón de edición de texto para la contraseña
+     */
     @BindView(R.id.password)
     EditText mPasswordView;
+    /**
+     * Imagen para mostrar la contraseña
+     */
     @BindView(R.id.login_visible_pass)
     ImageView visiblePassButton;
+    /**
+     * Botón para iniciar sesión
+     */
     @BindView(R.id.email_sign_in_button)
     Button mEmailSignInButton;
+    /**
+     * Texto para iniciar el proceso de creación de usuario
+     */
     @BindView(R.id.new_user_button)
     TextView mNewUserButton;
+    /**
+     * Texto para iniciar el proceso de recuperación de contraseña
+     */
     @BindView(R.id.reset_password_button)
     TextView mResetPassword;
+    /**
+     * Barra de progreso
+     */
     @BindView(R.id.login_progress)
     View mProgressView;
+    /**
+     * Contenedor donde se emplazan los elementos de la interfaz
+     */
     @BindView(R.id.login_form)
-    View mLoginFormView;
+    ConstraintLayout mLoginFormView;
 
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    /**
+     * Referencia a
+     * {@link
+     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+     *     FirebaseAuth
+     * </a>}
+     * para comprobar si hay un usuario con la sesión iniciada
+     */
+    private FirebaseAuth mAuth;
 
+    /**
+     * En este método se carga la interfaz y se inicializan todas las variables
+     *
+     * @param savedInstanceState estado de la Actividad guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,8 +141,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 .animate(android.R.anim.fade_in)
                 .into(loginLogo);
 
-        // Set up the login form.
-        populateAutoComplete();
+        populateAutoCompleteTextViewEmail();
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -98,6 +153,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
         });
+
         visiblePassButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -127,60 +183,97 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mResetPassword.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String emailAddress = mEmailView.getText().toString();
-                if (!TextUtils.isEmpty(emailAddress) && isEmailValid(emailAddress)) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
-                            .setTitle(R.string.forgot_password)
-                            .setMessage(R.string.dialog_msg_forgot_password)
-                            .setPositiveButton(R.string.send_it, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        Toast.makeText(LoginActivity.this, R.string.email_sent,
-                                                                Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            });
-                                }
-                            })
-                            .setNegativeButton(android.R.string.cancel, null);
-                    builder.create().show();
-                } else
-                    Toast.makeText(LoginActivity.this, R.string.error_invalid_email,
-                            Toast.LENGTH_SHORT).show();
+                showResetPasswordDialog(mEmailView.getText().toString());
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
-
-        //If Activity rotate while downloading Firebase data
+        mAuth = FirebaseAuth.getInstance();
+        //If Activity rotate while downloading Firebase data: User is signed in
         if (mAuth.getCurrentUser() != null) showProgress(true);
             //If the user is no logged yet
         else SportteamSyncInitialization.finalize(this);
 
     }
 
-    private void startNewUserForResult() {
-        Intent intent = new Intent(this, NewUserActivity.class);
-        startActivityForResult(intent, 0);
+    /**
+     * Inicia el {@link Loader} que carga el email de los usuarios que ya han iniciado sesión
+     * en alguna ocasión en este teléfono
+     */
+    private void populateAutoCompleteTextViewEmail() {
+        getLoaderManager().initLoader(0, null, this);
     }
 
+    /**
+     * Método de {@link LoaderCallbacks} para la creación del {@link Loader}. Realiza la
+     * consulta al Content Provider de los emails de usuarios.
+     *
+     * @param i identificador de la consulta
+     * @param bundle contedor de parámetros para la consulta
+     *
+     * @return el {@link Loader} de la consulta con un {@link Cursor} dónde se alamacenará la
+     * respuesta
+     */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) //User created
-            initLoadMyProfile();
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(this,
+                SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI,
+                SportteamContract.EmailLoggedEntry.EMAIL_LOGGED_COLUMNS,
+                null, null, null);
     }
 
-    private void populateAutoComplete() {
-        getLoaderManager().initLoader(0, null, LoginActivity.this);
+    /**
+     * Método de {@link LoaderCallbacks} para la finalización de la consulta del {@link Loader}.
+     * Obtiene el {@link Cursor} con los resultados de la consulta y lo utiliza para sugerir
+     * entradas para {@link #mEmailView}
+     *
+     * @param cursorLoader loader de la consulta
+     * @param data resultado de la consulta
+     */
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        addEmailsToAutoComplete(data);
     }
 
+    /**
+     * Método de {@link LoaderCallbacks} invocado cuando se reinicia el {@link Loader}. Utilizado
+     * para borrar los resultados de la consulta anterior.
+     *
+     * @param cursorLoader Loader que se reinicia
+     */
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        addEmailsToAutoComplete(null);
+    }
+
+    /**
+     * Invocado desde el {@link LoaderCallbacks} para establecer las entradas sugeridas en el
+     * cajón de introducción de la dirección de email.
+     *
+     * <p>Del {@link Cursor} extrae las direcciones de email y utiliza esa lista para crear un
+     * {@link ArrayAdapter} que asocia con {@link #mEmailView}
+     *
+     * @param data
+     */
+    private void addEmailsToAutoComplete(Cursor data) {
+        ArrayAdapter<String> adapter = null;
+        if (data != null) {
+            List<String> emails = new ArrayList<>();
+
+            //Loader reuses Cursor so move to first position
+            for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext())
+                emails.add(data.getString(SportteamContract.EmailLoggedEntry.COLUMN_EMAIL));
+
+            adapter = new ArrayAdapter<>(LoginActivity.this,
+                    android.R.layout.simple_dropdown_item_1line, emails);
+        }
+
+        mEmailView.setAdapter(adapter);
+    }
+
+    /**
+     * Comprueba los datos introducidos de email y contraseña y, con ellos, intenta iniciar la
+     * sesión a través de {@link #mAuth}
+     */
     private void attemptLogin() {
         // Reset errors.
         mEmailView.setError(null);
@@ -221,17 +314,52 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 Toast.makeText(LoginActivity.this, R.string.error_incorrect_password,
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                initLoadMyProfile();
+                                initLoadMyProfile(true);
                             }
                         }
                     });
         }
     }
 
-    private void initLoadMyProfile() {
+    /**
+     * Inicia la Actividad para crear un nuevo usuario {@link NewUserActivity}.
+     * Método invocado al pulsar sobre {@link #mNewUserButton}.
+     */
+    private void startNewUserForResult() {
+        Intent intent = new Intent(this, NewUserActivity.class);
+        startActivityForResult(intent, 0);
+    }
+
+    /**
+     * Se ejecuta al finalizar la ejecución de la Actividad de creación de usuario. Inicia la
+     * carga de datos del usuario nuevo.
+     *
+     * @param requestCode código con el que se inició la Actividad de creación de usuario
+     * @param resultCode código con el que finaliza la Actividad de creación de usuario
+     * @param data datos asociados a la finalización de la Actividad de creación de usuario
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) //User created
+            initLoadMyProfile(false);
+    }
+
+    /**
+     * Inicia la carga de datos del usuario que acaba de iniciar sesión: borra los datos que
+     * todavía pueda contener el Proveedor de Contenido de una sesión antetior e invoca
+     * {@link SportteamSyncInitialization#initialize(Context)}
+     * <p>Comprueba que el email que se introdujo en el registro ha sido verificado y, en caso
+     * contrario, exige que se compruebe antes finalizar el proceso de inicio de sesión.
+     *
+     * @param checkIfEmailIsVerified true si se requiere que el email haya sido verificado, false
+     *                               si no se requiere comprobación (en la reciente creación de
+     *                               usuario)
+     */
+    private void initLoadMyProfile(boolean checkIfEmailIsVerified) {
         final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         if (fUser != null) { //TODO isEmailVerified()
-//            if (fUser.isEmailVerified()) {
+//            if (!checkIfEmailIsVerified || fUser.isEmailVerified()) {
             deleteContentProvider();
 
             //Add email to emails logged table
@@ -272,13 +400,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    public void finishLoadMyProfile() {
-        Intent intent = new Intent(this, ProfileActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
-    }
-
+    /**
+     * Borra el contenido de las tablas del Proveedor de Contenido
+     */
     private void deleteContentProvider() {
         SportteamDBHelper db = new SportteamDBHelper(this);
         db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_USER);
@@ -295,51 +419,94 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         db.getWritableDatabase().execSQL("DELETE FROM " + SportteamContract.TABLE_EVENTS_REQUESTS);
     }
 
+    /**
+     * Invocado al finalizar la carga de los datos del usuario en el Proveedor de Contenido,
+     * lo que indica que ya pueden ser mostrados después del inicio de sesión.
+     */
+    public void finishLoadMyProfile() {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
+
+    /**
+     * Muestra un cuadro de diálogo sobre la pantalla para confirmar el envío de un email para
+     * la recuperación de la contraseña.
+     *
+     * @param emailAddress dirección email introducida para la cual se ha olvidado la contraseña.
+     */
+    private void showResetPasswordDialog(final String emailAddress) {
+        if (!TextUtils.isEmpty(emailAddress) && isEmailValid(emailAddress)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
+                    .setTitle(R.string.forgot_password)
+                    .setMessage(R.string.dialog_msg_forgot_password)
+                    .setPositiveButton(R.string.send_it, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(LoginActivity.this,
+                                                        R.string.email_sent,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, null);
+            builder.create().show();
+        } else
+            Toast.makeText(LoginActivity.this, R.string.error_invalid_email,
+                    Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Valida la cadena de texto introducida en el cajón de texto del email comprobando que
+     * tenga un patrón de dirección de email: {@link Patterns#EMAIL_ADDRESS}.
+     *
+     * @param email cadena de texto introducida
+     * @return true si la cadena de texto es válida, false en caso contrario
+     */
     private boolean isEmailValid(@NonNull String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
+    /**
+     * Valida la cadena de texto introducida en el cajón de texto de la contraseña comprobando
+     * que tenga más de 6 caracteres.
+     *
+     * @param password cadena de texto introducida
+     * @return true si la cadena de texto es válida, false en caso contrario
+     */
     private boolean isPasswordValid(String password) {
         return password.length() > 6;
     }
 
+    /**
+     * Muestra la interfaz con los botones y los cajones de introducción de texto
+     * {@link #mLoginFormView} o la barra de progreso {@link #mProgressView}.
+     *
+     * @param show true si se quiere mostrar la barra de progreso, false si se quiere mostrar el
+     *             resto de la interfaz
+     */
     private void showProgress(final boolean show) {
         mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
         mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI,
-                SportteamContract.EmailLoggedEntry.EMAIL_LOGGED_COLUMNS,
-                null, null, null);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
-        List<String> emails = new ArrayList<>();
-        //Loader reuses Cursor so move to first position
-        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext())
-            emails.add(data.getString(SportteamContract.EmailLoggedEntry.COLUMN_EMAIL));
-        addEmailsToAutoComplete(emails);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        mEmailView.setAdapter(null);
-    }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
-
-    /* https://stackoverflow.com/a/1109108/4235666 */
+    /**
+     * Obtiene una referencia a la {@link View} que tiene el foco de la interfaz y, si esta
+     * mostrando el teclado flotante en la pantalla, lo esconde
+     *
+     * @see
+     * <a href= "https://stackoverflow.com/a/17789187/4235666">
+     *     StackOverflow: Close/hide the Android Soft Keyboard
+     * </a>
+     */
     public void hideSoftKeyboard() {
         View view = getCurrentFocus();
         if (view != null) {

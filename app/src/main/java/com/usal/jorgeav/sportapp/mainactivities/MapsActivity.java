@@ -32,27 +32,114 @@ import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+/**
+ * Actividad para seleccionar direcciones o marcas de un mapa. Carga un
+ * {@link
+ * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
+ *     SupportMapFragment
+ * </a>}
+ * donde emplaza las instalaciones que recibe en la creación.
+ *
+ * <p></p>
+ * Implementa varios callbacks para
+ * recibir eventos sobre el mapa, como por ejemplo pulsaciones sobre coordendas concretas con las
+ * que se utilizará
+ * {@link
+ * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+ *     Google Places API
+ * </a>}
+ * para obtener la dirección seleccionada.
+ *
+ * <p></p>
+ * También es capaz de iniciar el proceso para crear una instalación nueva, en el caso de que no
+ * se encuentre en el mapa la instalación deseada por el usuario
+ */
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMarkerClickListener {
+    /**
+     * Nombre de la clase
+     */
     public static final String TAG = MapsActivity.class.getSimpleName();
+
+    /**
+     * Clave para identificar el dato añadido al {@link Intent}, cuando se inicia esta Actividad.
+     * El dato añadido es la colección de instalaciones que debe mostrarse sobre el mapa.
+     */
     public static final String INTENT_EXTRA_FIELD_LIST = "INTENT_EXTRA_FIELD_LIST";
+    /**
+     * Clave para identificar el dato añadido al {@link Intent}, cuando se inicia esta Actividad.
+     * El dato añadido es un booleano que indica si se posibilita o no la selección de direcciones
+     * sobre el mapa, o sólo se pueden seleccionar instalaciones.
+     */
     public static final String INTENT_EXTRA_ONLY_FIELDS = "INTENT_EXTRA_ONLY_FIELDS";
+    /**
+     * Clave para identificar el dato añadido al {@link Intent}, cuando se inicia esta Actividad.
+     * El dato añadido es un booleano que indica si esta Actividad fue iniciada por
+     * {@link FieldsActivity} y en ese caso cargar un menú direferente en la Toolbar
+     */
     public static final String INTENT_EXTRA_PARENT_FIELDS_ACTIVITY = "INTENT_EXTRA_PARENT_FIELDS_ACTIVITY";
+    /**
+     * Clave para identificar el dato que se utiliza como resultado, cuando finaliza esta Actividad.
+     * El dato añadido es una dirección sobre el mapa {@link MyPlace}
+     */
     public static final String PLACE_SELECTED_EXTRA = "PLACE_SELECTED_EXTRA";
+    /**
+     * Clave para identificar el dato que se utiliza como resultado, cuando finaliza esta Actividad.
+     * El dato añadido es una instalación {@link Field}
+     */
     public static final String FIELD_SELECTED_EXTRA = "FIELD_SELECTED_EXTRA";
+    /**
+     * Clave para identificar el resultado, cuando finaliza esta Actividad. Añadirlo significa
+     * que el usuario seleccionó la opción de crear una instalción nueva porque no encontraba
+     * la que quería.
+     */
     public static final String ADD_FIELD_SELECTED_EXTRA = "ADD_FIELD_SELECTED_EXTRA";
 
+    /**
+     * Referencia al mapa de Google cargado en
+     * {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
+     *     SupportMapFragment
+     * </a>}
+     */
     private GoogleMap mMap;
+    /**
+     * Colección de instalaciones que deben mostrarse sobre el mapa
+     */
     ArrayList<Field> mFieldsList;
+    /**
+     * Conlección de marcas sobre el mapa, cada una indicando la posición de una instalación
+     */
     ArrayList<Marker> mMarkersList;
+    /**
+     * True si sólo se pueden seleccionar instalaciones o false si tambíen direcciones
+     */
     boolean mOnlyField;
+    /**
+     * Referencia a la Toolbar de la Actividad
+     */
     Toolbar mToolbar;
+    /**
+     * Dirección seleccionada. Ver {@link #PLACE_SELECTED_EXTRA}
+     */
     MyPlace mPlaceSelected;
-    Marker mMarkerSelectedPlace;
+    /**
+     * Instalación seleccionada. Ver {@link #FIELD_SELECTED_EXTRA}
+     */
     Field mFieldSelected;
+    /**
+     * Marca del mapa seleccionada que se está mostrando actualmente
+     */
+    Marker mMarkerSelectedPlace;
 
+    /**
+     * En este método se carga la interfaz y se inicializan las variables
+     *
+     * @param savedInstanceState estado de la Actividad guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +162,14 @@ public class MapsActivity extends AppCompatActivity
         startMapFragment();
     }
 
+    /**
+     * Inicializa el contenido del menú de la Toolbar, dependiendo de si la Actividad la inició
+     * {@link FieldsActivity} u otra diferente
+     *
+     * @param menu menú en el que se emplazan las opciones
+     *
+     * @return true para mostrar el menú, false para no mostrarlo.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (getIntent().getBooleanExtra(INTENT_EXTRA_PARENT_FIELDS_ACTIVITY, false))
@@ -84,6 +179,16 @@ public class MapsActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Invocado cuando el usuario pulsa sobre una entrada del menú. Actúa aceptando el lugar
+     * seleccionado o indicando la necesidad de crear una instalación nueva. Luego finaliza
+     * esta Actividad.
+     *
+     * @param item el ítem que fue seleccionado
+     *
+     * @return false para seguir invocando esta llamada a Actividades superiores,
+     *          true para parar e indicar que la puslación se procesó aquí.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
@@ -120,7 +225,11 @@ public class MapsActivity extends AppCompatActivity
         return false;
     }
 
-    public void startMapFragment() {
+    /**
+     * Inicializa las variables relacionadas con la carga del mapa: las instalaciones, la
+     * colección de marcas y el propio mapa.
+     */
+    private void startMapFragment() {
         mMarkersList = new ArrayList<>();
         mFieldsList = getIntent().getParcelableArrayListExtra(INTENT_EXTRA_FIELD_LIST);
         if (mFieldsList == null) mFieldsList = new ArrayList<>();
@@ -137,6 +246,14 @@ public class MapsActivity extends AppCompatActivity
             getSupportActionBar().setTitle(getString(R.string.title_activity_maps));
     }
 
+    /**
+     * Invocado cuando finaliza la carga asíncrona del mapa. Se establecen las características
+     * de este como la posición de la cámara o las capas y el tipo de mapa que será (híbrido).
+     * Se emplazan las instalaciones en él {@link #populateMap()} y se centra la cámara
+     * {@link #centerCameraOnInit()}
+     *
+     * @param googleMap referencia al objeto mapa de la interfaz
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -158,6 +275,10 @@ public class MapsActivity extends AppCompatActivity
         centerCameraOnInit();
     }
 
+    /**
+     * Crea y emplaza sobre el mapa marcas a partir de las instalaciones pasadas en la
+     * creación de la Actividad.
+     */
     private void populateMap() {
         mMap.setInfoWindowAdapter(new MapFieldMarkerInfoAdapter(getLayoutInflater(), mFieldsList));
         //Populate map with Fields
@@ -175,6 +296,9 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Centra la cámara sobre el mapa en su inicialización.
+     */
     private void centerCameraOnInit() {
         String myUserId = Utiles.getCurrentUserId();
         if (myUserId != null) {
@@ -188,6 +312,13 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Invocado cuando se pulsa sobre una de las marcas del mapa que representa a una instalación.
+     * Mueve la cámara hacia ella y muestra la información de la instalación que representa.
+     *
+     * @param marker marca pulsada
+     * @return true si se procesa la marca pulsada, false en otro caso.
+     */
     @Override
     public boolean onMarkerClick(Marker marker) {
         Integer position = (Integer) marker.getTag();
@@ -210,6 +341,19 @@ public class MapsActivity extends AppCompatActivity
         return false;
     }
 
+    /**
+     * Invocado cuando se produce una pulsación larga sobre un punto del mapa. Utilizado para
+     * seleccinar direcciones en lugar de instalaciones. Busca instalaciones cercanas a las que
+     * podría haberse referido el usuario y, si no las encuentra, inicia una tarea en segundo
+     * plano para usar
+     * {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     *     Google Places API
+     * </a>}
+     * y obtener la dirección a partir de las coordenadas.
+     *
+     * @param latLng coordenadas de la pulsación larga sobre el mapa.
+     */
     @Override
     public void onMapLongClick(LatLng latLng) {
         int position = Utiles.searchClosestFieldInList(mFieldsList, latLng);
@@ -221,18 +365,43 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
-    // Use custom static AsyncTask class instead of create AsyncTask inside
-    // onMapLongClick() to avoid memory leak problem
+    /**
+     * Clase interna derivada de {@link AsyncTask} para realizar la tarea en segundo plano de
+     * geocodificación inversa a través de una petición HTTP.
+     *
+     * <p>Esta clase es estática para evitar pérdidas de memoria en el caso de que la Activiad
+     * sufra un proceso de recreación.
+     */
     private static class MyAsyncTask extends AsyncTask<LatLng, Void, MyPlace> {
 
-        // https://developer.android.com/reference/java/lang/ref/WeakReference
-        // The View with a weak reference could be collected by GC.
+        /**
+         * Referencia a la Actividad contenedora de esta clase a la que debe pasar los
+         * resultados de la consulta. La referncia es débil para poder ser recolectada por el
+         * Garbage Collector
+         *
+         * <p><b>Mas información: </b>
+         * {@link
+         * <a href= "https://developer.android.com/reference/java/lang/ref/WeakReference">
+         *     WeakReference
+         * </a>}
+         */
         private WeakReference<MapsActivity> mActivity;
 
+        /**
+         * Contructor con la referencia a la Actividad
+         *
+         * @param mapsActivity referencia a la Actividad contenedora de la clase
+         */
         MyAsyncTask(MapsActivity mapsActivity) {
             mActivity = new WeakReference<>(mapsActivity);
         }
 
+        /**
+         * Realiza la consulta de la dirección. Método ejecutado en segndo plano.
+         *
+         * @param latLng coordenadas de la consulta
+         * @return {@link MyPlace} con el resultado de la consulta
+         */
         @Override
         protected MyPlace doInBackground(LatLng... latLng) {
             // Check if MapsActivity still exists
@@ -243,12 +412,25 @@ public class MapsActivity extends AppCompatActivity
             return GeocodingTask.getMyPlaceObjectFromLatLngLocation(apiKey, latLng[0]);
         }
 
+        /**
+         * Devuelve los resultados de la tarea en segundo plano
+         *
+         * @param place {@link MyPlace} resultado de la consulta con una dirección o un error
+         */
         @Override
         protected void onPostExecute(MyPlace place) {
             mActivity.get().updateSelectedPlace(place);
         }
     }
 
+    /**
+     * Recibe y muestra la dirección seleccionada con una pulsación larga del usuario.
+     *
+     * <p>Comprueba que no hay errores (si los hay los muestra) y crea una marca para la dirección
+     * seleccionada que muestre el nombre de la dirección escrita.
+     *
+     * @param selectedPlace {@link MyPlace} resultado de la consulta
+     */
     private void updateSelectedPlace(MyPlace selectedPlace) {
         if (selectedPlace.isSucceed()) {
             // If the closest address to onMapLongClick's coordinates was already in the Field list

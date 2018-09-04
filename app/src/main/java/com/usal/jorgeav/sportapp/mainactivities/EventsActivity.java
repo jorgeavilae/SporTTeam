@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -33,22 +34,91 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class EventsActivity extends BaseActivity implements SelectSportFragment.OnSportSelectedListener {
+/**
+ * Actividad principal que hereda de {@link BaseActivity} y que aloja todos los Fragmentos
+ * relacionados con los Partidos. Actúa como puente entre los Fragmentos, para sus comunicaciones,
+ * con el deporte escogido en {@link SelectSportFragment} o recibiendo el resultado de la
+ * Actividad de selección de lugares {@link MapsActivity} para utilizarlo en la creación
+ * de partidos. <br>
+ *     También se encarga de comprobar los permisos para acceder a las imágenes, y de controlar
+ *     las librerías que se encargan de ellas
+ *     {@link
+ *          <a href= "https://github.com/Yalantis/uCrop">
+ *              uCrop (Github)
+ *          </a>}
+ *     y
+ *     {@link
+ *          <a href= "https://github.com/jkwiecien/EasyImage">
+ *              EasyImage (Github)
+ *          </a>}.
+ */
+public class EventsActivity extends BaseActivity
+        implements SelectSportFragment.OnSportSelectedListener {
+    /**
+     * Nombre de la clase
+     */
     private final static String TAG = EventsActivity.class.getSimpleName();
 
+    /**
+     * Clave para identificar un dato añadido al {@link android.app.PendingIntent}, cuando
+     * se inicia esta Actividad desde una notificación. El dato añadido es el identificador
+     * del partido que debe mostrar esta Actividad al iniciarse, en lugar del calendario.
+     */
     public static final String EVENTID_PENDING_INTENT_EXTRA = "EVENTID_PENDING_INTENT_EXTRA";
+    /**
+     * Clave para identificar un dato añadido al {@link android.app.PendingIntent}, cuando
+     * se inicia esta Actividad. El dato añadido es nulo, y este identificador se utiliza para
+     * iniciar la creación de un nuevo partido en lugar de mostrar el calendario.
+     */
     public static final String CREATE_NEW_EVENT_INTENT_EXTRA = "CREATE_NEW_EVENT_INTENT_EXTRA";
+    /**
+     * Código con el que identificar el resultado de la Actividad de selección de lugar
+     * {@link MapsActivity} en {@link #onActivityResult(int, int, Intent)}
+     */
     public static final int REQUEST_CODE_ADDRESS = 23;
 
+    /**
+     * Clave para mantener la instalación seleccionada en rotaciones del dispositivo en
+     * el {@link Bundle} de estado.
+     */
     private static final String INSTANCE_FIELD_ID_SELECTED = "INSTANCE_FIELD_ID_SELECTED";
+    /**
+     * Valor de la instalación seleccionada
+     */
     public String mFieldId;
+    /**
+     * Clave para mantener la dirección seleccionada en rotaciones del dispositivo en
+     * el {@link Bundle} de estado.
+     */
     private static final String INSTANCE_ADDRESS_SELECTED = "INSTANCE_ADDRESS_SELECTED";
+    /**
+     * Valor de la dirección seleccionada
+     */
     public String mAddress;
+    /**
+     * Clave para mantener la ciudad seleccionada en rotaciones del dispositivo en
+     * el {@link Bundle} de estado.
+     */
     private static final String INSTANCE_CITY_SELECTED = "INSTANCE_CITY_SELECTED";
+    /**
+     * Valor de la ciudad seleccionada
+     */
     public String mCity;
+    /**
+     * Clave para mantener las coordenadas seleccionadas en rotaciones del dispositivo en
+     * el {@link Bundle} de estado.
+     */
     private static final String INSTANCE_COORD_SELECTED = "INSTANCE_COORD_SELECTED";
+    /**
+     * Valor de las coordenadas seleccionadas
+     */
     public LatLng mCoord;
 
+    /**
+     * Crea el Fragmento principal que debe mostrar en la pantalla. Comprueba, también, si
+     * hay algún dato extra en el {@link Intent} que inicia la Actividad para cargar un
+     * Fragmento diferente
+     */
     @Override
     public void startMainFragment() {
         String eventId = getIntent().getStringExtra(EVENTID_PENDING_INTENT_EXTRA);
@@ -62,25 +132,27 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
         mNavigationView.setCheckedItem(R.id.nav_events);
     }
 
+    /**
+     * Comprueba que la entrada pulsada del menú lateral de navegación no es la
+     * correspondiente a esta Actividad, en cuyo caso ignora la pulsación. Si no lo es,
+     * invoca el mismo método de la superclase {@link BaseActivity#onNavigationItemSelected(MenuItem)}
+     *
+     * @param item elemento del menú pulsado
+     * @return valor de {@link BaseActivity#onNavigationItemSelected(MenuItem)} o false si es
+     * la misma entrada
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return item.getItemId() != R.id.nav_events && super.onNavigationItemSelected(item);
     }
 
-    @Override
-    public void onSportSelected(String sportId) {
-        Fragment fragment = NewEventFragment.newInstance(null, sportId);
-        initFragment(fragment, true);
-    }
-
-    // Start MapActivity to pick a place for new Events
-    public void startMapActivityForResult(ArrayList<Field> dataList, boolean onlyField) {
-        Intent intent = new Intent(this, MapsActivity.class);
-        intent.putExtra(MapsActivity.INTENT_EXTRA_FIELD_LIST, dataList);
-        intent.putExtra(MapsActivity.INTENT_EXTRA_ONLY_FIELDS, onlyField);
-        startActivityForResult(intent, REQUEST_CODE_ADDRESS);
-    }
-
+    /**
+     * Se invoca este método al destruir la Actividad. Guarda la instalación, la dirección,
+     * la ciudad y las coordenadas si las hubiera. Estas variables toman un valor sólo
+     * durante la creación de partidos.
+     *
+     * @param outState Bundle para guardar el estado de la Actividad
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -94,16 +166,24 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
             outState.putParcelable(INSTANCE_COORD_SELECTED, mCoord);
     }
 
+    /**
+     * Se ejecuta en la recreación de la Actividad, después de {@link #onStart()}. Sólo se
+     * ejecuta si <code>savedInstanceState != null</code>. Es el mismo {@link Bundle} de
+     * {@link #onCreate(Bundle)}. Usado para extraer la instalación, la dirección, la ciudad
+     * y las coordenadas si las hubiera.
+     *
+     * @param savedInstanceState Bundle para extraer el estado de la Actividad
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_ID_SELECTED))
+        if (savedInstanceState.containsKey(INSTANCE_FIELD_ID_SELECTED))
             mFieldId = savedInstanceState.getString(INSTANCE_FIELD_ID_SELECTED);
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_ADDRESS_SELECTED))
+        if (savedInstanceState.containsKey(INSTANCE_ADDRESS_SELECTED))
             mAddress = savedInstanceState.getString(INSTANCE_ADDRESS_SELECTED);
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_CITY_SELECTED))
+        if (savedInstanceState.containsKey(INSTANCE_CITY_SELECTED))
             mCity = savedInstanceState.getString(INSTANCE_CITY_SELECTED);
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_COORD_SELECTED))
+        if (savedInstanceState.containsKey(INSTANCE_COORD_SELECTED))
             mCoord = savedInstanceState.getParcelable(INSTANCE_COORD_SELECTED);
 
         if (mFieldId != null || mAddress != null || mCity != null || mCoord != null)
@@ -111,6 +191,45 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
                 ((NewEventContract.View) mDisplayedFragment).showEventField(mFieldId, mAddress, mCity, mCoord);
     }
 
+    /**
+     * Método invocado para recuperar el deporte escogido para el partido que se va a crear.
+     * Pertenece a la interfaz {@link SelectSportFragment.OnSportSelectedListener}
+     *
+     * @param sportId identificador único del deporte escogido
+     */
+    @Override
+    public void onSportSelected(String sportId) {
+        Fragment fragment = NewEventFragment.newInstance(null, sportId);
+        initFragment(fragment, true);
+    }
+
+    /**
+     * Inicia la transición hacia la Actividad de selección de lugar {@link MapsActivity}
+     *
+     * @param dataList colección de instalaciones que debe mostrar como opción {@link MapsActivity}
+     * @param onlyField true si sólo puede escogerse instalaciones, false si también pueden
+     *                  seleccionarse direcciones.
+     */
+    public void startMapActivityForResult(ArrayList<Field> dataList, boolean onlyField) {
+        Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra(MapsActivity.INTENT_EXTRA_FIELD_LIST, dataList);
+        intent.putExtra(MapsActivity.INTENT_EXTRA_ONLY_FIELDS, onlyField);
+        startActivityForResult(intent, REQUEST_CODE_ADDRESS);
+    }
+
+    /**
+     * Dependiendo del código de la consulta: <br>
+     *  - Recupera el lugar seleccionado para la alarma en {@link MapsActivity} <br>
+     *  - Recupera la imagen seleccionada en {@link EasyImage} <br>
+     *  - Recupera la imagen recortada y almacenada por {@link UCrop} para enviarla al servidor.
+     *  <p></p>
+     * Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
+     * {@link android.app.Activity#startActivityForResult(Intent, int)}.
+     *
+     * @param requestCode código con el que se inicia e identifica la Actividad
+     * @param resultCode código representativo del resultado de la ejecución de la Actividad
+     * @param data datos extras incluidos como resultado de la ejecución de la Actividad
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -168,8 +287,22 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
             Log.e(TAG, "onActivityResult: error ", UCrop.getError(data));
     }
 
+    /**
+     * Comprueba que los permisos fueron concedidos e inicia el proceso de selección de imágenes
+     * que necesita esa concesión. <br>
+     * Método invocado después de iniciar el proceso de petición de permisos de
+     * {@link Utiles#isStorageCameraPermissionGranted(Activity)}.
+     *
+     * @param requestCode código con el que se identifica la petición
+     * @param permissions permisos requeridos. Nunca es null.
+     * @param grantResults Resultado de la petición, que puede ser
+     *                     {@link android.content.pm.PackageManager#PERMISSION_GRANTED} o
+     *                     {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Nunca es null.
+     */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == Utiles.RC_GALLERY_CAMERA_PERMISSIONS &&
                 permissions[0].equals(WRITE_EXTERNAL_STORAGE) && permissions[1].equals(CAMERA)) {
@@ -186,17 +319,18 @@ public class EventsActivity extends BaseActivity implements SelectSportFragment.
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // This prevent from detach listeners on orientation changes and activity back transition
-        shouldDetachFirebaseListener(false);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // This prevent from detach listeners on orientation changes and activity back transition
-        shouldDetachFirebaseListener(true);
-    }
+    // todo Son estos metodos necesarios??
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        // This prevent from detach listeners on orientation changes and activity back transition
+//        shouldDetachFirebaseListener(false);
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        // This prevent from detach listeners on orientation changes and activity back transition
+//        shouldDetachFirebaseListener(true);
+//    }
 }

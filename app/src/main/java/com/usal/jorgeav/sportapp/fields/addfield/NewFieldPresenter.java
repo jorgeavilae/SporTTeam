@@ -61,7 +61,7 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
                 FieldsFirebaseActions.addField(field);
             else
                 FieldsFirebaseActions.updateField(field);
-            ((FieldsActivity) mNewFieldView.getActivityContext()).mFieldId = null;
+//            ((FieldsActivity) mNewFieldView.getActivityContext()).mFieldId = null;
             ((FieldsActivity) mNewFieldView.getActivityContext()).mAddress = null;
             ((FieldsActivity) mNewFieldView.getActivityContext()).mCity = null;
             ((FieldsActivity) mNewFieldView.getActivityContext()).mCoord = null;
