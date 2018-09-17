@@ -61,7 +61,7 @@ public abstract class ActivityContracts {
     }
 
     /**
-     * Esta interfaz porporciona control sobre el menú lateral de navegación. Establece su
+     * Esta interfaz proporciona control sobre el menú lateral de navegación. Establece su
      * aspecto o actualiza la información que muestra.
      */
     public interface NavigationDrawerManagement {

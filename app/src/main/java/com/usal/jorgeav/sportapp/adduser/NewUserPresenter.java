@@ -39,19 +39,46 @@ import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * Presentador utilizado en la creación de usuarios. Aquí se validan todos los atributos de
+ * un usuario introducidos en la Vista {@link NewUserContract.View}. También se encarga del
+ * proceso de creación del usuario en los servidores de la aplicación.
+ * Implementa la interfaz {@link NewUserContract.Presenter} para la comunicación con esta clase.
+ */
 class NewUserPresenter implements NewUserContract.Presenter {
+    /**
+     * Nombre de la clase
+     */
     private static final String TAG = NewUserPresenter.class.getSimpleName();
 
+    /**
+     * Vista correspondiente a este Presentador
+     */
     private NewUserContract.View mView;
 
-    // true if they are checked against database and unique
+    /**
+     * Indica si ya fue comprobado y aceptado que el email introducido por el usuario es único
+     */
     private Boolean isEmailUnique = null;
+    /**
+     * Indica si ya fue comprobado y aceptado que el nombre introducido por el usuario es único
+     */
     private Boolean isNameUnique = null;
 
+    /**
+     * Constructor
+     *
+     * @param mView referncia a la Vista correspondiente a este Presentador
+     */
     NewUserPresenter(NewUserContract.View mView) {
         this.mView = mView;
     }
 
+    /**
+     * Comprueba la existencia del email en la base de datos del servidor de Firebase.
+     *
+     * @param email dirección de email introducida
+     */
     @Override
     public void checkUserEmailExists(String email) {
         isEmailUnique = false;
@@ -78,10 +105,23 @@ class NewUserPresenter implements NewUserContract.Presenter {
         }
     }
 
+    /**
+     * Asegura que la cadena de texto utilizada como email concuerda con el patrón de una dirección
+     * de email.
+     *
+     * @param email cadena de texto usada como email
+     *
+     * @return true si concuerda, false en caso contrario
+     */
     private boolean isEmailValid(@NonNull String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
+    /**
+     * Comprueba la existencia del nombre en la base de datos del servidor de Firebase.
+     *
+     * @param name nombre introducido
+     */
     @Override
     public void checkUserNameExists(String name) {
         isNameUnique = false;
@@ -105,6 +145,30 @@ class NewUserPresenter implements NewUserContract.Presenter {
 
     }
 
+    /**
+     * Crea el usuario con los parámetros dados en {@link
+     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+     *     FirebaseAuth
+     * </a>}. Luego utiliza {@link
+     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/storage/FirebaseStorage">
+     *     FirebaseStorage
+     * </a>} para almacenar la foto de perfil del usuario en el servidor.
+     *
+     * <p> Si el proceso finaliza con éxito, se invoca
+     * {@link #storeUserDataAndFinish(Uri, String, String, LatLng, Long, ArrayList)}
+     * para almacenar el usuario en la base de datos.
+     *
+     * @param email dirección de email
+     * @param pass contraseña
+     * @param name nombre
+     * @param croppedImageFileSystemUri ruta del archivo de imagen utilizado como foto de perfil
+     * @param age edad
+     * @param city ciudad
+     * @param coords coordenadas de la ciudad
+     * @param sportsList lista de {@link Sport} que practica el usuario
+     *
+     * @return true si los argumentos son válidos, false en caso contrario.
+     */
     @Override
     public boolean createAuthUser(final String email, String pass, final String name,
                                   final Uri croppedImageFileSystemUri, final String age,
@@ -187,6 +251,20 @@ class NewUserPresenter implements NewUserContract.Presenter {
         } else return false;
     }
 
+    /**
+     * Método utilizado en la creación de usuario para validar los datos antes de la creación.
+     *
+     * @param email dirección de email
+     * @param pass contraseña
+     * @param name nombre
+     * @param croppedImageFileSystemUri ruta del archivo de imagen utilizado como foto de perfil
+     * @param age edad
+     * @param city ciudad
+     * @param coords coordenadas de la ciudad
+     * @param sportsList lista de {@link Sport} que practica el usuario
+     *
+     * @return true si los argumentos son válidos, false en caso contrario.
+     */
     private boolean validateArguments(String email, String pass, String name,
                                       Uri croppedImageFileSystemUri, String age,
                                       String city, LatLng coords, ArrayList<Sport> sportsList) {
@@ -245,6 +323,23 @@ class NewUserPresenter implements NewUserContract.Presenter {
         return true;
     }
 
+    /**
+     * Utiliza {@link UserFirebaseActions#addUser(User)} para añadir un usuario a {@link
+     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+     *     FirebaseDatabase
+     * </a>}. También incluye los datos más relevantes en el objeto {@link
+     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser">
+     *     FirebaseUser
+     * </a>}. Por último, finaliza la ejecución de la Actividad contenedora dado que el proceso de
+     * creación de usuario finaliza correctamente.
+     *
+     * @param photoUri ruta del archivo de imagen utilizado como foto de perfil
+     * @param name nombre
+     * @param city ciudad
+     * @param coords coordenadas de la ciudad
+     * @param age edad
+     * @param sportsList lista de {@link Sport} que practica el usuario
+     */
     private void storeUserDataAndFinish(Uri photoUri, String name, String city, LatLng coords,
                                         Long age, ArrayList<Sport> sportsList) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -277,10 +372,17 @@ class NewUserPresenter implements NewUserContract.Presenter {
         mView.getHostActivity().finish();
     }
 
+    /**
+     * Transforma un array de {@link Sport} en un {@link Map} utilizado para la creación del usuario
+     *
+     * @param sports lista de deportes practicados
+     *
+     * @return lista de deportes practicados en un objeto Map
+     */
     private Map<String, Double> sportsArrayToHashMap(List<Sport> sports) {
         HashMap<String, Double> result = new HashMap<>();
         for (Sport s : sports)
-            result.put(s.getSportID(), (double) s.getPunctuation());
+            result.put(s.getSportID(), s.getPunctuation());
         return result;
     }
 }

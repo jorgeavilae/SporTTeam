@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.adduser;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.net.Uri;
@@ -46,45 +47,121 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
+/**
+ * Fragmento utilizado en la creación de usuarios. Aquí se establecen todos los atributos de
+ * un usuario por medio de {@link EditText EditTexts}. Se encarga de inicializar todos esos
+ * componentes de la interfaz y validarlos con la ayuda de un {@link NewUserContract.Presenter}.
+ * Se encarga de mostrar los errores en la pantalla en caso de que los datos sean incorrectos.
+ * Implementa la interfaz {@link NewUserContract.View} para la comunicación con esta clase.
+ */
 public class NewUserFragment extends BaseFragment implements NewUserContract.View {
+    /**
+     * Nombre de la clase
+     */
     private static final String TAG = NewUserFragment.class.getSimpleName();
+    /**
+     * Identificador para la ejecución de {@link
+     * <a href= "https://github.com/jkwiecien/EasyImage">
+     *     EasyImage (Github)
+     * </a>}
+     */
     public static final int RC_PHOTO_PICKER = 2;
 
+    /**
+     * Presentador correspondiente a esta Vista
+     */
     private NewUserContract.Presenter mPresenter;
 
+    /**
+     * Ruta del archivo de imagen resultante después del proceso de recorte con {@link
+     * <a href= "https://github.com/Yalantis/uCrop">
+     *     uCrop (Github)
+     * </a>}
+     */
     Uri croppedImageUri;
-    String newUserCitySelectedName;
-    LatLng newUserCitySelectedCoord;
 
+    /**
+     * Variable que identifica esta aplicación como cliente autorizado de la API de Google utilizada
+     * para sugerir de ciudades.
+     */
     // Static prevent double initialization with same ID
     static GoogleApiClient mGoogleApiClient;
+    /**
+     * Adaptador para el {@link AutoCompleteTextView} de ciudades
+     */
     PlaceAutocompleteAdapter mAdapter;
+    /**
+     * Nombre de la ciudad escogida por el usuario
+     */
+    String newUserCitySelectedName;
+    /**
+     * Coordenadas del centro de la ciudad escogida por el usuario
+     */
+    LatLng newUserCitySelectedCoord;
 
+    /**
+     * Referencia al elemento de la interfaz para dirección de correo del usuario
+     */
     @BindView(R.id.new_user_email)
     EditText newUserEmail;
+    /**
+     * Referencia al elemento de la interfaz para contraseña del usuario
+     */
     @BindView(R.id.new_user_password)
     EditText newUserPassword;
+    /**
+     * Referencia al elemento de la interfaz para que al pulsar sobre esta imagen se
+     * muestre la contraseña escrita
+     */
     @BindView(R.id.new_user_visible_pass)
     ImageView newUserVisiblePass;
+    /**
+     * Referencia al elemento de la interfaz para nombre del usuario
+     */
     @BindView(R.id.new_user_name)
     EditText newUserName;
+    /**
+     * Referencia al elemento de la interfaz para edad del usuario
+     */
     @BindView(R.id.new_user_age)
     EditText newUserAge;
+    /**
+     * Referencia al elemento de la interfaz para ciudad del usuario
+     */
     @BindView(R.id.new_user_city)
     AutoCompleteTextView newUserAutocompleteCity;
+    /**
+     * Referencia al elemento de la interfaz para mostrar la imagen de perfil
+     */
     @BindView(R.id.new_user_photo)
     ImageView newUserPhoto;
+    /**
+     * Referencia al botón de la interfaz para iniciar el proceso de selección de foto de perfil
+     */
     @BindView(R.id.new_user_photo_button)
     ImageView newUserPhotoButton;
 
+    /**
+     * Constructor sin parámetros
+     */
     public NewUserFragment() {
-        // Required empty public constructor
     }
 
+    /**
+     * Método de instanciación del Fragmento
+     * @return una nueva instancia de NewUserFragment
+     */
     public static NewUserFragment newInstance() {
         return new NewUserFragment();
     }
 
+    /**
+     * En este método se inicializan la variable que permite utilizar la API de Google y el
+     * Presentador correspondiente a esta Vista.
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,12 +183,24 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         mPresenter = new NewUserPresenter(this);
     }
 
+    /**
+     * Inicializa el contenido del menú de opciones de la esquina superior derecha de la pantalla
+     *
+     * @param menu menú de opciones donde se van a emplazar los elementos.
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         getActivity().getMenuInflater().inflate(R.menu.menu_ok, menu);
     }
 
+    /**
+     * Invocado cuando un elemento del menú es pulsado. En este caso se encarga de validar los
+     * datos del proceso de creación e iniciar la selección de deportes.
+     *
+     * @param item elemento del menú pulsado
+     * @return true si se aceptó la pulsación, false en otro caso
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
@@ -140,6 +229,16 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         return false;
     }
 
+    /**
+     * Inicializa y obtiene una referencia a los elementos de la interfaz
+     *
+     * @param inflater utilizado para inflar el archivo de layout
+     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     *
+     * @return la vista de la interfaz inicializada
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -149,6 +248,10 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         return root;
     }
 
+    /**
+     * Establece los controles para regular el comportamiento del {@link EditText} donde se
+     * escribe la dirección de correo del usuario
+     */
     private void setEmailEditText() {
         newUserEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -159,6 +262,11 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         });
     }
 
+    /**
+     * Establece los controles para regular el comportamiento del {@link EditText} donde se
+     * escribe la contraseña del usuario
+     */
+    @SuppressLint("ClickableViewAccessibility")
     private void setPasswordEditText() {
         newUserPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -182,6 +290,11 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         });
     }
 
+
+    /**
+     * Establece los controles para regular el comportamiento del {@link ImageView} donde se
+     * pulsa para iniciar el proceso de selección de foto de perfil
+     */
     private void setPhotoButton() {
         if (croppedImageUri != null)
             Glide.with(this).load(croppedImageUri).into(newUserPhoto);
@@ -199,6 +312,11 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         });
     }
 
+
+    /**
+     * Establece los controles para regular el comportamiento del {@link EditText} donde se
+     * escribe el nombre del usuario
+     */
     private void setNameEditText() {
         newUserName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -212,6 +330,11 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         });
     }
 
+
+    /**
+     * Establece los controles para regular el comportamiento del {@link EditText} donde se
+     * escribe la edad del usuario
+     */
     private void setAgeEditText() {
         newUserAge.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -226,6 +349,16 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         });
     }
 
+
+    /**
+     * Establece los controles para regular el comportamiento del {@link AutoCompleteTextView}
+     * donde se escribe la ciudad del usuario. Crea un {@link TextWatcher} para reaccionar a los
+     * cambios en el texto y así realizar nuevas búsquedas con el {@link PlaceAutocompleteAdapter}.
+     * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     *     Google Places API
+     * </a>} para obtener la coordenadas de dicha ciudad.
+     */
     private void setAutocompleteTextView() {
         // Set up the adapter that will retrieve suggestions from
         // the Places Geo Data API that cover Spain
@@ -297,12 +430,24 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         });
     }
 
+    /**
+     * Al finalizar el proceso de creación de la Actividad contenedora, se invoca este método que
+     * establece un título para la barra superior.
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.new_user_title), this);
     }
 
+    /**
+     * Establece los comportamientos de los elementos de la interfaz. Si todos los datos son válidos
+     * y los deportes practicados están introducidos, invoca el proceso de creación de usuario con
+     * el Presentador.
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -338,12 +483,25 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         }
     }
 
+    /**
+     * Muestra el contenido del Fragmento
+     */
     @Override
     public void onResume() {
         super.onResume();
         mFragmentManagementListener.showContent();
     }
 
+    /**
+     * Invocado al finalizar el proceso de recortar la foto de perfil con
+     * {@link
+     * <a href= "https://github.com/Yalantis/uCrop">
+     *     uCrop (Github)
+     * </a>}
+     * para indicar la ruta del archivo de imagen resultante.
+     *
+     * @param photoCroppedUri ruta del archivo de imagen de la foto de perfil
+     */
     @Override
     public void croppedResult(Uri photoCroppedUri) {
         // Uri from cropped photo as result of UCrop
@@ -356,16 +514,31 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                     .into(newUserPhoto);
     }
 
+    /**
+     * Invocado para obtener una referencia a la {@link Activity} contenedora
+     *
+     * @return Actividad contenedora
+     */
     @Override
     public Activity getHostActivity() {
         return getActivity();
     }
 
+    /**
+     * Invocado para establecer un error en la dirección de email introducida
+     *
+     * @param stringRes identificador del recurso de texto utilizado para indicar el error
+     */
     @Override
     public void setEmailError(int stringRes) {
         this.newUserEmail.setError(getString(stringRes));
     }
 
+    /**
+     * Invocado para establecer un error en el nombre introducido
+     *
+     * @param stringRes identificador del recurso de texto utilizado para indicar el error
+     */
     @Override
     public void setNameError(int stringRes) {
         this.newUserName.setError(getString(stringRes));
