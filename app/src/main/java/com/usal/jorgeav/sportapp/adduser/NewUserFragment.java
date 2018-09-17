@@ -149,6 +149,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
 
     /**
      * Método de instanciación del Fragmento
+     *
      * @return una nueva instancia de NewUserFragment
      */
     public static NewUserFragment newInstance() {

@@ -68,7 +68,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
     /**
      * Constructor
      *
-     * @param mView referncia a la Vista correspondiente a este Presentador
+     * @param mView referencia a la Vista correspondiente a este Presentador
      */
     NewUserPresenter(NewUserContract.View mView) {
         this.mView = mView;

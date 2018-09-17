@@ -11,8 +11,8 @@ import com.usal.jorgeav.sportapp.data.Sport;
 import java.util.ArrayList;
 
 /**
- * Clase abstracta donde se declaran las interfaces por las que se comunican Vista y Presentador
- * de la arquitectura utilizada Modelo - Vista - Presentador.
+ * Clase abstracta donde se declaran las interfaces por las que se comunican Vista y Presentador,
+ * de la arquitectura utilizada Modelo - Vista - Presentador, para la creación de usuarios.
  */
 public class NewUserContract {
 
