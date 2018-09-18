@@ -41,16 +41,16 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  * Actividad de selección de lugares {@link MapsActivity} para utilizarlo en la creación
  * de partidos. <br>
  *     También se encarga de comprobar los permisos para acceder a las imágenes, y de controlar
- *     las librerías que se encargan de ellas
- *     {@link
- *          <a href= "https://github.com/Yalantis/uCrop">
- *              uCrop (Github)
- *          </a>}
- *     y
- *     {@link
- *          <a href= "https://github.com/jkwiecien/EasyImage">
- *              EasyImage (Github)
- *          </a>}.
+ *     las librerías que se encargan de ellas uCrop y EasyImage.
+ *
+ * @see
+ * <a href= "https://github.com/Yalantis/uCrop">
+ *      uCrop (Github)
+ * </a>
+ * @see
+ * <a href= "https://github.com/jkwiecien/EasyImage">
+ *      EasyImage (Github)
+ * </a>
  */
 public class EventsActivity extends BaseActivity
         implements SelectSportFragment.OnSportSelectedListener {
@@ -222,8 +222,8 @@ public class EventsActivity extends BaseActivity
      *  - Recupera el lugar seleccionado para la alarma en {@link MapsActivity} <br>
      *  - Recupera la imagen seleccionada en {@link EasyImage} <br>
      *  - Recupera la imagen recortada y almacenada por {@link UCrop} para enviarla al servidor.
-     *  <p></p>
-     * Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
+     *
+     *  <p>Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
      * {@link android.app.Activity#startActivityForResult(Intent, int)}.
      *
      * @param requestCode código con el que se inicia e identifica la Actividad

@@ -98,10 +98,12 @@ public class DetailAlarmFragment extends BaseFragment implements
     @BindView(R.id.alarm_detail_map)
     MapView alarmMap;
     /**
-     * Objeto principal de {@link
+     * Objeto principal de Google Maps API. Hace referencia al mapa que provee esta API.
+     *
+     * @see
      * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary">
      *     Google Maps API
-     * </a>}. Hace referencia al mapa que provee esta API.
+     * </a>
      */
     private GoogleMap mMap;
     /**

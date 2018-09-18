@@ -31,11 +31,12 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Adaptador para la lista de sugerencias de ciudades. Utiliza la interfaz {@link Filterable}
- * para filtrar las busquedas. Para las busquedas utiliza
- * {@link
+ * para filtrar las busquedas. Para las busquedas utiliza Google Places API
+ *
+ * @see
  * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
  *     Google Places API
- * </a>}
+ * </a>
  */
 public class PlaceAutocompleteAdapter
         extends ArrayAdapter<AutocompletePrediction> implements Filterable {
@@ -49,20 +50,20 @@ public class PlaceAutocompleteAdapter
     private static final CharacterStyle STYLE_BOLD = new StyleSpan(Typeface.BOLD);
 
     /**
-     * Coleccion de resultados una vez efectuada la busqueda
+     * Colección de resultados una vez efectuada la busqueda
      */
     private ArrayList<AutocompletePrediction> mResultList;
     /**
-     * Objeto
-     * {@link
+     * Objeto GoogleApiClient necesario para utilizar Google Places API
+     *
+     * @see
      * <a href= "https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient">
      *     GoogleApiClient
-     * </a>}
-     *  necesario para utilizar
-     * {@link
+     * </a>
+     * @see
      * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
      *     Google Places API
-     * </a>}
+     * </a>
      */
     private GoogleApiClient mGoogleApiClient;
     /**
@@ -193,32 +194,33 @@ public class PlaceAutocompleteAdapter
     }
 
     /**
-     * Metodo encargado de realizar la consulta asincrona a
-     * {@link
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     *     Google Places API
-     * </a>}
-     * con la cadena de texto introducida por el usuario
-     * <p>
-     * Utiliza el metodo
-     * {@link
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi.html#getAutocompletePredictions(com.google.android.gms.common.api.GoogleApiClient,%20java.lang.String,%20com.google.android.gms.maps.model.LatLngBounds,%20com.google.android.gms.location.places.AutocompleteFilter)">
-     *     GeoDataApi.getAutocompletePredictions()
-     * </a>}
-     *  para hacer las consultas.
-     * <p>
-     * A continuacion, espera por el resultado, comprueba el codigo de error y cierra el
-     * {@link
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompletePredictionBuffer">
-     *     AutocompletePredictionBuffer
-     * </a>}
-     *  por el que recibia la respuesta.
-     * <p>
-     * Si el codigo es correcto devuelve una lista con los resultados que coinciden con la
+     * Metodo encargado de realizar la consulta asíncrona a Google Places API con la cadena de
+     * texto introducida por el usuario
+     *
+     * <p>Utiliza el metodo GeoDataApi.getAutocompletePredictions() para hacer las consultas.
+     *
+     * <p>A continuacion, espera por el resultado, comprueba el codigo de error y cierra el
+     * AutocompletePredictionBuffer por el que recibia la respuesta.
+     *
+     * <p>Si el codigo es correcto devuelve una lista con los resultados que coinciden con la
      * busqueda
      *
      * @param constraint cadena de texto con la que se realiza la busqueda
+     *
      * @return ArrayList con los resultados de la busqueda
+     *
+     * @see
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     *     Google Places API
+     * </a>
+     * @see
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi.html#getAutocompletePredictions(com.google.android.gms.common.api.GoogleApiClient,%20java.lang.String,%20com.google.android.gms.maps.model.LatLngBounds,%20com.google.android.gms.location.places.AutocompleteFilter)">
+     *     GeoDataApi.getAutocompletePredictions()
+     * </a>
+     * @see
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompletePredictionBuffer">
+     *     AutocompletePredictionBuffer
+     * </a>
      */
     private ArrayList<AutocompletePrediction> getAutocomplete(CharSequence constraint) {
         if (mGoogleApiClient.isConnected()) {

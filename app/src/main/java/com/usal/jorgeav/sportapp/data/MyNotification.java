@@ -51,11 +51,12 @@ public class MyNotification {
 
     /**
      * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
-     * Realtime Database con
-     * {@link
+     * Realtime Database con DataSnapshot.getValue(Class)
+     *
+     * @see
      * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
      *     DataSnapshot.getValue(Class)
-     * </a>}
+     * </a>
      */
     public MyNotification() {
         // Default constructor required for calls to DataSnapshot.getValue(MyNotification.class)

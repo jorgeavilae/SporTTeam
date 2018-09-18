@@ -9,15 +9,15 @@ import java.util.Calendar;
 
 /**
  * Objeto de datos que representa un {@link Event} situado en el calendario de la interfaz
- * <p></p>
- * Mas informacion en (Github) {@link
+ *
+ * @see
  * <a href= "https://github.com/Tibolte/AgendaCalendarView/tree/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview">
  *     AgendaCalendarView implementation
- * </a>}
- *  y {@link
+ * </a>
+ * @see
  * <a href= "https://github.com/Tibolte/AgendaCalendarView/blob/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview/models/BaseCalendarEvent.java">
  *     BaseCalendarEvent implementation
- * </a>}
+ * </a>
  */
 public class MyCalendarEvent extends BaseCalendarEvent {
     /**

@@ -129,10 +129,11 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @BindView(R.id.new_alarm_map)
     MapView newAlarmMap;
     /**
-     * Objeto principal de {@link
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary">
+     * Objeto principal de Google Maps API. Hace referencia al mapa que provee esta API.
+     *
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary">
      *     Google Maps API
-     * </a>}. Hace referencia al mapa que provee esta API.
+     * </a>
      */
     private GoogleMap mMap;
     /**
@@ -466,10 +467,13 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      * Establece los controles para regular el comportamiento del {@link AutoCompleteTextView}
      * donde se escribe la ciudad de la alarma. Crea un {@link TextWatcher} para reaccionar a los
      * cambios en el texto y así realizar nuevas búsquedas con el {@link PlaceAutocompleteAdapter}.
-     * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la {@link
+     * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la Google
+     * Places API para obtener la coordenadas de dicha ciudad.
+     *
+     * @see
      * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
      *     Google Places API
-     * </a>} para obtener la coordenadas de dicha ciudad.
+     * </a>
      */
     private void setAutocompleteTextView() {
         // Set up the adapter that will retrieve suggestions from

@@ -57,14 +57,15 @@ public class NewUserContract {
      */
     public interface View {
         /**
-         * Invocado al finalizar el proceso de recortar la foto de perfil con
-         * {@link
-         * <a href= "https://github.com/Yalantis/uCrop">
-         *     uCrop (Github)
-         * </a>}
+         * Invocado al finalizar el proceso de recortar la foto de perfil con uCrop
          * para indicar la ruta del archivo de imagen resultante.
          *
          * @param photoCroppedUri ruta del archivo de imagen de la foto de perfil
+         *
+         * @see
+         * <a href= "https://github.com/Yalantis/uCrop">
+         *     uCrop (Github)
+         * </a>
          */
         void croppedResult(Uri photoCroppedUri);
 

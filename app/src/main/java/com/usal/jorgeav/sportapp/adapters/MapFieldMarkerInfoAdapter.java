@@ -18,13 +18,11 @@ import java.util.List;
 /**
  * Adaptador para la coleccion de marcas que se posicionan sobre el mapa representando
  * instalaciones.
- * <p>
  *
- * Mas informacion en
- * {@link
+ * @see
  * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter">
  *     GoogleMap.InfoWindowAdapter
- * </a>}
+ * </a>
  */
 public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
@@ -48,11 +46,10 @@ public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
     }
 
     /**
-     * Mas informacion en
-     * {@link
+     * @see
      * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoWindow(com.google.android.gms.maps.model.Marker)">
      *     GoogleMap.InfoWindowAdapter.getInfoWindow(Marker)
-     * </a>}
+     * </a>
      */
     @Override
     public View getInfoWindow(Marker marker) {
@@ -61,13 +58,11 @@ public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
     /**
      * Obtiene la instalacion correspondiente a la marca seleccionada y la emplaza en la View.
-     * <p>
      *
-     * Mas informacion en
-     * {@link
+     * @see
      * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoContents(com.google.android.gms.maps.model.Marker)">
      *     GoogleMap.InfoWindowAdapter.getInfoContents(Marker)
-     * </a>}
+     * </a>
      */
     @Override
     public View getInfoContents(Marker marker) {

@@ -10,15 +10,15 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 
 /**
  * Se encarga de renderizar cada partido en su celda correspondiente del calendario
- * <p></p>
- * Mas informacion en (Github) {@link
+ *
+ * @see
  * <a href= "https://github.com/Tibolte/AgendaCalendarView/tree/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview">
  *     AgendaCalendarView implementation
- * </a>}
- *  y {@link
+ * </a>
+ * @see
  * <a href= "https://github.com/Tibolte/AgendaCalendarView/blob/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview/render/EventRenderer.java">
  *     EventRenderer implementation
- * </a>}
+ * </a>
  */
 public class MyEventRenderer extends EventRenderer<MyCalendarEvent> {
 

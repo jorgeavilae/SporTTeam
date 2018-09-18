@@ -113,12 +113,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     ConstraintLayout mLoginFormView;
 
     /**
-     * Referencia a
-     * {@link
+     * Referencia a FirebaseAuth para comprobar si hay un usuario con la sesión iniciada
+     *
+     * @see
      * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
      *     FirebaseAuth
-     * </a>}
-     * para comprobar si hay un usuario con la sesión iniciada
+     * </a>
      */
     private FirebaseAuth mAuth;
 
@@ -252,7 +252,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * <p>Del {@link Cursor} extrae las direcciones de email y utiliza esa lista para crear un
      * {@link ArrayAdapter} que asocia con {@link #mEmailView}
      *
-     * @param data
+     * @param data conjunto de emails obtenidos de la base de datos
      */
     private void addEmailsToAutoComplete(Cursor data) {
         ArrayAdapter<String> adapter = null;

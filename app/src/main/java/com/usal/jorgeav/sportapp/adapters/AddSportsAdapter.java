@@ -34,29 +34,31 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
      */
     private List<Sport> mDataset;
     /**
-     * Referencia a la libreria
-     * {@link
+     * Referencia a la libreria Glide, concretamente al objeto RequestManager para cargar el icono
+     * correspondiente a cada item de la lista.
+     *
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
      *     Glide
-     * </a>}
-     * , concretamente al objeto
-     * {@link
+     * </a>
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
      *     RequestManager
-     * </a>}
-     * para cargar el icono correspondiente a cada item de la lista.
+     * </a>
      */
     private RequestManager mGlide;
 
     /**
+     * Constructor con argumentos
      *
      * @param mDataset Conjunto de deportes a mostrar
-     * @param glide Referencia a
-     * {@link
+     * @param glide Referencia a RequestManager para cargar el icono correspondiente a cada item de
+     *             la lista.
+     *
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
      *     RequestManager
-     * </a>}
-     * para cargar el icono correspondiente a cada item de la lista.
+     * </a>
      */
     public AddSportsAdapter(List<Sport> mDataset, RequestManager glide) {
         this.mDataset = mDataset;

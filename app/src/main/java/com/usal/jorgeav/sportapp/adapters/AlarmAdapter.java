@@ -41,30 +41,32 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
      */
     private OnAlarmItemClickListener mClickListener;
     /**
-     * Referencia a la libreria
-     * {@link
+     * Referencia a la libreria Glide, concretamente al objeto RequestManager para cargar el icono
+     * correspondiente a cada item de la lista.
+     *
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
      *     Glide
-     * </a>}
-     * , concretamente al objeto
-     * {@link
+     * </a>
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
      *     RequestManager
-     * </a>}
-     * para cargar el icono correspondiente a cada item de la lista.
+     * </a>
      */
     private final RequestManager mGlide;
 
     /**
+     * Constructor con argumentos
      *
      * @param mDataset Conjunto de alarmas
      * @param clickListener Referencia al Listener que implementa esta interfaz
-     * @param glide Referencia a
-     * {@link
+     * @param glide Referencia a RequestManager para cargar el icono correspondiente a cada item de
+     *             la lista.
+     *
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
      *     RequestManager
-     * </a>}
-     * para cargar el icono correspondiente a cada item de la lista
+     * </a>
      */
     public AlarmAdapter(Cursor mDataset, OnAlarmItemClickListener clickListener, RequestManager glide) {
         this.mDataset = mDataset;

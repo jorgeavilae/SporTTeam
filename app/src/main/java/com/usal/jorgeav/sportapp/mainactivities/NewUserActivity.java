@@ -50,16 +50,16 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  * ser utilizada por los Fragmentos en sus comunicaciones.
  *
  * <p>Además, se encarga de comprobar los permisos para acceder a las imágenes y así utilizar
- * las librerías que se encargan de establecer la foto de perfil
- * {@link
- *      <a href= "https://github.com/Yalantis/uCrop">
- *          uCrop (Github)
- *      </a>}
- * y
- * {@link
- *      <a href= "https://github.com/jkwiecien/EasyImage">
- *          EasyImage (Github)
- *      </a>}.
+ * las librerías que se encargan de establecer la foto de perfil uCrop y EasyImage.
+ *
+ * @see
+ * <a href= "https://github.com/Yalantis/uCrop">
+ *      uCrop (Github)
+ * </a>
+ * @see
+ * <a href= "https://github.com/jkwiecien/EasyImage">
+ *      EasyImage (Github)
+ * </a>
  */
 public class NewUserActivity extends AppCompatActivity
         implements ActivityContracts.FragmentManagement,
@@ -187,8 +187,8 @@ public class NewUserActivity extends AppCompatActivity
      * Dependiendo del código de la consulta: <br>
      *  - Recupera la imagen seleccionada en {@link EasyImage} <br>
      *  - Recupera la imagen recortada y almacenada por {@link UCrop} para enviarla al servidor.
-     *  <p></p>
-     * Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
+     *
+     *  <p>Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
      * {@link android.app.Activity#startActivityForResult(Intent, int)}.
      *
      * @param requestCode código con el que se inicia e identifica la Actividad

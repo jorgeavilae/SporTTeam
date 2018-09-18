@@ -195,8 +195,8 @@ public class FieldsActivity extends BaseActivity
      * Método invocado para recuperar los deportes escogidos para las pistas de la instalación
      * que se va a crear o se está editando. Pertenece a la interfaz
      * {@link SportsListFragment.OnSportsSelected}
-     * <p></p>
-     * Cuando se está editando, <code>fieldId != null</code> por lo que se actualizan las pistas
+     *
+     * <p>Cuando se está editando, <code>fieldId != null</code> por lo que se actualizan las pistas
      * en el servidor y se vuelve al Fragmento anterior. Cuando <code>fieldId == null</code>
      * es un proceso de creación de instalación y ya se tienen la dirección y la lista de deportes
      * por lo que se inicia {@link NewFieldFragment}

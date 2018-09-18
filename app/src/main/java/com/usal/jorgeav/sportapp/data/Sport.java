@@ -11,8 +11,8 @@ import java.util.HashMap;
 
 /**
  * Representa una Deporte del modelo.
- * <p></p>
- * Implementa la interfaz Parcelable para poder guardar este {@link Object} en
+ *
+ * <p>Implementa la interfaz Parcelable para poder guardar este {@link Object} en
  * el {@link android.os.Bundle} que se asocia a {@link SportsListFragment} en su creación y se
  * utiliza para pasarle deportes.
  *

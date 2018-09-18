@@ -20,6 +20,9 @@ public abstract class ActivityContracts {
 
         /**
          * Debe invocar {@link #initFragment(Fragment, boolean, String)} con un tag nulo.
+         *
+         * @param fragment Fragmento que va a mostrarse
+         * @param addToBackStack true si debe almacenarse en la pila de Fragmentos
          */
         void initFragment(@NotNull Fragment fragment, boolean addToBackStack);
 

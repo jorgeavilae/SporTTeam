@@ -146,13 +146,8 @@ class NewUserPresenter implements NewUserContract.Presenter {
     }
 
     /**
-     * Crea el usuario con los parámetros dados en {@link
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
-     *     FirebaseAuth
-     * </a>}. Luego utiliza {@link
-     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/storage/FirebaseStorage">
-     *     FirebaseStorage
-     * </a>} para almacenar la foto de perfil del usuario en el servidor.
+     * Crea el usuario con los parámetros dados en FirebaseAuth. Luego utiliza FirebaseStorage para
+     * almacenar la foto de perfil del usuario en el servidor.
      *
      * <p> Si el proceso finaliza con éxito, se invoca
      * {@link #storeUserDataAndFinish(Uri, String, String, LatLng, Long, ArrayList)}
@@ -168,6 +163,15 @@ class NewUserPresenter implements NewUserContract.Presenter {
      * @param sportsList lista de {@link Sport} que practica el usuario
      *
      * @return true si los argumentos son válidos, false en caso contrario.
+     *
+     * @see
+     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+     *     FirebaseAuth
+     * </a>
+     * @see
+     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/storage/FirebaseStorage">
+     *     FirebaseStorage
+     * </a>
      */
     @Override
     public boolean createAuthUser(final String email, String pass, final String name,
@@ -324,14 +328,10 @@ class NewUserPresenter implements NewUserContract.Presenter {
     }
 
     /**
-     * Utiliza {@link UserFirebaseActions#addUser(User)} para añadir un usuario a {@link
-     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
-     *     FirebaseDatabase
-     * </a>}. También incluye los datos más relevantes en el objeto {@link
-     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser">
-     *     FirebaseUser
-     * </a>}. Por último, finaliza la ejecución de la Actividad contenedora dado que el proceso de
-     * creación de usuario finaliza correctamente.
+     * Utiliza {@link UserFirebaseActions#addUser(User)} para añadir un usuario a FirebaseDatabase.
+     * También incluye los datos más relevantes en el objeto FirebaseUser. Por último, finaliza la
+     * ejecución de la Actividad contenedora dado que el proceso de creación de usuario finaliza
+     * correctamente.
      *
      * @param photoUri ruta del archivo de imagen utilizado como foto de perfil
      * @param name nombre
@@ -339,6 +339,15 @@ class NewUserPresenter implements NewUserContract.Presenter {
      * @param coords coordenadas de la ciudad
      * @param age edad
      * @param sportsList lista de {@link Sport} que practica el usuario
+     *
+     * @see
+     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+     *     FirebaseDatabase
+     * </a>
+     * @see
+     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser">
+     *     FirebaseUser
+     * </a>
      */
     private void storeUserDataAndFinish(Uri photoUri, String name, String city, LatLng coords,
                                         Long age, ArrayList<Sport> sportsList) {

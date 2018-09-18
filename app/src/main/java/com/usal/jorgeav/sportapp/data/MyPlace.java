@@ -11,26 +11,25 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Representa un lugar del mapa. Utilizado en la selección manual de direcciones en el mapa,
  * durante la geocodificación inversa.
- * <p></p>
  *
- * Se crea a partir de la respuesta obtenida de la consulta a
- * {@link
- * <a href= "https://developers.google.com/maps/documentation/geocoding/start">
- *     Google Geocoding API
- * </a>}. Mas información en
- * {@link
- * <a href= "https://developers.google.com/maps/documentation/geocoding/intro#GeocodingResponses">
- *     Geocoding Responses
- * </a>}
- * <p></p>
+ * <p>Se crea a partir de la respuesta obtenida de la consulta a Google Geocoding API. Mas
+ * información en Geocoding Responses.
  *
- * Implementa la interfaz Parcelable para poder guardar este {@link Object} en variables de
+ * <p>Implementa la interfaz Parcelable para poder guardar este {@link Object} en variables de
  * estado entre cambios de configuración
  * ({@link android.app.Activity#onConfigurationChanged(Configuration)}, o en {@link Intent}
  * para enviarla a otra {@link android.app.Activity}
  *
  * @see com.usal.jorgeav.sportapp.mainactivities.MapsActivity#onOptionsItemSelected(MenuItem)
  * @see com.usal.jorgeav.sportapp.mainactivities.EventsActivity#onActivityResult(int, int, Intent)
+ * @see
+ * <a href= "https://developers.google.com/maps/documentation/geocoding/start">
+ *     Google Geocoding API
+ * </a>
+ * @see
+ * <a href= "https://developers.google.com/maps/documentation/geocoding/intro#GeocodingResponses">
+ *     Geocoding Responses
+ * </a>
  */
 @SuppressWarnings("unused")
 public class MyPlace implements Parcelable {

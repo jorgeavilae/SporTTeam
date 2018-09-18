@@ -60,10 +60,12 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
      */
     private static final String TAG = NewUserFragment.class.getSimpleName();
     /**
-     * Identificador para la ejecución de {@link
+     * Identificador para la ejecución de EasyImage
+     *
+     * @see
      * <a href= "https://github.com/jkwiecien/EasyImage">
      *     EasyImage (Github)
-     * </a>}
+     * </a>
      */
     public static final int RC_PHOTO_PICKER = 2;
 
@@ -73,10 +75,12 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     private NewUserContract.Presenter mPresenter;
 
     /**
-     * Ruta del archivo de imagen resultante después del proceso de recorte con {@link
+     * Ruta del archivo de imagen resultante después del proceso de recorte con uCrop
+     *
+     * @see
      * <a href= "https://github.com/Yalantis/uCrop">
      *     uCrop (Github)
-     * </a>}
+     * </a>
      */
     Uri croppedImageUri;
 
@@ -355,10 +359,13 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
      * Establece los controles para regular el comportamiento del {@link AutoCompleteTextView}
      * donde se escribe la ciudad del usuario. Crea un {@link TextWatcher} para reaccionar a los
      * cambios en el texto y así realizar nuevas búsquedas con el {@link PlaceAutocompleteAdapter}.
-     * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la {@link
+     * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la Google
+     * Places API para obtener la coordenadas de dicha ciudad.
+     *
+     * @see
      * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
      *     Google Places API
-     * </a>} para obtener la coordenadas de dicha ciudad.
+     * </a>
      */
     private void setAutocompleteTextView() {
         // Set up the adapter that will retrieve suggestions from
@@ -494,14 +501,15 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     }
 
     /**
-     * Invocado al finalizar el proceso de recortar la foto de perfil con
-     * {@link
-     * <a href= "https://github.com/Yalantis/uCrop">
-     *     uCrop (Github)
-     * </a>}
+     * Invocado al finalizar el proceso de recortar la foto de perfil con uCrop
      * para indicar la ruta del archivo de imagen resultante.
      *
      * @param photoCroppedUri ruta del archivo de imagen de la foto de perfil
+     *
+     * @see
+     * <a href= "https://github.com/Yalantis/uCrop">
+     *     uCrop (Github)
+     * </a>
      */
     @Override
     public void croppedResult(Uri photoCroppedUri) {

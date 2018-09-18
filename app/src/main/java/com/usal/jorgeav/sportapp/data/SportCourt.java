@@ -12,13 +12,13 @@ import java.util.HashMap;
 
 /**
  * Representa una pista de una instalación
- * <p></p>
- * Implementa la interfaz Parcelable para poder guardar este {@link Object} en variables de
+ *
+ * <p>Implementa la interfaz Parcelable para poder guardar este {@link Object} en variables de
  * estado entre cambios de configuración
  * ({@link android.app.Activity#onConfigurationChanged(Configuration)}, o en {@link android.content.Intent}
  * para enviarla a otra {@link android.app.Activity}
- * <p></p>
- * Implementa la interfaz Serializable para poder guardar este {@link Object} en Parcel
+ *
+ * <p>Implementa la interfaz Serializable para poder guardar este {@link Object} en Parcel
  * de {@link Field} en el método {@link Field#writeToParcel(Parcel, int)}
  *
  * @see com.usal.jorgeav.sportapp.mainactivities.FieldsActivity#onSaveInstanceState(Bundle)
@@ -40,11 +40,12 @@ public class SportCourt implements Parcelable, Serializable {
 
     /**
      * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
-     * Realtime Database con
-     * {@link
+     * Realtime Database con DataSnapshot.getValue(Class)
+     *
+     * @see
      * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
      *     DataSnapshot.getValue(Class)
-     * </a>}
+     * </a>
      */
     public SportCourt() {
         // Default constructor required for calls to DataSnapshot.getValue(SportCourt.class)

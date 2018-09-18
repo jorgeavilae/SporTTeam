@@ -36,10 +36,9 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
     private static final String TAG = ProfileSportsAdapter.class.getSimpleName();
 
     /**
-     * Alamacena la coleccion de deportes que muestra este adapter.
-     * Puede ser un {@link Cursor}
-     * de deportes que practica el usuario ({@link java.util.Map<> Map<String, Double}) o
-     * de deportes que respresenten pistas de una instalación y que lleven un número de votos
+     * Almacena la colección de deportes que muestra este adapter. Puede ser un {@link Cursor}
+     * de deportes que practica el usuario ({@link java.util.Map Map&lt;String, Double&gt;}) o
+     * de deportes que representen pistas de una instalación y que lleven un número de votos
      * asociado ({@link SportCourt})
      */
     private Cursor mDataset;
@@ -48,17 +47,17 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
      */
     private OnProfileSportClickListener mClickListener;
     /**
-     * Referencia a la libreria
-     * {@link
+     * Referencia a la librería Glide, concretamente al objeto RequestManager para cargar el icono
+     * correspondiente a cada item de la lista.
+     *
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
      *     Glide
-     * </a>}
-     * , concretamente al objeto
-     * {@link
+     * </a>
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
      *     RequestManager
-     * </a>}
-     * para cargar el icono correspondiente a cada item de la lista.
+     * </a>
      */
     private RequestManager mGlide;
     /**
@@ -72,13 +71,14 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
      *
      * @param mDataset Conjunto de deportes
      * @param mClickListener Referencia al Listener que implementa esta interfaz
-     * @param glide Referencia a
-     * {@link
+     * @param glide Referencia a RequestManager para cargar el icono correspondiente a cada item de
+     *             la lista.
+     * @param isSportCourtsAdapter indicador de si los deportes son pistas de una instalacion
+     *
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
      *     RequestManager
-     * </a>}
-     * para cargar el icono correspondiente a cada item de la lista
-     * @param isSportCourtsAdapter indicador de si los deportes son pistas de una instalacion
+     * </a>
      */
     public ProfileSportsAdapter(Cursor mDataset,
                                 OnProfileSportClickListener mClickListener,

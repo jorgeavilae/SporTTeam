@@ -49,30 +49,32 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
      */
     private OnMyNotificationItemClickListener mClickListener;
     /**
-     * Referencia a la libreria
-     * {@link
+     * Referencia a la librería Glide, concretamente al objeto RequestManager para cargar el icono
+     * correspondiente a cada item de la lista.
+     *
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
      *     Glide
-     * </a>}
-     * , concretamente al objeto
-     * {@link
+     * </a>
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
      *     RequestManager
-     * </a>}
-     * para cargar el icono correspondiente a cada item de la lista.
+     * </a>
      */
     private RequestManager mGlide;
 
     /**
+     * Constructor con argumentos
      *
      * @param dataset Conjunto de notificaciones alamacenadas en un {@link Map}
      * @param mClickListener Referencia al Listener que implementa esta interfaz
-     * @param glide Referencia a
-     * {@link
+     * @param glide Referencia a RequestManager para cargar el icono correspondiente a cada item de
+     *             la lista.
+     *
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
      *     RequestManager
-     * </a>}
-     * para cargar el icono correspondiente a cada item de la lista
+     * </a>
      */
     public MyNotificationsAdapter(Map<String, MyNotification> dataset,
                                   OnMyNotificationItemClickListener mClickListener,
@@ -240,6 +242,8 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
          * lo envia a {@link OnMyNotificationItemClickListener}
          *
          * @param view View pulsada
+         *
+         * @return true si se utiliza la pulsación, false en caso contrario
          */
         @Override
         public boolean onLongClick(View view) {
@@ -266,6 +270,8 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
          *
          * @param key Indentificador de la notificacion
          * @param notification notificacion seleccionada
+         *
+         * @return true si se utiliza la pulsación, false en caso contrario
          */
         boolean onMyNotificationLongClick(String key, MyNotification notification);
     }

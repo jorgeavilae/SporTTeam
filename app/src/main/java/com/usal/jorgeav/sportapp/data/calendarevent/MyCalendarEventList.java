@@ -7,14 +7,14 @@ import java.util.List;
 
 /**
  * Clase envoltorio para la lista de partidos del calendario.
- * <p>
- * Mantiene la lista de los partidos que deben mostrarse en el calendario y metodos para
+ *
+ * <p>Mantiene la lista de los partidos que deben mostrarse en el calendario y metodos para
  * consultarla y controlarla
- * <p></p>
- * Mas informacion en (Github) {@link
+ *
+ * @see
  * <a href= "https://github.com/Tibolte/AgendaCalendarView/tree/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview">
  *     AgendaCalendarView implementation
- * </a>}
+ * </a>
  */
 public class MyCalendarEventList {
     /**

@@ -102,10 +102,10 @@ public abstract class BaseFragment extends Fragment {
      * Obtiene una referencia a la {@link View} que tiene el foco de la interfaz y, si esta
      * mostrando el teclado flotante en la pantalla, lo esconde
      *
-     * {@link
+     * @see
      * <a href= "https://stackoverflow.com/a/17789187/4235666">
      *     (StackOverflow) Close/hide the Android Soft Keyboard
-     * </a>}
+     * </a>
      */
     public void hideSoftKeyboard() {
         View view = getActivity().getCurrentFocus();

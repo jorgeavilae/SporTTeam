@@ -36,30 +36,32 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
      */
     private OnUserItemClickListener mClickListener;
     /**
-     * Referencia a la libreria
-     * {@link
+     * Referencia a la librería Glide, concretamente al objeto RequestManager para cargar el icono
+     * correspondiente a cada item de la lista.
+     *
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
      *     Glide
-     * </a>}
-     * , concretamente al objeto
-     * {@link
+     * </a>
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
      *     RequestManager
-     * </a>}
-     * para cargar el icono correspondiente a cada item de la lista.
+     * </a>
      */
     private RequestManager mGlide;
 
     /**
+     * Constructor con argumentos
      *
      * @param mDataset Conjunto de usuarios
      * @param mClickListener Referencia al Listener que implementa esta interfaz
-     * @param glide Referencia a
-     * {@link
+     * @param glide Referencia a RequestManager para cargar el icono correspondiente a cada item de
+     *             la lista.
+     *
+     * @see
      * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
      *     RequestManager
-     * </a>}
-     * para cargar el icono correspondiente a cada item de la lista
+     * </a>
      */
     public UsersAdapter(Cursor mDataset, OnUserItemClickListener mClickListener, RequestManager glide) {
         this.mDataset = mDataset;

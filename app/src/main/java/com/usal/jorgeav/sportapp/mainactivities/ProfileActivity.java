@@ -34,16 +34,16 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  * relacionados con el Usuario actual. Actúa como puente entre los Fragmentos, para sus
  * comunicaciones, con los deportes escogidos en {@link SportsListFragment} o comprobando
  * los permisos para acceder a las imágenes y así de utilizar las librerías que se encargan
- * de cambiar la foto de perfil
- * {@link
- *      <a href= "https://github.com/Yalantis/uCrop">
- *          uCrop (Github)
- *      </a>}
- * y
- * {@link
- *      <a href= "https://github.com/jkwiecien/EasyImage">
- *          EasyImage (Github)
- *      </a>}.
+ * de cambiar la foto de perfil uCrop y EasyImage.
+ *
+ * @see
+ * <a href= "https://github.com/Yalantis/uCrop">
+ *      uCrop (Github)
+ * </a>
+ * @see
+ * <a href= "https://github.com/jkwiecien/EasyImage">
+ *      EasyImage (Github)
+ * </a>
  */
 public class ProfileActivity extends BaseActivity
         implements SportsListFragment.OnSportsSelected {
@@ -106,8 +106,8 @@ public class ProfileActivity extends BaseActivity
      * Dependiendo del código de la consulta: <br>
      *  - Recupera la imagen seleccionada en {@link EasyImage} <br>
      *  - Recupera la imagen recortada y almacenada por {@link UCrop} para enviarla al servidor.
-     *  <p></p>
-     * Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
+     *
+     *  <p>Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
      * {@link android.app.Activity#startActivityForResult(Intent, int)}.
      *
      * @param requestCode código con el que se inicia e identifica la Actividad

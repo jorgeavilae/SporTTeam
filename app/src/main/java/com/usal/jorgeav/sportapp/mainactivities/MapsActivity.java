@@ -33,26 +33,24 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
- * Actividad para seleccionar direcciones o marcas de un mapa. Carga un
- * {@link
+ * Actividad para seleccionar direcciones o marcas de un mapa. Carga un SupportMapFragment donde
+ * emplaza las instalaciones que recibe en la creación.
+ *
+ * <p>Implementa varios callbacks para
+ * recibir eventos sobre el mapa, como por ejemplo pulsaciones sobre coordendas concretas con las
+ * que se utilizará Google Places API para obtener la dirección seleccionada.
+ *
+ * <p>También es capaz de iniciar el proceso para crear una instalación nueva, en el caso de que no
+ * se encuentre en el mapa la instalación deseada por el usuario
+ *
+ * @see
  * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
  *     SupportMapFragment
- * </a>}
- * donde emplaza las instalaciones que recibe en la creación.
- *
- * <p></p>
- * Implementa varios callbacks para
- * recibir eventos sobre el mapa, como por ejemplo pulsaciones sobre coordendas concretas con las
- * que se utilizará
- * {@link
+ * </a>
+ * @see
  * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
  *     Google Places API
- * </a>}
- * para obtener la dirección seleccionada.
- *
- * <p></p>
- * También es capaz de iniciar el proceso para crear una instalación nueva, en el caso de que no
- * se encuentre en el mapa la instalación deseada por el usuario
+ * </a>
  */
 public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -98,11 +96,12 @@ public class MapsActivity extends AppCompatActivity
     public static final String ADD_FIELD_SELECTED_EXTRA = "ADD_FIELD_SELECTED_EXTRA";
 
     /**
-     * Referencia al mapa de Google cargado en
-     * {@link
+     * Referencia al mapa de Google cargado en SupportMapFragment
+     *
+     * @see
      * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
      *     SupportMapFragment
-     * </a>}
+     * </a>
      */
     private GoogleMap mMap;
     /**
@@ -345,14 +344,14 @@ public class MapsActivity extends AppCompatActivity
      * Invocado cuando se produce una pulsación larga sobre un punto del mapa. Utilizado para
      * seleccinar direcciones en lugar de instalaciones. Busca instalaciones cercanas a las que
      * podría haberse referido el usuario y, si no las encuentra, inicia una tarea en segundo
-     * plano para usar
-     * {@link
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     *     Google Places API
-     * </a>}
-     * y obtener la dirección a partir de las coordenadas.
+     * plano para usar Google Places API y obtener la dirección a partir de las coordenadas.
      *
      * @param latLng coordenadas de la pulsación larga sobre el mapa.
+     *
+     * @see
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     *     Google Places API
+     * </a>
      */
     @Override
     public void onMapLongClick(LatLng latLng) {
@@ -376,14 +375,13 @@ public class MapsActivity extends AppCompatActivity
 
         /**
          * Referencia a la Actividad contenedora de esta clase a la que debe pasar los
-         * resultados de la consulta. La referncia es débil para poder ser recolectada por el
+         * resultados de la consulta. La referencia es débil para poder ser recolectada por el
          * Garbage Collector
          *
-         * <p><b>Mas información: </b>
-         * {@link
+         * @see
          * <a href= "https://developer.android.com/reference/java/lang/ref/WeakReference">
          *     WeakReference
-         * </a>}
+         * </a>
          */
         private WeakReference<MapsActivity> mActivity;
 

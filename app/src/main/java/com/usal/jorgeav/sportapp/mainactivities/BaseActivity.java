@@ -47,25 +47,26 @@ import butterknife.ButterKnife;
  * Actividad principal dónde se desarrolla la mayoría de la funcionalidad de la aplicación.
  * Casi todas las Actividades derivan de esta para, de esta forma, alojar en BaseActivity
  * el código común a todas.
- * <p></p><p></p>
- * Inicializa las referencias a la interfaz común a la mayoría de las Actividades. Configura la
- * barra superior y el menú lateral de navegación. Implementa la interfaz de
+ *
+ * <p>Inicializa las referencias a la interfaz común a la mayoría de las Actividades. Configura
+ * la barra superior y el menú lateral de navegación. Implementa la interfaz de
  * {@link ActivityContracts.NavigationDrawerManagement} para controlar estos elementos desde
  * los Fragmentos.
- * <p></p>
- * Implementa también, {@link ActivityContracts.FragmentManagement} para resolver transiciones
+ *
+ * <p>Implementa también, {@link ActivityContracts.FragmentManagement} para resolver transiciones
  * entre Fragmentos y establecer cuál de ellos está siendo mostrado, almacenando ese estado.
- * <p></p>
- * Inicializa los listeners de
- * {@link
+ *
+ * <p>Inicializa los listeners de FirebaseAuth. Invoca la incialización y la finalización, según
+ * corresponda, de la carga de datos desde FirebaseDatabase
+ *
+ * @see
  * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
  *     FirebaseAuth
- * </a>}
- * . Invoca la incialización y la finalización, según corresponda, de la carga de datos desde
- * {@link
+ * </a>
+ * @see
  * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
  *     FirebaseDatabase
- * </a>}
+ * </a>
  */
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -73,7 +74,7 @@ public abstract class BaseActivity extends AppCompatActivity
         ActivityContracts.FragmentManagement {
     /**
      * Método abstracto que deben implementar las Actividades que hereden de esta para
-     * establecer cúal será el Fragmento principal que mostrarán al iniciarse.
+     * establecer cual será el Fragmento principal que mostrarán al iniciarse.
      */
     public abstract void startMainFragment();
 
@@ -119,11 +120,12 @@ public abstract class BaseActivity extends AppCompatActivity
     ProgressBar mProgressbar;
     /**
      * Referencia al Fragmento que se está mostrando actualmente, o null si es un Fragmento
-     * no derivado de {@link BaseFragment} como
-     * {@link
+     * no derivado de {@link BaseFragment} como SupportMapFragment
+     *
+     * @see
      * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
      *     SupportMapFragment
-     * </a>}
+     * </a>
      */
     BaseFragment mDisplayedFragment;
     /**
@@ -133,12 +135,12 @@ public abstract class BaseActivity extends AppCompatActivity
     ActionBarDrawerToggle mToggle;
 
     /**
-     * Referencia a
-     * {@link
+     * Referencia a FirebaseAuth para establecer el listener del inicio y cierre de sesión
+     *
+     * @see
      * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
      *     FirebaseAuth
-     * </a>}
-     * para establecer el listener del inicio y cierre de sesión
+     * </a>
      */
     private FirebaseAuth mAuth;
     /**
@@ -153,11 +155,10 @@ public abstract class BaseActivity extends AppCompatActivity
      * {@link #onCreate(Bundle)}, y es true para indicar que hay un Fragmento guardado esperando
      * a ser cargado y false en caso contrario.
      *
-     * <p><b>Más información:</b><br>
-     * {@link
+     * @see
      * <a href= "https://developer.android.com/guide/components/activities/activity-lifecycle#restore-activity-ui-state-using-saved-instance-state">
      *     Restore activity UI state using saved instance state
-     * </a>}</p>
+     * </a>
      */
     private boolean mIsFragmentOnSavedInstance;
 
@@ -235,12 +236,13 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     /**
-     * Extrae la información del usuario almacenada en su perfil de
-     * {@link
+     * Extrae la información del usuario almacenada en su perfil de FirebaseUser y la coloca sobre
+     * la cabecera del menú lateral de navegación
+     *
+     * @see
      * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser">
      *     FirebaseUser
-     * </a>}
-     * y la coloca sobre la cabecera del menú lateral de navegación
+     * </a>
      */
     @Override
     public void setUserInfoInNavigationDrawer() {
@@ -620,11 +622,12 @@ public abstract class BaseActivity extends AppCompatActivity
     };
 
     /**
-     * Establece el Listener para los inicios y cierres de sesión de
-     * {@link
+     * Establece el Listener para los inicios y cierres de sesión de FirebaseAuth
+     *
+     * @see
      * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
      *     FirebaseAuth
-     * </a>}
+     * </a>
      */
     @Override
     public void onStart() {
@@ -633,13 +636,14 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     /**
-     * Inicia el proceso de finalización de los Listener de
-     * {@link
+     * Inicia el proceso de finalización de los Listener de FirebaseDatabase si corresponde.
+     * También borra el Listener sobre el inicio y cierre de sesión. Y elimina las animaciones que
+     * pudieran estar en proceso sobre el icono de la Toolbar.
+     *
+     * @see
      * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
      *     FirebaseDatabase
-     * </a>}
-     * si corresponde. También borra el Listener sobre el inicio y cierre de sesión. Y elimina las
-     * animaciones que pudieran estar en proceso sobre el icono de la Toolbar.
+     * </a>
      */
     @Override
     protected void onPause() {
