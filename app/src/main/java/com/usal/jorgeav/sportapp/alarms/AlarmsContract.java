@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
 /**
- * Clase abstracta donde se declaran las interfaces por las que se comunican Vista y Presentador,
+ * Clase abstracta donde se declaran las interfaces por las que se comunican Vista y Presentador
  * de la arquitectura utilizada Modelo - Vista - Presentador, para la colección de alarmas.
  */
 abstract class AlarmsContract {
