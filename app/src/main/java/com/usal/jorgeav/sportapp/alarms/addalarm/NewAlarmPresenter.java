@@ -25,15 +25,53 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
 
-class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+/**
+ * Presentador utilizado en la creación de alarmas. Aquí se validan todos los parámetros de
+ * la alarma introducidos en la Vista {@link NewAlarmContract.View}. También inicia la consulta
+ * al Proveedor de Contenido para obtener los datos de la alarma en caso de edición o para consultar
+ * las posibles instalaciones sobre las que establecer la alarma, en ambos casos el resultado será
+ * enviado a la Vista {@link NewAlarmContract.View}.
+ * Implementa la interfaz {@link NewAlarmContract.Presenter} para la comunicación con esta clase y la
+ * interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los callbacks de la
+ * consulta.
+ */
+class NewAlarmPresenter implements
+        NewAlarmContract.Presenter,
+        LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Nombre de la clase
+     */
     private static final String TAG = NewAlarmPresenter.class.getSimpleName();
 
+    /**
+     * Vista correspondiente a este Presentador
+     */
     private NewAlarmContract.View mNewAlarmView;
 
+    /**
+     * Constructor
+     *
+     * @param view referencia a la Vista correspondiente a este Presentador
+     */
     NewAlarmPresenter(NewAlarmContract.View view){
         this.mNewAlarmView = view;
     }
 
+    /**
+     * Valida los parámetros especificados y, si son correctos, crea la alarma en la base de
+     * datos del servidor.
+     *
+     * @param alarmId identificador de la alarma si se está editando o null si se está creando
+     * @param sport deporte de la alarma
+     * @param field instalación sobre la que escucha la alarma
+     * @param city ciudad sobre la que escucha la alarma
+     * @param dateFrom limite inferior del rango de fechas en las que la alarma está buscando
+     * @param dateTo límite superior del rango de fechas en las que la alarma está buscando
+     * @param totalFrom límite inferior del rango de puestos totales de los partidos buscados
+     * @param totalTo límite superior del rango de puestos totales de los partidos buscados
+     * @param emptyFrom límite inferior del rango de puestos vacantes de los partidos buscados
+     * @param emptyTo límite superior del rango de puestos vacantes de los partidos buscados
+     */
     @Override
     public void addAlarm(String alarmId, String sport, String field, String city, String dateFrom, String dateTo,
                          String totalFrom, String totalTo, String emptyFrom, String emptyTo) {
@@ -112,6 +150,13 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
         ((BaseFragment)mNewAlarmView).resetBackStack();
     }
 
+    /**
+     * Comprueba que el deporte es válido
+     *
+     * @param sport identificador del deporte
+     *
+     * @return true si es válido, false si no lo es
+     */
     private boolean isValidSport(String sport) {
         if (!TextUtils.isEmpty(sport)) {
             // If R.array.sport_id contains this sport
@@ -122,6 +167,17 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
         return false;
     }
 
+
+    /**
+     * Comprueba que el lugar el válido, teniendo en cuenta el deporte seleccionado para permitir
+     * que la instalación no sea especificada en deportes que no requieren de una.
+     *
+     * @param city ciudad
+     * @param fieldId identificador de la instalación
+     * @param sportId identificador del deporte
+     *
+     * @return true si es válido, false si no lo es
+     */
     private boolean isValidField(String city, String fieldId, String sportId) {
         if (city != null && !TextUtils.isEmpty(city)) {
             // Check if the sport doesn't need a field
@@ -146,6 +202,15 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
         return false;
     }
 
+    /**
+     * Comprueba que las fechas son válidas, asegurándose de que se establecen al menos a partir
+     * del día actual
+     *
+     * @param dateFrom limite inferior del rango de fechas en las que la alarma está buscando
+     * @param dateTo límite superior del rango de fechas en las que la alarma está buscando
+     *
+     * @return true si es válido, false si no lo es
+     */
     private boolean isDateCorrect(String dateFrom, String dateTo) {
         Long dateFromMillis = null, dateToMillis = null;
         if (!TextUtils.isEmpty(dateFrom))
@@ -162,18 +227,41 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
         return false;
     }
 
+    /**
+     * Comprueba que el rango de puestos totales especificado es correcto
+     *
+     * @param totalFrom límite inferior del rango de puestos totales de los partidos buscados
+     * @param totalTo límite superior del rango de puestos totales de los partidos buscados
+     *
+     * @return true si es válido, false si no lo es
+     */
     private boolean isTotalPlayersCorrect(String totalFrom, String totalTo) {
         if (TextUtils.isEmpty(totalFrom))
             return TextUtils.isEmpty(totalTo);
         return !TextUtils.isEmpty(totalTo) && Integer.valueOf(totalFrom) <= Integer.valueOf(totalTo);
     }
 
+    /**
+     * Comprueba que el rango de puestos vacantes especificado es correcto
+     *
+     * @param emptyFrom límite inferior del rango de puestos vacantes de los partidos buscados
+     * @param emptyTo límite superior del rango de puestos vacantes de los partidos buscados
+     *
+     * @return true si es válido, false si no lo es
+     */
     private boolean isEmptyPlayersCorrect(String emptyFrom, String emptyTo) {
         return !TextUtils.isEmpty(emptyFrom) && Integer.valueOf(emptyFrom) >= 0 &&
                 (TextUtils.isEmpty(emptyTo) || Integer.valueOf(emptyFrom) <= Integer.valueOf(emptyTo));
 
     }
 
+    /**
+     * Inicia el proceso de carga de la alarma que se va a editar de la base de datos
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     * @param b contenedor de posibles parámetros utilizados en la consulta
+     */
     @Override
     public void openAlarm(LoaderManager loaderManager, Bundle b) {
         if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_ALARM_ID)) {
@@ -181,17 +269,38 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
         }
     }
 
+    /**
+     * Inicia el proceso de carga de las instalaciones de la base de datos
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     * @param b contenedor de posibles parámetros utilizados en la consulta
+     */
     @Override
     public void loadFields(LoaderManager loaderManager, Bundle b) {
         if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_SPORT_SELECTED_ID))
             loaderManager.initLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT, b, this);
     }
 
+    /**
+     * Detiene el proceso de carga de las instalaciones de la base de datos
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     */
     @Override
     public void stopLoadFields(LoaderManager loaderManager) {
         loaderManager.destroyLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT);
     }
 
+    /**
+     * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
+     *
+     * @param id identificador del Loader
+     * @param args contenedor de posibles parámetros utilizados en la consulta
+     *
+     * @return Loader que realiza la consulta.
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String alarmId = args.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
@@ -208,6 +317,13 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
         return null;
     }
 
+    /**
+     * Invocado cuando finaliza la consulta del Loader, actúa sobre los resultados obtenidos en
+     * forma de {@link Cursor}.
+     *
+     * @param loader Loader utilizado para la consulta
+     * @param data resultado de la consulta
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
@@ -221,6 +337,12 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
         }
     }
 
+    /**
+     * Invocado cuando el {@link LoaderManager} exige un reinicio del Loader indicado. Se utiliza
+     * este método para borrar los resultados de la consulta anterior.
+     *
+     * @param loader Loader que va a reiniciarse.
+     */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
@@ -233,6 +355,12 @@ class NewAlarmPresenter implements NewAlarmContract.Presenter, LoaderManager.Loa
         }
     }
 
+    /**
+     * Extrae del {@link Cursor} los datos de la alarma para enviarlos a la Vista con el formato
+     * adecuado
+     *
+     * @param data datos obtenidos del Proveedor de Contenido
+     */
     private void showAlarmDetails(Cursor data) {
         Alarm a = UtilesContentProvider.cursorToSingleAlarm(data);
         if (a != null) {
