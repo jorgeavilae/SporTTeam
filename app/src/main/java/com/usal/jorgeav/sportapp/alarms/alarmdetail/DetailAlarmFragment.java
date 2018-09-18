@@ -44,50 +44,146 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailAlarmFragment extends BaseFragment implements DetailAlarmContract.View, EventsAdapter.OnEventItemClickListener {
+/**
+ * Fragmento utilizado para mostrar los detalles de una alarma. Se encarga de inicializar
+ * los componentes de la interfaz y utilizarlos para mostrar los parámetros de la alarma recuperados
+ * de la base de datos.
+ * Implementa la interfaz {@link DetailAlarmContract.View} para la comunicación con esta clase y la
+ * interfaz {@link EventsAdapter.OnEventItemClickListener} para manejar las pulsaciones sobre los
+ * eventos encontrados que coincidan con la alarma mostrada.
+ */
+public class DetailAlarmFragment extends BaseFragment implements
+        DetailAlarmContract.View,
+        EventsAdapter.OnEventItemClickListener {
+
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = DetailAlarmFragment.class.getSimpleName();
+    /**
+     * Etiqueta para establecer el identificador de alarma que debe mostrarse en la instanciación
+     * del Fragmento
+     */
     public static final String BUNDLE_ALARM_ID = "BUNDLE_ALARM_ID";
 
+    /**
+     * Identificador de la alarma que debe mostrarse
+     */
     private static String mAlarmId = "";
+    /**
+     * Identificador del deporte de la alarma que se muestra
+     */
     private static String mSportId = "";
+
+    /**
+     * Presentador correspondiente a esta Vista
+     */
     private DetailAlarmContract.Presenter mPresenter;
 
-    // Store Field's coordinates for rotations
+    /**
+     * Etiqueta utilizada para guardar, en el estado del Fragmento, las coordenadas que debe mostrar
+     * el mapa de la interfaz.
+     */
     public static final String INSTANCE_COORDS = "INSTANCE_COORDS";
+    /**
+     * Coordenadas que se muestran en el mapa de la interfaz, correspondientes a la instalación o
+     * la ciudad en la que se establece la alarma
+     */
     LatLng mCoords;
 
+    /**
+     * Referencia al mapa de la interfaz para mostrar la instalación o ciudad escogida
+     */
     @BindView(R.id.alarm_detail_map)
     MapView alarmMap;
+    /**
+     * Objeto principal de {@link
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary">
+     *     Google Maps API
+     * </a>}. Hace referencia al mapa que provee esta API.
+     */
     private GoogleMap mMap;
+    /**
+     * Referencia al elemento de la interfaz para indicar el deporte
+     */
     @BindView(R.id.alarm_detail_sport)
     ImageView imageViewAlarmSport;
+    /**
+     * Referencia al texto de la interfaz para indicar el lugar de la alarma
+     */
     @BindView(R.id.alarm_detail_place)
     TextView textViewAlarmPlace;
+    /**
+     * Referencia al botón de la interfaz para mostrar los detalles de la instalación
+     */
     @BindView(R.id.alarm_detail_place_icon)
     ImageView textViewAlarmPlaceIcon;
+    /**
+     * Referencia al elemento de la interfaz para indicar el limite inferior del rango de fechas
+     */
     @BindView(R.id.alarm_detail_date_from)
     TextView textViewAlarmDateFrom;
+    /**
+     * Referencia al elemento de la interfaz para indicar el limite superior del rango de fechas
+     */
     @BindView(R.id.alarm_detail_date_to)
     TextView textViewAlarmDateTo;
+    /**
+     * Referencia al elemento de la interfaz para indicar el limite inferior del rango de puestos
+     * totales
+     */
     @BindView(R.id.alarm_detail_total_from)
     TextView textViewAlarmTotalFrom;
+    /**
+     * Referencia al elemento de la interfaz para indicar el limite superior del rango de puestos
+     * totales
+     */
     @BindView(R.id.alarm_detail_total_to)
     TextView textViewAlarmTotalTo;
+    /**
+     * Referencia al elemento de la interfaz para indicar el limite inferior del rango de puestos
+     * vacantes
+     */
     @BindView(R.id.alarm_detail_empty_from)
     TextView textViewAlarmEmptyFrom;
+    /**
+     * Referencia al elemento de la interfaz para indicar el limite superior del rango de puestos
+     * vacantes
+     */
     @BindView(R.id.alarm_detail_empty_to)
     TextView textViewAlarmEmptyTo;
+    /**
+     * Referencia a la lista de la interfaz para mostrar la colección de partidos que coinciden
+     * con esta alarma
+     */
     @BindView(R.id.alarm_detail_events_coincidence_list)
     RecyclerView eventsCoincidenceList;
+    /**
+     * Adaptador para manejar y mostrar en cada celda los partidos que coinciden con esta alarma
+     */
     EventsAdapter eventsAdapter;
+    /**
+     * Referencia al contenedor de la interfaz que se muestra en caso de que no se encuentren
+     * partidos que coincidan con esta alarma
+     */
     @BindView(R.id.alarm_detail_events_placeholder)
     ConstraintLayout eventsCoincidencePlaceholder;
 
+    /**
+     * Constructor sin argumentos
+     */
     public DetailAlarmFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Método de instanciación del Fragmento.
+     *
+     * @param alarmId identificador de la alarma que se muestra
+     *
+     * @return una nueva instancia de DetailAlarmFragment
+     */
     public static DetailAlarmFragment newInstance(@NonNull String alarmId) {
         DetailAlarmFragment fragment = new DetailAlarmFragment();
         Bundle args = new Bundle();
@@ -96,6 +192,12 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         return fragment;
     }
 
+    /**
+     * Inicialización del Presentador correspondiente a esta Vista
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +206,11 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         mPresenter = new DetailAlarmPresenter(this);
     }
 
+    /**
+     * Inicializa el contenido del menú de opciones de la esquina superior derecha de la pantalla
+     *
+     * @param menu menú de opciones donde se van a emplazar los elementos.
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -111,6 +218,15 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         inflater.inflate(R.menu.menu_edit_delete, menu);
     }
 
+    /**
+     * Invocado cuando un elemento del menú es pulsado. En este caso se encarga de iniciar el
+     * proceso de edición de la alarma instanciando y mostrando el Fragmento correspondiente,
+     * o se encarga de iniciar el proceso de borrado de la alarma con la ayuda del Presentador.
+     *
+     * @param item elemento del menú pulsado
+     *
+     * @return true si se aceptó la pulsación, false en otro caso
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
@@ -129,6 +245,18 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         return false;
     }
 
+    /**
+     * Inicializa y obtiene una referencia a los elementos de la interfaz. Además centra el mapa en
+     * la ciudad del usuario, recupera posibles datos del estado anterior del Fragmento e inicializa
+     * el Adaptador de la colección de partidos.
+     *
+     * @param inflater utilizado para inflar el archivo de layout
+     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     *
+     * @return la vista de la interfaz inicializada
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -161,11 +289,20 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         eventsAdapter = new EventsAdapter(null, this, Glide.with(this));
         eventsCoincidenceList.setAdapter(eventsAdapter);
         eventsCoincidenceList.setHasFixedSize(true);
-        eventsCoincidenceList.setLayoutManager(new LinearLayoutManager(getActivityContext(), LinearLayoutManager.VERTICAL, false));
+        eventsCoincidenceList.setLayoutManager(new LinearLayoutManager(
+                getActivityContext(), LinearLayoutManager.VERTICAL, false));
 
         return root;
     }
 
+    /**
+     * Al finalizar el proceso de creación de la Actividad contenedora, se invoca este método que
+     * establece un título para la barra superior y la acción que debe realizar: navegar hacia
+     * atrás.
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -173,6 +310,10 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento, y pide al Presentador que
+     * recupere los parámetros de la alarma que se va a mostrar.
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -180,12 +321,19 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         mPresenter.openAlarm(getLoaderManager(), getArguments());
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento
+     */
     @Override
     public void onResume() {
         super.onResume();
         if (alarmMap != null) alarmMap.onResume();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento, y borra del Adaptador los
+     * posibles partidos que aloje para que no se almacenen en la variable de estado del Fragmento
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -193,6 +341,11 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         eventsAdapter.replaceData(null);
     }
 
+    /**
+     * Muestra en la interfaz el deporte de la alarma
+     *
+     * @param sport identificador del deporte
+     */
     @Override
     public void showAlarmSport(String sport) {
         if (sport != null) {
@@ -204,6 +357,12 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
 
     }
 
+    /**
+     * Muestra la dirección de la alarma o la ciudad y centra el mapa sobre ella
+     *
+     * @param field instalación
+     * @param city ciudad
+     */
     @Override
     public void showAlarmPlace(Field field, String city) {
         if (field != null) {
@@ -226,6 +385,14 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         }
     }
 
+    /**
+     * Muestra en la interfaz el rango de fechas establecido para la alarma. Si la alarma ya no
+     * está activa porque la fecha límite pertenece al pasado, muestra un aviso para que el usuario
+     * la modifique.
+     *
+     * @param dateFrom limite inferior del rango de fechas
+     * @param dateTo limite superior del rango de fechas
+     */
     @Override
     public void showAlarmDate(Long dateFrom, Long dateTo) {
         ((BaseActivity) getActivity()).showContent();
@@ -244,6 +411,12 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
             this.textViewAlarmDateTo.setText(R.string.forever);
     }
 
+    /**
+     * Muestra en la interfaz el rango de puesto totales buscados por la alarma
+     *
+     * @param totalPlayersFrom limite inferior del rango de puestos totales
+     * @param totalPlayersTo limite superior del rango de puestos totales
+     */
     @Override
     public void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo) {
         ((BaseActivity) getActivity()).showContent();
@@ -259,6 +432,12 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
             this.textViewAlarmTotalTo.setText(R.string.unspecified);
     }
 
+    /**
+     * Muestra en la interfaz el rango de puestos vacantes buscados por la alarma
+     *
+     * @param emptyPlayersFrom limite inferior del rango de puestos vacantes
+     * @param emptyPlayersTo limite superior del rango de puestos vacantes
+     */
     @Override
     public void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo) {
         ((BaseActivity) getActivity()).showContent();
@@ -274,6 +453,13 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
             this.textViewAlarmEmptyTo.setText(R.string.unspecified);
     }
 
+    /**
+     * Pasa al Adaptador el conjunto de partidos coincidentes con esta alarma encontrados en la
+     * base de datos. Si no se encontró ninguno, muestra una imagen explicando que la lista está
+     * vacía.
+     *
+     * @param data conjunto de partidos encontrados en la base de datos
+     */
     @Override
     public void showEvents(Cursor data) {
         eventsAdapter.replaceData(data);
@@ -290,6 +476,9 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         mFragmentManagementListener.showContent();
     }
 
+    /**
+     * Limpia los elementos de la interfaz utilizados para mostrar los datos de la alarma
+     */
     @Override
     public void clearUI() {
         this.imageViewAlarmSport.setVisibility(View.INVISIBLE);
@@ -305,12 +494,24 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
         this.textViewAlarmEmptyTo.setText("");
     }
 
+    /**
+     * Instancia y muestra el Fragmento encargado de mostrar los detalles del partido seleccionado
+     * de la lista por el usuario.
+     *
+     * @param eventId Identificador del Partido seleccionado
+     */
     @Override
     public void onEventClick(String eventId) {
         Fragment newFragment = DetailEventFragment.newInstance(eventId);
         mFragmentManagementListener.initFragment(newFragment, true);
     }
 
+    /**
+     * Alamacena en la variable de estado del Fragmento las coordenadas correspondientes al lugar
+     * sobre el que está establecida la alarma.
+     *
+     * @param outState donde se guarda estado del Fragmento en una posible rotación de la pantalla.
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -318,18 +519,27 @@ public class DetailAlarmFragment extends BaseFragment implements DetailAlarmCont
             outState.putParcelable(INSTANCE_COORDS, mCoords);
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (alarmMap != null) alarmMap.onDestroy();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento
+     */
     @Override
     public void onStop() {
         super.onStop();
         if (alarmMap != null) alarmMap.onStop();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento
+     */
     @Override
     public void onLowMemory() {
         super.onLowMemory();

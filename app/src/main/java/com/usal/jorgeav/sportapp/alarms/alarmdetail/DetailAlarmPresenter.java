@@ -18,16 +18,47 @@ import com.usal.jorgeav.sportapp.network.firebase.sync.AlarmsFirebaseSync;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 
-class DetailAlarmPresenter implements DetailAlarmContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+/**
+ * Presentador utilizado en la vista de detalles de alarmas. Aquí se inicia la consulta al
+ * Proveedor de Contenido para obtener los datos de la alarma o para consultar los partidos que
+ * coinciden con los parámetros de la alarma, en ambos casos el resultado será enviado a la
+ * Vista {@link DetailAlarmContract.View}. También se encarga de iniciar el borrado de una alarma
+ * de los servidores de la aplicación.
+ * Implementa la interfaz {@link DetailAlarmContract.Presenter} para la comunicación con esta clase
+ * y la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los callbacks de la
+ * consulta.
+ */
+class DetailAlarmPresenter implements
+        DetailAlarmContract.Presenter,
+        LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = DetailAlarmPresenter.class.getSimpleName();
 
+    /**
+     * Vista correspondiente a este Presentador
+     */
     private DetailAlarmContract.View mView;
 
+    /**
+     * Constructor
+     *
+     * @param view referencia a la Vista correspondiente a este Presentador
+     */
     DetailAlarmPresenter(@NonNull DetailAlarmContract.View view) {
         this.mView = view;
     }
 
+    /**
+     * Inicia el proceso de carga de la alarma que se quiere mostrar de la base de datos. También
+     * inicia la carga de los partidos que coinciden con los parámetros de la alarma.
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     * @param b contenedor de posibles parámetros utilizados en la consulta
+     */
     @Override
     public void openAlarm(LoaderManager loaderManager, Bundle b) {
         if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_ALARM_ID)) {
@@ -40,6 +71,11 @@ class DetailAlarmPresenter implements DetailAlarmContract.Presenter, LoaderManag
         }
     }
 
+    /**
+     * Inicia el proceso de borrado de la alarma de la base de datos
+     *
+     * @param b contenedor de posibles parámetros utilizados en el borrado
+     */
     @Override
     public void deleteAlarm(Bundle b) {
         String alarmId = b.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
@@ -51,6 +87,14 @@ class DetailAlarmPresenter implements DetailAlarmContract.Presenter, LoaderManag
         AlarmFirebaseActions.deleteAlarm(userId, alarmId);
     }
 
+    /**
+     * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
+     *
+     * @param id identificador del Loader
+     * @param args contenedor de posibles parámetros utilizados en la consulta
+     *
+     * @return Loader que realiza la consulta.
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String alarmId = args.getString(DetailAlarmFragment.BUNDLE_ALARM_ID);
@@ -67,6 +111,13 @@ class DetailAlarmPresenter implements DetailAlarmContract.Presenter, LoaderManag
         return null;
     }
 
+    /**
+     * Invocado cuando finaliza la consulta del Loader, actúa sobre los resultados obtenidos en
+     * forma de {@link Cursor} o envía los partidos encontrados a la Vista para que los muestre.
+     *
+     * @param loader Loader utilizado para la consulta
+     * @param data resultado de la consulta
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
@@ -79,6 +130,12 @@ class DetailAlarmPresenter implements DetailAlarmContract.Presenter, LoaderManag
         }
     }
 
+    /**
+     * Invocado cuando el {@link LoaderManager} exige un reinicio del Loader indicado. Se utiliza
+     * este método para borrar los resultados de la consulta anterior.
+     *
+     * @param loader Loader que va a reiniciarse.
+     */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
@@ -91,6 +148,12 @@ class DetailAlarmPresenter implements DetailAlarmContract.Presenter, LoaderManag
         }
     }
 
+    /**
+     * Extrae del {@link Cursor} los datos de la alarma para enviarlos a la Vista con el formato
+     * adecuado
+     *
+     * @param data datos obtenidos del Proveedor de Contenido
+     */
     private void showAlarmDetails(Cursor data) {
         Alarm a = UtilesContentProvider.cursorToSingleAlarm(data);
         if (a != null) {

@@ -58,11 +58,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Fragmento utilizado para mostrar la crear o editar alarmas. Se encarga de inicializar
- * los componentes de edición de la interfaz para que el usuario pueda introducir los parámetros
- * de la alarma, entre los que se encuentran dos {@link DatePickerDialog}, un {@link GoogleMap}
- * para indicar la instalación o la ciudad seleccionada y un {@link AutoCompleteTextView} para
- * escribir la ciudad.
+ * Fragmento utilizado para crear o editar alarmas. Se encarga de inicializar los componentes de
+ * edición de la interfaz para que el usuario pueda introducir los parámetros de la alarma, entre
+ * los que se encuentran dos {@link DatePickerDialog}, un {@link GoogleMap} para indicar la
+ * instalación o la ciudad seleccionada y un {@link AutoCompleteTextView} para escribir la ciudad.
  * Implementa la interfaz {@link NewAlarmContract.View} para la comunicación con esta clase.
  */
 public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.View  {
@@ -146,7 +145,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @BindView(R.id.new_alarm_sport)
     ImageView newAlarmSport;
     /**
-     * Referencia al text de la interfaz para indicar la instalación
+     * Referencia al texto de la interfaz para indicar la instalación
      */
     @BindView(R.id.new_alarm_field)
     TextView newAlarmField;
