@@ -46,57 +46,165 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailEventFragment extends BaseFragment implements DetailEventContract.View {
+/**
+ * Fragmento utilizado para mostrar los detalles de un partido. Se encarga de inicializar
+ * los componentes de la interfaz y utilizarlos para mostrar los parámetros del partido recuperados
+ * de la base de datos.
+ *
+ * <p>Adapta la interfaz, mostrando y ocultando elementos, según la relación del usuario con el
+ * partido mostrado. Además, también es relevante para ello, determinar si el partido está completo
+ * de participantes o si pertenece al pasado.
+ *
+ * <p>Implementa la interfaz {@link DetailEventContract.View} para la comunicación con esta clase.
+ */
+public class DetailEventFragment extends BaseFragment implements
+        DetailEventContract.View {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = DetailEventFragment.class.getSimpleName();
+
+    /**
+     * Etiqueta para establecer el identificador de partido que debe mostrarse en la instanciación
+     * del Fragmento
+     */
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
+    /**
+     * Identificador del partido que se está mostrando
+     */
     private String mEventId = "";
+
+    /**
+     * Identificador del deporte asociado al partido
+     */
     private String mSportId = "";
+
+    /**
+     * Identificador del usuario creador del partido
+     */
     private String mOwnerId = "";
+    /**
+     * Booleano que es true si el partido ya no acepta más participantes y false en caso contrario
+     */
     private Boolean isFull = null;
+    /**
+     * Booleano que es true si la fecha del partido corresponde al pasado y false en caso contrario
+     */
     private Boolean isPast = null;
+    /**
+     * Tipo de relación del usuario actual con el partido que se está mostrando
+     */
     @DetailEventPresenter.EventRelationType int mRelation = DetailEventPresenter.RELATION_TYPE_ERROR;
 
+    /**
+     * Presentador correspondiente a esta Vista
+     */
     private DetailEventContract.Presenter mPresenter;
 
+    /**
+     * Menú del Fragmento que cambiará según el tipo de relación del usuario con el partido
+     */
     Menu mMenu;
 
+    /**
+     * Referencia al mapa de la interfaz donde se emplaza el lugar del partido
+     */
     @BindView(R.id.event_detail_map)
     MapView detailEventMap;
+    /**
+     * Objeto principal de Google Maps API. Hace referencia al mapa que provee esta API.
+     *
+     * @see
+     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary">
+     *     Google Maps API
+     * </a>
+     */
     private GoogleMap mMap;
+    /**
+     * Referencia a la imagen de la interfaz donde se muestra el deporte del partido
+     */
     @BindView(R.id.event_detail_sport)
     ImageView detailEventSport;
+    /**
+     * Referencia al elemento de la interfaz donde se especifica el lugar del partido
+     */
     @BindView(R.id.event_detail_place)
     TextView detailEventPlace;
+    /**
+     * Referencia a la imagen de la interfaz que sirve de indicador para mostrar los detalles de la
+     * instalación donde se juega el partido
+     */
     @BindView(R.id.event_detail_place_icon)
     ImageView detailEventPlaceIcon;
+    /**
+     * Referencia al elemento de la interfaz donde se especifica la hora y la fecha del partido
+     */
     @BindView(R.id.event_detail_date)
     TextView detailEventDate;
 
+    /**
+     * Referencia al contenedor de la interfaz donde se acumula la información relativa a los
+     * puestos del partido
+     */
     @BindView(R.id.event_detail_participants_container)
     CardView detailEventParticipantsContainer;
+    /**
+     * Referencia a la imagen de la interfaz que sirve para conocer la proporción entre los
+     * puestos libres y totales
+     */
     @BindView(R.id.event_detail_players_proportion)
     ImageView detailEventProportion;
+    /**
+     * Referencia al elemento de la interfaz donde se especifican los puestos totales del partido
+     */
     @BindView(R.id.event_detail_total)
     TextView detailEventTotal;
+    /**
+     * Referencia al elemento de la interfaz donde se especifican los puestos vacantes del partido
+     */
     @BindView(R.id.event_detail_empty)
     TextView detailEventEmpty;
+    /**
+     * Referencia al botón de la interfaz que permitirá una y otra acción dependiendo de la
+     * relación del usuario actual con el partido
+     */
     @BindView(R.id.event_detail_state)
     Button detailEventStateButton;
 
+    /**
+     * Referencia al elemento de la interfaz donde se especifica el usuario creador del partido
+     */
     @BindView(R.id.event_detail_owner)
     TextView detailEventOwner;
 
+    /**
+     * Referencia al contenedor de la interfaz donde se pulsa para mostrar las peticiones de
+     * participación al partido
+     */
     @BindView(R.id.event_detail_user_requests)
     LinearLayout detailEventRequests;
+    /**
+     * Referencia al contenedor de la interfaz donde se pulsa para mostrar los usuarios a los que
+     * se puede enviar una invitación
+     */
     @BindView(R.id.event_detail_send_invitation)
     LinearLayout detailEventInvitation;
 
+    /**
+     * Constructor sin argumentos
+     */
     public DetailEventFragment() {
-        // Required empty public constructor
     }
 
+    /**
+     * Método de instanciación del Fragmento.
+     *
+     * @param eventId identificador del partido que se muestra
+     *
+     * @return una nueva instancia de DetailEventFragment
+     */
     public static DetailEventFragment newInstance(@NonNull String eventId) {
         DetailEventFragment fragment = new DetailEventFragment();
         Bundle args = new Bundle();
@@ -105,6 +213,12 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         return fragment;
     }
 
+    /**
+     * Inicialización del Presentador correspondiente a esta Vista
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +227,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         mPresenter = new DetailEventPresenter(this);
     }
 
+    /**
+     * Obtiene una referencia al menú y lo limpia para establecer su contenido una vez se conozca la
+     * relación del usuario con el partido
+     *
+     * @param menu menú de opciones donde se van a emplazar los elementos.
+     * @param inflater se utiliza para cargar las opciones de menú
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mMenu = menu;
@@ -120,6 +241,16 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         mMenu.clear();
     }
 
+    /**
+     * Invocado cuando un elemento del menú es pulsado. En este caso se encarga de iniciar el
+     * proceso de edición del partido instanciando y mostrando el Fragmento correspondiente, o de
+     * mostrar las invitaciones enviadas que no han sido respondidas, o se encarga de iniciar el
+     * proceso de borrado del partido con la ayuda del Presentador.
+     *
+     * @param item elemento del menú pulsado
+     *
+     * @return true si se aceptó la pulsación, false en otro caso
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
@@ -134,8 +265,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            mPresenter.deleteEvent(getArguments());
-                            ((BaseActivity)getActivity()).hideContent();
+                            if(mEventId != null) {
+                                mPresenter.deleteEvent(mEventId);
+                                ((BaseActivity) getActivity()).hideContent();
+                            }
                         }
                     })
                     .setNegativeButton(android.R.string.no, null);
@@ -151,6 +284,17 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         return false;
     }
 
+    /**
+     * Inicializa y obtiene una referencia a los elementos de la interfaz. Además centra el mapa en
+     * la ciudad del usuario y ordena al Presentador iniciar la consulta del tipo de relación.
+     *
+     * @param inflater utilizado para inflar el archivo de layout
+     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     *
+     * @return la vista de la interfaz inicializada
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -190,6 +334,13 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         return root;
     }
 
+    /**
+     * Modifica el aspecto de la interfaz dependiendo del tipo de relación especificado. Especifica
+     * el contenido del menú, el comportamiento del botón del contenedor de información sobre los
+     * puestos y muestra o esconde algunos botones.
+     *
+     * @param relation tipo de relación entre el usuario actual y el partido que se está mostrando
+     */
     @Override
     public void uiSetupForEventRelation(@DetailEventPresenter.EventRelationType int relation) {
         if (getActivity() == null) return;
@@ -239,6 +390,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         }
     }
 
+    /**
+     * Establece el aspecto de la interfaz cuando el usuario no tiene relación con el partido. Le
+     * permite enviar una petición de participación.
+     */
     private void setupForNone() {
         // Set menu actions
         if (mMenu != null) mMenu.clear();
@@ -264,6 +419,12 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         detailEventInvitation.setVisibility(View.GONE);
     }
 
+    /**
+     * Establece el aspecto de la interfaz para cuando el usuario es el creador del partido. Le
+     * permite borrarlo o editarlo, entre otras cosas.
+     *
+     * @param menuInflater se utiliza para cargar las opciones del menú
+     */
     private void setupForOwner(MenuInflater menuInflater) {
         // Set menu actions
         if (mMenu != null) {
@@ -287,9 +448,9 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         // Set send invitation button
         detailEventInvitation.setVisibility(View.VISIBLE);
         detailEventInvitation.setEnabled(true);
-        View.OnClickListener sendIntvitationClickListener = null;
+        View.OnClickListener sendInvitationClickListener;
         if (isFull == null || !isFull) {
-            sendIntvitationClickListener = new View.OnClickListener() {
+            sendInvitationClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Fragment fragment = InviteUserFragment.newInstance(mEventId);
@@ -297,7 +458,7 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 }
             };
         } else {
-            sendIntvitationClickListener = new View.OnClickListener() {
+            sendInvitationClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getContext(), R.string.no_empty_players_for_user,
@@ -305,12 +466,18 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
                 }
             };
         }
-        detailEventInvitation.setOnClickListener(sendIntvitationClickListener);
+        detailEventInvitation.setOnClickListener(sendInvitationClickListener);
 
         // Hide other buttons
         detailEventStateButton.setVisibility(View.GONE);
     }
 
+    /**
+     * Establece el aspecto de la interfaz para cuando el usuario es participante del partido. Le
+     * permite salir del evento o enviar invitaciones, entre otras cosas.
+     *
+     * @param menuInflater se utiliza para cargar las opciones del menú
+     */
     private void setupForParticipant(MenuInflater menuInflater) {
         // Set menu actions
         if (mMenu != null) {
@@ -367,6 +534,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         detailEventRequests.setVisibility(View.GONE);
     }
 
+    /**
+     * Establece el aspecto de la interfaz para cuando el usuario ha enviado ya una petición de
+     * participación.
+     */
     private void setupForRequestSent() {
         // Set menu actions
         if (mMenu != null) mMenu.clear();
@@ -395,6 +566,12 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         detailEventInvitation.setVisibility(View.GONE);
     }
 
+    /**
+     * Establece el aspecto de la interfaz para cuando el usuario ha recibido una invitación a este
+     * partido. Le permite aceptar o declinar la invitación.
+     *
+     * @param menuInflater se utiliza para cargar las opciones del menú
+     */
     private void setupForInvitationReceived() {
         // Set menu actions
         if (mMenu != null) mMenu.clear();
@@ -433,6 +610,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         detailEventInvitation.setVisibility(View.GONE);
     }
 
+    /**
+     * Establece el aspecto de la interfaz para cuando al usuario le han rechazado su petición de
+     * participación. No se le permite realizar ninguna acción.
+     */
     private void setupForBlocked() {
         // Set menu actions
         if (mMenu != null) mMenu.clear();
@@ -447,6 +628,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         detailEventInvitation.setVisibility(View.GONE);
     }
 
+    /**
+     * Establece el aspecto de la interfaz para cuando se produce algún error en la consulta del
+     * tipo de relación.
+     */
     private void setupForError() {
         // Set menu actions
         if (mMenu != null) mMenu.clear();
@@ -461,6 +646,14 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         detailEventInvitation.setVisibility(View.GONE);
     }
 
+    /**
+     * Al finalizar el proceso de creación de la Actividad contenedora, se invoca este método que
+     * establece un título para la barra superior y la acción que debe realizar: navegar hacia
+     * atrás.
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -468,6 +661,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento, y pide al Presentador que
+     * recupere los parámetros del partido que se va a mostrar.
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -475,6 +672,11 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         mPresenter.openEvent(getLoaderManager(), getArguments());
     }
 
+    /**
+     * Muestra en la interfaz el deporte del partido
+     *
+     * @param sport identificador del deporte
+     */
     @Override
     public void showEventSport(String sport) {
         showContent();
@@ -483,6 +685,17 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         mSportId = sport;
     }
 
+    /**
+     * Muestra en la interfaz el lugar del partido. Escribe la dirección y sitúa el mapa sobre sus
+     * coordenadas. También establece el botón para mostrar el Fragmento con los detalles de la
+     * instalación en la pantalla
+     *
+     * @param field instalación con sus parámetros. Puede ser null, si el deporte no requiere
+     *              instalación
+     * @param address dirección postal donde se juega. Coincide con la dirección de la
+     *                instalación si la hay.
+     * @param coord coordenadas sobre el mapa del lugar del partido. Coincide con las coordenadas
+     */
     @Override
     public void showEventField(Field field, String address, LatLng coord) {
         showContent();
@@ -506,6 +719,11 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         Utiles.setCoordinatesInMap(getActivityContext(), mMap, coord);
     }
 
+    /**
+     * Muestra en la interfaz el nombre del partido
+     *
+     * @param name nombre
+     */
     @Override
     public void showEventName(String name) {
         showContent();
@@ -513,6 +731,12 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
             mNavigationDrawerManagementListener.setActionBarTitle(name);
     }
 
+    /**
+     * Muestra en la interfaz el día y la fecha del partido. Si pertenece al pasado, se cambia el
+     * aspecto por completo.
+     *
+     * @param date fecha y hora en milisegundos
+     */
     @Override
     public void showEventDate(long date) {
         showContent();
@@ -523,6 +747,11 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         uiSetupForEventRelation(mRelation);
     }
 
+    /**
+     * Muestra en la interfaz el nombre del usuario creador del partido
+     *
+     * @param owner identificador del usuario creador del partido
+     */
     @Override
     public void showEventOwner(String owner) {
         showContent();
@@ -536,6 +765,14 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
 
     }
 
+    /**
+     * Muestra en la interfaz el número de puestos vacantes y totales del partido y establece la
+     * imagen que representa esa proporción. Si el partido está completo, se cambia el aspecto de
+     * la interfaz por completo.
+     *
+     * @param emptyPlayers número de puestos vacantes
+     * @param totalPlayers número de puestos totales
+     */
     @Override
     public void showEventPlayers(int emptyPlayers, int totalPlayers) {
         showContent();
@@ -550,12 +787,21 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         }
     }
 
+    /**
+     * Muestra el mensaje especificado en la interfaz mediante un {@link Toast}. Aunque la llamada
+     * se produzca desde otro hilo, la operación sobre la interfaz para mostrar  el mensaje debe
+     * ejecutarse desde el hilo principal.
+     *
+     * @param msgResource identificador del recurso de texto correspondiente al mensaje que se
+     *                    quiere mostrar
+     *
+     * @see
+     * <a href="https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)">
+     *     runOnUiThread(java.lang.Runnable)
+     * </a>
+     */
     @Override
     public void showMsgFromBackgroundThread(final int msgResource) {
-        /* Perform UI actions (like display a Toast or press back) need to happen in UI thread
-         * https://stackoverflow.com/a/3875204/4235666
-         * https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)
-         */
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -565,6 +811,9 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         });
     }
 
+    /**
+     * Limpia la interfaz de los datos del partido
+     */
     @Override
     public void clearUI() {
         this.detailEventSport.setVisibility(View.INVISIBLE);
@@ -578,11 +827,20 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         this.detailEventEmpty.setText("");
     }
 
+    /**
+     * Devuelve el identificador del partido
+     *
+     * @return identificador del partido
+     */
     @Override
     public String getEventID() {
         return mEventId;
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento, y ordena al Presentador que se
+     * añada como Observer de la relación entre el usuario y el partido
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -592,6 +850,10 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         setMenuVisibility(true);
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento, y ordena al Presentador que se
+     * borre como Observer de la relación entre el usuario y el partido
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -599,18 +861,27 @@ public class DetailEventFragment extends BaseFragment implements DetailEventCont
         mPresenter.unregisterUserRelationObserver();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         detailEventMap.onDestroy();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento.
+     */
     @Override
     public void onStop() {
         super.onStop();
         detailEventMap.onStop();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento.
+     */
     @Override
     public void onLowMemory() {
         super.onLowMemory();

@@ -27,16 +27,60 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 
-public class DetailEventPresenter implements DetailEventContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+/**
+ * Presentador utilizado en la vista de detalles de partidos. Aquí se inicia la consulta al
+ * Proveedor de Contenido para obtener los datos del partido, el resultado será enviado a la
+ * Vista {@link DetailEventContract.View}.
+ *
+ * <p>También se encarga de determinar la relación entre el usuario actual y el partido que se está
+ * mostrando. Para ello utiliza una {@link AsyncTask} que permite consultar el Proveedor de
+ * Contenido fuera del hilo principal. Además, se mantiene a la escucha de cambios en esa relación
+ * mediante un patrón Observer.
+ *
+ * <p>Por último, desde la Vista se pueden iniciar los procesos de borrado del partido,
+ * envío y cancelación de peticiones de participación, contestación de invitaciones, o incluso
+ * permitir que el usuario abandone el partido. Todos esos procesos se realizan a través de esta clase.
+ *
+ * Implementa la interfaz {@link DetailEventContract.Presenter} para la comunicación con esta clase
+ * y la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los callbacks de la
+ * consulta.
+ */
+public class DetailEventPresenter implements
+        DetailEventContract.Presenter,
+        LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = DetailEventPresenter.class.getSimpleName();
 
+    /**
+     * Vista correspondiente a este Presentador
+     */
     private DetailEventContract.View mView;
+    /**
+     * Permite que el Presentador mantenga un callback sobre una URI de la base de datos basándose
+     * en el patrón Observer
+     */
     private ContentObserver mContentObserver;
 
+    /**
+     * Identificador del usuario creador del partido
+     */
     private String ownerUid = "";
+    /**
+     * Objeto {@link Invitation} con los parámetros asociados a la posible invitación recibida por
+     * el usuario
+     */
     static Invitation mInvitation = null;
 
+    /**
+     * Constructor con argumentos. Aquí se inicializa el {@link ContentObserver} estableciendo su
+     * comportamiento: determinar el nuevo tipo de relación con
+     * {@link #getRelationTypeBetweenThisEventAndI()}
+     *
+     * @param view Vista correspondiente a este Presentador
+     */
     DetailEventPresenter(@NonNull DetailEventContract.View view) {
         this.mView = view;
 
@@ -49,6 +93,13 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         };
     }
 
+    /**
+     * Inicia el proceso de carga del partido que se quiere mostrar de la base de datos.
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     * @param b contenedor de posibles parámetros utilizados en la consulta
+     */
     @Override
     public void openEvent(LoaderManager loaderManager, Bundle b) {
         String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
@@ -56,6 +107,14 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         loaderManager.initLoader(SportteamLoader.LOADER_EVENT_ID, b, this);
     }
 
+    /**
+     * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
+     *
+     * @param id identificador del Loader
+     * @param args contenedor de posibles parámetros utilizados en la consulta
+     *
+     * @return Loader que realiza la consulta.
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
@@ -68,16 +127,35 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         return null;
     }
 
+    /**
+     * Invocado cuando finaliza la consulta del Loader, actúa sobre los resultados obtenidos en
+     * forma de {@link Cursor}.
+     *
+     * @param loader Loader utilizado para la consulta
+     * @param data resultado de la consulta
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         showEventDetails(data);
     }
 
+    /**
+     * Invocado cuando el {@link LoaderManager} exige un reinicio del Loader indicado. Se utiliza
+     * este método para borrar los resultados de la consulta anterior.
+     *
+     * @param loader Loader que va a reiniciarse.
+     */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         showEventDetails(null);
     }
 
+    /**
+     * Extrae del {@link Cursor} los datos del partido para enviarlos a la Vista con el formato
+     * adecuado
+     *
+     * @param data datos obtenidos del Proveedor de Contenido
+     */
     private void showEventDetails(Cursor data) {
         if (data != null && data.moveToFirst()) {
             mView.showEventSport(data.getString(SportteamContract.EventEntry.COLUMN_SPORT));
@@ -104,36 +182,101 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         }
     }
 
+    /**
+     * Modificador que, aplicado a una variable, le permite adquirir como valor solamente el
+     * conjunto de constantes que representan los distintos tipos de relación posible entre un
+     * usuario y un partido.
+     */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_OWNER,
             RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_INVITATION,
             RELATION_TYPE_ASSISTANT, RELATION_TYPE_BLOCKED})
     public @interface EventRelationType {}
+
+    /**
+     * Error
+     */
     public static final int RELATION_TYPE_ERROR = -1;
+    /**
+     * Ninguna relación
+     */
     public static final int RELATION_TYPE_NONE = 0;
+    /**
+     * Creador
+     */
     public static final int RELATION_TYPE_OWNER = 1; //Event.owner = me
+    /**
+     * Petición de participación enviada
+     */
     public static final int RELATION_TYPE_I_SEND_REQUEST = 2; //Request.sender = me
+    /**
+     * Invitación al partido recibida
+     */
     public static final int RELATION_TYPE_I_RECEIVE_INVITATION = 3; //Invitation.receiver = me
+    /**
+     * Participante en el partido
+     */
     public static final int RELATION_TYPE_ASSISTANT = 4; //Participation true
+    /**
+     * Bloqueado para el partido
+     */
     public static final int RELATION_TYPE_BLOCKED = 5; //Participation false
+
+
+    /**
+     * Crea y ejecuta una {@link AsyncTask} para realizar una serie de consultas al Proveedor de
+     * Contenido que determinen la relación entre el usuario y el partido. Es necesario ya que las
+     * consultas a la base de datos pueden tardar demasiado para realizarlas sobre el hilo de
+     * ejecución principal, ralentizando la interfaz.
+     */
     @Override
     public void getRelationTypeBetweenThisEventAndI() {
         // Do it in AsyncTask to avoid query ContentProvider in UI Thread
         new MyAsyncTask(mView).execute();
     }
 
-    // Use custom static AsyncTask class instead of create AsyncTask inside
-    // getRelationTypeBetweenThisEventAndI() to avoid memory leak problem
+    /**
+     * Clase interna derivada de {@link AsyncTask} para realizar acciones fuera del hilo principal
+     * de ejecución. Concretamente, esta clase se encarga de consultar el Proveedor de Contenido
+     * buscando la relación entre un identificador de usuario y un identificador de partido dados.
+     * Además, mantiene una referencia a la Vista correspondiente al Presentador para poder
+     * comunicarle los resultado de la consulta.
+     *
+     * <p>Crear esta clase interna con una referencia débil {@link WeakReference} a la Vista
+     * evita fugas de memoria, evitando una conexión fuerte entre la Vista, con un ciclo de vida
+     * propio, y este objeto, que se ejecuta fuera del hilo de la interfaz, permite al GC borrar
+     * la Vista.
+     */
     private static class MyAsyncTask extends AsyncTask<Void, Void, Integer> {
 
-        // https://developer.android.com/reference/java/lang/ref/WeakReference
-        // The View with a weak reference could be collected by GC.
+        /**
+         * Referencia a la Vista para comunicar resultados
+         *
+         * @see
+         * <a href="https://developer.android.com/reference/java/lang/ref/WeakReference">
+         *     WeakReference
+         * </a>
+         */
         private WeakReference<DetailEventContract.View> mView;
 
+        /**
+         * Constructor
+         *
+         * @param view Vista correspondiente al Presentador
+         */
         MyAsyncTask(DetailEventContract.View view) {
             mView = new WeakReference<>(view);
         }
 
+        /**
+         * Método de {@link AsyncTask} que se ejecuta fuera del hilo principal. Aquí se realizan
+         * secuencialmente las consultas a diferentes tablas del Proveedor de Contenido hasta
+         * determinar la relación entre el usuario y el partido.
+         *
+         * @param voids no se requiere ningún parámetro
+         *
+         * @return tipo de relación según las constantes declaradas en {@link DetailEventPresenter}
+         */
         @Override
         protected Integer doInBackground(Void... voids) {
             // Check if DetailEventView still exists
@@ -239,6 +382,13 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             }
         }
 
+        /**
+         * Envía el resultado obtenido en {@link #doInBackground(Void...)} a la Vista.Este método
+         * ya no se ejecuta en segundo plano.
+         *
+         * @param integer tipo de relación según las constantes declaradas en
+         *                  {@link DetailEventPresenter}
+         */
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
@@ -246,6 +396,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
         }
     }
 
+    /**
+     * Invocado desde la Vista cuando el usuario quiere enviar una petición de participación
+     * al partido
+     *
+     * @param eventId identificador del partido
+     */
     @Override
     public void sendEventRequest(String eventId) {
         String myUid = Utiles.getCurrentUserId();
@@ -253,6 +409,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             EventRequestFirebaseActions.sendEventRequest(myUid, eventId, ownerUid);
     }
 
+    /**
+     * Invocado desde la Vista cuando el usuario quiere cancelar una petición de participación
+     * enviada al partido previamente
+     *
+     * @param eventId identificador del partido
+     */
     @Override
     public void cancelEventRequest(String eventId) {
         String myUid = Utiles.getCurrentUserId();
@@ -260,6 +422,12 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             EventRequestFirebaseActions.cancelEventRequest(myUid, eventId, ownerUid);
     }
 
+    /**
+     * Invocado desde la Vista cuando el usuario quiere aceptar la invitación al partido que ha recibido
+     *
+     * @param eventId identificador del partido
+     * @param sender identificador del usuario que envió la petición
+     */
     @Override
     public void acceptEventInvitation(String eventId, String sender) {
         String myUid = Utiles.getCurrentUserId();
@@ -267,11 +435,13 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             InvitationFirebaseActions.acceptEventInvitation(mView.getThis(), myUid, eventId, sender);
     }
 
-    @Override
-    public Invitation getEventInvitation() {
-        return mInvitation;
-    }
-
+    /**
+     * Invocado desde la Vista cuando el usuario quiere rechazar la invitación al partido que ha
+     * recibido
+     *
+     * @param eventId identificador del partido
+     * @param sender identificador del usuario que envió la petición
+     */
     @Override
     public void declineEventInvitation(String eventId, String sender) {
         String myUid = Utiles.getCurrentUserId();
@@ -279,19 +449,46 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
             InvitationFirebaseActions.declineEventInvitation(myUid, eventId, sender);
     }
 
+    /**
+     * Devuelve la posible invitación al partido recibida por el usuario
+     *
+     * @return la invitación recibida o null
+     */
     @Override
-    public void quitEvent(String eventId, boolean deleteSimulatedParticipant) {
-        String myUid = Utiles.getCurrentUserId();
-        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId))
-            EventsFirebaseActions.quitEvent(myUid, eventId, deleteSimulatedParticipant);
+    public Invitation getEventInvitation() {
+        return mInvitation;
     }
 
+    /**
+     * Invocado desde la Vista cuando el usuario ya no quiere asistir al partido
+     *
+     * @param eventId identificador del partido
+     * @param deleteSimulatedParticipants true si se desea borrar también los usuarios simulados
+     *                                    {@link com.usal.jorgeav.sportapp.data.SimulatedUser}
+     *                                    añadidos por el usuario que ya no asistirá, false en
+     *                                    otro caso
+     */
     @Override
-    public void deleteEvent(Bundle b) {
-        String eventId = b.getString(DetailEventFragment.BUNDLE_EVENT_ID);
+    public void quitEvent(String eventId, boolean deleteSimulatedParticipants) {
+        String myUid = Utiles.getCurrentUserId();
+        if (!TextUtils.isEmpty(myUid) && !TextUtils.isEmpty(eventId))
+            EventsFirebaseActions.quitEvent(myUid, eventId, deleteSimulatedParticipants);
+    }
+
+    /**
+     * Invocado desde la Vista cuando el creador del partido desea eliminarlo de la base de datos
+     *
+     * @param eventId identificador del partido
+     */
+    @Override
+    public void deleteEvent(String eventId) {
         EventsFirebaseActions.deleteEvent(mView.getThis(), eventId);
     }
 
+    /**
+     * Registra y activa el Observer creado en el Constructor de esta clase sobre la URI
+     * correspondiente a la relación entre usuario y partido
+     */
     @Override
     public void registerUserRelationObserver() {
         // Register observer to listen for changes in event-user relation
@@ -299,6 +496,10 @@ public class DetailEventPresenter implements DetailEventContract.Presenter, Load
                 SportteamContract.UserEntry.CONTENT_USER_RELATION_EVENT_URI, false, mContentObserver);
     }
 
+    /**
+     * Desactiva el Observer creado en el Constructor de esta clase y que estaba puesto sobre la URI
+     * correspondiente a la relación entre usuario y partido
+     */
     @Override
     public void unregisterUserRelationObserver() {
         mView.getActivityContext().getContentResolver().unregisterContentObserver(mContentObserver);
