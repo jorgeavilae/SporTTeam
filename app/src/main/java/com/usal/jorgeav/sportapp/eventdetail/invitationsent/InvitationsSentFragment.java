@@ -26,25 +26,69 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class InvitationsSentFragment extends BaseFragment implements InvitationsSentContract.View, UsersAdapter.OnUserItemClickListener {
+/**
+ * Fragmento utilizado para mostrar la colección de invitaciones enviadas por el usuario actual.
+ * Se encarga de inicializar los componentes de la interfaz para mostrar la colección con la ayuda
+ * de {@link UsersAdapter} ya que cada invitación será representada por el usuario al que fue
+ * destinada.
+ * Implementa la interfaz {@link InvitationsSentContract.View} para la comunicación con esta clase
+ * y la interfaz {@link UsersAdapter.OnUserItemClickListener} para manejar la pulsación sobre cada
+ * uno de los usuarios destinatarios de la invitación.
+ */
+public class InvitationsSentFragment extends BaseFragment implements
+        InvitationsSentContract.View,
+        UsersAdapter.OnUserItemClickListener {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = InvitationsSentFragment.class.getSimpleName();
+    /**
+     * Etiqueta para establecer el identificador del evento al que están referidas las invitaciones
+     * que deben mostrarse en la instanciación del Fragmento
+     */
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
 
+    /**
+     * Presentador correspondiente a esta Vista
+     */
     InvitationsSentContract.Presenter mEventInvitationsPresenter;
 
+    /**
+     * Identificador del evento al que van referidas las invitaciones mostradas en este Fragmento
+     */
     private static String mEventId = "";
 
+    /**
+     * Referencia al elemento de la interfaz donde se lista los usuario destinatarios de las
+     * invitaciones
+     */
     @BindView(R.id.recycler_list)
     RecyclerView userInvitationsSentList;
+    /**
+     * Adaptador para manejar y emplazar los datos de los usuario destinatarios de las invitaciones
+     * en cada una de las celdas de la lista
+     */
     UsersAdapter mUsersAdapter;
+    /**
+     * Referencia al elemento de la interfaz que debe mostrarse en caso de que la consulta de
+     * invitaciones no arroje ningún resultado.
+     */
     @BindView(R.id.list_placeholder)
     ConstraintLayout userInvitationsSentPlaceholder;
 
+    /**
+     * Constructor sin argumentos
+     */
     public InvitationsSentFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Método de instanciación del Fragmento
+     *
+     * @return una nueva instancia de InvitationsSentFragment
+     */
     public static InvitationsSentFragment newInstance(@NonNull String eventId) {
         Bundle args = new Bundle();
         args.putString(BUNDLE_EVENT_ID, eventId);
@@ -53,6 +97,13 @@ public class InvitationsSentFragment extends BaseFragment implements Invitations
         return fragment;
     }
 
+    /**
+     * Inicializa el Presentador correspondiente a esta Vista, y el Adaptador para la colección de
+     * usuarios.
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,12 +113,29 @@ public class InvitationsSentFragment extends BaseFragment implements Invitations
         mUsersAdapter = new UsersAdapter(null, this, Glide.with(this));
     }
 
+    /**
+     * Inicializa el contenido del menú de opciones de la esquina superior derecha de la pantalla:
+     * lo limpia para no mostrar ninguna opción.
+     *
+     * @param menu menú de opciones donde se van a emplazar los elementos.
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
     }
 
+    /**
+     * Inicializa y obtiene una referencia a los elementos de la interfaz. Establece el adaptador
+     * creado como adaptador de la lista de la interfaz recién inflada.
+     *
+     * @param inflater utilizado para inflar el archivo de layout
+     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     *
+     * @return la vista de la interfaz inicializada
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -85,6 +153,13 @@ public class InvitationsSentFragment extends BaseFragment implements Invitations
         return root;
     }
 
+    /**
+     * Al finalizar el proceso de creación de la Actividad contenedora, se invoca este método que
+     * establece un título para la barra superior y la acción que debe realizar: navegar hacia atrás.
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -92,18 +167,33 @@ public class InvitationsSentFragment extends BaseFragment implements Invitations
         mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
+    /**
+     * Ordena al Presentador que inicie el proceso de carga de los usuarios destinatarios de
+     * invitaciones que se encuentren en la base de datos.
+     */
     @Override
     public void onStart() {
         super.onStart();
         mEventInvitationsPresenter.loadEventInvitationsSent(getLoaderManager(), getArguments());
     }
 
+    /**
+     * Borra los usuarios almacenados en el Adaptador para que no se guarden en el estado del
+     * Fragmento. Son recuperados inmediatamente al volver a mostrar el Fragmento por estar
+     * haciendo la misma consulta al Loader.
+     */
     @Override
     public void onPause() {
         super.onPause();
         mUsersAdapter.replaceData(null);
     }
 
+    /**
+     * Establece en el Adaptador los usuarios contenidos en el {@link Cursor} y, si no está vacío,
+     * muestra la lista; si está vacío, muestra una imagen que lo indica
+     *
+     * @param cursor usuarios obtenidos en la consulta
+     */
     @Override
     public void showEventInvitationsSent(Cursor cursor) {
         mUsersAdapter.replaceData(cursor);
@@ -117,6 +207,13 @@ public class InvitationsSentFragment extends BaseFragment implements Invitations
         mFragmentManagementListener.showContent();
     }
 
+    /**
+     * Crea y muestra un cuadro de diálogo preguntando si se quiere borrar la invitación que se
+     * envió al usuario seleccionado. También ofrece la opción de ver la pantalla de perfil del
+     * usuario pulsado.
+     *
+     * @param uid Identificador del usuario pulsado
+     */
     @Override
     public void onUserClick(final String uid) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext())
@@ -136,6 +233,13 @@ public class InvitationsSentFragment extends BaseFragment implements Invitations
         builder.create().show();
     }
 
+    /**
+     * No realiza ninguna acción
+     *
+     * @param uid Identificador del usuario pulsado
+     *
+     * @return false
+     */
     @Override
     public boolean onUserLongClick(String uid) {
         return false;
