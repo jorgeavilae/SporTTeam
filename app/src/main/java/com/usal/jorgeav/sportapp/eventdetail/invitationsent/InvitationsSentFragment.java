@@ -87,6 +87,8 @@ public class InvitationsSentFragment extends BaseFragment implements
     /**
      * Método de instanciación del Fragmento
      *
+     * @param eventId identificador del partido al que hacen referencia las invitaciones
+     *
      * @return una nueva instancia de InvitationsSentFragment
      */
     public static InvitationsSentFragment newInstance(@NonNull String eventId) {

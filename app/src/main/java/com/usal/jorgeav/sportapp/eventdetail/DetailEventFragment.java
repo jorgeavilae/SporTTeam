@@ -569,8 +569,6 @@ public class DetailEventFragment extends BaseFragment implements
     /**
      * Establece el aspecto de la interfaz para cuando el usuario ha recibido una invitación a este
      * partido. Le permite aceptar o declinar la invitación.
-     *
-     * @param menuInflater se utiliza para cargar las opciones del menú
      */
     private void setupForInvitationReceived() {
         // Set menu actions
