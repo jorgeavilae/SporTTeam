@@ -172,7 +172,7 @@ public class AlarmsFragment extends BaseFragment implements
     /**
      * Borra las alarmas almacenadas en el Adaptador para que no se guarden en el estado del
      * Fragmento. Son recuperadas inmediatamente al volver a mostrar el Fragmento por estar
-     * haciendo la misma consulta al Loader.
+     * usando el mismo Loader.
      */
     @Override
     public void onPause() {

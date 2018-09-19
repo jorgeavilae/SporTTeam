@@ -180,7 +180,7 @@ public class InvitationsSentFragment extends BaseFragment implements
     /**
      * Borra los usuarios almacenados en el Adaptador para que no se guarden en el estado del
      * Fragmento. Son recuperados inmediatamente al volver a mostrar el Fragmento por estar
-     * haciendo la misma consulta al Loader.
+     * usando el mismo Loader.
      */
     @Override
     public void onPause() {
@@ -209,8 +209,8 @@ public class InvitationsSentFragment extends BaseFragment implements
 
     /**
      * Crea y muestra un cuadro de diálogo preguntando si se quiere borrar la invitación que se
-     * envió al usuario seleccionado. También ofrece la opción de ver la pantalla de perfil del
-     * usuario pulsado.
+     * envió al usuario seleccionado. También ofrece la opción de mostrar el perfil del usuario
+     * pulsado.
      *
      * @param uid Identificador del usuario pulsado
      */
