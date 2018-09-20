@@ -60,16 +60,16 @@ public class InvitationsSentFragment extends BaseFragment implements
     private static String mEventId = "";
 
     /**
+     * Adaptador para manejar y emplazar los datos de los usuario destinatarios de las invitaciones
+     * en cada una de las celdas de la lista
+     */
+    UsersAdapter mUsersAdapter;
+    /**
      * Referencia al elemento de la interfaz donde se lista los usuario destinatarios de las
      * invitaciones
      */
     @BindView(R.id.recycler_list)
     RecyclerView userInvitationsSentList;
-    /**
-     * Adaptador para manejar y emplazar los datos de los usuario destinatarios de las invitaciones
-     * en cada una de las celdas de la lista
-     */
-    UsersAdapter mUsersAdapter;
     /**
      * Referencia al elemento de la interfaz que debe mostrarse en caso de que la consulta de
      * invitaciones no arroje ningún resultado.
