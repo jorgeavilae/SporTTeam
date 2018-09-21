@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.alarms;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -44,7 +45,7 @@ class AlarmsPresenter implements
      *
      * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
      *                      de Contenido
-     * @param b contenedor de posibles parámetros utilizados en la consulta
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
      */
     @Override
     public void loadAlarms(LoaderManager loaderManager, Bundle b) {
@@ -53,12 +54,12 @@ class AlarmsPresenter implements
     }
 
     /**
-     * Invocado por  {@link LoaderManager} para crear el Loader usado para la consulta
+     * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
      *
-     * @param id identificador del Loader
+     * @param id   identificador del Loader
      * @param args contenedor de posibles parámetros utilizados en la consulta
-     *
      * @return Loader que realiza la consulta.
+     * @see SportteamLoader#cursorLoaderMyAlarms(Context)
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -75,7 +76,7 @@ class AlarmsPresenter implements
      * forma de {@link Cursor} a la Vista.
      *
      * @param loader Loader utilizado para la consulta
-     * @param data resultado de la consulta
+     * @param data   resultado de la consulta
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {

@@ -127,17 +127,12 @@ public class AlarmsFragment extends BaseFragment implements
      * ButterKnife. Establece el adaptador creado como adaptador de la lista de la interfaz recién
      * inflada.
      *
-     * @param inflater utilizado para inflar el archivo de layout
-     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
      * @return la vista de la interfaz inicializada
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

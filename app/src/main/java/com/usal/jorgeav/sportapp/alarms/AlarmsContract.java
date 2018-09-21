@@ -7,7 +7,7 @@ import android.support.v4.app.LoaderManager;
 
 /**
  * Clase abstracta donde se declaran las interfaces por las que se comunican Vista y Presentador
- * de la arquitectura utilizada Modelo - Vista - Presentador, para la colección de alarmas.
+ * de la arquitectura utilizada Modelo - Vista - Presentador, para mostrar la colección de alarmas.
  */
 abstract class AlarmsContract {
 
@@ -16,11 +16,11 @@ abstract class AlarmsContract {
      */
     public interface Presenter {
         /**
-         * Inicia el proceso de carga de las alarmas de la base de datos
+         * Invocado para iniciar el proceso de carga de las alarmas de la base de datos
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
          *                      de Contenido
-         * @param b contenedor de posibles parámetros utilizados en la consulta
+         * @param b             contenedor de posibles parámetros utilizados en la consulta
          */
         void loadAlarms(LoaderManager loaderManager, Bundle b);
     }
@@ -30,7 +30,7 @@ abstract class AlarmsContract {
      */
     public interface View {
         /**
-         * Muestra las alarmas contenidas en el {@link Cursor}
+         * Invocado para mostrar las alarmas contenidas en el {@link Cursor}
          *
          * @param cursor alarmas obtenidas en la consulta
          */

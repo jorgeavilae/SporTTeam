@@ -181,7 +181,7 @@ public abstract class DetailEventContract {
 
         /**
          * Invocado para obtener una referencia al {@link BaseFragment} que implementa este método
-         * *
+         *
          * @return BaseFragment que implementa este método
          */
         BaseFragment getThis();
