@@ -128,8 +128,9 @@ public class InvitationsSentFragment extends BaseFragment implements
     }
 
     /**
-     * Inicializa y obtiene una referencia a los elementos de la interfaz. Establece el adaptador
-     * creado como adaptador de la lista de la interfaz recién inflada.
+     * Inicializa y obtiene una referencia a los elementos de la interfaz con la ayuda de
+     * ButterKnife. Establece el adaptador creado como adaptador de la lista de la interfaz recién
+     * inflada.
      *
      * @param inflater utilizado para inflar el archivo de layout
      * @param container contenedor donde se va a incluir la interfaz o null
@@ -137,6 +138,11 @@ public class InvitationsSentFragment extends BaseFragment implements
      *                           la pantalla, o null.
      *
      * @return la vista de la interfaz inicializada
+     *
+     * @see
+     * <a href= "http://jakewharton.github.io/butterknife/">
+     *     ButterKnife
+     * </a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

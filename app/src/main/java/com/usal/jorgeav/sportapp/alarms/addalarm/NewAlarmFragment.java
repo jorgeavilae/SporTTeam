@@ -315,10 +315,10 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     }
 
     /**
-     * Inicializa y obtiene una referencia a los elementos de la interfaz. Además centra el mapa en
-     * la ciudad del usuario, recupera posibles datos del estado anterior del Fragmento, establece
-     * Listeners para las pulsaciones sobre los elementos de la interfaz y establece los limites
-     * de fechas en los {@link DatePickerDialog}
+     * Inicializa y obtiene una referencia a los elementos de la interfaz con la ayuda de
+     * ButterKnife. Además centra el mapa en la ciudad del usuario, recupera posibles datos del
+     * estado anterior del Fragmento, establece Listeners para las pulsaciones sobre los elementos
+     * de la interfaz y establece los limites de fechas en los {@link DatePickerDialog}
      *
      * @param inflater utilizado para inflar el archivo de layout
      * @param container contenedor donde se va a incluir la interfaz o null
@@ -326,6 +326,11 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      *                           la pantalla, o null.
      *
      * @return la vista de la interfaz inicializada
+     *
+     * @see
+     * <a href= "http://jakewharton.github.io/butterknife/">
+     *     ButterKnife
+     * </a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

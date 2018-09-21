@@ -103,11 +103,16 @@ public class NewUserActivity extends AppCompatActivity
     public boolean sportsInitialize;
 
     /**
-     * Carga la interfaz y se inicializan todas las variables.
-     * Inicia el Fragmento {@link NewUserFragment}
+     * Inicializa y obtiene una referencia a los elementos de la interfaz, con la ayuda de
+     * ButterKnife, y se inicializan todas las variables. Inicia el Fragmento {@link NewUserFragment}
      *
      * @param savedInstanceState estado de la Actividad guardado en una posible rotación de
      *                           la pantalla, o null.
+     *
+     * @see
+     * <a href= "http://jakewharton.github.io/butterknife/">
+     *     ButterKnife
+     * </a>
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -248,9 +248,9 @@ public class DetailAlarmFragment extends BaseFragment implements
     }
 
     /**
-     * Inicializa y obtiene una referencia a los elementos de la interfaz. Además centra el mapa en
-     * la ciudad del usuario, recupera posibles datos del estado anterior del Fragmento e inicializa
-     * el Adaptador de la colección de partidos.
+     * Inicializa y obtiene una referencia a los elementos de la interfaz con la ayuda de
+     * ButterKnife. Además centra el mapa en la ciudad del usuario, recupera posibles datos del
+     * estado anterior del Fragmento e inicializa el Adaptador de la colección de partidos.
      *
      * @param inflater utilizado para inflar el archivo de layout
      * @param container contenedor donde se va a incluir la interfaz o null
@@ -258,6 +258,11 @@ public class DetailAlarmFragment extends BaseFragment implements
      *                           la pantalla, o null.
      *
      * @return la vista de la interfaz inicializada
+     *
+     * @see
+     * <a href= "http://jakewharton.github.io/butterknife/">
+     *     ButterKnife
+     * </a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

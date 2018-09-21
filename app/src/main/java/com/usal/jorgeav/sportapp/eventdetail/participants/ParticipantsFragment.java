@@ -217,10 +217,10 @@ public class ParticipantsFragment extends BaseFragment implements
     }
 
     /**
-     * Inicializa y obtiene una referencia a los elementos de la interfaz. Establece los adaptadores
-     * creados como adaptador de cada lista. Extrae los parámetros incluidos en el Fragemnto en su
-     * instanciación, para determinar si se permite añadir usuarios simulados y mostrar o no el
-     * botón correspondiente en consecuencia.
+     * Inicializa y obtiene una referencia a los elementos de la interfaz con la ayuda de
+     * ButterKnife. Establece los adaptadores creados como adaptador de cada lista. Extrae los
+     * parámetros incluidos en el Fragmento en su instanciación, para determinar si se permite
+     * añadir usuarios simulados y mostrar o no el botón correspondiente en consecuencia.
      *
      * @param inflater utilizado para inflar el archivo de layout
      * @param container contenedor donde se va a incluir la interfaz o null
@@ -228,6 +228,11 @@ public class ParticipantsFragment extends BaseFragment implements
      *                           la pantalla, o null.
      *
      * @return la vista de la interfaz inicializada
+     *
+     * @see
+     * <a href= "http://jakewharton.github.io/butterknife/">
+     *     ButterKnife
+     * </a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

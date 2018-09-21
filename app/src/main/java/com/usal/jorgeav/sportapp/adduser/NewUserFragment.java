@@ -235,7 +235,8 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     }
 
     /**
-     * Inicializa y obtiene una referencia a los elementos de la interfaz
+     * Inicializa y obtiene una referencia a los elementos de la interfaz con la ayuda de
+     * ButterKnife.
      *
      * @param inflater utilizado para inflar el archivo de layout
      * @param container contenedor donde se va a incluir la interfaz o null
@@ -243,6 +244,11 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
      *                           la pantalla, o null.
      *
      * @return la vista de la interfaz inicializada
+     *
+     * @see
+     * <a href= "http://jakewharton.github.io/butterknife/">
+     *     ButterKnife
+     * </a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

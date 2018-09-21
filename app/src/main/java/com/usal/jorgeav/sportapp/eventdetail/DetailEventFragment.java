@@ -285,8 +285,9 @@ public class DetailEventFragment extends BaseFragment implements
     }
 
     /**
-     * Inicializa y obtiene una referencia a los elementos de la interfaz. Además centra el mapa en
-     * la ciudad del usuario y ordena al Presentador iniciar la consulta del tipo de relación.
+     * Inicializa y obtiene una referencia a los elementos de la interfaz con la ayuda de
+     * ButterKnife. Además centra el mapa en la ciudad del usuario y ordena al Presentador iniciar
+     * la consulta del tipo de relación.
      *
      * @param inflater utilizado para inflar el archivo de layout
      * @param container contenedor donde se va a incluir la interfaz o null
@@ -294,6 +295,11 @@ public class DetailEventFragment extends BaseFragment implements
      *                           la pantalla, o null.
      *
      * @return la vista de la interfaz inicializada
+     *
+     * @see
+     * <a href= "http://jakewharton.github.io/butterknife/">
+     *     ButterKnife
+     * </a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
