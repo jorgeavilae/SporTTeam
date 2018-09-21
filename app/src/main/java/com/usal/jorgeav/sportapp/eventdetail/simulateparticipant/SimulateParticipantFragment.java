@@ -30,18 +30,12 @@ import pl.aprilapps.easyphotopicker.EasyImage;
  * ayuda de la Actividad contenedora {@link com.usal.jorgeav.sportapp.mainactivities.EventsActivity}
  * para incluir una foto para el usuario simulado. Esta Actividad es la que implementa los métodos
  * necesarios para utilizar las librerías uCrop y EasyImage.
- *
+ * <p>
  * <p>Implementa la interfaz {@link SimulateParticipantContract.View} para la comunicación con esta
  * clase.
  *
- * @see
- * <a href= "https://github.com/Yalantis/uCrop">
- *      uCrop (Github)
- * </a>
- * @see
- * <a href= "https://github.com/jkwiecien/EasyImage">
- *      EasyImage (Github)
- * </a>
+ * @see <a href= "https://github.com/Yalantis/uCrop">uCrop (Github)</a>
+ * @see <a href= "https://github.com/jkwiecien/EasyImage">EasyImage (Github)</a>
  */
 public class SimulateParticipantFragment extends BaseFragment implements
         SimulateParticipantContract.View {
@@ -58,10 +52,7 @@ public class SimulateParticipantFragment extends BaseFragment implements
     /**
      * Identificador necesario para el proceso de selección de imagen de la librería EasyImage
      *
-     * @see
-     * <a href= "https://github.com/jkwiecien/EasyImage">
-     *      EasyImage (Github)
-     * </a>
+     * @see <a href= "https://github.com/jkwiecien/EasyImage">EasyImage (Github)</a>
      */
     public static final int RC_PHOTO_PICKER = 2;
 
@@ -108,7 +99,6 @@ public class SimulateParticipantFragment extends BaseFragment implements
      * Método de instanciación del Fragmento
      *
      * @param eventId identificador del partido al que se añade el usuario simulado
-     *
      * @return una nueva instancia de SimulateParticipantFragment
      */
     public static SimulateParticipantFragment newInstance(@NonNull String eventId) {
@@ -151,7 +141,6 @@ public class SimulateParticipantFragment extends BaseFragment implements
      * proceso de creación enviando los datos introducidos al Presentador.
      *
      * @param item elemento del menú pulsado
-     *
      * @return true si se aceptó la pulsación, false en otro caso
      */
     @Override
@@ -178,21 +167,13 @@ public class SimulateParticipantFragment extends BaseFragment implements
      * ButterKnife. Establece que al pulsar {@link #simulatedUserPhotoButton} se inicie el proceso
      * por el que se elige una foto con la ayuda de EasyImage.*
      *
-     * @param inflater utilizado para inflar el archivo de layout
-     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
      * @return la vista de la interfaz inicializada
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
-     * </a>
-     * @see
-     * <a href= "https://github.com/jkwiecien/EasyImage">
-     *     EasyImage (Github)
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
+     * @see <a href= "https://github.com/jkwiecien/EasyImage">EasyImage (Github)</a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -241,11 +222,7 @@ public class SimulateParticipantFragment extends BaseFragment implements
      * en {@link #simulatedUserPhoto} con ayuda de Glide.
      *
      * @param photoCroppedUri ruta del archivo
-     *
-     * @see
-     * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
-     *     Glide
-     * </a>
+     * @see <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">Glide</a>
      */
     @Override
     public void croppedResult(Uri photoCroppedUri) {
@@ -266,11 +243,8 @@ public class SimulateParticipantFragment extends BaseFragment implements
      *
      * @param msgResource identificador del recurso de texto correspondiente al mensaje que se
      *                    quiere mostrar
-     *
-     * @see
-     * <a href="https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)">
-     *     runOnUiThread(java.lang.Runnable)
-     * </a>
+     * @see <a href="https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)">
+     * runOnUiThread(java.lang.Runnable)</a>
      */
     @Override
     public void showMsgFromBackgroundThread(final int msgResource) {

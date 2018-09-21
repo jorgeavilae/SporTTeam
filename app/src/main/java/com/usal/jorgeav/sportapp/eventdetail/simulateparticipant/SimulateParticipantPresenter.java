@@ -42,20 +42,18 @@ class SimulateParticipantPresenter implements
      * Añade a la base de datos del servidor los datos proporcionados como un usuario simulado del
      * partido indicado. Primero realiza una serie de comprobaciones sobre los datos: si surge
      * algún error lo manda a la Vista, si no surge ninguno continúa con el proceso.
-     *
+     * <p>
      * <p>Hace una distinción si se ha especificado una imagen para el usuario simulado, primero
      * la guarda en el almacenamiento en la nube (Firebase Storage) y luego almacena el usuario
      * simulado, en la base de datos del servidor, con la foto como una URL hacia el archivo de
      * imagen en Firebase Storage.
      *
      * @param eventId identificador del partido al que asistirá el usuario simulado
-     * @param name nombre del usuario simulado
-     * @param photo imagen del usuario simulado
-     * @param ageStr edad del usuario simulado en formato texto
-     *
-     * @link
-     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/storage/FirebaseStorage">
-     *     FirebaseStorage
+     * @param name    nombre del usuario simulado
+     * @param photo   imagen del usuario simulado
+     * @param ageStr  edad del usuario simulado en formato texto
+     * @link <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/storage/FirebaseStorage">
+     * FirebaseStorage
      * </a>
      */
     @Override
@@ -95,11 +93,11 @@ class SimulateParticipantPresenter implements
      * archivo de imagen a Firebase Storage. Si esta subida tiene éxito, se obtiene la URL y, junto
      * con el resto de datos, se crea el usuario simulado que se añade a la base de datos.
      *
-     * @param photo ruta del archivo de imagen del usuario simulado dentro del almacenamiento del
-     *              teléfono
+     * @param photo   ruta del archivo de imagen del usuario simulado dentro del almacenamiento del
+     *                teléfono
      * @param eventId identificador del evento al que se va a añadir el usuario simulado
-     * @param name nombre del usuario simulado
-     * @param age edad del usuario simulado
+     * @param name    nombre del usuario simulado
+     * @param age     edad del usuario simulado
      */
     private void storePhotoOnFirebaseAndAddSimulatedParticipant(Uri photo,
                                                                 String eventId,

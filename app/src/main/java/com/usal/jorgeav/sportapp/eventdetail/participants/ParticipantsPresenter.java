@@ -16,12 +16,12 @@ import com.usal.jorgeav.sportapp.network.firebase.sync.EventsFirebaseSync;
 /**
  * Presentador utilizado para mostrar la colección de participantes del partido, tanto usuarios
  * de la aplicación, como usuarios simulados añadidos por los primeros.
- *
+ * <p>
  * <p>Aquí se inicia la consulta al Proveedor de Contenido para obtener los datos de los usuarios
  * que participan y la lista de los usuarios simulados asociados a ese partido. Serán enviados a la
  * Vista {@link ParticipantsContract.View}. También permite eliminar, tanto los participantes, como
  * los usuarios simulados.
- *
+ * <p>
  * <p>Implementa la interfaz {@link ParticipantsContract.Presenter} para la comunicación con
  * esta clase y la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los
  * callbacks de las consultas.
@@ -59,9 +59,9 @@ class ParticipantsPresenter implements
      * Borra al usuario como participante del partido. También, dependiendo de un parámetro
      * booleano, se borran (o no) los usuarios simulados creados por ese usuario.
      *
-     * @param userId identificador del usuario que va a ser eliminado como participante del
-     *               partido
-     * @param eventId identificador del partido
+     * @param userId                     identificador del usuario que va a ser eliminado como participante del
+     *                                   partido
+     * @param eventId                    identificador del partido
      * @param deleteSimulatedParticipant true si se quieren borrar también los usuarios
      *                                   simulados que <var>userId</var> haya podido añadir,
      */
@@ -76,7 +76,7 @@ class ParticipantsPresenter implements
      *
      * @param simulatedUserId identificador del usuario simulado que va a ser eliminado del
      *                        partido
-     * @param eventId identificador del partido
+     * @param eventId         identificador del partido
      */
     @Override
     public void deleteSimulatedUser(String simulatedUserId, String eventId) {
@@ -89,7 +89,7 @@ class ParticipantsPresenter implements
      *
      * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
      *                      de Contenido
-     * @param b contenedor de posibles parámetros utilizados en la consulta
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
      */
     @Override
     public void loadParticipants(LoaderManager loaderManager, Bundle b) {
@@ -104,7 +104,7 @@ class ParticipantsPresenter implements
      *
      * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
      *                      de Contenido
-     * @param b contenedor de posibles parámetros utilizados en la consulta
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
      */
     @Override
     public void loadSimulatedParticipants(LoaderManager loaderManager, Bundle b) {
@@ -121,9 +121,8 @@ class ParticipantsPresenter implements
     /**
      * Invocado por  {@link LoaderManager} para crear el Loader usado para la consulta
      *
-     * @param id identificador del Loader
+     * @param id   identificador del Loader
      * @param args contenedor de posibles parámetros utilizados en la consulta
-     *
      * @return Loader que realiza la consulta.
      */
     @Override
@@ -146,7 +145,7 @@ class ParticipantsPresenter implements
      * participante al creador del evento.
      *
      * @param loader Loader utilizado para la consulta
-     * @param data resultado de la consulta
+     * @param data   resultado de la consulta
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -169,8 +168,7 @@ class ParticipantsPresenter implements
      * Cursor obtenido al consultar los datos identificador de usuario <var>uid</var>
      *
      * @param data {@link Cursor} con el resto de participantes
-     * @param uid identificador del usuario que se quiere añadir a la colección
-     *
+     * @param uid  identificador del usuario que se quiere añadir a la colección
      * @return un Cursor con los usuarios de la consulta al Loader más el que se acaba de añadir
      */
     /* https://stackoverflow.com/a/16440093/4235666 */
@@ -181,8 +179,10 @@ class ParticipantsPresenter implements
                 SportteamContract.UserEntry.USER_ID + " = ? ",
                 new String[]{uid},
                 null);
-        // Present an array of Cursors as a single linear Cursor, so members can not be closed
-        return new MergeCursor(new Cursor[]{uidCursor, data});
+        //todo comprobar este cambio: uidCursor puede cerrarse?
+        MergeCursor result = new MergeCursor(new Cursor[]{uidCursor, data});
+        if (uidCursor != null) uidCursor.close();
+        return result;
     }
 
     /**

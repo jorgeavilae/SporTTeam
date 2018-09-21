@@ -22,7 +22,7 @@ abstract class ParticipantsContract {
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
          *                      de Contenido
-         * @param b contenedor de posibles parámetros utilizados en la consulta
+         * @param b             contenedor de posibles parámetros utilizados en la consulta
          */
         void loadParticipants(LoaderManager loaderManager, Bundle b);
 
@@ -32,7 +32,7 @@ abstract class ParticipantsContract {
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
          *                      de Contenido
-         * @param b contenedor de posibles parámetros utilizados en la consulta
+         * @param b             contenedor de posibles parámetros utilizados en la consulta
          */
         void loadSimulatedParticipants(LoaderManager loaderManager, Bundle b);
 
@@ -40,9 +40,9 @@ abstract class ParticipantsContract {
          * Invocado para borrar al usuario como participante del partido. Se incluye un parámetro
          * booleano para borrar (o no) a los usuarios simulados creados por ese usuario.
          *
-         * @param userId identificador del usuario que va a ser eliminado como participante del
-         *               partido
-         * @param eventId identificador del partido
+         * @param userId                     identificador del usuario que va a ser eliminado como
+         *                                   participante del partido
+         * @param eventId                    identificador del partido
          * @param deleteSimulatedParticipant true si se quieren borrar también los usuarios
          *                                   simulados que <var>userId</var> haya podido añadir,
          *                                   false en otro caso
@@ -54,7 +54,7 @@ abstract class ParticipantsContract {
          *
          * @param simulatedUserId identificador del usuario simulado que va a ser eliminado del
          *                        partido
-         * @param eventId identificador del partido
+         * @param eventId         identificador del partido
          */
         void deleteSimulatedUser(String simulatedUserId, String eventId);
     }

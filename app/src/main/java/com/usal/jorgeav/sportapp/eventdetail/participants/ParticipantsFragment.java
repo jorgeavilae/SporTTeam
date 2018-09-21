@@ -37,17 +37,17 @@ import butterknife.ButterKnife;
 /**
  * Fragmento utilizado para mostrar la colección de participantes del partido, tanto usuarios
  * de la aplicación, como usuarios simulados añadidos por los primeros.
- *
+ * <p>
  * <p>Este Fragmento se encarga de inicializar los componentes de la interfaz para mostrar esa
  * colección en dos listas, con la ayuda de {@link UsersAdapter} y {@link SimulatedUsersAdapter}.
  * En la instanciación, se le pasa el tipo de relación del partido con el usuario actual, si el
  * partido está lleno y si el partido pertenece al pasado; es necesario para permitir o no añadir
  * más usuarios simulados.
- *
+ * <p>
  * <p>Desde este Fragmento, el creador del partido puede expulsar usuarios y usuarios simulados.
  * Además, cualquier participante puede añadir usuarios simulados, así como eliminarlos, pero sólo
  * a los usuarios simulados que añadió.
- *
+ * <p>
  * <p>Implementa la interfaz {@link ParticipantsContract.View} para la comunicación con esta clase,
  * la interfaz {@link UsersAdapter.OnUserItemClickListener} para manejar la pulsación sobre cada
  * uno de los usuarios participantes y la interfaz
@@ -160,12 +160,11 @@ public class ParticipantsFragment extends BaseFragment implements
     /**
      * Método de instanciación del Fragmento
      *
-     * @param eventID identificador del partido al que asisten los participantes
-     * @param ownerId identificador del usuario creador del partido
+     * @param eventID  identificador del partido al que asisten los participantes
+     * @param ownerId  identificador del usuario creador del partido
      * @param relation tipo de relación del usuario actual con el partido
-     * @param isPast true si la fecha del partido pertenece al pasado, false en otro caso
-     * @param isFull true si no quedan puestos vacantes en el partido, false en otro caso
-     *
+     * @param isPast   true si la fecha del partido pertenece al pasado, false en otro caso
+     * @param isFull   true si no quedan puestos vacantes en el partido, false en otro caso
      * @return una nueva instancia de ParticipantsFragment
      */
     public static ParticipantsFragment newInstance(@NonNull String eventID, @NonNull String ownerId,
@@ -222,16 +221,13 @@ public class ParticipantsFragment extends BaseFragment implements
      * parámetros incluidos en el Fragmento en su instanciación, para determinar si se permite
      * añadir usuarios simulados y mostrar o no el botón correspondiente en consecuencia.
      *
-     * @param inflater utilizado para inflar el archivo de layout
-     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
      * @return la vista de la interfaz inicializada
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
+     * @see <a href= "http://jakewharton.github.io/butterknife/">
+     * ButterKnife
      * </a>
      */
     @Override
@@ -264,7 +260,7 @@ public class ParticipantsFragment extends BaseFragment implements
 
         //Allow add simulated participant if isn't Past and isn't Full and if I am owner or participant
         setLayoutToAllowAddSimulatedParticipants(isPast != null && !isPast && isFull != null && !isFull
-                &&(mRelation == DetailEventPresenter.RELATION_TYPE_ASSISTANT
+                && (mRelation == DetailEventPresenter.RELATION_TYPE_ASSISTANT
                 || mRelation == DetailEventPresenter.RELATION_TYPE_OWNER));
 
         return root;
@@ -277,7 +273,7 @@ public class ParticipantsFragment extends BaseFragment implements
      * @param allow true si se permite añadir usuarios simulados, false en caso contrario
      */
     private void setLayoutToAllowAddSimulatedParticipants(boolean allow) {
-        if(allow) {
+        if (allow) {
             addSimulatedParticipant.setVisibility(View.VISIBLE);
             addSimulatedParticipant.setEnabled(true);
             addSimulatedParticipant.setOnClickListener(new View.OnClickListener() {
@@ -303,20 +299,27 @@ public class ParticipantsFragment extends BaseFragment implements
      * asegurando que ese número entero representa a algún tipo de relación o error en otro caso.
      *
      * @param relation variable entera que se va a transformar
-     *
      * @return <var>relation</var> transformada a variable de tipo {@link DetailEventPresenter.EventRelationType}
      */
     private
     @DetailEventPresenter.EventRelationType
     int parseRelation(int relation) {
         switch (relation) {
-            default: case -1: return DetailEventPresenter.RELATION_TYPE_ERROR;
-            case 0: return DetailEventPresenter.RELATION_TYPE_NONE;
-            case 1: return DetailEventPresenter.RELATION_TYPE_OWNER;
-            case 2: return DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST;
-            case 3: return DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION;
-            case 4: return DetailEventPresenter.RELATION_TYPE_ASSISTANT;
-            case 5: return DetailEventPresenter.RELATION_TYPE_BLOCKED;
+            default:
+            case -1:
+                return DetailEventPresenter.RELATION_TYPE_ERROR;
+            case 0:
+                return DetailEventPresenter.RELATION_TYPE_NONE;
+            case 1:
+                return DetailEventPresenter.RELATION_TYPE_OWNER;
+            case 2:
+                return DetailEventPresenter.RELATION_TYPE_I_SEND_REQUEST;
+            case 3:
+                return DetailEventPresenter.RELATION_TYPE_I_RECEIVE_INVITATION;
+            case 4:
+                return DetailEventPresenter.RELATION_TYPE_ASSISTANT;
+            case 5:
+                return DetailEventPresenter.RELATION_TYPE_BLOCKED;
         }
     }
 
@@ -418,7 +421,6 @@ public class ParticipantsFragment extends BaseFragment implements
      * Al realizar una pulsación larga sobre un usuario: se crea y muestra un cuadro de diálogo
      * preguntando si se le quiere expulsar. También ofrece la opción de mostrar el perfil del usuario
      * pulsado.
-     *
      * <p>Si se expulsa al usuario, se crea y muestra otro cuadro de diálogo preguntando si también
      * se desea borrar a los usuarios simulados que fueron añadidos por el usuario recién expulsado.
      *
@@ -467,7 +469,7 @@ public class ParticipantsFragment extends BaseFragment implements
      * el creador del usuario simulado o el creador del partido.
      *
      * @param simulatedUserCreator Identificador del usuario creador del usuario simulado
-     * @param simulatedUserId Identificador del usuario simulado pulsado
+     * @param simulatedUserId      Identificador del usuario simulado pulsado
      */
     @Override
     public void onSimulatedUserClick(String simulatedUserCreator, final String simulatedUserId) {

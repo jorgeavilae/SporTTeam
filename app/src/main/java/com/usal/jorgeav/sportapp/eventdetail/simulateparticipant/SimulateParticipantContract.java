@@ -20,9 +20,9 @@ public abstract class SimulateParticipantContract {
          * un usuario simulado del partido indicado
          *
          * @param eventId identificador del partido al que asistirá el usuario simulado
-         * @param name nombre del usuario simulado
-         * @param photo imagen del usuario simulado
-         * @param ageStr edad del usuario simulado en formato texto
+         * @param name    nombre del usuario simulado
+         * @param photo   imagen del usuario simulado
+         * @param ageStr  edad del usuario simulado en formato texto
          */
         void addSimulatedParticipant(String eventId, String name, Uri photo, String ageStr);
     }
@@ -36,11 +36,7 @@ public abstract class SimulateParticipantContract {
          * simulado después de ser recortada con uCrop.
          *
          * @param photoCroppedUri ruta del archivo
-         *
-         * @see
-         * <a href= "https://github.com/Yalantis/uCrop">
-         *      uCrop (Github)
-         * </a>
+         * @see <a href= "https://github.com/Yalantis/uCrop">uCrop (Github)</a>
          */
         void croppedResult(Uri photoCroppedUri);
 
@@ -75,7 +71,7 @@ public abstract class SimulateParticipantContract {
 
         /**
          * Invocado para obtener una referencia al {@link BaseFragment} que implementa este método
-         * *
+         *
          * @return BaseFragment que implementa este método
          */
         BaseFragment getThis();
