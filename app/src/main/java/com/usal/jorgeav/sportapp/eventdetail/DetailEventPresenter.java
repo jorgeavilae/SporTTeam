@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.eventdetail;
 
+import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -114,6 +115,7 @@ public class DetailEventPresenter implements
      * @param args contenedor de posibles parámetros utilizados en la consulta
      *
      * @return Loader que realiza la consulta.
+     * @see SportteamLoader#cursorLoaderOneEvent(Context, String)
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

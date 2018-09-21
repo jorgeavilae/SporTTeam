@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.eventdetail.participants;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.MergeCursor;
 import android.os.Bundle;
@@ -124,6 +125,8 @@ class ParticipantsPresenter implements
      * @param id   identificador del Loader
      * @param args contenedor de posibles parámetros utilizados en la consulta
      * @return Loader que realiza la consulta.
+     * @see SportteamLoader#cursorLoaderEventParticipants(Context, String, boolean)
+     * @see SportteamLoader#cursorLoaderEventSimulatedParticipants(Context, String)
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

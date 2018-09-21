@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.eventdetail.invitationsent;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -80,6 +81,7 @@ class InvitationsSentPresenter implements
      * @param args contenedor de posibles parámetros utilizados en la consulta
      *
      * @return Loader que realiza la consulta.
+     * @see SportteamLoader#cursorLoaderUsersForEventInvitationsSent(Context, String, String)
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.eventdetail.userrequests;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -122,6 +123,8 @@ class UsersRequestsPresenter implements
      * @param id   identificador del Loader
      * @param args contenedor de posibles parámetros utilizados en la consulta
      * @return Loader que realiza la consulta.
+     * @see SportteamLoader#cursorLoaderUsersForEventRequestsReceived(Context, String)
+     * @see SportteamLoader#cursorLoaderEventParticipants(Context, String, boolean)
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

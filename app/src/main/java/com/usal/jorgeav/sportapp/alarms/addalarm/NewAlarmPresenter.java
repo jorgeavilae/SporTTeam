@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.alarms.addalarm;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -300,6 +301,8 @@ class NewAlarmPresenter implements
      * @param args contenedor de posibles parámetros utilizados en la consulta
      *
      * @return Loader que realiza la consulta.
+     * @see SportteamLoader#cursorLoaderOneAlarm(Context, String)
+     * @see SportteamLoader#cursorLoaderFieldsFromCityWithSport(Context, String, String)
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

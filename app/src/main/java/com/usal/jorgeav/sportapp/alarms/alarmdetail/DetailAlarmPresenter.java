@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.alarms.alarmdetail;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -94,6 +95,8 @@ class DetailAlarmPresenter implements
      * @param args contenedor de posibles parámetros utilizados en la consulta
      *
      * @return Loader que realiza la consulta.
+     * @see SportteamLoader#cursorLoaderOneAlarm(Context, String)
+     * @see SportteamLoader#cursorLoaderAlarmCoincidence(Context, String, String)
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
