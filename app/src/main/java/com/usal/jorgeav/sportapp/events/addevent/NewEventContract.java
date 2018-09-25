@@ -53,7 +53,7 @@ public abstract class NewEventContract {
         void loadFriends(LoaderManager loaderManager, Bundle b);
 
         /**
-         * Invocado para crear la alarma en la base de datos con los parámetros especificados
+         * Invocado para crear el partido en la base de datos con los parámetros especificados
          *
          * @param id                    identificador del partido que se está editando, o null si es
          *                              un proceso de creación

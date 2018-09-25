@@ -100,10 +100,8 @@ public class DetailAlarmFragment extends BaseFragment implements
     /**
      * Objeto principal de Google Maps API. Hace referencia al mapa que provee esta API.
      *
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary">
-     *     Google Maps API
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap">
+     * GoogleMap<a>
      */
     private GoogleMap mMap;
     /**

@@ -91,7 +91,7 @@ public class NewEventFragment extends BaseFragment implements
      */
     private static boolean sInitialize;
 
-    // todo en vez de consultar borrar el loader y guardar fields en instanceState; pq no consultar y recuperar la consulta del loader sin borrarlo?
+    // todo en vez de consultar borrar el loader y guardar fields en instanceState; pq no consultar y recuperar la consulta del loader sin borrarlo? newfieldfragment no lo tiene
     /**
      * Etiqueta utilizada para guardar, en el estado del Fragmento, las instalaciones encontradas
      * en la consulta a la base de datos.
@@ -126,8 +126,8 @@ public class NewEventFragment extends BaseFragment implements
     /**
      * Objeto principal de Google Maps API. Hace referencia al mapa que provee esta API.
      *
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary">
-     * Google Maps API</a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap">
+     * GoogleMap<a>
      */
     private GoogleMap mMap;
     /**
