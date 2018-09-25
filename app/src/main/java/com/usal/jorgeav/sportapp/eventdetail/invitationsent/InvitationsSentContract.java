@@ -22,7 +22,7 @@ abstract class InvitationsSentContract {
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
          *                      de Contenido
-         * @param bundle contenedor de posibles parámetros utilizados en la consulta
+         * @param bundle        contenedor de posibles parámetros utilizados en la consulta
          */
         void loadEventInvitationsSent(LoaderManager loaderManager, Bundle bundle);
 
@@ -31,7 +31,7 @@ abstract class InvitationsSentContract {
          * por el usuario actual.
          *
          * @param eventId identificador del evento al que hace referencia la invitación
-         * @param uid identificador del usuario que recibe la invitación
+         * @param uid     identificador del usuario que recibe la invitación
          */
         void deleteInvitationToThisEvent(String eventId, String uid);
     }

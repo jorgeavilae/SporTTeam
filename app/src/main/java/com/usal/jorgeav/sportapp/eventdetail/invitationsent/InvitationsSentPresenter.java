@@ -16,8 +16,8 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
  * Presentador utilizado para mostrar la colección de invitaciones enviadas por el usuario actual.
  * Aquí se inicia la consulta al Proveedor de Contenido para obtener los datos de los usuarios que
  * han recibido las invitaciones y que serán enviados a la Vista {@link InvitationsSentContract.View}.
- *
- * <p>Implementa la interfaz {@link InvitationsSentContract.Presenter} para la comunicación con
+ * <p>
+ * Implementa la interfaz {@link InvitationsSentContract.Presenter} para la comunicación con
  * esta clase y la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los
  * callbacks de la consulta.
  */
@@ -49,7 +49,7 @@ class InvitationsSentPresenter implements
      * usuario actual.
      *
      * @param eventId identificador del evento al que hace referencia la invitación
-     * @param uid identificador del usuario que recibe la invitación
+     * @param uid     identificador del usuario que recibe la invitación
      */
     @Override
     public void deleteInvitationToThisEvent(String eventId, String uid) {
@@ -64,7 +64,7 @@ class InvitationsSentPresenter implements
      *
      * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
      *                      de Contenido
-     * @param bundle contenedor de posibles parámetros utilizados en la consulta
+     * @param bundle        contenedor de posibles parámetros utilizados en la consulta
      */
     @Override
     public void loadEventInvitationsSent(LoaderManager loaderManager, Bundle bundle) {
@@ -77,9 +77,8 @@ class InvitationsSentPresenter implements
     /**
      * Invocado por  {@link LoaderManager} para crear el Loader usado para la consulta
      *
-     * @param id identificador del Loader
+     * @param id   identificador del Loader
      * @param args contenedor de posibles parámetros utilizados en la consulta
-     *
      * @return Loader que realiza la consulta.
      * @see SportteamLoader#cursorLoaderUsersForEventInvitationsSent(Context, String, String)
      */
@@ -101,7 +100,7 @@ class InvitationsSentPresenter implements
      * forma de {@link Cursor} a la Vista.
      *
      * @param loader Loader utilizado para la consulta
-     * @param data resultado de la consulta
+     * @param data   resultado de la consulta
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {

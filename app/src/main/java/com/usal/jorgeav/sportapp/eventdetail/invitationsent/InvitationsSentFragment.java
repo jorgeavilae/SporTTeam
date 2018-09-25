@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
  * Se encarga de inicializar los componentes de la interfaz para mostrar la colección con la ayuda
  * de {@link UsersAdapter} ya que cada invitación será representada por el usuario al que fue
  * destinada.
+ * <p>
  * Implementa la interfaz {@link InvitationsSentContract.View} para la comunicación con esta clase
  * y la interfaz {@link UsersAdapter.OnUserItemClickListener} para manejar la pulsación sobre cada
  * uno de los usuarios destinatarios de la invitación.
@@ -88,7 +89,6 @@ public class InvitationsSentFragment extends BaseFragment implements
      * Método de instanciación del Fragmento
      *
      * @param eventId identificador del partido al que hacen referencia las invitaciones
-     *
      * @return una nueva instancia de InvitationsSentFragment
      */
     public static InvitationsSentFragment newInstance(@NonNull String eventId) {
@@ -132,17 +132,12 @@ public class InvitationsSentFragment extends BaseFragment implements
      * ButterKnife. Establece el adaptador creado como adaptador de la lista de la interfaz recién
      * inflada.
      *
-     * @param inflater utilizado para inflar el archivo de layout
-     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
      * @return la vista de la interfaz inicializada
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -245,7 +240,6 @@ public class InvitationsSentFragment extends BaseFragment implements
      * No realiza ninguna acción
      *
      * @param uid Identificador del usuario pulsado
-     *
      * @return false
      */
     @Override
