@@ -21,7 +21,6 @@ import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEvent;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyCalendarEventList;
 import com.usal.jorgeav.sportapp.data.calendarevent.MyEventRenderer;
-import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.eventdetail.DetailEventFragment;
 import com.usal.jorgeav.sportapp.events.eventrequest.EventRequestsFragment;
 import com.usal.jorgeav.sportapp.sportselection.SelectSportFragment;
@@ -36,17 +35,17 @@ import butterknife.ButterKnife;
 /**
  * Fragmento utilizado para mostrar la colección de partidos en los que participa el usuario.
  * <p>
- * <p>Se encarga de inicializar los componentes de la interfaz para mostrar la colección en un
+ * Se encarga de inicializar los componentes de la interfaz para mostrar la colección en un
  * {@link AgendaCalendarView}. También permite viajar al Fragmento en el que se muestran los
  * detalles de los partidos, al Fragmentos donde se listan las peticiones de participación enviadas
  * por el usuario actual, y al Fragmento utilizado para crear un partido nuevo.
  * <p>
- * <p>En el {@link AgendaCalendarView} se emplazan los partidos contenidos en una variable de tipo
+ * En el {@link AgendaCalendarView} se emplazan los partidos contenidos en una variable de tipo
  * {@link MyCalendarEventList}. Estos partidos vienen en un {@link Cursor} del Proveedor de
  * Contenido y deben ser transformados a {@link MyCalendarEvent} para que puedan ser mostrados en
  * la interfaz con la ayuda de {@link MyEventRenderer}.
  * <p>
- * <p>Implementa la interfaz {@link EventsContract.View} para la comunicación con esta clase y la
+ * Implementa la interfaz {@link EventsContract.View} para la comunicación con esta clase y la
  * interfaz {@link CalendarPickerController} para manejar las pulsaciones sobre el calendario y los
  * partidos contenidos en él.
  *
@@ -172,7 +171,7 @@ public class EventsFragment extends BaseFragment implements
      * {@link #mEventList}. Busca los partidos cuyas fechas sean más baja y más alta para establecer
      * las fechas límite que mostrará el calendario, teniendo en cuanta la fecha actual. Luego
      * inicia el calendario con la lista de partidos {@link MyCalendarEvent}s y establece la clase
-     * que los renderizará en sus celdas {@link MyEventRenderer}.
+     * que los emplazará los datos en cada una de las celdas {@link MyEventRenderer}.
      */
     private void initCalendar() {
         Calendar minDate = Calendar.getInstance();

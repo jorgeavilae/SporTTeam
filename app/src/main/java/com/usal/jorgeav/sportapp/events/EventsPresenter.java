@@ -16,6 +16,7 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
  * Aquí se inicia la consulta al Proveedor de Contenido para obtener los partidos creados por este
  * usuario y los partidos en los que fue añadido como participante y que serán enviados a la Vista
  * {@link EventsContract.View}.
+ * <p>
  * Implementa la interfaz {@link EventsContract.Presenter} para la comunicación con esta clase y la
  * interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los callbacks de la
  * consulta.

@@ -9,8 +9,8 @@ import android.view.inputmethod.InputMethodManager;
 import com.usal.jorgeav.sportapp.mainactivities.ActivityContracts;
 
 /**
- * Representa los Fragmentos de la aplicacion. Ha sido creada para implementar el codigo
- * comun al resto de Fragmentos, para que estos obtengan esa funcionalidad mediante herencia.
+ * Representa a la mayoría de los Fragmentos de la aplicación. Ha sido creada para implementar el
+ * código común a todos ellos, para que obtengan esa funcionalidad mediante herencia.
  */
 public abstract class BaseFragment extends Fragment {
     /**
@@ -33,7 +33,7 @@ public abstract class BaseFragment extends Fragment {
     protected ActivityContracts.NavigationDrawerManagement mNavigationDrawerManagementListener;
 
     /**
-     * En este metodo del ciclo de vida se asocian las varibales a la Actividad, en el caso de que
+     * En este método del ciclo de vida se asocian las variables a la Actividad, en el caso de que
      * haya implementado las interfaces de {@link ActivityContracts}
      *
      * @param context {@link Context} de Actividad
@@ -59,18 +59,18 @@ public abstract class BaseFragment extends Fragment {
     }
 
     /**
-     *
-     * @return {@link Context} de la Actividad contedora
+     * @return {@link Context} de la Actividad contenedora
      */
     public Context getActivityContext() {
         return getActivity();
     }
 
     /**
-     *
      * @return {@link BaseFragment} que referencia a este Fragmento
      */
-    public BaseFragment getThis() { return this;}
+    public BaseFragment getThis() {
+        return this;
+    }
 
     /**
      * Utiliza {@link #mFragmentManagementListener} para mostrar el Fragmento
@@ -102,15 +102,14 @@ public abstract class BaseFragment extends Fragment {
      * Obtiene una referencia a la {@link View} que tiene el foco de la interfaz y, si esta
      * mostrando el teclado flotante en la pantalla, lo esconde
      *
-     * @see
-     * <a href= "https://stackoverflow.com/a/17789187/4235666">
-     *     (StackOverflow) Close/hide the Android Soft Keyboard
-     * </a>
+     * @see <a href= "https://stackoverflow.com/a/17789187/4235666">
+     * (StackOverflow) Close/hide the Android Soft Keyboard</a>
      */
     public void hideSoftKeyboard() {
         View view = getActivity().getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm =
+                    (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null)
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }

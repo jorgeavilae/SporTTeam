@@ -98,10 +98,8 @@ public class MapsActivity extends AppCompatActivity
     /**
      * Referencia al mapa de Google cargado en SupportMapFragment
      *
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
-     *     SupportMapFragment
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
+     * SupportMapFragment</a>
      */
     private GoogleMap mMap;
     /**
