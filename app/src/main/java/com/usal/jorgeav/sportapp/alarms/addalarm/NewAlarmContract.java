@@ -19,27 +19,27 @@ public abstract class NewAlarmContract {
      */
     public interface Presenter {
         /**
-         * Inicia el proceso de carga de la alarma de la base de datos que se quiere editar
+         * Inicia el proceso de consulta de la alarma de la base de datos que se quiere editar
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
          *                      de Contenido
-         * @param b contenedor de posibles parámetros utilizados en la consulta
+         * @param b             contenedor de posibles parámetros utilizados en la consulta
          */
         void openAlarm(LoaderManager loaderManager, Bundle b);
 
         /**
          * Invocado para crear la alarma en la base de datos con los parámetros especificados
          *
-         * @param alarmId identificador de la alarma si se está editando o null si se está creando
-         * @param sport deporte de la alarma
-         * @param field instalación sobre la que escucha la alarma
-         * @param city ciudad sobre la que escucha la alarma
-         * @param dateFrom limite inferior del rango de fechas en las que la alarma está buscando
-         * @param dateTo límite superior del rango de fechas en las que la alarma está buscando
+         * @param alarmId   identificador de la alarma si se está editando o null si se está creando
+         * @param sport     deporte de la alarma
+         * @param field     instalación sobre la que escucha la alarma
+         * @param city      ciudad sobre la que escucha la alarma
+         * @param dateFrom  limite inferior del rango de fechas en las que la alarma está buscando
+         * @param dateTo    límite superior del rango de fechas en las que la alarma está buscando
          * @param totalFrom límite inferior del rango de puestos totales de los partidos buscados
-         * @param totalTo límite superior del rango de puestos totales de los partidos buscados
+         * @param totalTo   límite superior del rango de puestos totales de los partidos buscados
          * @param emptyFrom límite inferior del rango de puestos vacantes de los partidos buscados
-         * @param emptyTo límite superior del rango de puestos vacantes de los partidos buscados
+         * @param emptyTo   límite superior del rango de puestos vacantes de los partidos buscados
          */
         void addAlarm(String alarmId, String sport, String field, String city,
                       String dateFrom, String dateTo,
@@ -47,16 +47,16 @@ public abstract class NewAlarmContract {
                       String emptyFrom, String emptyTo);
 
         /**
-         * Inicia el proceso de carga de instalaciones de la base de datos donde establecer la alarma
+         * Inicia el proceso de consulta de instalaciones de la base de datos donde establecer la alarma
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
          *                      de Contenido
-         * @param arguments contenedor de posibles parámetros utilizados en la consulta
+         * @param arguments     contenedor de posibles parámetros utilizados en la consulta
          */
         void loadFields(LoaderManager loaderManager, Bundle arguments);
 
         /**
-         * Detiene el proceso de carga de instalaciones de la base de datos
+         * Detiene el proceso de consulta de instalaciones de la base de datos
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para detener la consulta al
          *                      Proveedor de Contenido
@@ -79,7 +79,7 @@ public abstract class NewAlarmContract {
          * Muestra la instalación en la interfaz
          *
          * @param fieldId identificador de la instalación
-         * @param city ciudad
+         * @param city    ciudad
          */
         void showAlarmField(String fieldId, String city);
 
@@ -87,7 +87,7 @@ public abstract class NewAlarmContract {
          * Muestra el rango de fechas en la interfaz
          *
          * @param dateFrom limite inferior del rango de fechas
-         * @param dateTo limite superior del rango de fechas
+         * @param dateTo   limite superior del rango de fechas
          */
         void showAlarmDate(Long dateFrom, Long dateTo);
 
@@ -95,7 +95,7 @@ public abstract class NewAlarmContract {
          * Muestra el rango de puestos totales en la interfaz
          *
          * @param totalPlayersFrom limite inferior del rango de puestos totales
-         * @param totalPlayersTo limite superior del rango de puestos totales
+         * @param totalPlayersTo   limite superior del rango de puestos totales
          */
         void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo);
 
@@ -103,7 +103,7 @@ public abstract class NewAlarmContract {
          * Muestra el rango de puestos vacantes en la interfaz
          *
          * @param emptyPlayersFrom limite inferior del rango de puestos vacantes
-         * @param emptyPlayersTo limite superior del rango de puestos vacantes
+         * @param emptyPlayersTo   limite superior del rango de puestos vacantes
          */
         void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo);
 

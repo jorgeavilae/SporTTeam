@@ -64,7 +64,7 @@ import butterknife.ButterKnife;
  * instalación o la ciudad seleccionada y un {@link AutoCompleteTextView} para escribir la ciudad.
  * Implementa la interfaz {@link NewAlarmContract.View} para la comunicación con esta clase.
  */
-public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.View  {
+public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.View {
     /**
      * Nombre de la clase
      */
@@ -87,11 +87,12 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      * en la consulta a la base de datos.
      */
     public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
+    //todo necesario?
     /**
-     * Etiqueta utilizada para guardar, en el estado del Fragmento, las instalaciones encontradas
-     * en la consulta a la base de datos.
+     * Etiqueta utilizada para guardar, en el estado del Fragmento, el deporte establecido para la
+     * alarma.
      */
-    public static final String INSTANCE_SPORT_IMAGE_ID = "INSTANCE_SPORT_IMAGE_ID";
+//    public static final String INSTANCE_SPORT_IMAGE_ID = "INSTANCE_SPORT_IMAGE_ID";
     /**
      * Almacena las instalaciones encontradas en la consulta, que serán sobre las que se pueda
      * establecer la alarma
@@ -132,8 +133,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      * Objeto principal de Google Maps API. Hace referencia al mapa que provee esta API.
      *
      * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary">
-     *     Google Maps API
-     * </a>
+     * Google Maps API</a>
      */
     private GoogleMap mMap;
     /**
@@ -227,7 +227,6 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      *
      * @param alarmId identificador de alarma
      * @param sportId identificador de deporte
-     *
      * @return una nueva instancia de NewAlarmFragment
      */
     public static NewAlarmFragment newInstance(@Nullable String alarmId, @Nullable String sportId) {
@@ -301,8 +300,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             mNewAlarmPresenter.addAlarm(
                     alarmId,
                     mSportId,
-                    ((AlarmsActivity)getActivity()).mFieldId,
-                    ((AlarmsActivity)getActivity()).mCity,
+                    ((AlarmsActivity) getActivity()).mFieldId,
+                    ((AlarmsActivity) getActivity()).mCity,
                     newAlarmDateFrom.getText().toString(),
                     newAlarmDateTo.getText().toString(),
                     newAlarmTotalFrom.getText().toString(),
@@ -320,17 +319,12 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      * estado anterior del Fragmento, establece Listeners para las pulsaciones sobre los elementos
      * de la interfaz y establece los limites de fechas en los {@link DatePickerDialog}
      *
-     * @param inflater utilizado para inflar el archivo de layout
-     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
      * @return la vista de la interfaz inicializada
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -339,8 +333,11 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
         //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
         newAlarmMap.onCreate(savedInstanceState);
-        try { MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         newAlarmMap.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -348,14 +345,14 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
                 // Coordinates selected previously
                 if (mMarker != null) mMarker.remove();
-                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity)getActivity()).mCoord);
+                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity) getActivity()).mCoord);
             }
         });
 
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_FIELD_LIST_ID))
             mFieldList = savedInstanceState.getParcelableArrayList(INSTANCE_FIELD_LIST_ID);
-        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_SPORT_IMAGE_ID))
-            setSportLayout(savedInstanceState.getString(INSTANCE_SPORT_IMAGE_ID));
+        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
         if (getArguments() != null && getArguments().containsKey(BUNDLE_ALARM_ID))
             newAlarmSport.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -401,7 +398,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
 
-                datePickerDialogFrom.getDatePicker().setMinDate(System.currentTimeMillis()-1000);
+                datePickerDialogFrom.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 datePickerDialogFrom.setCanceledOnTouchOutside(true);
                 datePickerDialogFrom.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.delete), new DialogInterface.OnClickListener() {
                     @Override
@@ -434,13 +431,13 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
 
-                datePickerDialogTo.getDatePicker().setMinDate(myCalendar.getTimeInMillis() + 1000*60*60*24);
+                datePickerDialogTo.getDatePicker().setMinDate(myCalendar.getTimeInMillis() + 1000 * 60 * 60 * 24);
                 datePickerDialogTo.setCanceledOnTouchOutside(true);
                 datePickerDialogTo.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.delete), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (!TextUtils.isEmpty(newAlarmDateTo.getText())) // myCalendar has been set
-                            myCalendar.setTimeInMillis(datePickerDialogTo.getDatePicker().getMinDate() - 1000*60*60*24);
+                            myCalendar.setTimeInMillis(datePickerDialogTo.getDatePicker().getMinDate() - 1000 * 60 * 60 * 24);
                         newAlarmDateTo.setText("");
                     }
                 });
@@ -451,7 +448,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         newAlarmInfinitePlayers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked) {
+                if (isChecked) {
                     newAlarmEmptyFrom.setEnabled(false);
                     newAlarmEmptyFrom.setText(R.string.infinite);
                     newAlarmEmptyTo.setEnabled(false);
@@ -475,10 +472,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la Google
      * Places API para obtener la coordenadas de dicha ciudad.
      *
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     *     Google Places API
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     * Google Places API</a>
      */
     private void setAutocompleteTextView() {
         // Set up the adapter that will retrieve suggestions from
@@ -505,8 +500,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
             @Override
             public void afterTextChanged(Editable editable) {
-                ((AlarmsActivity)getActivity()).mFieldId = null;
-                ((AlarmsActivity)getActivity()).mCity = null;
+                ((AlarmsActivity) getActivity()).mFieldId = null;
+                ((AlarmsActivity) getActivity()).mCity = null;
             }
         });
 
@@ -527,9 +522,9 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                                 public void onResult(@NonNull PlaceBuffer places) {
                                     if (places.getStatus().isSuccess() && places.getCount() > 0) {
                                         Place myPlace = places.get(0);
-                                        ((AlarmsActivity)getActivity()).mFieldId = null;
-                                        ((AlarmsActivity)getActivity()).mCity = myPlace.getName().toString();
-                                        ((AlarmsActivity)getActivity()).mCoord = myPlace.getLatLng();
+                                        ((AlarmsActivity) getActivity()).mFieldId = null;
+                                        ((AlarmsActivity) getActivity()).mCity = myPlace.getName().toString();
+                                        ((AlarmsActivity) getActivity()).mCoord = myPlace.getLatLng();
                                         Log.i(TAG, "Place found: Name - " + myPlace.getName()
                                                 + " LatLng - " + myPlace.getLatLng());
                                     } else {
@@ -625,9 +620,9 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         if (mFieldList != null)
             if (mFieldList.size() == 0)
                 startNewFieldDialog();
-            /* else startMapForPickAField();
-             * Not necessary since isn't needed a Field to create a new Alarm
-             */
+        /* else startMapForPickAField();
+         * Not necessary since isn't needed a Field to create a new Alarm
+         */
 
         //Since mFieldList are retained in savedInstance no need to load again
         mNewAlarmPresenter.stopLoadFields(getLoaderManager());
@@ -671,8 +666,10 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     public void onPause() {
         super.onPause();
         newAlarmMap.onPause();
-        if (datePickerDialogFrom != null && datePickerDialogFrom.isShowing()) datePickerDialogFrom.dismiss();
-        if (datePickerDialogTo != null && datePickerDialogTo.isShowing()) datePickerDialogTo.dismiss();
+        if (datePickerDialogFrom != null && datePickerDialogFrom.isShowing())
+            datePickerDialogFrom.dismiss();
+        if (datePickerDialogTo != null && datePickerDialogTo.isShowing())
+            datePickerDialogTo.dismiss();
     }
 
     /**
@@ -693,7 +690,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      * Muestra la instalación o la ciudad escogida en el mapa
      *
      * @param fieldId identificador de la instalación
-     * @param city ciudad
+     * @param city    ciudad
      */
     @Override
     public void showAlarmField(String fieldId, String city) {
@@ -724,7 +721,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      * Muestra en la interfaz las fechas escogidas para la alarma
      *
      * @param dateFrom limite inferior del rango de fechas
-     * @param dateTo limite superior del rango de fechas
+     * @param dateTo   limite superior del rango de fechas
      */
     @Override
     public void showAlarmDate(Long dateFrom, Long dateTo) {
@@ -739,7 +736,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      * Muestra en la interfaz el rango de puestos totales buscados en la alarma
      *
      * @param totalPlayersFrom limite inferior del rango de puestos totales
-     * @param totalPlayersTo limite superior del rango de puestos totales
+     * @param totalPlayersTo   limite superior del rango de puestos totales
      */
     @Override
     public void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo) {
@@ -754,7 +751,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      * Muestra en la interfaz el rango de puestos vacantes buscados en la alarma
      *
      * @param emptyPlayersFrom limite inferior del rango de puestos vacantes
-     * @param emptyPlayersTo limite superior del rango de puestos vacantes
+     * @param emptyPlayersTo   limite superior del rango de puestos vacantes
      */
     @Override
     public void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo) {
@@ -771,9 +768,9 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     @Override
     public void clearUI() {
         mSportId = "";
-        ((AlarmsActivity)getActivity()).mFieldId = null;
-        ((AlarmsActivity)getActivity()).mCity = null;
-        ((AlarmsActivity)getActivity()).mCoord = null;
+        ((AlarmsActivity) getActivity()).mFieldId = null;
+        ((AlarmsActivity) getActivity()).mCity = null;
+        ((AlarmsActivity) getActivity()).mCoord = null;
         newAlarmField.setText("");
         newAlarmCity.setText("");
         newAlarmDateFrom.setText("");
@@ -793,8 +790,8 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     public void onDetach() {
         super.onDetach();
         // If user go back and pick other sport, we need to clear this variables
-        ((AlarmsActivity)getActivity()).mFieldId = null;
-        ((AlarmsActivity)getActivity()).mCity = null;
+        ((AlarmsActivity) getActivity()).mFieldId = null;
+        ((AlarmsActivity) getActivity()).mCity = null;
     }
 
     /**
@@ -807,8 +804,6 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         super.onSaveInstanceState(outState);
         if (mFieldList != null)
             outState.putParcelableArrayList(INSTANCE_FIELD_LIST_ID, mFieldList);
-        if (mSportId != null)
-            outState.putString(INSTANCE_SPORT_IMAGE_ID, mSportId);
     }
 
     /**

@@ -54,7 +54,7 @@ class NewAlarmPresenter implements
      *
      * @param view referencia a la Vista correspondiente a este Presentador
      */
-    NewAlarmPresenter(NewAlarmContract.View view){
+    NewAlarmPresenter(NewAlarmContract.View view) {
         this.mNewAlarmView = view;
     }
 
@@ -62,16 +62,16 @@ class NewAlarmPresenter implements
      * Valida los parámetros especificados y, si son correctos, crea la alarma en la base de
      * datos del servidor.
      *
-     * @param alarmId identificador de la alarma si se está editando o null si se está creando
-     * @param sport deporte de la alarma
-     * @param field instalación sobre la que escucha la alarma
-     * @param city ciudad sobre la que escucha la alarma
-     * @param dateFrom limite inferior del rango de fechas en las que la alarma está buscando
-     * @param dateTo límite superior del rango de fechas en las que la alarma está buscando
+     * @param alarmId   identificador de la alarma si se está editando o null si se está creando
+     * @param sport     deporte de la alarma
+     * @param field     instalación sobre la que escucha la alarma
+     * @param city      ciudad sobre la que escucha la alarma
+     * @param dateFrom  limite inferior del rango de fechas en las que la alarma está buscando
+     * @param dateTo    límite superior del rango de fechas en las que la alarma está buscando
      * @param totalFrom límite inferior del rango de puestos totales de los partidos buscados
-     * @param totalTo límite superior del rango de puestos totales de los partidos buscados
+     * @param totalTo   límite superior del rango de puestos totales de los partidos buscados
      * @param emptyFrom límite inferior del rango de puestos vacantes de los partidos buscados
-     * @param emptyTo límite superior del rango de puestos vacantes de los partidos buscados
+     * @param emptyTo   límite superior del rango de puestos vacantes de los partidos buscados
      */
     @Override
     public void addAlarm(String alarmId, String sport, String field, String city, String dateFrom, String dateTo,
@@ -117,8 +117,10 @@ class NewAlarmPresenter implements
 
         // totalFrom could be null and totalTo should be greater than totalFrom or null
         if (isTotalPlayersCorrect(totalFrom, totalTo)) {
-            if (!TextUtils.isEmpty(totalFrom)) a.setTotal_players_from(Long.valueOf(totalFrom)); else a.setTotal_players_from(null);
-            if (!TextUtils.isEmpty(totalTo)) a.setTotal_players_to(Long.valueOf(totalTo)); else a.setTotal_players_to(null);
+            if (!TextUtils.isEmpty(totalFrom)) a.setTotal_players_from(Long.valueOf(totalFrom));
+            else a.setTotal_players_from(null);
+            if (!TextUtils.isEmpty(totalTo)) a.setTotal_players_to(Long.valueOf(totalTo));
+            else a.setTotal_players_to(null);
         } else {
             Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_total_player_invalid, Toast.LENGTH_SHORT).show();
             return;
@@ -128,14 +130,15 @@ class NewAlarmPresenter implements
         if (emptyFrom == null || TextUtils.isEmpty(emptyFrom)) emptyFrom = "1";
         if (isEmptyPlayersCorrect(emptyFrom, emptyTo)) {
             a.setEmpty_players_from(Long.valueOf(emptyFrom));
-            if (!TextUtils.isEmpty(emptyTo)) a.setEmpty_players_to(Long.valueOf(emptyTo)); else a.setEmpty_players_to(null);
+            if (!TextUtils.isEmpty(emptyTo)) a.setEmpty_players_to(Long.valueOf(emptyTo));
+            else a.setEmpty_players_to(null);
         } else {
             Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_empty_players_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        long totalPlayersFrom = (a.getTotal_players_from()!=null ? a.getTotal_players_from():-1);
-        long emptyPlayersTo = (a.getEmpty_players_to()!=null ? a.getEmpty_players_to():-1);
+        long totalPlayersFrom = (a.getTotal_players_from() != null ? a.getTotal_players_from() : -1);
+        long emptyPlayersTo = (a.getEmpty_players_to() != null ? a.getEmpty_players_to() : -1);
         if (totalPlayersFrom < emptyPlayersTo && emptyPlayersTo > 0) {
             Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_players_relation_invalid, Toast.LENGTH_SHORT).show();
             return;
@@ -145,17 +148,16 @@ class NewAlarmPresenter implements
         if (myUserId == null || TextUtils.isEmpty(myUserId)) return;
         AlarmFirebaseActions.addAlarm(a, myUserId);
         NotificationsFirebaseActions.checkOneAlarmAndNotify(a);
-        ((AlarmsActivity)mNewAlarmView.getActivityContext()).mFieldId = null;
-        ((AlarmsActivity)mNewAlarmView.getActivityContext()).mCity = null;
-        ((AlarmsActivity)mNewAlarmView.getActivityContext()).mCoord = null;
-        ((BaseFragment)mNewAlarmView).resetBackStack();
+        ((AlarmsActivity) mNewAlarmView.getActivityContext()).mFieldId = null;
+        ((AlarmsActivity) mNewAlarmView.getActivityContext()).mCity = null;
+        ((AlarmsActivity) mNewAlarmView.getActivityContext()).mCoord = null;
+        ((BaseFragment) mNewAlarmView).resetBackStack();
     }
 
     /**
      * Comprueba que el deporte es válido
      *
      * @param sport identificador del deporte
-     *
      * @return true si es válido, false si no lo es
      */
     private boolean isValidSport(String sport) {
@@ -173,10 +175,9 @@ class NewAlarmPresenter implements
      * Comprueba que el lugar el válido, teniendo en cuenta el deporte seleccionado para permitir
      * que la instalación no sea especificada en deportes que no requieren de una.
      *
-     * @param city ciudad
+     * @param city    ciudad
      * @param fieldId identificador de la instalación
      * @param sportId identificador del deporte
-     *
      * @return true si es válido, false si no lo es
      */
     private boolean isValidField(String city, String fieldId, String sportId) {
@@ -208,8 +209,7 @@ class NewAlarmPresenter implements
      * del día actual
      *
      * @param dateFrom limite inferior del rango de fechas en las que la alarma está buscando
-     * @param dateTo límite superior del rango de fechas en las que la alarma está buscando
-     *
+     * @param dateTo   límite superior del rango de fechas en las que la alarma está buscando
      * @return true si es válido, false si no lo es
      */
     private boolean isDateCorrect(String dateFrom, String dateTo) {
@@ -222,7 +222,7 @@ class NewAlarmPresenter implements
         if (dateFromMillis != null && dateFromMillis > 0)
             if (dateToMillis != null && dateToMillis > 0)
                 return (DateUtils.isToday(dateFromMillis) || System.currentTimeMillis() < dateFromMillis)
-                                && dateFromMillis <= dateToMillis;
+                        && dateFromMillis <= dateToMillis;
             else
                 return DateUtils.isToday(dateFromMillis) || System.currentTimeMillis() < dateFromMillis;
         return false;
@@ -232,8 +232,7 @@ class NewAlarmPresenter implements
      * Comprueba que el rango de puestos totales especificado es correcto
      *
      * @param totalFrom límite inferior del rango de puestos totales de los partidos buscados
-     * @param totalTo límite superior del rango de puestos totales de los partidos buscados
-     *
+     * @param totalTo   límite superior del rango de puestos totales de los partidos buscados
      * @return true si es válido, false si no lo es
      */
     private boolean isTotalPlayersCorrect(String totalFrom, String totalTo) {
@@ -246,8 +245,7 @@ class NewAlarmPresenter implements
      * Comprueba que el rango de puestos vacantes especificado es correcto
      *
      * @param emptyFrom límite inferior del rango de puestos vacantes de los partidos buscados
-     * @param emptyTo límite superior del rango de puestos vacantes de los partidos buscados
-     *
+     * @param emptyTo   límite superior del rango de puestos vacantes de los partidos buscados
      * @return true si es válido, false si no lo es
      */
     private boolean isEmptyPlayersCorrect(String emptyFrom, String emptyTo) {
@@ -261,7 +259,7 @@ class NewAlarmPresenter implements
      *
      * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
      *                      de Contenido
-     * @param b contenedor de posibles parámetros utilizados en la consulta
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
      */
     @Override
     public void openAlarm(LoaderManager loaderManager, Bundle b) {
@@ -275,7 +273,7 @@ class NewAlarmPresenter implements
      *
      * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
      *                      de Contenido
-     * @param b contenedor de posibles parámetros utilizados en la consulta
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
      */
     @Override
     public void loadFields(LoaderManager loaderManager, Bundle b) {
@@ -297,9 +295,8 @@ class NewAlarmPresenter implements
     /**
      * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
      *
-     * @param id identificador del Loader
+     * @param id   identificador del Loader
      * @param args contenedor de posibles parámetros utilizados en la consulta
-     *
      * @return Loader que realiza la consulta.
      * @see SportteamLoader#cursorLoaderOneAlarm(Context, String)
      * @see SportteamLoader#cursorLoaderFieldsFromCityWithSport(Context, String, String)
@@ -321,11 +318,11 @@ class NewAlarmPresenter implements
     }
 
     /**
-     * Invocado cuando finaliza la consulta del Loader, actúa sobre los resultados obtenidos en
-     * forma de {@link Cursor}.
+     * Invocado cuando finaliza la consulta del Loader, los resultados obtenidos en forma de
+     * {@link Cursor} serán enviados a la Vista.
      *
      * @param loader Loader utilizado para la consulta
-     * @param data resultado de la consulta
+     * @param data   resultado de la consulta
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
