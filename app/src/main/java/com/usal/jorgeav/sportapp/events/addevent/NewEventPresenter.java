@@ -298,7 +298,6 @@ class NewEventPresenter implements
         loaderManager.destroyLoader(SportteamLoader.LOADER_FRIENDS_ID);
     }
 
-
     /**
      * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
      *

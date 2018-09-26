@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.fields.addfield;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -21,21 +22,61 @@ import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
-import java.util.ArrayList;
 import java.util.List;
 
-class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+/**
+ * Presentador utilizado en la creación o edición de instalaciones.
+ * <p>
+ * Aquí se validan todos los parámetros de la instalación introducidos en la Vista
+ * {@link NewFieldContract.View}. También inicia la consulta al Proveedor de Contenido para obtener
+ * esos datos en caso de que se trate de una edición o para consultar las instalaciones de la ciudad
+ * en caso de que el usuario quiera editar la dirección y deban mostrarse esas instalaciones sobre
+ * un mapa, en ambos casos el resultado será enviado a la Vista {@link NewFieldContract.View}.
+ * <p>
+ * Implementa la interfaz {@link NewFieldContract.Presenter} para la comunicación con esta clase y
+ * la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los callbacks de la
+ * consulta.
+ */
+class NewFieldPresenter implements
+        NewFieldContract.Presenter,
+        LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Nombre de la clase
+     */
     public static final String TAG = NewFieldPresenter.class.getSimpleName();
 
+    /**
+     * Vista correspondiente a este Presentador
+     */
     private NewFieldContract.View mNewFieldView;
 
+    /**
+     * Constructor
+     *
+     * @param view Vista correspondiente a este Presentador
+     */
     NewFieldPresenter(NewFieldContract.View view) {
         this.mNewFieldView = view;
     }
 
+    /**
+     * Transforma las horas introducidas a milisegundos, valida los parámetros especificados y,
+     * si son correctos, crea o edita la instalación en la base de datos del servidor y finaliza el
+     * Fragmento.
+     *
+     * @param id        identificador de la instalación o null si es una instalación nueva
+     * @param name      nombre de la instalación
+     * @param address   dirección de la instalación
+     * @param coords    coordenadas de la instalación
+     * @param city      ciudad de la instalación
+     * @param openTime  hora de apertura de la instalación en formato HH:mm
+     * @param closeTime hora de cierre de la instalación en formato HH:mm
+     * @param creator   identificador del usuario actual que está creado/editando la instalación
+     * @param sports    lista de pistas en las que se indica el deporte y la puntuación inicial
+     */
     @Override
     public void addField(String id, String name, String address, LatLng coords, String city,
-                         String openTime, String closeTime, String userId, List<SportCourt> sports) {
+                         String openTime, String closeTime, String creator, List<SportCourt> sports) {
         // Store in DDBB times in millis (without day) needs a baseDay to parse back to String properly
         Long baseDay = UtilesTime.stringDateToMillis("11/07/92");
         Long openMillis = UtilesTime.stringTimeToMillis(openTime);
@@ -44,7 +85,7 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
         if (closeMillis != null) closeMillis += baseDay;
 
         if (isValidAddress(address, city) && isValidName(name) && isValidCoords(coords)
-                && isTimesCorrect(openMillis, closeMillis) && isValidCreator(userId)) {
+                && isTimesCorrect(openMillis, closeMillis) && isValidCreator(creator)) {
 
             //If are equals means "all day" so: from 0:00 to 0:00
             if (openMillis != null && closeMillis != null
@@ -54,13 +95,14 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
             }
 
             Field field = new Field(id, name, address, coords.latitude, coords.longitude, city,
-                    openMillis, closeMillis, userId, sports);
+                    openMillis, closeMillis, creator, sports);
 
             Log.d(TAG, "addField: " + field);
             if (TextUtils.isEmpty(field.getId()))
                 FieldsFirebaseActions.addField(field);
             else
                 FieldsFirebaseActions.updateField(field);
+
 //            ((FieldsActivity) mNewFieldView.getActivityContext()).mFieldId = null;
             ((FieldsActivity) mNewFieldView.getActivityContext()).mAddress = null;
             ((FieldsActivity) mNewFieldView.getActivityContext()).mCity = null;
@@ -69,6 +111,13 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
         }
     }
 
+    /**
+     * Comprueba que la dirección es válida
+     *
+     * @param address dirección postal de la instalación
+     * @param city    ciudad de la instalación
+     * @return true si es válido, false en caso contrario
+     */
     private boolean isValidAddress(String address, String city) {
         if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(city)
                 && address.contains(city)) return true;
@@ -77,6 +126,12 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
         return false;
     }
 
+    /**
+     * Comprueba que el nombre es válido
+     *
+     * @param name nombre para la instalación
+     * @return true si es válido, false en caso contrario
+     */
     private boolean isValidName(String name) {
         if (!TextUtils.isEmpty(name)) return true;
         Toast.makeText(mNewFieldView.getActivityContext(), R.string.error_invalid_name, Toast.LENGTH_SHORT).show();
@@ -84,6 +139,12 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
         return false;
     }
 
+    /**
+     * Comprueba que el identificador del usuario creador es válido
+     *
+     * @param userId identificador del usuario creador
+     * @return true si es válido, false en caso contrario
+     */
     private boolean isValidCreator(String userId) {
         if (!TextUtils.isEmpty(userId)) return true;
         Toast.makeText(mNewFieldView.getActivityContext(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
@@ -91,6 +152,12 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
         return false;
     }
 
+    /**
+     * Comprueba que las coordenadas son válidas
+     *
+     * @param coords coordenadas de la instalación
+     * @return true si es válido, false en caso contrario
+     */
     private boolean isValidCoords(LatLng coords) {
         if (coords != null && coords.latitude != 0 && coords.longitude != 0)
             return true;
@@ -99,6 +166,13 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
         return false;
     }
 
+    /**
+     * Comprueba que las horas de apertura y cierre son válidas
+     *
+     * @param open  hora de apertura en milisegundos
+     * @param close hora de cierre en milisegundos
+     * @return true si es válido, false en caso contrario
+     */
     private boolean isTimesCorrect(Long open, Long close) {
         if (open != null && close != null && open <= close) return true;
         Toast.makeText(mNewFieldView.getActivityContext(), R.string.toast_invalid_times, Toast.LENGTH_SHORT).show();
@@ -106,6 +180,13 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
         return false;
     }
 
+    /**
+     * Inicia el proceso de consulta a la base de datos de la instalación que se va a editar
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
+     */
     @Override
     public void openField(LoaderManager loaderManager, Bundle b) {
         if (b != null && b.containsKey(NewFieldFragment.BUNDLE_FIELD_ID)) {
@@ -114,12 +195,26 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
         }
     }
 
+    /**
+     * Detiene el proceso de consulta a la base de datos de la instalación que se va a editar
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     */
     @Override
     public void destroyOpenFieldLoader(LoaderManager loaderManager) {
         loaderManager.destroyLoader(SportteamLoader.LOADER_FIELD_ID);
         loaderManager.destroyLoader(SportteamLoader.LOADER_FIELD_SPORTS_ID);
     }
 
+    /**
+     * Inicia el proceso de consulta a la base de datos de las instalaciones de la ciudad del
+     * usuario actual
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
+     */
     @Override
     public void loadNearbyFields(LoaderManager loaderManager, Bundle b) {
         loaderManager.destroyLoader(SportteamLoader.LOADER_FIELDS_FROM_CITY);
@@ -131,6 +226,16 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
         }
     }
 
+    /**
+     * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
+     *
+     * @param id   identificador del Loader
+     * @param args contenedor de posibles parámetros utilizados en la consulta
+     * @return Loader que realiza la consulta.
+     * @see SportteamLoader#cursorLoaderFieldsFromCity(Context, String)
+     * @see SportteamLoader#cursorLoaderOneField(Context, String)
+     * @see SportteamLoader#cursorLoaderFieldSports(Context, String)
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
@@ -151,41 +256,52 @@ class NewFieldPresenter implements NewFieldContract.Presenter, LoaderManager.Loa
         return null;
     }
 
+    /**
+     * Invocado cuando finaliza la consulta del Loader, envía a la Vista los resultados obtenidos,
+     * transformando el {@link Cursor} en los objetos o listas que requieren los métodos de la Vista.
+     *
+     * @param loader Loader utilizado para la consulta
+     * @param data   resultado de la consulta
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
             case SportteamLoader.LOADER_FIELDS_FROM_CITY:
-                ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
-                mNewFieldView.retrieveFields(dataList);
+                mNewFieldView.retrieveFields(UtilesContentProvider.cursorToMultipleField(data));
                 break;
             case SportteamLoader.LOADER_FIELD_ID:
                 showFieldDetail(data);
                 break;
             case SportteamLoader.LOADER_FIELD_SPORTS_ID:
-                ArrayList<SportCourt> sports = new ArrayList<>();
-                //Loader reuses Cursor so move to first position
-                for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-                    String sportId = data.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
-                    Double punctuation = data.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
-                    Long votes = data.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);
-                    sports.add(new SportCourt(sportId, punctuation, votes));
-                }
-                mNewFieldView.setSportCourts(sports);
+                mNewFieldView.setSportCourts(UtilesContentProvider.cursorToMultipleSportCourt(data));
                 break;
         }
     }
 
+    /**
+     * Invocado cuando el {@link LoaderManager} exige un reinicio del Loader indicado. Se utiliza
+     * este método para borrar los resultados de las consultas anteriores.
+     *
+     * @param loader Loader que va a reiniciarse.
+     */
     @Override
     public void onLoaderReset(Loader loader) {
     }
 
+    /**
+     * Extrae del {@link Cursor} los datos de la instalación para enviarlos a la Vista con el
+     * formato adecuado
+     *
+     * @param data datos obtenidos del Proveedor de Contenido
+     */
     private void showFieldDetail(Cursor data) {
         if (data != null && data.moveToFirst()) {
             String address = data.getString(SportteamContract.FieldEntry.COLUMN_ADDRESS);
             String city = data.getString(SportteamContract.FieldEntry.COLUMN_CITY);
             double lat = data.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LATITUDE);
             double lng = data.getDouble(SportteamContract.FieldEntry.COLUMN_ADDRESS_LONGITUDE);
-            LatLng coords = null; if (lat != 0 && lng != 0) coords = new LatLng(lat, lng);
+            LatLng coords = null;
+            if (lat != 0 && lng != 0) coords = new LatLng(lat, lng);
             mNewFieldView.showFieldPlace(address, city, coords);
 
             mNewFieldView.showFieldName(data.getString(SportteamContract.FieldEntry.COLUMN_NAME));

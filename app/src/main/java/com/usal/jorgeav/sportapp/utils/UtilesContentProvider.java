@@ -94,7 +94,6 @@ public class UtilesContentProvider {
     public static ArrayList<Field> cursorToMultipleField(Cursor cursor) {
         ArrayList<Field> result = new ArrayList<>();
         if (cursor != null) {
-            /* https://stackoverflow.com/questions/10723770/whats-the-best-way-to-iterate-an-android-cursor#comment33274077_10723771 */
             //Move to first position to prevent errors
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
                 String fieldId = cursor.getString(SportteamContract.FieldEntry.COLUMN_FIELD_ID);
@@ -118,7 +117,6 @@ public class UtilesContentProvider {
     public static ArrayList<String> cursorToMultipleFriendsID(Cursor cursor) {
         ArrayList<String> result = new ArrayList<>();
         if (cursor != null) {
-            /* https://stackoverflow.com/questions/10723770/whats-the-best-way-to-iterate-an-android-cursor#comment33274077_10723771 */
             //Move to first position to prevent errors
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
                 result.add(cursor.getString(SportteamContract.UserEntry.COLUMN_USER_ID));
@@ -141,7 +139,7 @@ public class UtilesContentProvider {
     public static HashMap<String, SimulatedUser> cursorToMultipleSimulatedParticipants(Cursor data) {
         HashMap<String, SimulatedUser> simulatedUserHashMap = new HashMap<>();
         if (data != null)
-            //Loader reuses Cursor so move to first position
+            //Move to first position to prevent errors
             for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                 String key = data.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_SIMULATED_USER_ID);
 
@@ -154,6 +152,19 @@ public class UtilesContentProvider {
                 simulatedUserHashMap.put(key, simulatedUser);
             }
         return simulatedUserHashMap;
+    }
+
+    public static ArrayList<SportCourt> cursorToMultipleSportCourt(Cursor data) {
+        ArrayList<SportCourt> sports = new ArrayList<>();
+        if (data != null)
+            //Move to first position to prevent errors
+            for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                String sportId = data.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
+                Double punctuation = data.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
+                Long votes = data.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);
+                sports.add(new SportCourt(sportId, punctuation, votes));
+            }
+        return sports;
     }
 
     public static User getUserFromContentProvider(@NonNull String userId) {

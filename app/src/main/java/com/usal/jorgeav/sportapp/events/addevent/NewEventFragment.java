@@ -643,7 +643,7 @@ public class NewEventFragment extends BaseFragment implements
     }
 
     /**
-     * Limpia los elementos de la interfaz utilizados para mostrar los datos de la alarma
+     * Limpia los elementos de la interfaz utilizados para mostrar los datos del partido
      */
     @Override
     public void clearUI() {
