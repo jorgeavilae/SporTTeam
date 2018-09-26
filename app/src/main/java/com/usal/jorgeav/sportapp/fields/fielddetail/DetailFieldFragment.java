@@ -42,41 +42,125 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailFieldFragment extends BaseFragment implements DetailFieldContract.View {
+/**
+ * Fragmento utilizado para mostrar los detalles de una instalación. Se encarga de inicializar
+ * los componentes de la interfaz y utilizarlos para mostrar los parámetros de la instalación
+ * recuperados de la base de datos.
+ * <p>
+ * Desde este Fragmento se puede añadir una instalación nueva o votar por alguna de las pistas de
+ * la instalación que se está mostrando. Además, si el usuario actual es el creador de la
+ * instalación, puede editarla o borrarla.
+ * <p>
+ * Este Fragmento puede ser mostrado a modo informativo para ver los detalles de la instalación
+ * dónde se sitúa una alarma o un partido. También puede ser mostrado desde el mapa de instalaciones
+ * lo que permitiría además, editarla o borrarla (sólo si el usuario actual es su creador).
+ * <p>
+ * Implementa la interfaz {@link DetailFieldContract.View} para la comunicación con esta clase.
+ */
+public class DetailFieldFragment extends BaseFragment implements
+        DetailFieldContract.View {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = DetailFieldFragment.class.getSimpleName();
+
+    /**
+     * Etiqueta para establecer, en la instanciación del Fragmento, el identificador de la
+     * instalación que debe mostrarse
+     */
     public static final String BUNDLE_FIELD_ID = "BUNDLE_FIELD_ID";
+
+    /**
+     * Etiqueta para establecer, en la instanciación del Fragmento, si la instalación debe mostrarse
+     * a modo informativo o no
+     */
     public static final String BUNDLE_IS_INFO = "BUNDLE_IS_INFO";
 
+    /**
+     * Identificador de la instalación que se está mostrando
+     */
     private String mFieldId = "";
 
+    /**
+     * Presentador correspondiente a esta Vista
+     */
     private DetailFieldContract.Presenter mPresenter;
 
+    /**
+     * Menú del Fragmento que cambiará si el usuario actual es el creador de la instalación
+     */
     private Menu mMenu = null;
 
+    /**
+     * Referencia al mapa de la interfaz donde se emplaza la dirección de la instalación
+     */
     @BindView(R.id.field_detail_map)
     MapView detailFieldMap;
+    /**
+     * Objeto principal de Google Maps API. Hace referencia al mapa que provee esta API.
+     *
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap">
+     * GoogleMap<a>
+     */
     private GoogleMap mMap;
+    /**
+     * Referencia al elemento de la interfaz usado para escribir la dirección postal de la
+     * instalación
+     */
     @BindView(R.id.field_detail_address)
     TextView detailFieldAddress;
+    /**
+     * Referencia al elemento de la interfaz usado para escribir la hora de apertura de la
+     * instalación
+     */
     @BindView(R.id.field_detail_opening)
     TextView detailFieldOpening;
+    /**
+     * Referencia al elemento de la interfaz usado para escribir la hora de cierre de la
+     * instalación
+     */
     @BindView(R.id.field_detail_closing)
     TextView detailFieldClosing;
+    /**
+     * Referencia al elemento de la interfaz usado para indicar el usuario creador de la
+     * instalación
+     */
     @BindView(R.id.field_detail_creator)
     TextView detailFieldCreator;
 
+    /**
+     * Referencia a la lista de la interfaz donde se colocan las pistas de la instalación y sus
+     * puntuaciones
+     */
     @BindView(R.id.field_detail_sport_list)
     RecyclerView detailFieldSportList;
+    /**
+     * Adaptador usado para manejar la lista de pistas de la instalación
+     */
     ProfileSportsAdapter sportsAdapter;
+    /**
+     * Referencia al elemento de la interfaz utilizado para indicar que no existen pistas para
+     * esta instalación
+     */
     @BindView(R.id.field_detail_sport_placeholder)
     ConstraintLayout detailFieldSportPlaceholder;
 
-
+    /**
+     * Constructor sin argumentos
+     */
     public DetailFieldFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Método de instanciación del Fragmento
+     *
+     * @param fieldId identificador de la instalación
+     * @param isInfo  true si es sólo para mostrar la información de la instalación, false en caso
+     *                contrario
+     * @return una nueva instancia de DetailFieldFragment
+     */
     public static DetailFieldFragment newInstance(@NonNull String fieldId, boolean isInfo) {
         DetailFieldFragment fragment = new DetailFieldFragment();
         Bundle args = new Bundle();
@@ -86,6 +170,12 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         return fragment;
     }
 
+    /**
+     * Inicialización del Presentador correspondiente a esta Vista
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +184,13 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         mPresenter = new DetailFieldPresenter(this);
     }
 
+    /**
+     * Obtiene una referencia al menú y lo limpia para establecer su contenido una vez se conozca si
+     * el usuario es el creador de la instalación
+     *
+     * @param menu     menú de opciones donde se van a emplazar los elementos.
+     * @param inflater se utiliza para cargar las opciones de menú
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mMenu = menu;
@@ -101,6 +198,15 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         mMenu.clear();
     }
 
+    /**
+     * Invocado cuando un elemento del menú es pulsado. En este caso se encarga de iniciar el
+     * proceso de edición de la instalación instanciando y mostrando el Fragmento correspondiente, o
+     * se encarga de iniciar el proceso de borrado del partido con la ayuda del Presentador, o de
+     * mostrar una lista de deportes para añadir una pista nueva.
+     *
+     * @param item elemento del menú pulsado
+     * @return true si se aceptó la pulsación, false en otro caso
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
@@ -130,6 +236,18 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         return false;
     }
 
+    /**
+     * Inicializa y obtiene una referencia a los elementos de la interfaz con la ayuda de
+     * ButterKnife. Además centra el mapa en la ciudad del usuario y establece el Adaptador para la
+     * lista de pistas.
+     *
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     * @return la vista de la interfaz inicializada
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -155,12 +273,13 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
             }
         });
 
-        sportsAdapter = new ProfileSportsAdapter(null, new ProfileSportsAdapter.OnProfileSportClickListener() {
-            @Override
-            public void onProfileSportClick(String sportId) {
-                displayVoteCourtDialog(sportId);
-            }
-        }, Glide.with(this), true);
+        sportsAdapter = new ProfileSportsAdapter(null,
+                new ProfileSportsAdapter.OnProfileSportClickListener() {
+                    @Override
+                    public void onProfileSportClick(String sportId) {
+                        displayVoteCourtDialog(sportId);
+                    }
+                }, Glide.with(this), true);
         detailFieldSportList.setAdapter(sportsAdapter);
         detailFieldSportList.setHasFixedSize(true);
         detailFieldSportList.setLayoutManager(new GridLayoutManager(getActivityContext(), 2, LinearLayoutManager.VERTICAL, false));
@@ -168,6 +287,13 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         return root;
     }
 
+    /**
+     * Crea y muestra un cuadro de diálogo para votar por una pista. Se muestra al pulsar sobre
+     * alguna de las pistas de la lista y muestra una barra para escoger una puntuación que se
+     * envía a la base de datos a través del Presentador.
+     *
+     * @param sportId identificador del deporte correspondiente a la pista pulsada
+     */
     private void displayVoteCourtDialog(final String sportId) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.vote_dialog, null);
@@ -185,6 +311,14 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         builder.create().show();
     }
 
+    /**
+     * Al finalizar el proceso de creación de la Actividad contenedora, se invoca este método que
+     * establece un título para la barra superior y la acción que debe realizar: navegar hacia
+     * atrás.
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -192,6 +326,10 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento, y pide al Presentador que
+     * recupere los parámetros de la instalación que se va a mostrar.
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -199,26 +337,45 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         mPresenter.openField(getLoaderManager(), getArguments());
     }
 
+    /**
+     * Muestra en la interfaz el nombre de la instalación
+     *
+     * @param name nombre de la instalación
+     */
     @Override
     public void showFieldName(String name) {
         showContent();
         mNavigationDrawerManagementListener.setActionBarTitle(name);
     }
 
+    /**
+     * Muestra en la interfaz la dirección establecida para la instalación. Centra el mapa en esas
+     * coordenadas.
+     *
+     * @param address dirección postal de la instalación
+     * @param city    ciudad de la instalación
+     * @param coords  coordenadas de la instalación
+     */
     @Override
-    public void showFieldPlace(String address, String city, LatLng coordinates) {
+    public void showFieldPlace(String address, String city, LatLng coords) {
         showContent();
         this.detailFieldAddress.setText(address);
 
         if (getActivity() instanceof FieldsActivity) {
             ((FieldsActivity) getActivity()).mAddress = address;
             ((FieldsActivity) getActivity()).mCity = city;
-            ((FieldsActivity) getActivity()).mCoord = coordinates;
+            ((FieldsActivity) getActivity()).mCoord = coords;
         }
 
-        Utiles.setCoordinatesInMap(getActivityContext(), mMap, coordinates);
+        Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords);
     }
 
+    /**
+     * Muestra en la interfaz las horas de apertura y cierre de la instalación
+     *
+     * @param openTime  hora de apertura de la instalación en milisegundos
+     * @param closeTime hora de cierre de la instalación en milisegundos
+     */
     @Override
     public void showFieldTimes(long openTime, long closeTime) {
         showContent();
@@ -231,6 +388,41 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         }
     }
 
+    /**
+     * Muestra en la interfaz el usuario creador de la instalación. Obtiene el nombre correspondiente
+     * al identificador de usuario proporcionado para mostrarlo. También compara este identificador
+     * con el del usuario actual y, si coinciden, carga en el menú de la barra superior las opciones
+     * de edición y borrado de la instalación.
+     *
+     * @param creator identificador del usuario creador de la instalación
+     */
+    @Override
+    public void showFieldCreator(String creator) {
+        String name = UtilesContentProvider.getUserNameFromContentProvider(creator);
+        if (name != null && !TextUtils.isEmpty(name)) {
+            String created = getString(R.string.created_by);
+            this.detailFieldCreator.setText(String.format(created, name));
+        }
+
+        String myUid = Utiles.getCurrentUserId();
+        if (TextUtils.isEmpty(myUid)) return;
+
+        // If current user is creator and is not info detail fragment: allow edit/delete
+        if (myUid.equals(creator)
+                && getArguments() != null && getArguments().containsKey(BUNDLE_IS_INFO)
+                && !getArguments().getBoolean(BUNDLE_IS_INFO) && mMenu != null) {
+            mMenu.clear();
+            getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
+            getActivity().getMenuInflater().inflate(R.menu.menu_add, mMenu);
+        }
+    }
+
+    /**
+     * Pasa al Adaptador el conjunto de pistas encontradas en la base de datos para esta instalación.
+     * Si no se encontró ninguna, muestra una imagen explicando que la lista está vacía.
+     *
+     * @param cursor contiene la lista de pistas con sus puntuaciones y cantidad de votos
+     */
     @Override
     public void showSportCourts(Cursor cursor) {
         sportsAdapter.replaceData(cursor);
@@ -243,27 +435,9 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         }
     }
 
-    @Override
-    public void showFieldCreator(String userId) {
-        String name = UtilesContentProvider.getUserNameFromContentProvider(userId);
-        if (name != null && !TextUtils.isEmpty(name)) {
-            String created = getString(R.string.created_by);
-            this.detailFieldCreator.setText(String.format(created, name));
-        }
-
-        String myUid = Utiles.getCurrentUserId();
-        if (TextUtils.isEmpty(myUid)) return;
-
-        // If current user is creator and is not info detail fragment: allow edit/delete
-        if (myUid.equals(userId)
-                && getArguments() != null && getArguments().containsKey(BUNDLE_IS_INFO)
-                && !getArguments().getBoolean(BUNDLE_IS_INFO) && mMenu != null) {
-            mMenu.clear();
-            getActivity().getMenuInflater().inflate(R.menu.menu_edit_delete, mMenu);
-            getActivity().getMenuInflater().inflate(R.menu.menu_add, mMenu);
-        }
-    }
-
+    /**
+     * Limpia la interfaz de los datos de la instalación
+     */
     @Override
     public void clearUI() {
         this.mNavigationDrawerManagementListener.setActionBarTitle(getString(R.string.field_detail_title));
@@ -273,6 +447,10 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         this.detailFieldCreator.setText("");
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento, y borra las pstas del Adaptador
+     * para evitar que se almacenen en el estado del Fragmento
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -280,6 +458,7 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         sportsAdapter.replaceData(null);
     }
 
+    //todo esto porque???
     @Override
     public void onDetach() {
         super.onDetach();
@@ -291,24 +470,36 @@ public class DetailFieldFragment extends BaseFragment implements DetailFieldCont
         }
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento.
+     */
     @Override
     public void onResume() {
         super.onResume();
         detailFieldMap.onResume();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         detailFieldMap.onDestroy();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento.
+     */
     @Override
     public void onStop() {
         super.onStop();
         detailFieldMap.onStop();
     }
 
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento.
+     */
     @Override
     public void onLowMemory() {
         super.onLowMemory();

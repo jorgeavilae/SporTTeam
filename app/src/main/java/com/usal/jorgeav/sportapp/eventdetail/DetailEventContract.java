@@ -19,13 +19,12 @@ public abstract class DetailEventContract {
      * Interfaz del Presentador con los métodos utilizados para comunicarse con él
      */
     public interface Presenter {
-
         /**
          * Inicia el proceso de carga del partido de la base de datos
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
          *                      de Contenido
-         * @param b contenedor de posibles parámetros utilizados en la consulta
+         * @param b             contenedor de posibles parámetros utilizados en la consulta
          */
         void openEvent(LoaderManager loaderManager, Bundle b);
 
@@ -55,7 +54,7 @@ public abstract class DetailEventContract {
          * Invocado cuando el usuario quiere aceptar la invitación al partido que ha recibido
          *
          * @param eventId identificador del partido
-         * @param sender identificador del usuario que envió la petición
+         * @param sender  identificador del usuario que envió la petición
          */
         void acceptEventInvitation(String eventId, String sender);
 
@@ -63,14 +62,14 @@ public abstract class DetailEventContract {
          * Invocado cuando el usuario quiere rechazar la invitación al partido que ha recibido
          *
          * @param eventId identificador del partido
-         * @param sender identificador del usuario que envió la petición
+         * @param sender  identificador del usuario que envió la petición
          */
         void declineEventInvitation(String eventId, String sender);
 
         /**
          * Invocado cuando el usuario ya no quiere asistir al partido
          *
-         * @param eventId identificador del partido
+         * @param eventId                     identificador del partido
          * @param deleteSimulatedParticipants true si se desea borrar también los usuarios simulados
          *                                    {@link com.usal.jorgeav.sportapp.data.SimulatedUser}
          *                                    añadidos por el usuario que ya no asistirá, false en
@@ -119,12 +118,12 @@ public abstract class DetailEventContract {
         /**
          * Invocado para mostrar en la interfaz la instalación donde se juega este partido
          *
-         * @param field instalación con sus parámetros. Puede ser null, si el deporte no requiere
-         *              instalación
+         * @param field   instalación con sus parámetros. Puede ser null, si el deporte no requiere
+         *                instalación
          * @param address dirección postal donde se juega. Coincide con la dirección de la
          *                instalación si la hay.
-         * @param coord coordenadas sobre el mapa del lugar del partido. Coincide con las coordenadas
-         *              de la instalación si la hay.
+         * @param coord   coordenadas sobre el mapa del lugar del partido. Coincide con las coordenadas
+         *                de la instalación si la hay.
          */
         void showEventField(Field field, String address, LatLng coord);
 

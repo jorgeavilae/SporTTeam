@@ -50,12 +50,12 @@ import butterknife.ButterKnife;
  * Fragmento utilizado para mostrar los detalles de un partido. Se encarga de inicializar
  * los componentes de la interfaz y utilizarlos para mostrar los parámetros del partido recuperados
  * de la base de datos.
- *
- * <p>Adapta la interfaz, mostrando y ocultando elementos, según la relación del usuario con el
+ * <p>
+ * Adapta la interfaz, mostrando y ocultando elementos, según la relación del usuario con el
  * partido mostrado. Además, también es relevante para ello, determinar si el partido está completo
  * de participantes o si pertenece al pasado.
- *
- * <p>Implementa la interfaz {@link DetailEventContract.View} para la comunicación con esta clase.
+ * <p>
+ * Implementa la interfaz {@link DetailEventContract.View} para la comunicación con esta clase.
  */
 public class DetailEventFragment extends BaseFragment implements
         DetailEventContract.View {
@@ -96,7 +96,8 @@ public class DetailEventFragment extends BaseFragment implements
     /**
      * Tipo de relación del usuario actual con el partido que se está mostrando
      */
-    @DetailEventPresenter.EventRelationType int mRelation = DetailEventPresenter.RELATION_TYPE_ERROR;
+    @DetailEventPresenter.EventRelationType
+    int mRelation = DetailEventPresenter.RELATION_TYPE_ERROR;
 
     /**
      * Presentador correspondiente a esta Vista
@@ -200,7 +201,6 @@ public class DetailEventFragment extends BaseFragment implements
      * Método de instanciación del Fragmento.
      *
      * @param eventId identificador del partido que se muestra
-     *
      * @return una nueva instancia de DetailEventFragment
      */
     public static DetailEventFragment newInstance(@NonNull String eventId) {
@@ -229,7 +229,7 @@ public class DetailEventFragment extends BaseFragment implements
      * Obtiene una referencia al menú y lo limpia para establecer su contenido una vez se conozca la
      * relación del usuario con el partido
      *
-     * @param menu menú de opciones donde se van a emplazar los elementos.
+     * @param menu     menú de opciones donde se van a emplazar los elementos.
      * @param inflater se utiliza para cargar las opciones de menú
      */
     @Override
@@ -246,7 +246,6 @@ public class DetailEventFragment extends BaseFragment implements
      * proceso de borrado del partido con la ayuda del Presentador.
      *
      * @param item elemento del menú pulsado
-     *
      * @return true si se aceptó la pulsación, false en otro caso
      */
     @Override
@@ -263,7 +262,7 @@ public class DetailEventFragment extends BaseFragment implements
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            if(mEventId != null) {
+                            if (mEventId != null) {
                                 mPresenter.deleteEvent(mEventId);
                                 ((BaseActivity) getActivity()).hideContent();
                             }
@@ -273,7 +272,7 @@ public class DetailEventFragment extends BaseFragment implements
             builder.create().show();
             return true;
         } else if (item.getItemId() == R.id.action_unanswered_invitations) {
-            if(mEventId != null) {
+            if (mEventId != null) {
                 Fragment fragment = InvitationsSentFragment.newInstance(mEventId);
                 mFragmentManagementListener.initFragment(fragment, true);
             }
@@ -287,17 +286,12 @@ public class DetailEventFragment extends BaseFragment implements
      * ButterKnife. Además centra el mapa en la ciudad del usuario y ordena al Presentador iniciar
      * la consulta del tipo de relación.
      *
-     * @param inflater utilizado para inflar el archivo de layout
-     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
      * @return la vista de la interfaz inicializada
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -310,8 +304,11 @@ public class DetailEventFragment extends BaseFragment implements
 
         //Need to be MapView, not SupportMapFragment https://stackoverflow.com/a/19354359/4235666
         detailEventMap.onCreate(savedInstanceState);
-        try { MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         detailEventMap.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -442,7 +439,7 @@ public class DetailEventFragment extends BaseFragment implements
         detailEventRequests.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mEventId != null) {
+                if (mEventId != null) {
                     Fragment fragment = UsersRequestsFragment.newInstance(mEventId);
                     mFragmentManagementListener.initFragment(fragment, true);
                 }
@@ -692,11 +689,11 @@ public class DetailEventFragment extends BaseFragment implements
      * coordenadas. También establece el botón para mostrar el Fragmento con los detalles de la
      * instalación en la pantalla
      *
-     * @param field instalación con sus parámetros. Puede ser null, si el deporte no requiere
-     *              instalación
+     * @param field   instalación con sus parámetros. Puede ser null, si el deporte no requiere
+     *                instalación
      * @param address dirección postal donde se juega. Coincide con la dirección de la
      *                instalación si la hay.
-     * @param coord coordenadas sobre el mapa del lugar del partido. Coincide con las coordenadas
+     * @param coord   coordenadas sobre el mapa del lugar del partido. Coincide con las coordenadas
      */
     @Override
     public void showEventField(Field field, String address, LatLng coord) {
@@ -778,7 +775,7 @@ public class DetailEventFragment extends BaseFragment implements
     @Override
     public void showEventPlayers(int emptyPlayers, int totalPlayers) {
         showContent();
-        if(emptyPlayers > -1 && totalPlayers > -1) {
+        if (emptyPlayers > -1 && totalPlayers > -1) {
             this.detailEventEmpty.setText(String.format(Locale.getDefault(), "%d", emptyPlayers));
             this.detailEventTotal.setText(String.format(Locale.getDefault(), "%d", totalPlayers));
             this.detailEventProportion.setImageResource(Utiles.getPlayerIconFromResource(emptyPlayers, totalPlayers));
@@ -796,11 +793,8 @@ public class DetailEventFragment extends BaseFragment implements
      *
      * @param msgResource identificador del recurso de texto correspondiente al mensaje que se
      *                    quiere mostrar
-     *
-     * @see
-     * <a href="https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)">
-     *     runOnUiThread(java.lang.Runnable)
-     * </a>
+     * @see <a href="https://developer.android.com/reference/android/app/Activity.html#runOnUiThread(java.lang.Runnable)">
+     * runOnUiThread(java.lang.Runnable)</a>
      */
     @Override
     public void showMsgFromBackgroundThread(final int msgResource) {

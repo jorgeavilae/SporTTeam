@@ -32,16 +32,16 @@ import java.lang.ref.WeakReference;
  * Presentador utilizado en la vista de detalles de partidos. Aquí se inicia la consulta al
  * Proveedor de Contenido para obtener los datos del partido, el resultado será enviado a la
  * Vista {@link DetailEventContract.View}.
- *
- * <p>También se encarga de determinar la relación entre el usuario actual y el partido que se está
+ * <p>
+ * También se encarga de determinar la relación entre el usuario actual y el partido que se está
  * mostrando. Para ello utiliza una {@link AsyncTask} que permite consultar el Proveedor de
  * Contenido fuera del hilo principal. Además, se mantiene a la escucha de cambios en esa relación
  * mediante un patrón Observer.
- *
- * <p>Por último, desde la Vista se pueden iniciar los procesos de borrado del partido,
+ * <p>
+ * Por último, desde la Vista se pueden iniciar los procesos de borrado del partido,
  * envío y cancelación de peticiones de participación, contestación de invitaciones, o incluso
  * permitir que el usuario abandone el partido. Todos esos procesos se realizan a través de esta clase.
- *
+ * <p>
  * Implementa la interfaz {@link DetailEventContract.Presenter} para la comunicación con esta clase
  * y la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los callbacks de la
  * consulta.
@@ -99,7 +99,7 @@ public class DetailEventPresenter implements
      *
      * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
      *                      de Contenido
-     * @param b contenedor de posibles parámetros utilizados en la consulta
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
      */
     @Override
     public void openEvent(LoaderManager loaderManager, Bundle b) {
@@ -111,9 +111,8 @@ public class DetailEventPresenter implements
     /**
      * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
      *
-     * @param id identificador del Loader
+     * @param id   identificador del Loader
      * @param args contenedor de posibles parámetros utilizados en la consulta
-     *
      * @return Loader que realiza la consulta.
      * @see SportteamLoader#cursorLoaderOneEvent(Context, String)
      */
@@ -134,7 +133,7 @@ public class DetailEventPresenter implements
      * forma de {@link Cursor}.
      *
      * @param loader Loader utilizado para la consulta
-     * @param data resultado de la consulta
+     * @param data   resultado de la consulta
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -167,7 +166,8 @@ public class DetailEventPresenter implements
             String address = data.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
             double latitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
             double longitude = data.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
-            LatLng coord = null; if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+            LatLng coord = null;
+            if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
             mView.showEventField(field, address, coord);
 
             mView.showEventName(data.getString(SportteamContract.EventEntry.COLUMN_NAME));
@@ -193,7 +193,8 @@ public class DetailEventPresenter implements
     @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_OWNER,
             RELATION_TYPE_I_SEND_REQUEST, RELATION_TYPE_I_RECEIVE_INVITATION,
             RELATION_TYPE_ASSISTANT, RELATION_TYPE_BLOCKED})
-    public @interface EventRelationType {}
+    public @interface EventRelationType {
+    }
 
     /**
      * Error
@@ -243,7 +244,7 @@ public class DetailEventPresenter implements
      * buscando la relación entre un identificador de usuario y un identificador de partido dados.
      * Además, mantiene una referencia a la Vista correspondiente al Presentador para poder
      * comunicarle los resultado de la consulta.
-     *
+     * <p>
      * <p>Crear esta clase interna con una referencia débil {@link WeakReference} a la Vista
      * evita fugas de memoria, evitando una conexión fuerte entre la Vista, con un ciclo de vida
      * propio, y este objeto, que se ejecuta fuera del hilo de la interfaz, permite al GC borrar
@@ -254,9 +255,8 @@ public class DetailEventPresenter implements
         /**
          * Referencia a la Vista para comunicar resultados
          *
-         * @see
-         * <a href="https://developer.android.com/reference/java/lang/ref/WeakReference">
-         *     WeakReference
+         * @see <a href="https://developer.android.com/reference/java/lang/ref/WeakReference">
+         * WeakReference
          * </a>
          */
         private WeakReference<DetailEventContract.View> mView;
@@ -276,7 +276,6 @@ public class DetailEventPresenter implements
          * determinar la relación entre el usuario y el partido.
          *
          * @param voids no se requiere ningún parámetro
-         *
          * @return tipo de relación según las constantes declaradas en {@link DetailEventPresenter}
          */
         @Override
@@ -298,7 +297,7 @@ public class DetailEventPresenter implements
                         new String[]{detailEventView.getEventID(), myUid},
                         null);
                 if (cursorOwner != null) {
-                    if(cursorOwner.getCount() > 0) {
+                    if (cursorOwner.getCount() > 0) {
                         cursorOwner.close();
                         return RELATION_TYPE_OWNER;
                     }
@@ -314,7 +313,7 @@ public class DetailEventPresenter implements
                         new String[]{detailEventView.getEventID(), myUid},
                         null);
                 if (cursorReceiver != null) {
-                    if(cursorReceiver.getCount() > 0 && cursorReceiver.moveToFirst()) {
+                    if (cursorReceiver.getCount() > 0 && cursorReceiver.moveToFirst()) {
                         // In this case, store Invitation to accept it or decline it later
                         String sender = cursorReceiver.getString(SportteamContract.EventsInvitationEntry.COLUMN_SENDER_ID);
                         Long date = cursorReceiver.getLong(SportteamContract.EventsInvitationEntry.COLUMN_DATE);
@@ -335,7 +334,7 @@ public class DetailEventPresenter implements
                         new String[]{myUid, detailEventView.getEventID()},
                         null);
                 if (cursorSender != null) {
-                    if(cursorSender.getCount() > 0) {
+                    if (cursorSender.getCount() > 0) {
                         cursorSender.close();
                         return RELATION_TYPE_I_SEND_REQUEST;
                     }
@@ -352,7 +351,7 @@ public class DetailEventPresenter implements
                         new String[]{detailEventView.getEventID(), myUid, String.valueOf(1)}, /*1 -> true*/
                         null);
                 if (cursorAssist != null) {
-                    if(cursorAssist.getCount() > 0) {
+                    if (cursorAssist.getCount() > 0) {
                         cursorAssist.close();
                         return RELATION_TYPE_ASSISTANT;
                     }
@@ -369,7 +368,7 @@ public class DetailEventPresenter implements
                         new String[]{detailEventView.getEventID(), myUid, String.valueOf(0)}, /*0 -> false*/
                         null);
                 if (cursorNotAssist != null) {
-                    if(cursorNotAssist.getCount() > 0) {
+                    if (cursorNotAssist.getCount() > 0) {
                         cursorNotAssist.close();
                         return RELATION_TYPE_BLOCKED;
                     }
@@ -389,7 +388,7 @@ public class DetailEventPresenter implements
          * ya no se ejecuta en segundo plano.
          *
          * @param integer tipo de relación según las constantes declaradas en
-         *                  {@link DetailEventPresenter}
+         *                {@link DetailEventPresenter}
          */
         @Override
         protected void onPostExecute(Integer integer) {
@@ -428,7 +427,7 @@ public class DetailEventPresenter implements
      * Invocado desde la Vista cuando el usuario quiere aceptar la invitación al partido que ha recibido
      *
      * @param eventId identificador del partido
-     * @param sender identificador del usuario que envió la petición
+     * @param sender  identificador del usuario que envió la petición
      */
     @Override
     public void acceptEventInvitation(String eventId, String sender) {
@@ -442,7 +441,7 @@ public class DetailEventPresenter implements
      * recibido
      *
      * @param eventId identificador del partido
-     * @param sender identificador del usuario que envió la petición
+     * @param sender  identificador del usuario que envió la petición
      */
     @Override
     public void declineEventInvitation(String eventId, String sender) {
@@ -464,7 +463,7 @@ public class DetailEventPresenter implements
     /**
      * Invocado desde la Vista cuando el usuario ya no quiere asistir al partido
      *
-     * @param eventId identificador del partido
+     * @param eventId                     identificador del partido
      * @param deleteSimulatedParticipants true si se desea borrar también los usuarios simulados
      *                                    {@link com.usal.jorgeav.sportapp.data.SimulatedUser}
      *                                    añadidos por el usuario que ya no asistirá, false en
