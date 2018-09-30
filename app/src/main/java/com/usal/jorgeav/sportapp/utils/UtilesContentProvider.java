@@ -30,6 +30,17 @@ public class UtilesContentProvider {
             String sport = cursor.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
             String field = cursor.getString(SportteamContract.AlarmEntry.COLUMN_FIELD);
             String city = cursor.getString(SportteamContract.AlarmEntry.COLUMN_CITY);
+
+            Double coord_latitude = null;
+            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_COORD_LATITUDE))
+                coord_latitude = cursor.getDouble(SportteamContract.AlarmEntry.COLUMN_COORD_LATITUDE);
+            Double coord_longitude = null;
+            if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_COORD_LONGITUDE))
+                coord_longitude = cursor.getDouble(SportteamContract.AlarmEntry.COLUMN_COORD_LONGITUDE);
+            LatLng coords = null;
+            if (coord_latitude != null && coord_longitude != null)
+                coords = new LatLng(coord_latitude, coord_longitude);
+
             Long dateFrom = null;
             if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_DATE_FROM))
                 dateFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_FROM);
@@ -49,7 +60,7 @@ public class UtilesContentProvider {
             if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO))
                 emptyPlTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO);
 
-            return new Alarm(alarmId, sport, field, city,
+            return new Alarm(alarmId, sport, field, city, coords,
                     dateFrom, dateTo,
                     totalPlFrom, totalPlTo,
                     emptyPlFrom, emptyPlTo);
@@ -66,6 +77,17 @@ public class UtilesContentProvider {
                 String sport = cursor.getString(SportteamContract.AlarmEntry.COLUMN_SPORT);
                 String field = cursor.getString(SportteamContract.AlarmEntry.COLUMN_FIELD);
                 String city = cursor.getString(SportteamContract.AlarmEntry.COLUMN_CITY);
+
+                Double coord_latitude = null;
+                if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_COORD_LATITUDE))
+                    coord_latitude = cursor.getDouble(SportteamContract.AlarmEntry.COLUMN_COORD_LATITUDE);
+                Double coord_longitude = null;
+                if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_COORD_LONGITUDE))
+                    coord_longitude = cursor.getDouble(SportteamContract.AlarmEntry.COLUMN_COORD_LONGITUDE);
+                LatLng coords = null;
+                if (coord_latitude != null && coord_longitude != null)
+                    coords = new LatLng(coord_latitude, coord_longitude);
+
                 Long dateFrom = null;
                 if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_DATE_FROM))
                     dateFrom = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_DATE_FROM);
@@ -85,7 +107,7 @@ public class UtilesContentProvider {
                 if (!cursor.isNull(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO))
                     emptyPlTo = cursor.getLong(SportteamContract.AlarmEntry.COLUMN_EMPTY_PLAYERS_TO);
 
-                result.add(new Alarm(alarmId, sport, field, city, dateFrom,
+                result.add(new Alarm(alarmId, sport, field, city, coords, dateFrom,
                         dateTo, totalPlFrom, totalPlTo, emptyPlFrom, emptyPlTo));
             }
         return result;

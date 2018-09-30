@@ -24,6 +24,8 @@ public class UtilesContentValues {
         cv.put(SportteamContract.AlarmEntry.SPORT, alarm.getSport_id());
         cv.put(SportteamContract.AlarmEntry.FIELD, alarm.getField_id());
         cv.put(SportteamContract.AlarmEntry.CITY, alarm.getCity());
+        cv.put(SportteamContract.AlarmEntry.COORD_LATITUDE, alarm.getCoord_latitude());
+        cv.put(SportteamContract.AlarmEntry.COORD_LONGITUDE, alarm.getCoord_longitude());
         cv.put(SportteamContract.AlarmEntry.DATE_FROM, alarm.getDate_from());
         cv.put(SportteamContract.AlarmEntry.DATE_TO, alarm.getDate_to());
         cv.put(SportteamContract.AlarmEntry.TOTAL_PLAYERS_FROM, alarm.getTotal_players_from());
