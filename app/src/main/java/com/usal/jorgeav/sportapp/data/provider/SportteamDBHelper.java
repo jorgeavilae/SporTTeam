@@ -10,7 +10,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "sportteam.db";
 
     /* Increment when change the database schema or the onUpgrade method will not be called */
-    private static final int DATABASE_VERSION = 26;
+    private static final int DATABASE_VERSION = 27;
 
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -57,6 +57,8 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.AlarmEntry.SPORT                  + " TEXT NOT NULL,"         +
                 SportteamContract.AlarmEntry.FIELD                  + " TEXT,"                  +
                 SportteamContract.AlarmEntry.CITY                   + " TEXT NOT NULL,"         +
+                SportteamContract.AlarmEntry.COORD_LATITUDE         + " REAL,"                  +
+                SportteamContract.AlarmEntry.COORD_LONGITUDE        + " REAL,"                  +
                 SportteamContract.AlarmEntry.DATE_FROM              + " INTEGER,"               +
                 SportteamContract.AlarmEntry.DATE_TO                + " INTEGER,"               +
                 SportteamContract.AlarmEntry.TOTAL_PLAYERS_FROM     + " INTEGER,"               +

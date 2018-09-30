@@ -323,6 +323,8 @@ public final class SportteamContract {
         public static final String SPORT = "sport";
         public static final String FIELD = "field";
         public static final String CITY = "city";
+        public static final String COORD_LATITUDE = "coordLatitude";
+        public static final String COORD_LONGITUDE = "coordLongitude";
         public static final String DATE_FROM = "dateFrom";
         public static final String DATE_TO = "dateTo";
         public static final String TOTAL_PLAYERS_FROM = "totalPlayersFrom";
@@ -335,6 +337,8 @@ public final class SportteamContract {
         public static final String SPORT_TABLE_PREFIX = TABLE_ALARM + "." + SPORT;
         public static final String FIELD_TABLE_PREFIX = TABLE_ALARM + "." + FIELD;
         public static final String CITY_TABLE_PREFIX = TABLE_ALARM + "." + CITY;
+        public static final String COORD_LATITUDE_TABLE_PREFIX = TABLE_ALARM + "." + COORD_LATITUDE;
+        public static final String COORD_LONGITUDE_TABLE_PREFIX = TABLE_ALARM + "." + COORD_LONGITUDE;
         public static final String DATE_FROM_TABLE_PREFIX = TABLE_ALARM + "." + DATE_FROM;
         public static final String DATE_TO_TABLE_PREFIX = TABLE_ALARM + "." + DATE_TO;
         public static final String TOTAL_PLAYERS_FROM_TABLE_PREFIX = TABLE_ALARM + "." + TOTAL_PLAYERS_FROM;
@@ -349,6 +353,8 @@ public final class SportteamContract {
                 SPORT_TABLE_PREFIX,
                 FIELD_TABLE_PREFIX,
                 CITY_TABLE_PREFIX,
+                COORD_LATITUDE,
+                COORD_LONGITUDE,
                 DATE_FROM_TABLE_PREFIX,
                 DATE_TO_TABLE_PREFIX,
                 TOTAL_PLAYERS_FROM_TABLE_PREFIX,
@@ -363,12 +369,14 @@ public final class SportteamContract {
         public static final int COLUMN_SPORT = 2;
         public static final int COLUMN_FIELD = 3;
         public static final int COLUMN_CITY = 4;
-        public static final int COLUMN_DATE_FROM = 5;
-        public static final int COLUMN_DATE_TO = 6;
-        public static final int COLUMN_TOTAL_PLAYERS_FROM = 7;
-        public static final int COLUMN_TOTAL_PLAYERS_TO = 8;
-        public static final int COLUMN_EMPTY_PLAYERS_FROM = 9;
-        public static final int COLUMN_EMPTY_PLAYERS_TO = 10;
+        public static final int COLUMN_COORD_LATITUDE = 5;
+        public static final int COLUMN_COORD_LONGITUDE = 6;
+        public static final int COLUMN_DATE_FROM = 7;
+        public static final int COLUMN_DATE_TO = 8;
+        public static final int COLUMN_TOTAL_PLAYERS_FROM = 9;
+        public static final int COLUMN_TOTAL_PLAYERS_TO = 10;
+        public static final int COLUMN_EMPTY_PLAYERS_FROM = 11;
+        public static final int COLUMN_EMPTY_PLAYERS_TO = 12;
 
         /* URI for one alarm */
         public static Uri buildAlarmUriWith(long id) {
