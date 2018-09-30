@@ -85,6 +85,8 @@ public final class FirebaseDBContract {
         public static final String SPORT = "sport_id";
         public static final String FIELD = "field_id";
         public static final String CITY = "city";
+        public static final String COORD_LATITUDE = "coord_latitude";
+        public static final String COORD_LONGITUDE = "coord_longitude";
         public static final String DATE_FROM = "date_from";
         public static final String DATE_TO = "date_to";
         public static final String TOTAL_PLAYERS_FROM = "total_players_from";

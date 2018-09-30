@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.data;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 
 import java.util.HashMap;
@@ -25,6 +26,16 @@ public class Alarm {
      * Identificador de la ciudad donde está puesta esta alarma
      */
     private String city;
+    /**
+     * Componente latitud de la dirección donde está puesta esta alarma. Si hay una instalación
+     * en {@link #field_id}, coincide con la componente latitud de la dirección de la instalación.
+     */
+    private Double coord_latitude;
+    /**
+     * Componente longitud de la dirección donde está puesta esta alarma. Si hay una instalación
+     * en {@link #field_id}, coincide con la componente longitud de la dirección de la instalación.
+     */
+    private Double coord_longitude;
     /**
      * Limite inferior del periodo de fechas en el que deben jugarse los partidos que busca
      * esta alarma
@@ -76,6 +87,7 @@ public class Alarm {
      * @param sport_id identificador de deporte
      * @param field_id identificador de instalacion o null
      * @param city nombre de ciudad
+     * @param coord coordenadas del lugar de la alarma
      * @param date_from limite inferior del periodo de fechas
      * @param date_to limite superior del periodo de fechas
      * @param total_players_from limite inferior de puestos totales
@@ -83,7 +95,7 @@ public class Alarm {
      * @param empty_players_from limite inferior de puestos vacantes
      * @param empty_players_to limite superior de puestos vacantes
      */
-    public Alarm(String id, String sport_id, String field_id, String city,
+    public Alarm(String id, String sport_id, String field_id, String city, LatLng coord,
                  Long date_from, Long date_to,
                  Long total_players_from, Long total_players_to,
                  Long empty_players_from, Long empty_players_to) {
@@ -91,6 +103,13 @@ public class Alarm {
         this.sport_id = sport_id;
         this.field_id = field_id;
         this.city = city;
+        if (coord != null) {
+            this.coord_latitude = coord.latitude;
+            this.coord_longitude = coord.longitude;
+        } else {
+            this.coord_latitude = null;
+            this.coord_longitude = null;
+        }
         this.date_from = date_from;
         this.date_to = date_to;
         this.total_players_from = total_players_from;
@@ -113,6 +132,14 @@ public class Alarm {
 
     public String getCity() {
         return city;
+    }
+
+    public Double getCoord_latitude() {
+        return coord_latitude;
+    }
+
+    public Double getCoord_longitude() {
+        return coord_longitude;
     }
 
     public Long getDate_from() {
@@ -155,6 +182,14 @@ public class Alarm {
         this.city = city;
     }
 
+    public void setCoord_latitude(Double coord_latitude) {
+        this.coord_latitude = coord_latitude;
+    }
+
+    public void setCoord_longitude(Double coord_longitude) {
+        this.coord_longitude = coord_longitude;
+    }
+
     public void setDate_from(Long date_from) {
         this.date_from = date_from;
     }
@@ -191,6 +226,8 @@ public class Alarm {
         result.put(FirebaseDBContract.Alarm.SPORT, this.sport_id);
         result.put(FirebaseDBContract.Alarm.FIELD, this.field_id);
         result.put(FirebaseDBContract.Alarm.CITY, this.city);
+        result.put(FirebaseDBContract.Alarm.COORD_LATITUDE, this.coord_latitude);
+        result.put(FirebaseDBContract.Alarm.COORD_LONGITUDE, this.coord_longitude);
         result.put(FirebaseDBContract.Alarm.DATE_FROM, this.date_from);
         result.put(FirebaseDBContract.Alarm.DATE_TO, this.date_to);
         result.put(FirebaseDBContract.Alarm.TOTAL_PLAYERS_FROM, this.total_players_from);
@@ -211,6 +248,8 @@ public class Alarm {
                 ", sport_id='" + sport_id + '\'' +
                 ", field_id='" + field_id + '\'' +
                 ", city='" + city + '\'' +
+                ", coord_latitude=" + coord_latitude +
+                ", coord_longitude=" + coord_longitude +
                 ", date_from=" + date_from +
                 ", date_to=" + date_to +
                 ", total_players_from=" + total_players_from +
