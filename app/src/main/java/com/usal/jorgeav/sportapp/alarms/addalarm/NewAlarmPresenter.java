@@ -10,6 +10,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.alarms.alarmdetail.DetailAlarmFragment;
@@ -66,6 +67,7 @@ class NewAlarmPresenter implements
      * @param sport     deporte de la alarma
      * @param field     instalación sobre la que escucha la alarma
      * @param city      ciudad sobre la que escucha la alarma
+     * @param coords    coordenadas de la instalación o la ciudad sobre la que escucha la alarma
      * @param dateFrom  limite inferior del rango de fechas en las que la alarma está buscando
      * @param dateTo    límite superior del rango de fechas en las que la alarma está buscando
      * @param totalFrom límite inferior del rango de puestos totales de los partidos buscados
@@ -74,8 +76,9 @@ class NewAlarmPresenter implements
      * @param emptyTo   límite superior del rango de puestos vacantes de los partidos buscados
      */
     @Override
-    public void addAlarm(String alarmId, String sport, String field, String city, String dateFrom, String dateTo,
-                         String totalFrom, String totalTo, String emptyFrom, String emptyTo) {
+    public void addAlarm(String alarmId, String sport, String field, String city, LatLng coords,
+                         String dateFrom, String dateTo, String totalFrom, String totalTo,
+                         String emptyFrom, String emptyTo) {
 
         // Parse emptyPlayers string if needed (empty == "Infinite")
         if (mNewAlarmView.getActivityContext().getString(R.string.infinite).equals(emptyFrom))
@@ -97,10 +100,13 @@ class NewAlarmPresenter implements
         // field could be null, but not city
         if (city == null || TextUtils.isEmpty(city))
             city = UtilesPreferences.getCurrentUserCity(mNewAlarmView.getActivityContext());
+        if (coords == null || (coords.latitude == 0 && coords.longitude == 0))
+            coords = UtilesPreferences.getCurrentUserCityCoords(mNewAlarmView.getActivityContext());
 
-        if (isValidField(city, field, sport)) {
+        if (isValidField(city, field, sport, coords)) {
             a.setField_id(field);
             a.setCity(city);
+            //todo a.setCoords(coords);
         } else {
             Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_place_invalid, Toast.LENGTH_SHORT).show();
             return;
@@ -178,30 +184,44 @@ class NewAlarmPresenter implements
      * @param city    ciudad
      * @param fieldId identificador de la instalación
      * @param sportId identificador del deporte
+     * @param coords  coordenadas de la instalación o la ciudad
      * @return true si es válido, false si no lo es
      */
-    private boolean isValidField(String city, String fieldId, String sportId) {
-        if (city != null && !TextUtils.isEmpty(city)) {
-            // Check if the sport doesn't need a field
-            String[] arraySports = mNewAlarmView.getActivityContext().getResources().getStringArray(R.array.sport_id_values);
-            if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1]))
-                return true;
-
-            if (fieldId != null && !TextUtils.isEmpty(fieldId)) {
-                // Query database for the fieldId and checks if this sport exists
-                Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId);
-
-                if (field != null && field.getCity().equals(city)
-                        && field.containsSportCourt(sportId)) return true;
-                else {
-                    Log.e(TAG, "isValidField: not valid");
-                    return false;
-                }
-            } else
-                return true; //Could be null
+    private boolean isValidField(String city, String fieldId, String sportId, LatLng coords) {
+        if (city == null || TextUtils.isEmpty(city)) {
+            Log.e(TAG, "isValidField: city not valid");
+            return false;
         }
-        Log.e(TAG, "isValidField: city not valid");
-        return false;
+        if (coords == null || (coords.latitude == 0 && coords.longitude == 0)) {
+            Log.e(TAG, "isValidField: coordinates not valid");
+            return false;
+        }
+
+        // Check if the sport doesn't need a field
+        String[] arraySports = mNewAlarmView.getActivityContext().getResources().getStringArray(R.array.sport_id_values);
+        if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1]))
+            return true;
+
+        //If sport needs a field, couldn't be null
+        if (fieldId == null || TextUtils.isEmpty(fieldId)) {
+            Log.e(TAG, "isValidField: field not valid");
+            return false;
+        }
+
+        // Query database for the fieldId and checks if this sport exists
+        Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId);
+
+        if (field != null
+                && field.getCity().equals(city)
+                && field.containsSportCourt(sportId)
+                && field.getCoord_latitude() == coords.latitude
+                && field.getCoord_longitude() == coords.longitude)
+            return true;
+        else {
+            Log.e(TAG, "isValidField: not valid");
+            return false;
+        }
+
     }
 
     /**

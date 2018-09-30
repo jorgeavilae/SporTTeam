@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.data.Field;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public abstract class NewAlarmContract {
          * @param sport     deporte de la alarma
          * @param field     instalación sobre la que escucha la alarma
          * @param city      ciudad sobre la que escucha la alarma
+         * @param coords    coordenadas de la instalación o la ciudad sobre la que escucha la alarma
          * @param dateFrom  limite inferior del rango de fechas en las que la alarma está buscando
          * @param dateTo    límite superior del rango de fechas en las que la alarma está buscando
          * @param totalFrom límite inferior del rango de puestos totales de los partidos buscados
@@ -41,7 +43,7 @@ public abstract class NewAlarmContract {
          * @param emptyFrom límite inferior del rango de puestos vacantes de los partidos buscados
          * @param emptyTo   límite superior del rango de puestos vacantes de los partidos buscados
          */
-        void addAlarm(String alarmId, String sport, String field, String city,
+        void addAlarm(String alarmId, String sport, String field, String city, LatLng coords,
                       String dateFrom, String dateTo,
                       String totalFrom, String totalTo,
                       String emptyFrom, String emptyTo);

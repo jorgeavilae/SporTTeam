@@ -302,6 +302,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                     mSportId,
                     ((AlarmsActivity) getActivity()).mFieldId,
                     ((AlarmsActivity) getActivity()).mCity,
+                    ((AlarmsActivity) getActivity()).mCoord,
                     newAlarmDateFrom.getText().toString(),
                     newAlarmDateTo.getText().toString(),
                     newAlarmTotalFrom.getText().toString(),
@@ -362,6 +363,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                             .setItems(R.array.sport_id_entries, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int position) {
                                     String[] sportIDs = getResources().getStringArray(R.array.sport_id_values);
+                                    //todo porq showAlarmField??
                                     showAlarmField(null, ((AlarmsActivity) getActivity()).mCity);
                                     setSportLayout(sportIDs[position]);
                                 }
@@ -502,6 +504,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             public void afterTextChanged(Editable editable) {
                 ((AlarmsActivity) getActivity()).mFieldId = null;
                 ((AlarmsActivity) getActivity()).mCity = null;
+                ((AlarmsActivity) getActivity()).mCoord = null;
             }
         });
 
@@ -713,6 +716,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
             ((AlarmsActivity) getActivity()).mCoord = null;
         }
 
+        //todo poner marker solo cuando es un field
         if (mMarker != null) mMarker.remove();
         mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity) getActivity()).mCoord);
     }
@@ -782,9 +786,9 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     }
 
     /**
-     * Indica a la Actividad contenedora que elimine la instalación y la ciudad seleccionadas
-     * porque este Fragmento va a desvincularse de ella. Posiblemente porque el usuario navega
-     * hacia atrás para seleccionar otro deporte.
+     * Indica a la Actividad contenedora que elimine el lugar seleccionado porque este Fragmento va
+     * a desvincularse de ella. Posiblemente porque el usuario navega hacia atrás para seleccionar
+     * otro deporte.
      */
     @Override
     public void onDetach() {
@@ -792,6 +796,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
         // If user go back and pick other sport, we need to clear this variables
         ((AlarmsActivity) getActivity()).mFieldId = null;
         ((AlarmsActivity) getActivity()).mCity = null;
+        ((AlarmsActivity) getActivity()).mCoord = null;
     }
 
     /**
