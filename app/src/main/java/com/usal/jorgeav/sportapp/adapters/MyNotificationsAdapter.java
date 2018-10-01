@@ -40,8 +40,8 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
     private static final String TAG = MyNotificationsAdapter.class.getSimpleName();
 
     /**
-     * Alamacena la coleccion de {@link MyNotification} que maneja este adapter mediante
-     * {@link LinkedHashMap} para mantener el orden a lo largo de la ejecucion
+     * Almacena la colección de {@link MyNotification} que maneja este adapter mediante
+     * {@link LinkedHashMap} para mantener el orden a lo largo de la ejecución
      */
     private LinkedHashMap<String, MyNotification> mDataset;
     /**
@@ -52,29 +52,21 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
      * Referencia a la librería Glide, concretamente al objeto RequestManager para cargar el icono
      * correspondiente a cada item de la lista.
      *
-     * @see
-     * <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">
-     *     Glide
-     * </a>
-     * @see
-     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
-     *     RequestManager
-     * </a>
+     * @see <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">Glide</a>
+     * @see <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     * RequestManager</a>
      */
     private RequestManager mGlide;
 
     /**
      * Constructor con argumentos
      *
-     * @param dataset Conjunto de notificaciones alamacenadas en un {@link Map}
+     * @param dataset        Conjunto de notificaciones almacenadas en un {@link Map}
      * @param mClickListener Referencia al Listener que implementa esta interfaz
-     * @param glide Referencia a RequestManager para cargar el icono correspondiente a cada item de
-     *             la lista.
-     *
-     * @see
-     * <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
-     *     RequestManager
-     * </a>
+     * @param glide          Referencia a RequestManager para cargar el icono correspondiente a cada item de
+     *                       la lista.
+     * @see <a href= "https://bumptech.github.io/glide/javadocs/380/com/bumptech/glide/RequestManager.html">
+     * RequestManager</a>
      */
     public MyNotificationsAdapter(Map<String, MyNotification> dataset,
                                   OnMyNotificationItemClickListener mClickListener,
@@ -156,9 +148,10 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
     }
 
     /**
-     * Devuelve la entrada del Map para la posicion indicada
-     * @param position posicion de la entrada buscada
-     * @return Entrada de Map en la posicion indicada
+     * Devuelve la entrada del Map para la posición indicada
+     *
+     * @param position posición de la entrada buscada
+     * @return Entrada de Map en la posición indicada
      */
     private Map.Entry<String, MyNotification> getEntry(int position) {
         if (position > -1 && position < mDataset.size()) {
@@ -170,8 +163,9 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
     }
 
     /**
-     * Setter para actualizar la coleccion de notificaciones que maneja este adapter
-     * @param notifications Colección de notificacion
+     * Setter para actualizar la colección de notificaciones que maneja este adapter
+     *
+     * @param notifications Colección de notificaciones
      */
     public void replaceData(LinkedHashMap<String, MyNotification> notifications) {
         if (notifications != null) this.mDataset = new LinkedHashMap<>(notifications);
@@ -186,26 +180,26 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
     }
 
     /**
-     * Representa cada una de las celdas que el adaptador mantiene para la coleccion
+     * Representa cada una de las celdas que el adaptador mantiene para la colección
      */
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener, AdapterView.OnLongClickListener {
         /**
-         * Imagen de la notificacion
+         * Imagen de la notificación
          */
         @BindView(R.id.notification_item_icon)
         ImageView imageViewNotificationIcon;
         /**
-         * Titulo de la notificacion
+         * Titulo de la notificación
          */
         @BindView(R.id.notification_item_title)
         TextView textViewNotificationTitle;
         /**
-         * Mensaje de la notificacion
+         * Mensaje de la notificación
          */
         @BindView(R.id.notification_item_message)
         TextView textViewNotificationMessage;
         /**
-         * Fecha de la notificacion
+         * Fecha de la notificación
          */
         @BindView(R.id.notification_item_date)
         TextView textViewNotificationDate;
@@ -224,8 +218,8 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         }
 
         /**
-         * Obtiene la notificacion de la posicion de la celda pulsada y
-         * lo envia a {@link OnMyNotificationItemClickListener}
+         * Obtiene la notificación de la posición de la celda pulsada y
+         * lo envía a {@link OnMyNotificationItemClickListener}
          *
          * @param view View pulsada
          */
@@ -238,11 +232,10 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         }
 
         /**
-         * Obtiene la notificacion de la posicion de la celda pulsada y
-         * lo envia a {@link OnMyNotificationItemClickListener}
+         * Obtiene la notificación de la posición de la celda pulsada y
+         * lo envía a {@link OnMyNotificationItemClickListener}
          *
          * @param view View pulsada
-         *
          * @return true si se utiliza la pulsación, false en caso contrario
          */
         @Override
@@ -259,18 +252,18 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
      */
     public interface OnMyNotificationItemClickListener {
         /**
-         * Avisa al Listener de que se produjo una pulsación sobre una notificacion
+         * Avisa al Listener de que se produjo una pulsación sobre una notificación
          *
-         * @param key Indentificador de la notificacion
-         * @param notification notificacion seleccionada
+         * @param key          Identificador de la notificación
+         * @param notification notificación seleccionada
          */
         void onMyNotificationClick(String key, MyNotification notification);
+
         /**
-         * Avisa al Listener de que se produjo una pulsación larga sobre una notificacion
+         * Avisa al Listener de que se produjo una pulsación larga sobre una notificación
          *
-         * @param key Indentificador de la notificacion
-         * @param notification notificacion seleccionada
-         *
+         * @param key          Identificador de la notificación
+         * @param notification notificación seleccionada
          * @return true si se utiliza la pulsación, false en caso contrario
          */
         boolean onMyNotificationLongClick(String key, MyNotification notification);

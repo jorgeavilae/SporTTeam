@@ -46,7 +46,7 @@ public class AlarmsFragment extends BaseFragment implements
     AlarmsContract.Presenter mAlarmsPresenter;
 
     /**
-     * Adaptador para la colección de alarmas que se pretende mostrar
+     * Adaptador para la colección de alarmas que se muestra
      */
     AlarmAdapter mAlarmsRecyclerAdapter;
 
@@ -141,7 +141,8 @@ public class AlarmsFragment extends BaseFragment implements
 
         alarmsRecyclerList.setAdapter(mAlarmsRecyclerAdapter);
         alarmsRecyclerList.setHasFixedSize(true);
-        alarmsRecyclerList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        alarmsRecyclerList.setLayoutManager(new LinearLayoutManager(getActivityContext(),
+                LinearLayoutManager.VERTICAL, false));
 
         return root;
     }

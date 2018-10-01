@@ -13,6 +13,7 @@ import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
  * Presentador utilizado para mostrar la colección de alarmas guardadas. Aquí se inicia la consulta
  * al Proveedor de Contenido para obtener las alarmas creadas por este usuario que serán enviadas a
  * la Vista {@link AlarmsContract.View}.
+ * <p>
  * Implementa la interfaz {@link AlarmsContract.Presenter} para la comunicación con esta clase y la
  * interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los callbacks de la
  * consulta.
