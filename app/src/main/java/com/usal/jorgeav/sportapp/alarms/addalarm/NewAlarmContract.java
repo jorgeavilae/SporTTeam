@@ -82,8 +82,9 @@ public abstract class NewAlarmContract {
          *
          * @param fieldId identificador de la instalación
          * @param city    ciudad
+         * @param coords  coordenadas del lugar
          */
-        void showAlarmField(String fieldId, String city);
+        void showAlarmField(String fieldId, String city, LatLng coords);
 
         /**
          * Muestra el rango de fechas en la interfaz

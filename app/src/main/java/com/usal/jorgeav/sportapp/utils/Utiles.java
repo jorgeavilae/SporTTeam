@@ -277,17 +277,20 @@ public class Utiles {
     }
 
     public static Marker setCoordinatesInMap(Context context, GoogleMap map, LatLng coords) {
+        return setCoordinatesInMap(context, map, coords, false);
+    }
+
+    public static Marker setCoordinatesInMap(Context context, GoogleMap map, LatLng coords, boolean coordsAreCity) {
         // Prevent null coords
-        boolean coordsAreCurrentCity = false;
         if (coords == null) {
-            coordsAreCurrentCity = true;
+            coordsAreCity = true;
             coords = UtilesPreferences.getCurrentUserCityCoords(context);
         }
 
         Marker marker = null;
         if (map != null && coords != null) {
             // Add a marker if coords aren't current city
-            if (!coordsAreCurrentCity) {
+            if (!coordsAreCity) {
                 Resources res = context.getResources();
                 float hue = Utiles.getFloatFromResources(res, R.dimen.hue_of_colorSportteam_logo);
                 marker = map.addMarker(new MarkerOptions().position(coords)
@@ -296,7 +299,7 @@ public class Utiles {
 
             // Move the camera
             double bound = 0.00135;
-            if (coordsAreCurrentCity) bound += 0.002;
+            if (coordsAreCity) bound += 0.002;
             LatLng southwest = new LatLng(coords.latitude - bound, coords.longitude - bound);
             LatLng northeast = new LatLng(coords.latitude + bound, coords.longitude + bound);
             LatLngBounds llb = new LatLngBounds(southwest, northeast);

@@ -82,6 +82,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
 
     // todo en vez de consultar borrar el loader y guardar fields en instanceState; pq no consultar y recuperar la consulta del loader sin borrarlo?
+    //puede que se carguen unos fields diferentes: si cambia el deporte se debn cargar los fields del deporte nuevo no los del deporte de getArguments()
     /**
      * Etiqueta utilizada para guardar, en el estado del Fragmento, las instalaciones encontradas
      * en la consulta a la base de datos.
@@ -346,7 +347,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
 
                 // Coordinates selected previously
                 if (mMarker != null) mMarker.remove();
-                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity) getActivity()).mCoord);
+                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity) getActivity()).mCoord, false);
             }
         });
 
@@ -363,9 +364,11 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                             .setItems(R.array.sport_id_entries, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int position) {
                                     String[] sportIDs = getResources().getStringArray(R.array.sport_id_values);
-                                    //todo porq showAlarmField??
-                                    showAlarmField(null, ((AlarmsActivity) getActivity()).mCity);
                                     setSportLayout(sportIDs[position]);
+                                    ((AlarmsActivity) getActivity()).mFieldId = null;
+                                    ((AlarmsActivity) getActivity()).mCity = null;
+                                    ((AlarmsActivity) getActivity()).mCoord = null;
+                                    showAlarmField(null, null, null);
                                 }
                             });
                     builder.create().show();
@@ -525,6 +528,7 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
                                 public void onResult(@NonNull PlaceBuffer places) {
                                     if (places.getStatus().isSuccess() && places.getCount() > 0) {
                                         Place myPlace = places.get(0);
+                                        showAlarmField(null, myPlace.getName().toString(), myPlace.getLatLng());
                                         ((AlarmsActivity) getActivity()).mFieldId = null;
                                         ((AlarmsActivity) getActivity()).mCity = myPlace.getName().toString();
                                         ((AlarmsActivity) getActivity()).mCoord = myPlace.getLatLng();
@@ -557,14 +561,17 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
     }
 
     /**
-     * Muestra el contenido de la interfaz y, si no están cargados ya, pide al Presentador que
-     * recupere los parámetros de la alarma que se va a modificar.
+     * Muestra el contenido de la interfaz y sitúa el mapa. Además, si no están cargados ya, pide al
+     * Presentador que recupere los parámetros de la alarma que se va a modificar.
      */
     @Override
     public void onStart() {
         super.onStart();
         newAlarmMap.onStart();
         showContent();
+        showAlarmField(((AlarmsActivity) getActivity()).mFieldId,
+                ((AlarmsActivity) getActivity()).mCity,
+                ((AlarmsActivity) getActivity()).mCoord);
 
         if (sInitialize) return;
 
@@ -694,31 +701,34 @@ public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.V
      *
      * @param fieldId identificador de la instalación
      * @param city    ciudad
+     * @param coords  coordenadas del lugar
      */
     @Override
-    public void showAlarmField(String fieldId, String city) {
+    public void showAlarmField(String fieldId, String city, LatLng coords) {
         if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof AlarmsActivity) {
             Field f = UtilesContentProvider.getFieldFromContentProvider(fieldId);
             if (f != null) {
                 newAlarmField.setText(f.getName() + ", " + f.getCity());
                 newAlarmCity.setText("");
 
-                ((AlarmsActivity) getActivity()).mFieldId = fieldId;
-                ((AlarmsActivity) getActivity()).mCity = f.getCity();
-                ((AlarmsActivity) getActivity()).mCoord = new LatLng(f.getCoord_latitude(), f.getCoord_longitude());
+                if (mMarker != null) mMarker.remove();
+                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords,false);
             }
         } else if (city != null && !TextUtils.isEmpty(city) && getActivity() instanceof AlarmsActivity) {
             newAlarmField.setText("");
             newAlarmCity.setText(city);
 
-            ((AlarmsActivity) getActivity()).mCity = city;
-            ((AlarmsActivity) getActivity()).mFieldId = null;
-            ((AlarmsActivity) getActivity()).mCoord = null;
-        }
+            if (mMarker != null) mMarker.remove();
+            mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords, true);
+            if (mMarker != null) mMarker.remove();
+        } else {
+            newAlarmField.setText("");
+            newAlarmCity.setText("");
 
-        //todo poner marker solo cuando es un field
-        if (mMarker != null) mMarker.remove();
-        mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity) getActivity()).mCoord);
+            if (mMarker != null) mMarker.remove();
+            mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, null, true);
+            if (mMarker != null) mMarker.remove();
+        }
     }
 
     /**

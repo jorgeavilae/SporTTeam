@@ -147,7 +147,7 @@ public class AlarmsActivity extends BaseActivity
 
         if (mFieldId != null || mCity != null || mCoord != null)
             if (mDisplayedFragment instanceof NewAlarmContract.View)
-                ((NewAlarmContract.View) mDisplayedFragment).showAlarmField(mFieldId, mCity);
+                ((NewAlarmContract.View) mDisplayedFragment).showAlarmField(mFieldId, mCity, mCoord);
     }
 
     /**
@@ -205,7 +205,7 @@ public class AlarmsActivity extends BaseActivity
                 }
 
                 if (mDisplayedFragment instanceof NewAlarmContract.View)
-                    ((NewAlarmContract.View) mDisplayedFragment).showAlarmField(mFieldId, mCity);
+                    ((NewAlarmContract.View) mDisplayedFragment).showAlarmField(mFieldId, mCity, mCoord);
             } else
                 Toast.makeText(this, R.string.no_field_selection, Toast.LENGTH_SHORT).show();
     }

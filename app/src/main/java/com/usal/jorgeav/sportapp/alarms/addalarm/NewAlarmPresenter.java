@@ -106,7 +106,8 @@ class NewAlarmPresenter implements
         if (isValidField(city, field, sport, coords)) {
             a.setField_id(field);
             a.setCity(city);
-            //todo a.setCoords(coords);
+            a.setCoord_latitude(coords.latitude);
+            a.setCoord_longitude(coords.longitude);
         } else {
             Toast.makeText(mNewAlarmView.getActivityContext(), R.string.toast_place_invalid, Toast.LENGTH_SHORT).show();
             return;
@@ -385,7 +386,15 @@ class NewAlarmPresenter implements
         Alarm a = UtilesContentProvider.cursorToSingleAlarm(data);
         if (a != null) {
             mNewAlarmView.showAlarmSport(a.getSport_id());
-            mNewAlarmView.showAlarmField(a.getField_id(), a.getCity());
+            LatLng coords = null;
+            if (a.getCoord_latitude() != null && a.getCoord_longitude() != null)
+                coords = new LatLng(a.getCoord_latitude(), a.getCoord_longitude());
+
+            ((AlarmsActivity) mNewAlarmView.getActivityContext()).mFieldId = a.getField_id();
+            ((AlarmsActivity) mNewAlarmView.getActivityContext()).mCity =  a.getCity();
+            ((AlarmsActivity) mNewAlarmView.getActivityContext()).mCoord = coords;
+            mNewAlarmView.showAlarmField(a.getField_id(), a.getCity(), coords);
+
             mNewAlarmView.showAlarmDate(a.getDate_from(), a.getDate_to());
             mNewAlarmView.showAlarmTotalPlayers(a.getTotal_players_from(), a.getTotal_players_to());
             mNewAlarmView.showAlarmEmptyPlayers(a.getEmpty_players_from(), a.getEmpty_players_to());
