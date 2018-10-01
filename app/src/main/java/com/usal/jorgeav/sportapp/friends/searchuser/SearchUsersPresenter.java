@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.friends.searchuser;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -12,16 +13,46 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 
 
-class SearchUsersPresenter implements SearchUsersContract.Presenter, LoaderManager.LoaderCallbacks<Cursor> {
+/**
+ * Presentador utilizado para mostrar la colección de usuarios desconocidos. Aquí se inicia la
+ * consulta al Proveedor de Contenido para obtener los usuarios desconocidos y de la misma ciudad
+ * que el usuario actual, y que serán enviados a la Vista {@link SearchUsersContract.View}.
+ * <p>
+ * Implementa la interfaz {@link SearchUsersContract.Presenter} para la comunicación con esta clase
+ * y la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los callbacks de la
+ * consulta.
+ */
+class SearchUsersPresenter implements
+        SearchUsersContract.Presenter,
+        LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = SearchUsersPresenter.class.getSimpleName();
 
+    /**
+     * Vista correspondiente a este Presentador
+     */
     private SearchUsersContract.View mSearchUsersView;
 
+    /**
+     * Constructor
+     *
+     * @param mEventInvitationsView Vista correspondiente a este Presentador
+     */
     SearchUsersPresenter(SearchUsersContract.View mEventInvitationsView) {
         this.mSearchUsersView = mEventInvitationsView;
     }
 
+    /**
+     * Inicia el proceso de consulta a la base de datos de los usuarios desconocidos que estén en la
+     * misma ciudad que el usuario actual.
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
+     */
     @Override
     public void loadNearbyUsers(LoaderManager loaderManager, Bundle b) {
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_FROM_CITY);
@@ -32,6 +63,14 @@ class SearchUsersPresenter implements SearchUsersContract.Presenter, LoaderManag
         loaderManager.initLoader(SportteamLoader.LOADER_USERS_FROM_CITY, b, this);
     }
 
+    /**
+     * Inicia el proceso de consulta a la base de datos de los usuarios desconocidos cuyo nombre
+     * coincida con uno dado.
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
+     */
     @Override
     public void loadUsersWithName(LoaderManager loaderManager, Bundle b) {
         loaderManager.destroyLoader(SportteamLoader.LOADER_USERS_FROM_CITY);
@@ -42,6 +81,15 @@ class SearchUsersPresenter implements SearchUsersContract.Presenter, LoaderManag
         loaderManager.restartLoader(SportteamLoader.LOADER_USERS_WITH_NAME, b, this);
     }
 
+    /**
+     * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
+     *
+     * @param id   identificador del Loader
+     * @param args contenedor de posibles parámetros utilizados en la consulta
+     * @return Loader que realiza la consulta.
+     * @see SportteamLoader#cursorLoaderUsersFromCity(Context, String, String)
+     * @see SportteamLoader#cursorLoaderUsersWithName(Context, String, String)
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String currentUserID = Utiles.getCurrentUserId();
@@ -61,11 +109,24 @@ class SearchUsersPresenter implements SearchUsersContract.Presenter, LoaderManag
         return null;
     }
 
+    /**
+     * Invocado cuando finaliza la consulta del Loader, entrega los resultados obtenidos en
+     * forma de {@link Cursor} a la Vista.
+     *
+     * @param loader Loader utilizado para la consulta
+     * @param data   resultado de la consulta
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mSearchUsersView.showUsers(data);
     }
 
+    /**
+     * Invocado cuando el {@link LoaderManager} exige un reinicio del Loader indicado. Se utiliza
+     * este método para borrar los resultados de la consulta anterior.
+     *
+     * @param loader Loader que va a reiniciarse.
+     */
     @Override
     public void onLoaderReset(Loader loader) {
         mSearchUsersView.showUsers(null);
