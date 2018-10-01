@@ -11,6 +11,7 @@ import com.usal.jorgeav.sportapp.data.Alarm;
 import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
+import com.usal.jorgeav.sportapp.mainactivities.LoginActivity;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.sync.AlarmsFirebaseSync;
@@ -25,16 +26,58 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-class NotificationsPresenter implements NotificationsContract.Presenter {
+/**
+ * Presentador utilizado para mostrar la colección de notificaciones recibidas por el usuario actual.
+ * Aquí se inicia la consulta, esta vez directamente al servidor de Firebase, para obtener las
+ * notificaciones recibidas por este usuario y que serán enviadas a la Vista
+ * {@link NotificationsContract.View}.
+ * <p>
+ * La consulta se hace directamente al servidor por medio de
+ * {@link FirebaseSync#loadMyNotifications(ValueEventListener)}. Esto es debido a que las
+ * notificaciones no se almacenan en el Proveedor de Contenido.
+ * <p>
+ * Implementa la interfaz {@link NotificationsContract.Presenter} para la comunicación con esta
+ * clase.
+ */
+class NotificationsPresenter implements
+        NotificationsContract.Presenter {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = NotificationsPresenter.class.getSimpleName();
 
+    /**
+     * Vista correspondiente a este Presentador
+     */
     private NotificationsContract.View mView;
 
+    /**
+     * Constructor
+     *
+     * @param view Vista correspondiente a este Presentador
+     */
     NotificationsPresenter(NotificationsContract.View view) {
         this.mView = view;
     }
 
+    /**
+     * Inicia el proceso de consulta a la base de datos del servidor de las notificaciones recibidas
+     * por el usuario actual. Utiliza {@link FirebaseSync#loadMyNotifications(ValueEventListener)}
+     * para establecer el comportamiento una vez realizada la consulta a Firebase.
+     * <p>
+     * Dentro del método {@link ValueEventListener#onDataChange(DataSnapshot)}, se crea un
+     * {@link LinkedHashMap} para almacenar la notificación y su identificador, por orden
+     * cronológico. Luego se van añadiendo una a una asegurándose que el objeto al que refieren
+     * (usuario, partido o alarma) se encuentra en el Proveedor de Contenido, cargándolos del
+     * servidor en caso contrario.
+     *
+     * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+     * FirebaseDatabase</a>
+     * @see UsersFirebaseSync#loadAProfile(LoginActivity, String, boolean)
+     * @see EventsFirebaseSync#loadAnEvent(String)
+     * @see AlarmsFirebaseSync#loadAnAlarm(String)
+     */
     @Override
     public void loadNotifications() {
         FirebaseSync.loadMyNotifications(new ValueEventListener() {
@@ -94,12 +137,19 @@ class NotificationsPresenter implements NotificationsContract.Presenter {
         });
     }
 
-    private LinkedHashMap<String,MyNotification> reverseLinkedHashMap(LinkedHashMap<String, MyNotification> map) {
+    /**
+     * Invierte el orden del {@link LinkedHashMap} de notificaciones para mostrar las más recientes
+     * primero.
+     *
+     * @param map conjunto de notificaciones.
+     * @return el conjunto de notificaciones ordenadas en el sentido inverso al que se recibieron.
+     */
+    private LinkedHashMap<String, MyNotification> reverseLinkedHashMap(LinkedHashMap<String, MyNotification> map) {
         LinkedHashMap<String, MyNotification> result = new LinkedHashMap<>(map.size());
 
         List<Map.Entry<String, MyNotification>> list = new ArrayList<>(map.entrySet());
 
-        for( int i = list.size() -1; i >= 0 ; i --){
+        for (int i = list.size() - 1; i >= 0; i--) {
             Map.Entry<String, MyNotification> entry = list.get(i);
             result.put(entry.getKey(), entry.getValue());
         }
@@ -107,6 +157,12 @@ class NotificationsPresenter implements NotificationsContract.Presenter {
         return result;
     }
 
+    /**
+     * Borra una notificación de las recibidas por el usuario.
+     *
+     * @param key identificador de la notificación que se desea borrar
+     * @see NotificationsFirebaseActions#deleteNotification(String, String)
+     */
     @Override
     public void deleteNotification(String key) {
         String myUserID = Utiles.getCurrentUserId();
@@ -114,6 +170,11 @@ class NotificationsPresenter implements NotificationsContract.Presenter {
             NotificationsFirebaseActions.deleteNotification(myUserID, key);
     }
 
+    /**
+     * Borra todas las notificaciones recibidas por el usuario.
+     *
+     * @see NotificationsFirebaseActions#deleteAllNotifications(String)
+     */
     @Override
     public void deleteAllNotifications() {
         String myUserID = Utiles.getCurrentUserId();
