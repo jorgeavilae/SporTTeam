@@ -26,6 +26,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.EventsAdapter;
@@ -181,7 +182,6 @@ public class DetailAlarmFragment extends BaseFragment implements
      * Método de instanciación del Fragmento.
      *
      * @param alarmId identificador de la alarma que se muestra
-     *
      * @return una nueva instancia de DetailAlarmFragment
      */
     public static DetailAlarmFragment newInstance(@NonNull String alarmId) {
@@ -224,7 +224,6 @@ public class DetailAlarmFragment extends BaseFragment implements
      * o se encarga de iniciar el proceso de borrado de la alarma con la ayuda del Presentador.
      *
      * @param item elemento del menú pulsado
-     *
      * @return true si se aceptó la pulsación, false en otro caso
      */
     @Override
@@ -250,17 +249,12 @@ public class DetailAlarmFragment extends BaseFragment implements
      * ButterKnife. Además centra el mapa en la ciudad del usuario, recupera posibles datos del
      * estado anterior del Fragmento e inicializa el Adaptador de la colección de partidos.
      *
-     * @param inflater utilizado para inflar el archivo de layout
-     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
      * @return la vista de la interfaz inicializada
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -365,11 +359,12 @@ public class DetailAlarmFragment extends BaseFragment implements
     /**
      * Muestra la dirección de la alarma o la ciudad y centra el mapa sobre ella
      *
-     * @param field instalación
-     * @param city ciudad
+     * @param field  instalación
+     * @param city   ciudad
+     * @param coords coordenadas del lugar
      */
     @Override
-    public void showAlarmPlace(Field field, String city) {
+    public void showAlarmPlace(Field field, String city, LatLng coords) {
         if (field != null) {
             final String fieldId = field.getId();
             this.textViewAlarmPlace.setText(field.getName() + ", " + field.getCity());
@@ -381,12 +376,14 @@ public class DetailAlarmFragment extends BaseFragment implements
                     mFragmentManagementListener.initFragment(newFragment, true);
                 }
             });
-            mCoords = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
-            Utiles.setCoordinatesInMap(getActivityContext(), mMap, mCoords);
+            mCoords = coords;
+            Utiles.setCoordinatesInMap(getActivityContext(), mMap, mCoords, false);
         } else if (city != null && !TextUtils.isEmpty(city)) {
             this.textViewAlarmPlace.setText(city);
             this.textViewAlarmPlaceIcon.setVisibility(View.INVISIBLE);
-            mCoords = null;
+            mCoords = coords;
+            Marker m = Utiles.setCoordinatesInMap(getActivityContext(), mMap, mCoords, true);
+            if (m != null) m.remove();
         }
     }
 
@@ -396,7 +393,7 @@ public class DetailAlarmFragment extends BaseFragment implements
      * la modifique.
      *
      * @param dateFrom limite inferior del rango de fechas
-     * @param dateTo limite superior del rango de fechas
+     * @param dateTo   limite superior del rango de fechas
      */
     @Override
     public void showAlarmDate(Long dateFrom, Long dateTo) {
@@ -420,7 +417,7 @@ public class DetailAlarmFragment extends BaseFragment implements
      * Muestra en la interfaz el rango de puesto totales buscados por la alarma
      *
      * @param totalPlayersFrom limite inferior del rango de puestos totales
-     * @param totalPlayersTo limite superior del rango de puestos totales
+     * @param totalPlayersTo   limite superior del rango de puestos totales
      */
     @Override
     public void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo) {
@@ -441,7 +438,7 @@ public class DetailAlarmFragment extends BaseFragment implements
      * Muestra en la interfaz el rango de puestos vacantes buscados por la alarma
      *
      * @param emptyPlayersFrom limite inferior del rango de puestos vacantes
-     * @param emptyPlayersTo limite superior del rango de puestos vacantes
+     * @param emptyPlayersTo   limite superior del rango de puestos vacantes
      */
     @Override
     public void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo) {

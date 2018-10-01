@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 
@@ -23,7 +24,7 @@ abstract class DetailAlarmContract {
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
          *                      de Contenido
-         * @param b contenedor de posibles parámetros utilizados en la consulta
+         * @param b             contenedor de posibles parámetros utilizados en la consulta
          */
         void openAlarm(LoaderManager loaderManager, Bundle b);
 
@@ -50,17 +51,18 @@ abstract class DetailAlarmContract {
         /**
          * Invocado para mostrar el lugar de la alarma en la interfaz
          *
-         * @param field instalación
-         * @param city ciudad
+         * @param field  instalación
+         * @param city   ciudad
+         * @param coords coordenadas del lugar
          */
-        void showAlarmPlace(Field field, String city);
+        void showAlarmPlace(Field field, String city, LatLng coords);
 
         /**
          * Invocado para mostrar en la interfaz el rango de fechas en las que está establecida
          * la alarma
          *
          * @param dateFrom limite inferior del rango de fechas
-         * @param dateTo limite superior del rango de fechas
+         * @param dateTo   limite superior del rango de fechas
          */
         void showAlarmDate(Long dateFrom, Long dateTo);
 
@@ -69,7 +71,7 @@ abstract class DetailAlarmContract {
          * alarma
          *
          * @param totalPlayersFrom limite inferior del rango de puestos totales
-         * @param totalPlayersTo limite superior del rango de puestos totales
+         * @param totalPlayersTo   limite superior del rango de puestos totales
          */
         void showAlarmTotalPlayers(Long totalPlayersFrom, Long totalPlayersTo);
 
@@ -78,7 +80,7 @@ abstract class DetailAlarmContract {
          * alarma
          *
          * @param emptyPlayersFrom limite inferior del rango de puestos vacantes
-         * @param emptyPlayersTo limite superior del rango de puestos vacantes
+         * @param emptyPlayersTo   limite superior del rango de puestos vacantes
          */
         void showAlarmEmptyPlayers(Long emptyPlayersFrom, Long emptyPlayersTo);
 
@@ -105,6 +107,7 @@ abstract class DetailAlarmContract {
         /**
          * Invocado para obtener una referencia al {@link BaseFragment} que implementa este método
          * *
+         *
          * @return BaseFragment que implementa este método
          */
         BaseFragment getThis();

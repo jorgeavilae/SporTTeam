@@ -9,6 +9,7 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment;
 import com.usal.jorgeav.sportapp.data.Alarm;
@@ -162,8 +163,11 @@ class DetailAlarmPresenter implements
         if (a != null) {
             mView.showAlarmSport(a.getSport_id());
 
+            LatLng coords = null;
+            if (a.getCoord_latitude() != null && a.getCoord_longitude() != null)
+                coords = new LatLng(a.getCoord_latitude(), a.getCoord_longitude());
             Field field = UtilesContentProvider.getFieldFromContentProvider(a.getField_id());
-            mView.showAlarmPlace(field, a.getCity());
+            mView.showAlarmPlace(field, a.getCity(), coords);
 
             mView.showAlarmDate(a.getDate_from(), a.getDate_to());
             mView.showAlarmTotalPlayers(a.getTotal_players_from(), a.getTotal_players_to());
