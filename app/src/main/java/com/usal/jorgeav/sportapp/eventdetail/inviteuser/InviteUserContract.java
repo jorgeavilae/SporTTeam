@@ -22,7 +22,7 @@ abstract class InviteUserContract {
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
          *                      de Contenido
-         * @param bundle contenedor de posibles parámetros utilizados en la consulta
+         * @param bundle        contenedor de posibles parámetros utilizados en la consulta
          */
         void loadFriends(LoaderManager loaderManager, Bundle bundle);
 
@@ -30,7 +30,7 @@ abstract class InviteUserContract {
          * Invocado para enviar una invitación para el evento indicado al usuario seleccionado.
          *
          * @param eventId identificador del evento al que se invita
-         * @param uid identificador del usuario que recibirá la invitación
+         * @param uid     identificador del usuario que recibirá la invitación
          */
         void sendInvitationToThisEvent(String eventId, String uid);
     }
@@ -40,9 +40,9 @@ abstract class InviteUserContract {
      */
     public interface View {
         /**
-         * Muestra los usuarios a los que enviar invitaciones contenidas en el {@link Cursor}.
-         * Serán todos los amigos del usuario actual menos los que ya tengan alguna relación con
-         * el partido.
+         * Invocado para mostrar los usuarios a los que enviar invitaciones contenidas en el
+         * {@link Cursor}. Serán todos los amigos del usuario actual menos los que ya tengan alguna
+         * relación con el partido.
          *
          * @param cursor usuarios obtenidos en la consulta
          */

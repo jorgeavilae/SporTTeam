@@ -18,8 +18,8 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
  * pueden recibir una invitación y que serán enviados a la Vista {@link InviteUserContract.View}.
  * Esta colección de usuarios la forman los amigos del usuario actual menos los que ya tienen algún
  * tipo de relación con el partido.
- *
- * <p>Implementa la interfaz {@link InviteUserContract.Presenter} para la comunicación con
+ * <p>
+ * Implementa la interfaz {@link InviteUserContract.Presenter} para la comunicación con
  * esta clase y la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los
  * callbacks de la consulta.
  */
@@ -52,7 +52,7 @@ class InviteUserPresenter implements
      * del usuario actual.
      *
      * @param eventId identificador del evento al que hace referencia la invitación
-     * @param uid identificador del usuario que recibe la invitación
+     * @param uid     identificador del usuario que recibe la invitación
      */
     @Override
     public void sendInvitationToThisEvent(String eventId, String uid) {
@@ -67,7 +67,7 @@ class InviteUserPresenter implements
      *
      * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
      *                      de Contenido
-     * @param bundle contenedor de posibles parámetros utilizados en la consulta
+     * @param bundle        contenedor de posibles parámetros utilizados en la consulta
      */
     @Override
     public void loadFriends(LoaderManager loaderManager, Bundle bundle) {
@@ -76,11 +76,10 @@ class InviteUserPresenter implements
     }
 
     /**
-     * Invocado por  {@link LoaderManager} para crear el Loader usado para la consulta
+     * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
      *
-     * @param id identificador del Loader
+     * @param id   identificador del Loader
      * @param args contenedor de posibles parámetros utilizados en la consulta
-     *
      * @return Loader que realiza la consulta.
      * @see SportteamLoader#cursorLoaderUsersForInvite(Context, String, String)
      */
@@ -102,7 +101,7 @@ class InviteUserPresenter implements
      * forma de {@link Cursor} a la Vista.
      *
      * @param loader Loader utilizado para la consulta
-     * @param data resultado de la consulta
+     * @param data   resultado de la consulta
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {

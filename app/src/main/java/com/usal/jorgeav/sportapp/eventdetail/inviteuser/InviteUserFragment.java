@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
  * Fragmento utilizado para mostrar la colección de usuarios a los que enviar una invitación al
  * partido referido. Se encarga de inicializar los componentes de la interfaz para mostrar la
  * colección con la ayuda de {@link UsersAdapter}.
+ * <p>
  * Implementa la interfaz {@link InviteUserContract.View} para la comunicación con esta clase
  * y la interfaz {@link UsersAdapter.OnUserItemClickListener} para manejar la pulsación sobre cada
  * uno de los usuarios destinatarios de la invitación.
@@ -44,21 +45,20 @@ public class InviteUserFragment extends BaseFragment implements
     private static final String TAG = InviteUserFragment.class.getSimpleName();
     /**
      * Etiqueta para establecer, en la instanciación del Fragmento, el identificador del evento
-     * al que estarán referidas las invitaciones que van a enviarse a los usuarios en la
-     * instanciación del Fragmento
+     * al que estarán referidas las invitaciones que van a enviarse a los usuarios.
      */
     public static final String BUNDLE_EVENT_ID = "BUNDLE_EVENT_ID";
-
-    /**
-     * Presentador correspondiente a esta Vista
-     */
-    InviteUserContract.Presenter mSendInvitationPresenter;
 
     /**
      * Identificador del evento al que van referidas las invitaciones que pretenden enviarse desde
      * este Fragmento
      */
     private static String mEvent = "";
+
+    /**
+     * Presentador correspondiente a esta Vista
+     */
+    InviteUserContract.Presenter mSendInvitationPresenter;
 
     /**
      * Referencia al elemento de la interfaz donde se listan los posibles usuarios destinatarios
@@ -89,7 +89,6 @@ public class InviteUserFragment extends BaseFragment implements
      * Método de instanciación del Fragmento
      *
      * @param eventId identificador del partido al que hacen referencia las invitaciones
-     *
      * @return una nueva instancia de InviteUserFragment
      */
     public static InviteUserFragment newInstance(@NonNull String eventId) {
@@ -133,17 +132,12 @@ public class InviteUserFragment extends BaseFragment implements
      * ButterKnife. Establece el adaptador creado como adaptador de la lista de la interfaz recién
      * inflada.
      *
-     * @param inflater utilizado para inflar el archivo de layout
-     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
      * @return la vista de la interfaz inicializada
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -244,7 +238,6 @@ public class InviteUserFragment extends BaseFragment implements
      * No realiza ninguna acción
      *
      * @param uid Identificador del usuario pulsado
-     *
      * @return false
      */
     @Override
