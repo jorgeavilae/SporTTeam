@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
+import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.network.firebase.actions.EventRequestFirebaseActions;
@@ -59,9 +60,11 @@ public class DetailEventPresenter implements
      * Vista correspondiente a este Presentador
      */
     private DetailEventContract.View mView;
+
     /**
-     * Permite que el Presentador mantenga un callback sobre una URI de la base de datos basándose
-     * en el patrón Observer
+     * Permite que el Presentador mantenga un callback sobre una URI de la base de datos que se
+     * ejecuta cada vez esa URI es notificada a causa de un cambio en los datos a los que apunta.
+     * Se basa en el patrón Observer.
      */
     private ContentObserver mContentObserver;
 
@@ -73,7 +76,7 @@ public class DetailEventPresenter implements
      * Objeto {@link Invitation} con los parámetros asociados a la posible invitación recibida por
      * el usuario
      */
-    static Invitation mInvitation = null;
+    private static Invitation mInvitation = null;
 
     /**
      * Constructor con argumentos. Aquí se inicializa el {@link ContentObserver} estableciendo su
@@ -225,12 +228,11 @@ public class DetailEventPresenter implements
      */
     public static final int RELATION_TYPE_BLOCKED = 5; //Participation false
 
-
     /**
      * Crea y ejecuta una {@link AsyncTask} para realizar una serie de consultas al Proveedor de
-     * Contenido que determinen la relación entre el usuario y el partido. Es necesario ya que las
-     * consultas a la base de datos pueden tardar demasiado para realizarlas sobre el hilo de
-     * ejecución principal, ralentizando la interfaz.
+     * Contenido que determinen la relación entre el usuario y el partido. Es necesario que las
+     * consultas a la base de datos se realicen en segundo plano ya que pueden tardar demasiado
+     * como para realizarlas sobre el hilo de ejecución principal, y ralentizarían la interfaz.
      */
     @Override
     public void getRelationTypeBetweenThisEventAndI() {
@@ -245,7 +247,7 @@ public class DetailEventPresenter implements
      * Además, mantiene una referencia a la Vista correspondiente al Presentador para poder
      * comunicarle los resultado de la consulta.
      * <p>
-     * <p>Crear esta clase interna con una referencia débil {@link WeakReference} a la Vista
+     * Crear esta clase interna con una referencia débil {@link WeakReference} a la Vista
      * evita fugas de memoria, evitando una conexión fuerte entre la Vista, con un ciclo de vida
      * propio, y este objeto, que se ejecuta fuera del hilo de la interfaz, permite al GC borrar
      * la Vista.
@@ -256,8 +258,7 @@ public class DetailEventPresenter implements
          * Referencia a la Vista para comunicar resultados
          *
          * @see <a href="https://developer.android.com/reference/java/lang/ref/WeakReference">
-         * WeakReference
-         * </a>
+         * WeakReference</a>
          */
         private WeakReference<DetailEventContract.View> mView;
 
@@ -276,7 +277,7 @@ public class DetailEventPresenter implements
          * determinar la relación entre el usuario y el partido.
          *
          * @param voids no se requiere ningún parámetro
-         * @return tipo de relación según las constantes declaradas en {@link DetailEventPresenter}
+         * @return tipo de relación según las constantes declaradas en {@link EventRelationType}
          */
         @Override
         protected Integer doInBackground(Void... voids) {
@@ -384,11 +385,11 @@ public class DetailEventPresenter implements
         }
 
         /**
-         * Envía el resultado obtenido en {@link #doInBackground(Void...)} a la Vista.Este método
+         * Envía el resultado obtenido en {@link #doInBackground(Void...)} a la Vista. Este método
          * ya no se ejecuta en segundo plano.
          *
          * @param integer tipo de relación según las constantes declaradas en
-         *                {@link DetailEventPresenter}
+         *                {@link EventRelationType}
          */
         @Override
         protected void onPostExecute(Integer integer) {
@@ -465,9 +466,8 @@ public class DetailEventPresenter implements
      *
      * @param eventId                     identificador del partido
      * @param deleteSimulatedParticipants true si se desea borrar también los usuarios simulados
-     *                                    {@link com.usal.jorgeav.sportapp.data.SimulatedUser}
-     *                                    añadidos por el usuario que ya no asistirá, false en
-     *                                    otro caso
+     *                                    {@link SimulatedUser} añadidos por el usuario que ya no
+     *                                    asistirá, false en otro caso.
      */
     @Override
     public void quitEvent(String eventId, boolean deleteSimulatedParticipants) {

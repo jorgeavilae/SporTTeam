@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.Invitation;
+import com.usal.jorgeav.sportapp.data.SimulatedUser;
 
 /**
  * Clase abstracta donde se declaran las interfaces por las que se comunican Vista y Presentador,
@@ -20,7 +21,7 @@ public abstract class DetailEventContract {
      */
     public interface Presenter {
         /**
-         * Inicia el proceso de carga del partido de la base de datos
+         * Invocado para iniciar el proceso de carga del partido de la base de datos
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
          *                      de Contenido
@@ -32,7 +33,7 @@ public abstract class DetailEventContract {
          * Invocado para obtener la relación que el usuario actual mantiene con el partido que
          * se muestra
          */
-        //todo deberia aceptar un listener como parámetro donde se especificara loq hace con la relation
+        //todo debería aceptar un listener como parámetro donde se especificara loq hace con la relation
         void getRelationTypeBetweenThisEventAndI();
 
         /**
@@ -71,9 +72,8 @@ public abstract class DetailEventContract {
          *
          * @param eventId                     identificador del partido
          * @param deleteSimulatedParticipants true si se desea borrar también los usuarios simulados
-         *                                    {@link com.usal.jorgeav.sportapp.data.SimulatedUser}
-         *                                    añadidos por el usuario que ya no asistirá, false en
-         *                                    otro caso
+         *                                    {@link SimulatedUser} añadidos por el usuario que ya
+         *                                    no asistirá, false en otro caso
          */
         void quitEvent(String eventId, boolean deleteSimulatedParticipants);
 

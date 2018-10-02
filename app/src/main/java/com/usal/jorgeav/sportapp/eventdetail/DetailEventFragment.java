@@ -835,14 +835,17 @@ public class DetailEventFragment extends BaseFragment implements
 
     /**
      * Avisa al mapa de este método del ciclo de vida del Fragmento, y ordena al Presentador que se
-     * añada como Observer de la relación entre el usuario y el partido
+     * añada como Observer de la relación entre el usuario y el partido. Provoca que se muestre el
+     * menú al girar la pantalla.
+     *
+     * @see <a href="https://stackoverflow.com/a/17063800/4235666">
+     * Call onCreateOptionsMenu() on orientation changes (StackOverflow)</a>
      */
     @Override
     public void onResume() {
         super.onResume();
         detailEventMap.onResume();
         mPresenter.registerUserRelationObserver();
-        /* https://stackoverflow.com/a/17063800/4235666 */
         setMenuVisibility(true);
     }
 

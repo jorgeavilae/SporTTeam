@@ -59,13 +59,11 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
      * Nombre de la clase
      */
     private static final String TAG = NewUserFragment.class.getSimpleName();
+
     /**
      * Identificador para la ejecución de EasyImage
      *
-     * @see
-     * <a href= "https://github.com/jkwiecien/EasyImage">
-     *     EasyImage (Github)
-     * </a>
+     * @see <a href= "https://github.com/jkwiecien/EasyImage">EasyImage (Github)</a>
      */
     public static final int RC_PHOTO_PICKER = 2;
 
@@ -77,9 +75,8 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     /**
      * Ruta del archivo de imagen resultante después del proceso de recorte con uCrop
      *
-     * @see
-     * <a href= "https://github.com/Yalantis/uCrop">
-     *     uCrop (Github)
+     * @see <a href= "https://github.com/Yalantis/uCrop">
+     * uCrop (Github)
      * </a>
      */
     Uri croppedImageUri;
@@ -238,17 +235,12 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
      * Inicializa y obtiene una referencia a los elementos de la interfaz con la ayuda de
      * ButterKnife.
      *
-     * @param inflater utilizado para inflar el archivo de layout
-     * @param container contenedor donde se va a incluir la interfaz o null
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
      * @return la vista de la interfaz inicializada
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -368,10 +360,8 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
      * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la Google
      * Places API para obtener la coordenadas de dicha ciudad.
      *
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     *     Google Places API
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     * Google Places API</a>
      */
     private void setAutocompleteTextView() {
         // Set up the adapter that will retrieve suggestions from
@@ -398,9 +388,9 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
 
             @Override
             public void afterTextChanged(Editable editable) {
-                    newUserCitySelectedName = null;
-                    newUserCitySelectedCoord = null;
-                    newUserAutocompleteCity.setError(getString(R.string.error_invalid_city));
+                newUserCitySelectedName = null;
+                newUserCitySelectedCoord = null;
+                newUserAutocompleteCity.setError(getString(R.string.error_invalid_city));
             }
         };
         newUserAutocompleteCity.addTextChangedListener(tw);
@@ -473,7 +463,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         setAgeEditText();
         setAutocompleteTextView();
 
-        if (((NewUserActivity)getActivity()).sports != null && ((NewUserActivity)getActivity()).sportsInitialize) {
+        if (((NewUserActivity) getActivity()).sports != null && ((NewUserActivity) getActivity()).sportsInitialize) {
             hideContent();
 
             if (TextUtils.isEmpty(newUserEmail.getError())
@@ -481,7 +471,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                     && TextUtils.isEmpty(newUserName.getError())
                     && TextUtils.isEmpty(newUserAge.getError())) {
 
-                ((NewUserActivity)getActivity()).sportsInitialize = mPresenter.createAuthUser(
+                ((NewUserActivity) getActivity()).sportsInitialize = mPresenter.createAuthUser(
                         newUserEmail.getText().toString(),
                         newUserPassword.getText().toString(),
                         newUserName.getText().toString(),
@@ -511,11 +501,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
      * para indicar la ruta del archivo de imagen resultante.
      *
      * @param photoCroppedUri ruta del archivo de imagen de la foto de perfil
-     *
-     * @see
-     * <a href= "https://github.com/Yalantis/uCrop">
-     *     uCrop (Github)
-     * </a>
+     * @see <a href= "https://github.com/Yalantis/uCrop">uCrop (Github)</a>
      */
     @Override
     public void croppedResult(Uri photoCroppedUri) {

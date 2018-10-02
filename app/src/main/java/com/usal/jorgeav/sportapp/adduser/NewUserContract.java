@@ -37,14 +37,14 @@ public class NewUserContract {
         /**
          * Invocado para crear el usuario con los parámetros dados
          *
-         * @param email dirección de email
-         * @param pass contraseña
-         * @param name nombre
+         * @param email                     dirección de email
+         * @param pass                      contraseña
+         * @param name                      nombre
          * @param croppedImageFileSystemUri ruta del archivo de imagen utilizado como foto de perfil
-         * @param age edad
-         * @param city ciudad
-         * @param coords coordenadas de la ciudad
-         * @param sportsList lista de {@link Sport} que practica el usuario
+         * @param age                       edad
+         * @param city                      ciudad
+         * @param coords                    coordenadas de la ciudad
+         * @param sportsList                lista de {@link Sport} que practica el usuario
          * @return true si los argumentos son válidos, false en caso contrario.
          */
         boolean createAuthUser(String email, String pass, String name,
@@ -61,11 +61,7 @@ public class NewUserContract {
          * para indicar la ruta del archivo de imagen resultante.
          *
          * @param photoCroppedUri ruta del archivo de imagen de la foto de perfil
-         *
-         * @see
-         * <a href= "https://github.com/Yalantis/uCrop">
-         *     uCrop (Github)
-         * </a>
+         * @see <a href= "https://github.com/Yalantis/uCrop">uCrop (Github)</a>
          */
         void croppedResult(Uri photoCroppedUri);
 
