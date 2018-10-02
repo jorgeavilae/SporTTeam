@@ -44,7 +44,7 @@ public class FriendsFragment extends BaseFragment implements
     private static final String TAG = FriendsFragment.class.getSimpleName();
 
     /**
-     * Presentador correspondiente a esta Vistas
+     * Presentador correspondiente a esta Vista
      */
     FriendsContract.Presenter mFriendsPresenter;
 
@@ -209,7 +209,7 @@ public class FriendsFragment extends BaseFragment implements
 
     /**
      * Inicia la transición hacia el Fragmento utilizado para mostrar los detalles del usuario
-     * pulsado.
+     * pulsado, {@link ProfileFragment}.
      *
      * @param uid Identificador del usuario pulsado
      */
