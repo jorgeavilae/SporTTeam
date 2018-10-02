@@ -109,8 +109,8 @@ public class FieldsMapFragment extends SupportMapFragment implements
     /**
      * Referencia al mapa de Google cargado en SupportMapFragment
      *
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
-     * SupportMapFragment</a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap">
+     * GoogleMap</a>
      */
     private GoogleMap mMap;
 
@@ -149,7 +149,7 @@ public class FieldsMapFragment extends SupportMapFragment implements
     }
 
     /**
-     * Inicializa el Presentador correspondiente a esta vista
+     * Inicializa el Presentador correspondiente a esta Vista
      *
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
@@ -220,7 +220,6 @@ public class FieldsMapFragment extends SupportMapFragment implements
 
         mFieldsPresenter.loadNearbyFields(getLoaderManager(), getArguments());
     }
-
 
     /**
      * Transforma las instalaciones contenidas en el {@link Cursor} en instalaciones con el formato

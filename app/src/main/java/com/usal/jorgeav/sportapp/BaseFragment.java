@@ -59,6 +59,8 @@ public abstract class BaseFragment extends Fragment {
     }
 
     /**
+     * Devuelve el Context de la Actividad contenedora
+     *
      * @return {@link Context} de la Actividad contenedora
      */
     public Context getActivityContext() {
@@ -66,6 +68,8 @@ public abstract class BaseFragment extends Fragment {
     }
 
     /**
+     * Devuelve una referencia al este BaseFragment
+     *
      * @return {@link BaseFragment} que referencia a este Fragmento
      */
     public BaseFragment getThis() {

@@ -2,7 +2,6 @@ package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.usal.jorgeav.sportapp.R;
@@ -26,7 +25,7 @@ public class SearchEventsActivity extends BaseActivity
      * Clave para mantener en rotaciones del dispositivo, en el {@link Bundle} de estado,
      * el filtro del deporte seleccionado.
      */
-    public static final String INSTANCE_SPORTID_SELECTED = "INSTANCE_SPORTID_SELECTED";
+    public static final String INSTANCE_SPORT_SELECTED = "INSTANCE_SPORT_SELECTED";
     /**
      * Deporte seleccionado para el filtro
      */
@@ -119,7 +118,7 @@ public class SearchEventsActivity extends BaseActivity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mSportId != null)
-            outState.putString(INSTANCE_SPORTID_SELECTED, mSportId);
+            outState.putString(INSTANCE_SPORT_SELECTED, mSportId);
 
         if (mDateFrom != null)
             outState.putLong(INSTANCE_DATE_FROM_SELECTED, mDateFrom);
@@ -147,8 +146,8 @@ public class SearchEventsActivity extends BaseActivity
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.containsKey(INSTANCE_SPORTID_SELECTED))
-            mSportId = savedInstanceState.getString(INSTANCE_SPORTID_SELECTED);
+        if (savedInstanceState.containsKey(INSTANCE_SPORT_SELECTED))
+            mSportId = savedInstanceState.getString(INSTANCE_SPORT_SELECTED);
 
         if (savedInstanceState.containsKey(INSTANCE_DATE_FROM_SELECTED))
             mDateFrom = savedInstanceState.getLong(INSTANCE_DATE_FROM_SELECTED);
@@ -171,13 +170,13 @@ public class SearchEventsActivity extends BaseActivity
      * el Fragmento {@link SearchEventsFragment}.
      * Pertenece a la interfaz {@link SearchEventsFragment.OnSearchEventFilter}
      *
-     * @param sportId deporte
-     * @param dateFrom limite inferior del periodo de fechas
-     * @param dateTo limite superior del periodo de fechas
+     * @param sportId   deporte
+     * @param dateFrom  limite inferior del periodo de fechas
+     * @param dateTo    limite superior del periodo de fechas
      * @param totalFrom limite inferior de jugadores totales
-     * @param totalTo limite superior de jugadores totales
+     * @param totalTo   limite superior de jugadores totales
      * @param emptyFrom limite inferior de puestos vacantes
-     * @param emptyTo limite superior de puestos vacantes
+     * @param emptyTo   limite superior de puestos vacantes
      */
     @Override
     public void onFilterSet(String sportId, Long dateFrom, Long dateTo, int totalFrom,
