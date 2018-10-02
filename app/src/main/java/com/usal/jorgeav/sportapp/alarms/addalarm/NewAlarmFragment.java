@@ -64,7 +64,8 @@ import butterknife.ButterKnife;
  * instalación o la ciudad seleccionada y un {@link AutoCompleteTextView} para escribir la ciudad.
  * Implementa la interfaz {@link NewAlarmContract.View} para la comunicación con esta clase.
  */
-public class NewAlarmFragment extends BaseFragment implements NewAlarmContract.View {
+public class NewAlarmFragment extends BaseFragment implements
+        NewAlarmContract.View {
     /**
      * Nombre de la clase
      */

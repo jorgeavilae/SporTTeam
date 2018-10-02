@@ -31,52 +31,132 @@ import com.usal.jorgeav.sportapp.utils.UtilesTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
-public class SearchEventsFragment extends BaseFragment implements SearchEventsContract.View {
-
+/**
+ * Fragmento utilizado para establecer los filtros de la búsqueda de partidos. Se encarga de
+ * inicializar los componentes de edición de la interfaz para que el usuario pueda introducir los
+ * parámetros, entre los que se encuentran dos {@link DatePickerDialog} y un botón que muestra un
+ * diálogo para escoger deporte.
+ * <p>
+ * Implementa la interfaz {@link SearchEventsContract.View} para la comunicación con esta clase.
+ * También aloja una interfaz {@link OnSearchEventFilter} para comunicar a la Actividad contenedora,
+ * a través de ella, los filtros establecidos después de comprobar su validez.
+ */
+public class SearchEventsFragment extends BaseFragment implements
+        SearchEventsContract.View {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = SearchEventsFragment.class.getSimpleName();
 
+    /**
+     * Presentador correspondiente a esta Vista
+     */
     SearchEventsContract.Presenter mSearchEventsPresenter;
 
+    /**
+     * Etiqueta para almacenar en el estado del Fragmento, el deporte seleccionado.
+     */
     public static final String BUNDLE_SPORT = "BUNDLE_SPORT";
+    /**
+     * Identificador del deporte seleccionado.
+     */
     String mSportIdSelected = "";
 
+    /**
+     * Referencia al botón de la interfaz que se utiliza para establecer el deporte del filtro
+     */
     @BindView(R.id.search_events_button)
     Button searchEventsButton;
+    /**
+     * Referencia a la imagen de la interfaz que se usa para mostrar el icono del deporte
+     * seleccionado
+     */
     @BindView(R.id.search_events_icon)
     ImageView searchEventsIcon;
+    /**
+     * Referencia al texto en la interfaz donde se escribe el nombre del deporte seleccionado.
+     */
     @BindView(R.id.search_events_sport)
     TextView searchEventsSportName;
+    /**
+     * Referencia al elemento de la interfaz donde se establece el limite inferior del periodo de
+     * fechas
+     */
     @BindView(R.id.search_events_date_from)
     EditText searchEventsDateFrom;
+    /**
+     * Referencia al elemento de la interfaz donde se establece el limite superior del periodo de
+     * fechas
+     */
     @BindView(R.id.search_events_date_to)
     EditText searchEventsDateTo;
+    /**
+     * Referencia al elemento de la interfaz donde se establece el limite inferior del rango de
+     * puestos totales
+     */
     @BindView(R.id.search_events_total_from)
     EditText searchEventsTotalFrom;
+    /**
+     * Referencia al elemento de la interfaz donde se establece el limite superior del rango de
+     * puestos totales
+     */
     @BindView(R.id.search_events_total_to)
     EditText searchEventsTotalTo;
+    /**
+     * Referencia al elemento de la interfaz donde se establece el limite inferior del rango de
+     * puestos vacantes
+     */
     @BindView(R.id.search_events_empty_from)
     EditText searchEventsEmptyFrom;
+    /**
+     * Referencia al elemento de la interfaz donde se establece el limite superior del rango de
+     * puestos vacantes
+     */
     @BindView(R.id.search_events_empty_to)
     EditText searchEventsEmptyTo;
 
+    /**
+     * Objeto para establecer las fechas preseleccionadas y los límites de los calendarios mostrados
+     * en los diálogos que se utilizan en la selección del rango de fechas del filtro
+     */
     Calendar myCalendar;
+    /**
+     * Diálogo de selección de fecha utilizado en la selección del rango límite inferior
+     */
     DatePickerDialog datePickerDialogFrom;
+    /**
+     * Diálogo de selección de fecha utilizado en la selección del rango límite superior
+     */
     DatePickerDialog datePickerDialogTo;
 
+    /**
+     * Constructor sin argumentos
+     */
     public SearchEventsFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Método de instanciación del Fragmento
+     *
+     * @return una nueva instancia de este Fragmento
+     */
     public static Fragment newInstance() {
         return new SearchEventsFragment();
     }
 
+    /**
+     * En este método se inicializan el Presentador correspondiente a esta Vista.
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +165,11 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         mSearchEventsPresenter = new SearchEventsPresenter(this);
     }
 
+    /**
+     * Inicializa el contenido del menú de opciones de la esquina superior derecha de la pantalla
+     *
+     * @param menu menú de opciones donde se van a emplazar los elementos.
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -92,6 +177,13 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         inflater.inflate(R.menu.menu_ok, menu);
     }
 
+    /**
+     * Invocado cuando un elemento del menú es pulsado. En este caso se encarga validar y enviar a
+     * la Actividad contenedora, los filtros introducidos, por medio de {@link #actionOkPressed()}.
+     *
+     * @param item elemento del menú pulsado
+     * @return true si se aceptó la pulsación, false en otro caso
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
@@ -102,6 +194,12 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         return false;
     }
 
+    /**
+     * Transforma el texto de los elementos de la interfaz a los parámetros aceptados por el
+     * método de validación del Presentador. Los comprueba y, si son válidos, los envía a la
+     * {@link SearchEventsActivity} por medio de
+     * {@link OnSearchEventFilter#onFilterSet(String, Long, Long, int, int, int, int)}
+     */
     private void actionOkPressed() {
         Long dateFrom = -1L;
         Long dateTo = -1L;
@@ -133,6 +231,19 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
             }
     }
 
+    /**
+     * Inicializa y obtiene una referencia a los elementos de la interfaz con la ayuda de
+     * ButterKnife. Además, recupera el deporte del estado anterior del Fragmento, establece
+     * Listeners para las pulsaciones sobre los elementos de la interfaz y establece los limites de
+     * fechas en los {@link DatePickerDialog}
+     *
+     * @param inflater           utilizado para inflar el archivo de layout
+     * @param container          contenedor donde se va a incluir la interfaz o null
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     * @return la vista de la interfaz inicializada
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -166,7 +277,7 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
 
-                datePickerDialogFrom.getDatePicker().setMinDate(System.currentTimeMillis()-1000);
+                datePickerDialogFrom.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 datePickerDialogFrom.setCanceledOnTouchOutside(true);
                 datePickerDialogFrom.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.delete), new DialogInterface.OnClickListener() {
                     @Override
@@ -199,13 +310,13 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH));
 
-                datePickerDialogTo.getDatePicker().setMinDate(myCalendar.getTimeInMillis() + 1000*60*60*24);
+                datePickerDialogTo.getDatePicker().setMinDate(myCalendar.getTimeInMillis() + 1000 * 60 * 60 * 24);
                 datePickerDialogTo.setCanceledOnTouchOutside(true);
                 datePickerDialogTo.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.delete), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (!TextUtils.isEmpty(searchEventsDateTo.getText())) // myCalendar has been set
-                            myCalendar.setTimeInMillis(datePickerDialogTo.getDatePicker().getMinDate() - 1000*60*60*24);
+                            myCalendar.setTimeInMillis(datePickerDialogTo.getDatePicker().getMinDate() - 1000 * 60 * 60 * 24);
                         searchEventsDateTo.setText("");
                     }
                 });
@@ -219,6 +330,11 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         return root;
     }
 
+    /**
+     * Muestra en la interfaz los filtros establecidos en una posible ejecución anterior.
+     *
+     * @see #displayPreviousFilters()
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -226,6 +342,10 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         displayPreviousFilters();
     }
 
+    /**
+     * Comprueba si había filtros establecidos de una ejecución anterior, y coloca sus valores en
+     * sus respectivos elementos de la interfaz.
+     */
     private void displayPreviousFilters() {
         if (getActivity() instanceof SearchEventsActivity) {
             SearchEventsActivity searchEventsActivity = (SearchEventsActivity) getActivity();
@@ -238,17 +358,26 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
                 searchEventsDateTo.setText(UtilesTime.millisToDateString(searchEventsActivity.mDateTo));
 
             if (searchEventsActivity.mTotalFrom != null && searchEventsActivity.mTotalFrom > -1)
-                searchEventsTotalFrom.setText(Integer.toString(searchEventsActivity.mTotalFrom));
+                searchEventsTotalFrom.setText(String.format(Locale.getDefault(),
+                        "%d", searchEventsActivity.mTotalFrom));
             if (searchEventsActivity.mTotalTo != null && searchEventsActivity.mTotalTo > -1)
-                searchEventsTotalTo.setText(Integer.toString(searchEventsActivity.mTotalTo));
+                searchEventsTotalTo.setText(String.format(Locale.getDefault(),
+                        "%d", searchEventsActivity.mTotalTo));
 
             if (searchEventsActivity.mEmptyFrom != null && searchEventsActivity.mEmptyFrom > -1)
-                searchEventsEmptyFrom.setText(Integer.toString(searchEventsActivity.mEmptyFrom));
+                searchEventsEmptyFrom.setText(String.format(Locale.getDefault(),
+                        "%d", searchEventsActivity.mEmptyFrom));
             if (searchEventsActivity.mEmptyTo != null && searchEventsActivity.mEmptyTo > -1)
-                searchEventsEmptyTo.setText(Integer.toString(searchEventsActivity.mEmptyTo));
+                searchEventsEmptyTo.setText(String.format(Locale.getDefault(),
+                        "%d", searchEventsActivity.mEmptyTo));
         }
     }
 
+    /**
+     * Crea y muestra un cuadro de diálogo con la lista de deportes. Si el usuario seleccionad uno,
+     * se establece como filtro con ayuda de {@link #setSportSearched(String)}. También puede borrar
+     * su selección con {@link #unsetSportSearched()}
+     */
     private void createPickSportDialog() {
         ArrayList<String> sportsResources = new ArrayList<>(
                 Arrays.asList(getResources().getStringArray(R.array.sport_id_values)));
@@ -274,6 +403,12 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         builder.create().show();
     }
 
+    /**
+     * Establece el deporte indicado como deporte seleccionado para el filtro. Muestra en la
+     * interfaz su icono y su nombre.
+     *
+     * @param sportId identificador del deporte seleccionado
+     */
     private void setSportSearched(String sportId) {
         mSportIdSelected = sportId;
 
@@ -286,6 +421,10 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         Glide.with(this).load(sportDrawableResource).into(searchEventsIcon);
     }
 
+    /**
+     * Borra cualquier deporte seleccionado previamente para el filtro. Borra de la interfaz su
+     * icono y su nombre.
+     */
     private void unsetSportSearched() {
         mSportIdSelected = "";
 
@@ -293,6 +432,14 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         searchEventsIcon.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Al finalizar el proceso de creación de la Actividad contenedora, se invoca este método que
+     * establece un título para la barra superior y la acción que debe realizar: navegar hacia
+     * atrás.
+     *
+     * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -301,6 +448,11 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
         mFragmentManagementListener.showContent();
     }
 
+    /**
+     * Guarda el deporte seleccionado en el estado del Fragmento
+     *
+     * @param outState donde se guarda estado del Fragmento en una posible rotación de la pantalla.
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -308,7 +460,22 @@ public class SearchEventsFragment extends BaseFragment implements SearchEventsCo
             outState.putString(BUNDLE_SPORT, mSportIdSelected);
     }
 
+    /**
+     * Interfaz que debe implementar la Actividad contenedora para recibir los parámetros del
+     * filtro y así poder aplicarlos en un Fragmento diferente
+     */
     public interface OnSearchEventFilter {
+        /**
+         * Se invoca para enviar los filtros escogidos para la búsqueda y finalizar el Fragmento.
+         *
+         * @param sportId   deporte
+         * @param dateFrom  limite inferior del periodo de fechas
+         * @param dateTo    limite superior del periodo de fechas
+         * @param totalFrom limite inferior de jugadores totales
+         * @param totalTo   limite superior de jugadores totales
+         * @param emptyFrom limite inferior de puestos vacantes
+         * @param emptyTo   limite superior de puestos vacantes
+         */
         void onFilterSet(String sportId, Long dateFrom, Long dateTo, int totalFrom, int totalTo,
                          int emptyFrom, int emptyTo);
     }

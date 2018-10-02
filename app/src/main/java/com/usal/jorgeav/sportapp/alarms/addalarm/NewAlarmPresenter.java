@@ -33,6 +33,7 @@ import java.util.ArrayList;
  * al Proveedor de Contenido para obtener los datos de la alarma en caso de edición o para consultar
  * las posibles instalaciones sobre las que establecer la alarma, en ambos casos el resultado será
  * enviado a la Vista {@link NewAlarmContract.View}.
+ * <p>
  * Implementa la interfaz {@link NewAlarmContract.Presenter} para la comunicación con esta clase y la
  * interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los callbacks de la
  * consulta.
@@ -391,7 +392,7 @@ class NewAlarmPresenter implements
                 coords = new LatLng(a.getCoord_latitude(), a.getCoord_longitude());
 
             ((AlarmsActivity) mNewAlarmView.getActivityContext()).mFieldId = a.getField_id();
-            ((AlarmsActivity) mNewAlarmView.getActivityContext()).mCity =  a.getCity();
+            ((AlarmsActivity) mNewAlarmView.getActivityContext()).mCity = a.getCity();
             ((AlarmsActivity) mNewAlarmView.getActivityContext()).mCoord = coords;
             mNewAlarmView.showAlarmField(a.getField_id(), a.getCity(), coords);
 
