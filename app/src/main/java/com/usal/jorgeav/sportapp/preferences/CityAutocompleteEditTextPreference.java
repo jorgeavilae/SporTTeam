@@ -28,15 +28,52 @@ import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 
+/**
+ * Clase derivada de {@link EditTextPreference} con el objetivo de usarla como tal pero añadiendo
+ * la funcionalidad proporcionada por el AutoCompletado de sitios de Google GeoDataApi. Aplicando
+ * un {@link PlaceAutocompleteAdapter} a este {@link EditTextPreference}, se construye un EditText
+ * para la pantalla de preferencias que sugiera las ciudades que puede elegir el usuario
+ *
+ * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+ * Google Places API</a>
+ */
 public class CityAutocompleteEditTextPreference extends EditTextPreference {
+    /**
+     * Nombre de la clase
+     */
     private final static String TAG = CityAutocompleteEditTextPreference.class.getSimpleName();
 
-    private AutoCompleteTextView mEditText = null;
+    /**
+     * Referencia al elemento de la interfaz donde se va a escribir el texto que servirá para
+     * buscar las ciudades.
+     */
+    private AutoCompleteTextView mEditText;
+    /**
+     * Nombre de la ciudad escogida
+     */
     String citySelectedName = null;
+    /**
+     * Coordenadas de la ciudad escogida
+     */
     LatLng citySelectedCoord = null;
-    // Static prevent double initialization with same ID
+
+    /**
+     * Objeto GoogleApiClient necesario para utilizar Google Places API
+     *
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient">
+     * GoogleApiClient</a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     * Google Places API</a>
+     */
     private static GoogleApiClient mGoogleApiClient;
 
+    /**
+     * Constructor
+     *
+     * @param context contexto de la Actividad
+     * @param attrs   atributos necesarios para {@link #mEditText}
+     * @see #setAutocompleteTextView()
+     */
     public CityAutocompleteEditTextPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         mEditText = new AutoCompleteTextView(context, attrs);
@@ -44,18 +81,29 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
         setAutocompleteTextView();
     }
 
+    /**
+     * Inicializa el cliente GoogleApiClient para poder utilizar Google Places API. Establece los
+     * controles para regular el comportamiento del {@link #mEditText} donde se
+     * escribe la ciudad. Crea un {@link TextWatcher} para reaccionar a los cambios en el texto y
+     * así realizar nuevas búsquedas con el {@link PlaceAutocompleteAdapter}.
+     * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la Google
+     * Places API para obtener la coordenadas de dicha ciudad.
+     *
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     * Google Places API</a>
+     */
     private void setAutocompleteTextView() {
         if (mGoogleApiClient == null)
             mGoogleApiClient = new GoogleApiClient
-                        .Builder(getContext())
-                        .addApi(Places.GEO_DATA_API)
-                        .enableAutoManage(((SettingsActivity)getContext()), new GoogleApiClient.OnConnectionFailedListener() {
-                            @Override
-                            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                                Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
-                            }
-                        })
-                        .build();
+                    .Builder(getContext())
+                    .addApi(Places.GEO_DATA_API)
+                    .enableAutoManage(((SettingsActivity) getContext()), new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                            Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
+                        }
+                    })
+                    .build();
         else mGoogleApiClient.connect();
 
         // Set up the adapter that will retrieve suggestions from
@@ -125,6 +173,12 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
         });
     }
 
+    /**
+     * Vincula la interfaz del cuadro de diálogo en el que aparece {@link #mEditText} a los datos
+     * que debe mostrar este elemento.
+     *
+     * @param view interfaz del cuadro de diálogo
+     */
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
@@ -144,6 +198,12 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
         }
     }
 
+    /**
+     * Invocado al cerrar el cuadro de diálogo, aplica los cambios sobre el valor de esta
+     * preferencia.
+     *
+     * @param positiveResult true si se aceptan los cambios, false en caso contrario.
+     */
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {

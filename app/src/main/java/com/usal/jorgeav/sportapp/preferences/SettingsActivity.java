@@ -9,10 +9,25 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.usal.jorgeav.sportapp.R;
 
+/**
+ * Esta Actividad sólo instancia, muestra y aloja el Fragmento encargado de la funcionalidad
+ * relativa a las preferencias de la aplicación {@link SettingsFragment}.
+ */
 public class SettingsActivity extends AppCompatActivity {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private final static String TAG = SettingsActivity.class.getSimpleName();
 
+    /**
+     * Crea e inicia la transición hacia el Fragmento de preferencias {@link SettingsFragment}.
+     * Además, carga el archivo de la interfaz en la pantalla, inicializa la barra superior
+     * {@link Toolbar} y la configura para navegar hacia atrás.
+     *
+     * @param savedInstanceState estado de la Actividad guardado en una posible rotación de
+     *                           la pantalla, o null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,18 +54,30 @@ public class SettingsActivity extends AppCompatActivity {
                 .commitAllowingStateLoss();
     }
 
+    /**
+     * Finaliza la Actividad.
+     */
+    //todo necesario?
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
     }
 
-    /* https://stackoverflow.com/a/1109108/4235666 */
+    /**
+     * Obtiene una referencia a la {@link View} que tiene el foco de la interfaz y, si esta
+     * mostrando el teclado flotante en la pantalla, lo esconde
+     *
+     * @see <a href= "https://stackoverflow.com/a/17789187/4235666">
+     * (StackOverflow) Close/hide the Android Soft Keyboard</a>
+     */
     public void hideSoftKeyboard() {
         View view = getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            InputMethodManager imm =
+                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null)
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }
