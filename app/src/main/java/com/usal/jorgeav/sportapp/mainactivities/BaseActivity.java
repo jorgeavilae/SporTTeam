@@ -687,16 +687,16 @@ public abstract class BaseActivity extends AppCompatActivity
      * Obtiene una referencia a la {@link View} que tiene el foco de la interfaz y, si esta
      * mostrando el teclado flotante en la pantalla, lo esconde
      *
-     * @see
-     * <a href= "https://stackoverflow.com/a/17789187/4235666">
-     *     StackOverflow: Close/hide the Android Soft Keyboard
-     * </a>
+     * @see <a href= "https://stackoverflow.com/a/17789187/4235666">
+     * (StackOverflow) Close/hide the Android Soft Keyboard</a>
      */
     public void hideSoftKeyboard() {
         View view = getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            InputMethodManager imm =
+                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null)
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 

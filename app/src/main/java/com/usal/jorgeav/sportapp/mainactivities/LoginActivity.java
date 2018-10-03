@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
+import android.annotation.SuppressLint;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
 import android.content.Context;
@@ -51,13 +52,13 @@ import butterknife.ButterKnife;
 /**
  * Actividad para el inicio de sesión. Se encarga de comprobar el email de usuario y su
  * contraseña.
- * <p>Incorpora una opción de autocompletado para las direcciones de email que ya hayan sido
- * utilizadas para iniciar sesión.
- * <p>También contiene la funcionalidad que permite recibir un email para recuperar contraseñas
- * olvidadas
- * <p>Por útlimo, contiene un botón para acceder a la pantalla de creación de usuarios.ç
- *
- * <p>Implementa {@link LoaderCallbacks} para permitir consultar, al Proveedor de Contenido,
+ * Incorpora una funcionalidad para sugerir direcciones de email que ya hayan sido utilizadas para
+ * iniciar sesión.
+ * También contiene la funcionalidad que permite recibir un email para recuperar contraseñas
+ * olvidadas.
+ * Por último, contiene un botón para acceder a la pantalla de creación de usuarios.
+ * <p>
+ * Implementa {@link LoaderCallbacks} para permitir consultar, al Proveedor de Contenido,
  * el email de los usuarios que ya hayan iniciado sesión en alguna ocasión.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
@@ -115,10 +116,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Referencia a FirebaseAuth para comprobar si hay un usuario con la sesión iniciada
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
-     *     FirebaseAuth
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+     * FirebaseAuth</a>
      */
     private FirebaseAuth mAuth;
 
@@ -128,12 +127,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      *
      * @param savedInstanceState estado de la Actividad guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,10 +209,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Método de {@link LoaderCallbacks} para la creación del {@link Loader}. Realiza la
      * consulta al Content Provider de los emails de usuarios.
      *
-     * @param i identificador de la consulta
-     * @param bundle contedor de parámetros para la consulta
-     *
-     * @return el {@link Loader} de la consulta con un {@link Cursor} dónde se alamacenará la
+     * @param i      identificador de la consulta
+     * @param bundle contenedor de parámetros para la consulta
+     * @return el {@link Loader} de la consulta con un {@link Cursor} dónde se almacenará la
      * respuesta
      */
     @Override
@@ -233,7 +228,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * entradas para {@link #mEmailView}
      *
      * @param cursorLoader loader de la consulta
-     * @param data resultado de la consulta
+     * @param data         resultado de la consulta
      */
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
@@ -254,8 +249,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Invocado desde el {@link LoaderCallbacks} para establecer las entradas sugeridas en el
      * cajón de introducción de la dirección de email.
-     *
-     * <p>Del {@link Cursor} extrae las direcciones de email y utiliza esa lista para crear un
+     * <p>
+     * Del {@link Cursor} extrae las direcciones de email y utiliza esa lista para crear un
      * {@link ArrayAdapter} que asocia con {@link #mEmailView}
      *
      * @param data conjunto de emails obtenidos de la base de datos
@@ -341,8 +336,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * carga de datos del usuario nuevo.
      *
      * @param requestCode código con el que se inició la Actividad de creación de usuario
-     * @param resultCode código con el que finaliza la Actividad de creación de usuario
-     * @param data datos asociados a la finalización de la Actividad de creación de usuario
+     * @param resultCode  código con el que finaliza la Actividad de creación de usuario
+     * @param data        datos asociados a la finalización de la Actividad de creación de usuario
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -353,9 +348,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     /**
      * Inicia la carga de datos del usuario que acaba de iniciar sesión: borra los datos que
-     * todavía pueda contener el Proveedor de Contenido de una sesión antetior e invoca
+     * todavía pueda contener el Proveedor de Contenido de una sesión anterior e invoca
      * {@link SportteamSyncInitialization#initialize(Context)}
-     * <p>Comprueba que el email que se introdujo en el registro ha sido verificado y, en caso
+     * <p>
+     * Comprueba que el email que se introdujo en el registro ha sido verificado y, en caso
      * contrario, exige que se compruebe antes finalizar el proceso de inicio de sesión.
      *
      * @param checkIfEmailIsVerified true si se requiere que el email haya sido verificado, false
@@ -364,8 +360,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private void initLoadMyProfile(boolean checkIfEmailIsVerified) {
         final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (fUser != null) { //TODO isEmailVerified()
+        if (fUser != null) {
+
+            //TODO isEmailVerified()
+            @SuppressWarnings("unused")Boolean b = checkIfEmailIsVerified;
 //            if (!checkIfEmailIsVerified || fUser.isEmailVerified()) {
+
             deleteContentProvider();
 
             //Add email to emails logged table
@@ -508,16 +508,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Obtiene una referencia a la {@link View} que tiene el foco de la interfaz y, si esta
      * mostrando el teclado flotante en la pantalla, lo esconde
      *
-     * @see
-     * <a href= "https://stackoverflow.com/a/17789187/4235666">
-     *     StackOverflow: Close/hide the Android Soft Keyboard
-     * </a>
+     * @see <a href= "https://stackoverflow.com/a/17789187/4235666">
+     * (StackOverflow) Close/hide the Android Soft Keyboard</a>
      */
     public void hideSoftKeyboard() {
         View view = getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            InputMethodManager imm =
+                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null)
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }

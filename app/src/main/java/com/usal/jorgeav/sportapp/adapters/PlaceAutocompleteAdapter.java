@@ -33,13 +33,12 @@ import java.util.concurrent.TimeUnit;
  * Adaptador para la lista de sugerencias de ciudades. Utiliza la interfaz {@link Filterable}
  * para filtrar las busquedas. Para las busquedas utiliza Google Places API
  *
- * @see
- * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
- *     Google Places API
+ * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+ * Google Places API
  * </a>
  */
-public class PlaceAutocompleteAdapter
-        extends ArrayAdapter<AutocompletePrediction> implements Filterable {
+public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePrediction> implements
+        Filterable {
     /**
      * Nombre de la clase
      */
@@ -56,14 +55,10 @@ public class PlaceAutocompleteAdapter
     /**
      * Objeto GoogleApiClient necesario para utilizar Google Places API
      *
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient">
-     *     GoogleApiClient
-     * </a>
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     *     Google Places API
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient">
+     * GoogleApiClient</a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     * Google Places API</a>
      */
     private GoogleApiClient mGoogleApiClient;
     /**
@@ -76,11 +71,12 @@ public class PlaceAutocompleteAdapter
     private AutocompleteFilter mPlaceFilter;
 
     /**
+     * Constructor
      *
-     * @param context Contexto de la Actividad que aloja el adaptador
+     * @param context         Contexto de la Actividad que aloja el adaptador
      * @param googleApiClient necesario para acceder a las funciones de la API
-     * @param bounds limites sobre los que efectuar la busqueda
-     * @param filter filtro de lugares para restringir la busqueda
+     * @param bounds          limites sobre los que efectuar la busqueda
+     * @param filter          filtro de lugares para restringir la busqueda
      */
     public PlaceAutocompleteAdapter(Context context, GoogleApiClient googleApiClient,
                                     LatLngBounds bounds, AutocompleteFilter filter) {
@@ -91,7 +87,6 @@ public class PlaceAutocompleteAdapter
     }
 
     /**
-     *
      * @return el tamaño de la lista de ciudades
      */
     @Override
@@ -100,7 +95,6 @@ public class PlaceAutocompleteAdapter
     }
 
     /**
-     *
      * @param position posicion dentro de la lista
      * @return el elemento situado en esa posicion
      */
@@ -112,9 +106,9 @@ public class PlaceAutocompleteAdapter
     /**
      * Rellena los elementos de la celda con los datos de la ciudad de la posicion indicada
      *
-     * @param position posicion de la celda
+     * @param position    posicion de la celda
      * @param convertView View de la celda
-     * @param parent View del padre donde se situa la celda
+     * @param parent      View del padre donde se situa la celda
      * @return la celda con los datos emplazados
      */
     @NonNull
@@ -141,6 +135,7 @@ public class PlaceAutocompleteAdapter
      * en {@link #mResultList} en el metodo
      * {@link Filter#publishResults(CharSequence, Filter.FilterResults)}
      * <p>
+     *
      * @return el filtro creado
      */
     @NonNull
@@ -206,20 +201,15 @@ public class PlaceAutocompleteAdapter
      * busqueda
      *
      * @param constraint cadena de texto con la que se realiza la busqueda
-     *
      * @return ArrayList con los resultados de la busqueda
-     *
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     *     Google Places API
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     * Google Places API
      * </a>
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi.html#getAutocompletePredictions(com.google.android.gms.common.api.GoogleApiClient,%20java.lang.String,%20com.google.android.gms.maps.model.LatLngBounds,%20com.google.android.gms.location.places.AutocompleteFilter)">
-     *     GeoDataApi.getAutocompletePredictions()
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi.html#getAutocompletePredictions(com.google.android.gms.common.api.GoogleApiClient,%20java.lang.String,%20com.google.android.gms.maps.model.LatLngBounds,%20com.google.android.gms.location.places.AutocompleteFilter)">
+     * GeoDataApi.getAutocompletePredictions()
      * </a>
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompletePredictionBuffer">
-     *     AutocompletePredictionBuffer
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompletePredictionBuffer">
+     * AutocompletePredictionBuffer
      * </a>
      */
     private ArrayList<AutocompletePrediction> getAutocomplete(CharSequence constraint) {
