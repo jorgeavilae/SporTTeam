@@ -189,8 +189,8 @@ public class DetailEventPresenter implements
 
     /**
      * Modificador que, aplicado a una variable, le permite adquirir como valor solamente el
-     * conjunto de constantes que representan los distintos tipos de relación posible entre un
-     * usuario y un partido.
+     * siguiente conjunto de constantes que representan los distintos tipos de relación posible
+     * entre un usuario y un partido.
      */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_NONE, RELATION_TYPE_OWNER,

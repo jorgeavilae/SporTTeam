@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.network.firebase;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -18,10 +19,36 @@ import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
 import java.util.Map;
 
+/**
+ * Clase necesaria para implementar la funcionalidad proporcionada por Firebase Cloud Messaging.
+ * Esta clase es un Servicio que permanece activo a la espera de mensajes enviados desde los
+ * servidores de Firebase. Cuando esto ocurre, invoca el callback
+ * {@link #onMessageReceived(RemoteMessage)} en el que se procesa el mensaje y se actúa en
+ * consecuencia.
+ * <p>
+ * En concreto, en esta aplicación es usada para recibir los datos de una notificación recién
+ * insertada en la rama correspondiente al usuario cuya sesión está iniciada. Este mensaje ha sido
+ * dirigido a este dispositivo por haber guardado el token de esta aplicación cliente en la clase
+ * {@link MyFirebaseInstanceIDService}.
+ *
+ * @see <a href= "https://firebase.google.com/docs/cloud-messaging/android/client">
+ * Firebase Cloud Messaging for Android</a>
+ * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/messaging/FirebaseMessagingService">
+ * FirebaseMessagingService</a>
+ */
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = "MyFirebaseMsgService";
 
+    /**
+     * Invocado al recibir un mensaje. Ejecuta {@link #notify(Map)} para mostrar el mensaje
+     * recibido como una notificación en la barra de notificaciones.
+     *
+     * @param remoteMessage mensaje recibido del servidor
+     */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         // Check if message contains a data payload.
@@ -29,6 +56,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notify(remoteMessage.getData());
     }
 
+    /**
+     * Muestra la notificación en la barra de notificaciones del dispositivo. Si la notificación
+     * viene con datos relativos a un usuario o partido, se asegura de que estén presentes en el
+     * Proveedor de Contenido. A continuación, crea y muestra la notificación con ayuda de
+     * {@link UtilesNotification#createNotification(Context, MyNotification)}
+     *
+     * @param dataMap mapa de pares clave valor con los datos incorporados al mensaje del servidor.
+     */
     private void notify(Map<String, String> dataMap) {
         MyNotification notification = parseNotificationFromMap(dataMap);
         String notificationID = "";
@@ -72,20 +107,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationsFirebaseActions.checkNotification(notificationID);
     }
 
-    /* Convert map into a MyNotification object.
-       data map from Firebase Cloud Functions, should look like this:
-        data: {
-            notificationID: notificationID,
-            title: title,
-            message: message,
-            notification_type: notification_type,
-            checked: checked,
-            data_type: data_type,
-            extra_data_one: extra_data_one,
-            date: date
-        }
+
+    /**
+     * Convierte el mapa de pares clave valor proporcionado en un objeto {@link MyNotification}.
+     *
+     * @param data mapa de pares clave valor con los datos incorporados al mensaje del servidor.
      */
     private MyNotification parseNotificationFromMap(Map<String, String> data) {
+    /*
+       data: {
+           notificationID: notificationID,
+           title: title,
+           message: message,
+           notification_type: notification_type,
+           checked: checked,
+           data_type: data_type,
+           extra_data_one: extra_data_one,
+           date: date
+       }
+     */
         Long notification_type = null;
         if (data.containsKey(FirebaseDBContract.Notification.NOTIFICATION_TYPE))
             notification_type = Long.parseLong(data.get(FirebaseDBContract.Notification.NOTIFICATION_TYPE));

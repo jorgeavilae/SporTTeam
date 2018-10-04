@@ -186,8 +186,8 @@ class ProfilePresenter implements
 
     /**
      * Modificador que, aplicado a una variable, le permite adquirir como valor solamente el
-     * conjunto de constantes que representan los distintos tipos de relación posible entre un
-     * usuario cualquiera y el usuario actual.
+     * siguiente conjunto de constantes que representan los distintos tipos de relación posible
+     * entre un usuario cualquiera y el usuario actual.
      */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RELATION_TYPE_ERROR, RELATION_TYPE_ME, RELATION_TYPE_NONE, RELATION_TYPE_FRIENDS,
