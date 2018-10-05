@@ -14,10 +14,32 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Clase con métodos auxiliares, invocados desde varios puntos de la aplicación, que proveen de
+ * funcionalidad útil para encapsular objetos de datos de la aplicación como {@link Event},
+ * {@link Alarm} o {@link Invitation} en objetos de datos con el formato {@link ContentValues},
+ * necesario para introducirlos en el Proveedor de Contenido.
+ * <p>
+ * También encapsula datos de objetos DataSnapshot (de Firebase Realtime Database) directamente a
+ * {@link ContentValues}.
+ *
+ * @see <a href= "https://firebase.google.com/docs/database/">Firebase Realtime Database</a>
+ * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/DataSnapshot">
+ * DataSnapshot<a>
+ */
 public class UtilesContentValues {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = UtilesContentValues.class.getSimpleName();
 
+    /**
+     * Encapsula una alarma {@link Alarm} en un {@link ContentValues}
+     *
+     * @param alarm alarma
+     * @return alarma en {@link ContentValues}
+     */
     public static ContentValues alarmToContentValues(Alarm alarm) {
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.AlarmEntry.ALARM_ID, alarm.getId());
@@ -35,6 +57,12 @@ public class UtilesContentValues {
         return cv;
     }
 
+    /**
+     * Encapsula un partido {@link Event} en un {@link ContentValues}
+     *
+     * @param event partido
+     * @return partido en {@link ContentValues}
+     */
     public static ContentValues eventToContentValues(Event event) {
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.EventEntry.EVENT_ID, event.getEvent_id());
@@ -52,6 +80,12 @@ public class UtilesContentValues {
         return cv;
     }
 
+    /**
+     * Encapsula una instalación {@link Field} en un {@link ContentValues}
+     *
+     * @param field instalación
+     * @return instalación en {@link ContentValues}
+     */
     public static ContentValues fieldToContentValues(Field field) {
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.FieldEntry.FIELD_ID, field.getId());
@@ -65,6 +99,13 @@ public class UtilesContentValues {
         cv.put(SportteamContract.FieldEntry.CREATOR, field.getCreator());
         return cv;
     }
+
+    /**
+     * Encapsula las pistas de una instalación {@link Field} en una lista de {@link ContentValues}
+     *
+     * @param field instalación
+     * @return lista de {@link ContentValues}, cada uno conteniendo a una pista de la instalación
+     */
     public static ArrayList<ContentValues> fieldSportToContentValues(Field field) {
         ArrayList<ContentValues> cvArray = new ArrayList<>();
         if (field.getSport() != null)
@@ -79,6 +120,12 @@ public class UtilesContentValues {
         return cvArray;
     }
 
+    /**
+     * Encapsula un usuario {@link User} en un {@link ContentValues}
+     *
+     * @param user usuario
+     * @return usuario en {@link ContentValues}
+     */
     public static ContentValues dataUserToContentValues(User user) {
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.UserEntry.USER_ID, user.getUid());
@@ -91,6 +138,15 @@ public class UtilesContentValues {
         cv.put(SportteamContract.UserEntry.PHOTO, user.getProfile_picture());
         return cv;
     }
+
+    /**
+     * Encapsula los deportes practicados por un usuario {@link User} en una lista de
+     * {@link ContentValues}
+     *
+     * @param user usuario
+     * @return lista de {@link ContentValues}, cada uno conteniendo a un deporte practicado por el
+     * usuario
+     */
     public static ArrayList<ContentValues> sportUserToContentValues(User user) {
         ArrayList<ContentValues> cvArray = new ArrayList<>();
         if (user.getSports_practiced() != null)
@@ -104,6 +160,12 @@ public class UtilesContentValues {
         return cvArray;
     }
 
+    /**
+     * Encapsula una invitación {@link Invitation} en un {@link ContentValues}
+     *
+     * @param invitation invitación
+     * @return invitación en {@link ContentValues}
+     */
     public static ContentValues invitationToContentValues(Invitation invitation) {
         ContentValues cv = new ContentValues();
         cv.put(SportteamContract.EventsInvitationEntry.RECEIVER_ID, invitation.getReceiver());
@@ -113,9 +175,17 @@ public class UtilesContentValues {
         return cv;
     }
 
+    /**
+     * Encapsula un DataSnapshot de una petición de amistad en un {@link ContentValues}
+     *
+     * @param dataSnapshot   datos de la petición de amistad en Firebase Realtime Database
+     * @param key            identificador del usuario actual, participante en esta petición de amistad
+     * @param keyIsTheSender true si el usuario actual envió la petición, false si la recibe
+     * @return petición de amistad en {@link ContentValues}
+     */
     public static ContentValues dataSnapshotFriendRequestToContentValues(DataSnapshot dataSnapshot, String key, boolean keyIsTheSender) {
         String senderId, receiverId;
-        if(keyIsTheSender) {
+        if (keyIsTheSender) {
             receiverId = dataSnapshot.getKey();
             senderId = key;
         } else {
@@ -131,6 +201,13 @@ public class UtilesContentValues {
         return cv;
     }
 
+    /**
+     * Encapsula un DataSnapshot de una relación de amistad en un {@link ContentValues}
+     *
+     * @param dataSnapshot datos de una relación de amistad en Firebase Realtime Database
+     * @param myUserID     identificador del usuario actual
+     * @return relación de amistad en {@link ContentValues}
+     */
     public static ContentValues dataSnapshotFriendToContentValues(DataSnapshot dataSnapshot, String myUserID) {
         String userId = dataSnapshot.getKey();
         Long date = dataSnapshot.getValue(Long.class);
@@ -142,6 +219,13 @@ public class UtilesContentValues {
         return cv;
     }
 
+    /**
+     * Encapsula un DataSnapshot de una participación en un partido en un {@link ContentValues}
+     *
+     * @param dataSnapshot datos de participación en un partido en Firebase Realtime Database
+     * @param myUserID     identificador del usuario actual
+     * @return participación en un partido en {@link ContentValues}
+     */
     public static ContentValues dataSnapshotEventsParticipationToContentValues(DataSnapshot dataSnapshot, String myUserID) {
         String eventId = dataSnapshot.getKey();
 
@@ -158,10 +242,17 @@ public class UtilesContentValues {
         return cv;
     }
 
-
+    /**
+     * Encapsula un DataSnapshot de una petición de participación en un {@link ContentValues}
+     *
+     * @param dataSnapshot datos de la petición de participación en Firebase Realtime Database
+     * @param key          identificador del usuario actual, participante en esta petición de participación
+     * @param iAmTheSender true si el usuario actual envió la petición, false si la recibe
+     * @return petición de participación en {@link ContentValues}
+     */
     public static ContentValues dataSnapshotEventsRequestsToContentValues(DataSnapshot dataSnapshot, String key, boolean iAmTheSender) {
         String eventId, senderId;
-        if(iAmTheSender) {
+        if (iAmTheSender) {
             eventId = dataSnapshot.getKey();
             senderId = key;
         } else {

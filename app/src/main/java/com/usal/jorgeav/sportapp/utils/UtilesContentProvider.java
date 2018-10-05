@@ -1,6 +1,5 @@
 package com.usal.jorgeav.sportapp.utils;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -21,9 +20,26 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Clase con métodos auxiliares, invocados desde varios puntos de la aplicación, que proveen de
+ * funcionalidad útil para extraer objetos de datos de la aplicación como {@link Event},
+ * {@link Alarm} o {@link Field} de un {@link Cursor} obtenido del Proveedor de Contenido.
+ * <p>
+ * También obtiene dichos datos de consultas directas al Proveedor de Contenido a partir de un
+ * identificador del objeto buscado.
+ */
 public class UtilesContentProvider {
+    /**
+     * Nombre de la clase
+     */
     private static final String TAG = UtilesContentProvider.class.getSimpleName();
 
+    /**
+     * Extrae los datos de una alarma {@link Alarm} del {@link Cursor} proporcionado
+     *
+     * @param cursor datos de la alarma en un Cursor
+     * @return objeto {@link Alarm} construido a partir de los datos extraídos del Cursor
+     */
     public static Alarm cursorToSingleAlarm(Cursor cursor) {
         if (cursor != null && cursor.moveToFirst()) {
             String alarmId = cursor.getString(SportteamContract.AlarmEntry.COLUMN_ALARM_ID);
@@ -68,6 +84,12 @@ public class UtilesContentProvider {
         return null;
     }
 
+    /**
+     * Extrae los datos de varias alarmas {@link Alarm} del {@link Cursor} proporcionado
+     *
+     * @param cursor datos de las alarmas en un Cursor
+     * @return lista de {@link Alarm} construidas a partir de los datos extraídos del Cursor
+     */
     private static ArrayList<Alarm> cursorToMultipleAlarm(Cursor cursor) {
         ArrayList<Alarm> result = new ArrayList<>();
         if (cursor != null)
@@ -113,6 +135,12 @@ public class UtilesContentProvider {
         return result;
     }
 
+    /**
+     * Extrae los datos de varias instalaciones {@link Field} del {@link Cursor} proporcionado
+     *
+     * @param cursor datos de las instalaciones en un Cursor
+     * @return lista de {@link Field} construidas a partir de los datos extraídos del Cursor
+     */
     public static ArrayList<Field> cursorToMultipleField(Cursor cursor) {
         ArrayList<Field> result = new ArrayList<>();
         if (cursor != null) {
@@ -136,6 +164,103 @@ public class UtilesContentProvider {
         return result;
     }
 
+    /**
+     * Extrae los datos de varios pistas de instalación {@link SportCourt} del {@link Cursor}
+     * proporcionado
+     *
+     * @param data datos de pistas de instalación en un Cursor
+     * @return lista de {@link SportCourt} construida a partir de los datos extraídos del Cursor
+     */
+    public static ArrayList<SportCourt> cursorToMultipleSportCourt(Cursor data) {
+        ArrayList<SportCourt> sports = new ArrayList<>();
+        if (data != null)
+            //Move to first position to prevent errors
+            for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                String sportId = data.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
+                Double punctuation = data.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
+                Long votes = data.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);
+                sports.add(new SportCourt(sportId, punctuation, votes));
+            }
+        return sports;
+    }
+
+    /**
+     * Extrae los datos de varios partidos {@link Event} del {@link Cursor} proporcionado
+     *
+     * @param c datos de los partidos en un Cursor
+     * @return lista de {@link Event} construidos a partir de los datos extraídos del Cursor
+     */
+    public static ArrayList<Event> cursorToMultipleEvent(Cursor c) {
+        ArrayList<Event> result = new ArrayList<>();
+        if (c != null) {
+            //Move to first position to prevent errors
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                String eventId = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
+                String sport = c.getString(SportteamContract.EventEntry.COLUMN_SPORT);
+                String fieldId = c.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+                String address = c.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
+                double latitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
+                double longitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
+                LatLng coord = null;
+                if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+                String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
+                String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
+                Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
+                String owner = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
+                Long totalPl = c.getLong(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
+                Long emptyPl = c.getLong(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
+
+                result.add(new Event(eventId, sport, fieldId, address, coord, name, city, date,
+                        owner, totalPl, emptyPl, null, null));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Extrae los datos de varios partidos {@link Event} del {@link Cursor} proporcionado y los
+     * transforma en {@link MyCalendarEvent}
+     *
+     * @param c     datos de los partidos en un Cursor
+     * @param color color necesario para {@link MyCalendarEvent}
+     * @return lista de {@link MyCalendarEvent} construidas a partir de los datos extraídos del Cursor
+     */
+    public static ArrayList<MyCalendarEvent> cursorToMultipleCalendarEvent(Cursor c, int color) {
+        ArrayList<MyCalendarEvent> result = new ArrayList<>();
+        if (c != null) {
+            //Move to first position to prevent errors
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                Field field = getFieldFromContentProvider(c.getString(SportteamContract.EventEntry.COLUMN_FIELD));
+
+                String eventId = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
+                String sport = c.getString(SportteamContract.EventEntry.COLUMN_SPORT);
+                String fieldId = c.getString(SportteamContract.EventEntry.COLUMN_FIELD);
+                String address = c.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
+                double latitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
+                double longitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
+                LatLng coord = null;
+                if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
+                String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
+                String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
+                Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
+                String owner = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
+                Long totalPl = c.getLong(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
+                Long emptyPl = c.getLong(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
+
+                Event event = new Event(eventId, sport, fieldId, address, coord, name, city, date, owner, totalPl, emptyPl, null, null);
+
+                result.add(MyCalendarEvent.Builder.newInstance(event, field, color));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Extrae los identificadores de varios usuarios del {@link Cursor} proporcionado
+     *
+     * @param cursor identificadores de los amigos en un Cursor
+     * @return lista de identificadores construida a partir del Cursor
+     */
     public static ArrayList<String> cursorToMultipleFriendsID(Cursor cursor) {
         ArrayList<String> result = new ArrayList<>();
         if (cursor != null) {
@@ -146,6 +271,15 @@ public class UtilesContentProvider {
         return result;
     }
 
+    /**
+     * Extrae los identificadores de varios usuarios y su participación del {@link Cursor}
+     * proporcionado. La participación es 1 o true si el usuario participa, o 0 o false si está
+     * bloqueado en ese partido.
+     *
+     * @param data identificadores de los participantes y participación en un Cursor
+     * @return mapa de identificadores como clave y participación como valor construido a partir del
+     * Cursor
+     */
     public static HashMap<String, Boolean> cursorToMultipleParticipants(Cursor data) {
         HashMap<String, Boolean> map = new HashMap<>();
         if (data != null)
@@ -158,6 +292,14 @@ public class UtilesContentProvider {
         return map;
     }
 
+    /**
+     * Extrae los datos de varios usuarios simulados {@link SimulatedUser} del {@link Cursor}
+     * proporcionado
+     *
+     * @param data datos de los usuarios simulados en un Cursor
+     * @return mapa de identificadores como clave y objeto {@link SimulatedUser} como valor
+     * construido a partir del Cursor
+     */
     public static HashMap<String, SimulatedUser> cursorToMultipleSimulatedParticipants(Cursor data) {
         HashMap<String, SimulatedUser> simulatedUserHashMap = new HashMap<>();
         if (data != null)
@@ -176,19 +318,14 @@ public class UtilesContentProvider {
         return simulatedUserHashMap;
     }
 
-    public static ArrayList<SportCourt> cursorToMultipleSportCourt(Cursor data) {
-        ArrayList<SportCourt> sports = new ArrayList<>();
-        if (data != null)
-            //Move to first position to prevent errors
-            for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-                String sportId = data.getString(SportteamContract.FieldSportEntry.COLUMN_SPORT);
-                Double punctuation = data.getDouble(SportteamContract.FieldSportEntry.COLUMN_PUNCTUATION);
-                Long votes = data.getLong(SportteamContract.FieldSportEntry.COLUMN_VOTES);
-                sports.add(new SportCourt(sportId, punctuation, votes));
-            }
-        return sports;
-    }
-
+    /**
+     * Consulta, al Proveedor de Contenido, los datos de un usuario {@link User} y lo crea a partir
+     * del {@link Cursor} obtenido.
+     *
+     * @param userId identificador del usuario
+     * @return objeto {@link User} construido a partir de los datos obtenidos del Proveedor de
+     * Contenido
+     */
     public static User getUserFromContentProvider(@NonNull String userId) {
         User u = null;
         if (TextUtils.isEmpty(userId)) return null;
@@ -214,6 +351,14 @@ public class UtilesContentProvider {
         return u;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, la url de la foto de perfil de un usuario y la devuelve
+     * a partir del {@link Cursor} obtenido.
+     *
+     * @param userId identificador del usuario
+     * @return cadena de texto representando la URL por la que se accede a la foto de perfil del
+     * usuario almacenada en Firebase Storage
+     */
     public static String getUserPictureFromContentProvider(@NonNull String userId) {
         if (TextUtils.isEmpty(userId)) return null;
         Cursor c = SportteamLoader.simpleQueryUserIdPicture(MyApplication.getAppContext(), userId);
@@ -232,6 +377,14 @@ public class UtilesContentProvider {
         return null;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, el nombre de un usuario y lo devuelve a partir del
+     * {@link Cursor} obtenido.
+     *
+     * @param userId identificador del usuario
+     * @return cadena de texto representando el nombre del usuario almacenado en el Proveedor de
+     * Contenido
+     */
     public static String getUserNameFromContentProvider(@NonNull String userId) {
         if (TextUtils.isEmpty(userId)) return null;
         Cursor c = SportteamLoader.simpleQueryUserIdName(MyApplication.getAppContext(), userId);
@@ -250,6 +403,13 @@ public class UtilesContentProvider {
         return null;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, la ciudad del usuario actual y la devuelve a partir del
+     * {@link Cursor} obtenido.
+     *
+     * @return cadena de texto representando la ciudad del usuario actual almacenada en el Proveedor
+     * de Contenido
+     */
     static String getCurrentUserCityFromContentProvider() {
         String currentUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(currentUserID)) return null;
@@ -268,6 +428,12 @@ public class UtilesContentProvider {
         return result;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, las coordenadas de la ciudad del usuario actual y las
+     * devuelve a partir del {@link Cursor} obtenido.
+     *
+     * @return coordenadas de la ciudad del usuario actual almacenadas en el Proveedor de Contenido
+     */
     static LatLng getCurrentUserCityCoordsFromContentProvider() {
         String currentUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(currentUserID)) return null;
@@ -288,6 +454,14 @@ public class UtilesContentProvider {
         return result;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, los datos de un partido {@link Event} y lo crea a partir
+     * del {@link Cursor} obtenido.
+     *
+     * @param eventId identificador del partido
+     * @return objeto {@link Event} construido a partir de los datos obtenidos del Proveedor de
+     * Contenido
+     */
     public static Event getEventFromContentProvider(@NonNull String eventId) {
         Event e = null;
         if (TextUtils.isEmpty(eventId)) return null;
@@ -319,6 +493,13 @@ public class UtilesContentProvider {
         return e;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, el deporte del partido indicado y lo devuelve a partir
+     * del {@link Cursor} obtenido.
+     *
+     * @param eventId identificador del partido
+     * @return identificador del deporte del partido indicado
+     */
     public static String getEventSportFromContentProvider(@NonNull String eventId) {
         if (TextUtils.isEmpty(eventId)) return null;
         Cursor c = SportteamLoader.simpleQueryEventIdSport(MyApplication.getAppContext(), eventId);
@@ -337,6 +518,14 @@ public class UtilesContentProvider {
         return null;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, los datos de una instalación {@link Field} y la crea a
+     * partir del {@link Cursor} obtenido.
+     *
+     * @param fieldId identificador de la instalación
+     * @return objeto {@link Field} construido a partir de los datos obtenidos del Proveedor de
+     * Contenido
+     */
     public static Field getFieldFromContentProvider(@NonNull String fieldId) {
         Field f = null;
         if (TextUtils.isEmpty(fieldId)) return null;
@@ -365,6 +554,13 @@ public class UtilesContentProvider {
         return f;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, las pistas de la instalación indicada y las devuelve a
+     * partir del {@link Cursor} obtenido.
+     *
+     * @param fieldId identificador de la instalación
+     * @return lista de {@link SportCourt} representando las pistas de la instalación indicada
+     */
     private static ArrayList<SportCourt> getFieldSportFromContentProvider(@NonNull String fieldId) {
         ArrayList<SportCourt> result = new ArrayList<>();
         Cursor cursorFieldSport = SportteamLoader.simpleQuerySportsOfFieldId(MyApplication.getAppContext(), fieldId);
@@ -386,6 +582,14 @@ public class UtilesContentProvider {
         return result;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, el nombre de una instalación y lo devuelve a partir del
+     * {@link Cursor} obtenido.
+     *
+     * @param fieldId identificador de la instalación
+     * @return cadena de texto representando el nombre de la instalación almacenado en el Proveedor
+     * de Contenido
+     */
     public static String getFieldNameFromContentProvider(@NonNull String fieldId) {
         if (TextUtils.isEmpty(fieldId)) return null;
         Cursor cursorField = SportteamLoader.simpleQueryFieldIdName(MyApplication.getAppContext(), fieldId);
@@ -404,6 +608,14 @@ public class UtilesContentProvider {
         return null;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, los datos de una alarma {@link Alarm} y la crea a partir
+     * del {@link Cursor} obtenido.
+     *
+     * @param alarmId identificador de la alarma
+     * @return objeto {@link Alarm} construido a partir de los datos obtenidos del Proveedor de
+     * Contenido
+     */
     public static Alarm getAlarmFromContentProvider(@NonNull String alarmId) {
         Alarm a = null;
         if (TextUtils.isEmpty(alarmId)) return null;
@@ -421,6 +633,13 @@ public class UtilesContentProvider {
         return a;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, el deporte de la alarma indicada y lo devuelve a partir
+     * del {@link Cursor} obtenido.
+     *
+     * @param alarmId identificador de la alarma
+     * @return identificador del deporte de la alarma indicada
+     */
     public static String getAlarmSportFromContentProvider(@NonNull String alarmId) {
         if (TextUtils.isEmpty(alarmId)) return null;
         Cursor c = SportteamLoader.simpleQueryAlarmIdSport(MyApplication.getAppContext(), alarmId);
@@ -439,8 +658,15 @@ public class UtilesContentProvider {
         return null;
     }
 
-    public static ArrayList<Alarm> getAllAlarmsFromContentProvider(Context context) {
-        Cursor c = context.getContentResolver().query(
+    /**
+     * Consulta, al Proveedor de Contenido, los datos de todas las alarmas {@link Alarm} y crea una
+     * lista de ellas a partir del {@link Cursor} obtenido.
+     *
+     * @return lista de alarmas {@link Alarm}, creadas por el usuario actual, creadas a partir de
+     * los datos obtenidos del Proveedor de Contenido
+     */
+    public static ArrayList<Alarm> getAllAlarmsFromContentProvider() {
+        Cursor c = MyApplication.getAppContext().getContentResolver().query(
                 SportteamContract.AlarmEntry.CONTENT_ALARM_URI,
                 SportteamContract.AlarmEntry.ALARM_COLUMNS,
                 null, null, null);
@@ -457,72 +683,25 @@ public class UtilesContentProvider {
         return null;
     }
 
+    /**
+     * Consulta, al Proveedor de Contenido, los identificadores de partidos que coincidan con los
+     * parámetros de una alarma proporcionada (y que no tengan relación con el usuario actual) y
+     * devuelve el primer identificador de partido del resultado obtenido, o null.
+     *
+     * @param alarm    {@link Alarm} de la que extraer los parámetros
+     * @param myUserId identificador del usuario actual
+     * @return identificador de un partido que coincide con los parámetros de la alarma y con el que
+     * el usuario actual no tiene relación, o null.
+     */
     public static String eventsCoincidenceAlarmFromContentProvider(Alarm alarm, String myUserId) {
         String result = null;
         if (alarm == null || myUserId == null || TextUtils.isEmpty(myUserId)) return null;
-        Cursor c = SportteamLoader.cursorAlarmCoincidence(MyApplication.getAppContext().getContentResolver(), alarm, myUserId);
+        Cursor c = SportteamLoader.cursorAlarmCoincidence(
+                MyApplication.getAppContext().getContentResolver(), alarm, myUserId);
         if (c != null) {
             if (c.getCount() > 0 && c.moveToFirst())
                 result = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
             c.close();
-        }
-        return result;
-    }
-
-    public static ArrayList<MyCalendarEvent> cursorToMultipleCalendarEvent(Cursor c, int color) {
-        ArrayList<MyCalendarEvent> result = new ArrayList<>();
-        if (c != null) {
-            //Move to first position to prevent errors
-            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                Field field = getFieldFromContentProvider(c.getString(SportteamContract.EventEntry.COLUMN_FIELD));
-
-                String eventId = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
-                String sport = c.getString(SportteamContract.EventEntry.COLUMN_SPORT);
-                String fieldId = c.getString(SportteamContract.EventEntry.COLUMN_FIELD);
-                String address = c.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
-                double latitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
-                double longitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
-                LatLng coord = null;
-                if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
-                String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
-                String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
-                Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
-                String owner = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
-                Long totalPl = c.getLong(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
-                Long emptyPl = c.getLong(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
-
-                Event event = new Event(eventId, sport, fieldId, address, coord, name, city, date, owner, totalPl, emptyPl, null, null);
-
-                result.add(MyCalendarEvent.Builder.newInstance(event, field, color));
-            }
-        }
-        return result;
-    }
-
-    public static ArrayList<Event> cursorToMultipleEvent(Cursor c) {
-        ArrayList<Event> result = new ArrayList<>();
-        if (c != null) {
-            /* https://stackoverflow.com/questions/10723770/whats-the-best-way-to-iterate-an-android-cursor#comment33274077_10723771 */
-            //Move to first position to prevent errors
-            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                String eventId = c.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
-                String sport = c.getString(SportteamContract.EventEntry.COLUMN_SPORT);
-                String fieldId = c.getString(SportteamContract.EventEntry.COLUMN_FIELD);
-                String address = c.getString(SportteamContract.EventEntry.COLUMN_ADDRESS);
-                double latitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LATITUDE);
-                double longitude = c.getDouble(SportteamContract.EventEntry.COLUMN_FIELD_LONGITUDE);
-                LatLng coord = null;
-                if (latitude != 0 && longitude != 0) coord = new LatLng(latitude, longitude);
-                String name = c.getString(SportteamContract.EventEntry.COLUMN_NAME);
-                String city = c.getString(SportteamContract.EventEntry.COLUMN_CITY);
-                Long date = c.getLong(SportteamContract.EventEntry.COLUMN_DATE);
-                String owner = c.getString(SportteamContract.EventEntry.COLUMN_OWNER);
-                Long totalPl = c.getLong(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS);
-                Long emptyPl = c.getLong(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS);
-
-                result.add(new Event(eventId, sport, fieldId, address, coord, name, city, date,
-                        owner, totalPl, emptyPl, null, null));
-            }
         }
         return result;
     }

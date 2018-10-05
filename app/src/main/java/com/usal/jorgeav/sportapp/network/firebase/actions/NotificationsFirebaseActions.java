@@ -95,7 +95,7 @@ public class NotificationsFirebaseActions {
     }
 
     public static void checkAlarmsAndNotify() {
-        List<Alarm> alarms = UtilesContentProvider.getAllAlarmsFromContentProvider(MyApplication.getAppContext());
+        List<Alarm> alarms = UtilesContentProvider.getAllAlarmsFromContentProvider();
         if (alarms == null || alarms.size() < 1) return;
 
         String myUserID = Utiles.getCurrentUserId();

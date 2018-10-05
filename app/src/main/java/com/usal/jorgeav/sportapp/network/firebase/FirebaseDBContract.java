@@ -11,6 +11,8 @@ import java.lang.annotation.RetentionPolicy;
  * documento de tipo JSON, cada dato almacenado debe ir acompañado de una etiqueta. Esas
  * etiquetas se listan aquí como constantes públicas para que sean accesibles y consistentes a los
  * largo de todas las clases de la aplicación.
+ *
+ * @see <a href= "https://firebase.google.com/docs/database/">Firebase Realtime Database</a>
  */
 @SuppressWarnings("WeakerAccess")
 public final class FirebaseDBContract {

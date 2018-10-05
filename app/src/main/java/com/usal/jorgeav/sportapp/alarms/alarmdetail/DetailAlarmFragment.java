@@ -281,7 +281,8 @@ public class DetailAlarmFragment extends BaseFragment implements
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
 
-                Utiles.setCoordinatesInMap(getActivityContext(), mMap, mCoords);
+                Marker m = Utiles.setCoordinatesInMap(getActivityContext(), mMap, mCoords);
+                if (m != null) m.remove();
             }
         });
 
