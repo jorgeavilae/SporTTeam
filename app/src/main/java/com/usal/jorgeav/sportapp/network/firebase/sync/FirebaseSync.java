@@ -31,11 +31,50 @@ import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Esta clase se utiliza para sincronizar todas las ramas necesarias de Firebase Realtime Database.
+ * Se encarga de establecer sobre estos datos los Listeners necesarios para almacenar dichos datos
+ * en el Proveedor de Contenido cada vez que cambien.
+ * <p>
+ * Estos métodos obtienen los Listeners del resto de clases del paquete y los establecen sobre la
+ * rama adecuada del árbol JSON de la base de datos del servidor. Además, para no establecer
+ * múltiples Listeners sobre la misma rama, mantiene una referencia a todos ellos en una variable
+ * estática {@link HashMap}. Cada par de esta variables estará formado con el
+ * {@link ExecutorChildEventListener} como valor y la referencia a la rama del árbol JSON en la que
+ * está escuchando como referencia.
+ * <p>
+ * Estos Listeners se vinculan al principio de la ejecución de la aplicación y se desvinculan al
+ * finalizarla.
+ *
+ * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+ * FirebaseDatabase</a>
+ * @see <a href= "https://stackoverflow.com/questions/33776195/how-to-keep-track-of-listeners-in-firebase-on-android">
+ * How to keep track of listeners in Firebase on Android?</a>
+ */
 public class FirebaseSync {
+    /**
+     * Nombre de la clase
+     */
     private static final String TAG = FirebaseSync.class.getSimpleName();
 
+    /**
+     * Mapa de Listeners para mantener una referencia a ellos con el objetivo de no duplicarlos
+     * bajo la misma rama del servidor y para poder desvincularlos al finalizar la ejecución.
+     */
     private static HashMap<DatabaseReference, ChildEventListener> listenerMap = new HashMap<>();
 
+    /**
+     * Método invocado para establecer todos los Listeners necesarios para mantener todos los
+     * datos actualizados: los datos del usuario actual, los partidos con los que mantiene relación,
+     * alarmas, amigos, etcétera. Es invocado al inicio de la aplicación o al iniciar sesión.
+     * <p>
+     * Se le pasa una referencia a la {@link LoginActivity} para que, en el caso de ser invocado al
+     * iniciar sesión, pueda avisar a dicha Actividad cuando los datos del usuario actual estén en
+     * el Proveedor de Contenido para que pueda mostrarlos en la interfaz.
+     *
+     * @param loginActivity referencia a la Actividad de inicio de sesión en caso de que este método
+     *                      haya sido invocado desde ella, o null.
+     */
     public static void syncFirebaseDatabase(LoginActivity loginActivity) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null && listenerMap.isEmpty()) {
             String myUserID = Utiles.getCurrentUserId();
@@ -76,6 +115,11 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Método invocado para desvincular y borrar todos los Listeners utilizados para mantener los
+     * datos actualizados, limpiando {@link #listenerMap}. Es invocado al finalizar la aplicación o
+     * al cerrar sesión.
+     */
     public static void detachListeners() {
         for (Map.Entry<DatabaseReference, ChildEventListener> entry : listenerMap.entrySet()) {
             Log.i(TAG, "detachListeners: ref " + entry.getKey());
@@ -84,6 +128,11 @@ public class FirebaseSync {
         listenerMap.clear();
     }
 
+    /**
+     * Usa {@link UsersFirebaseSync#getListenerToLoadUsersFromFriends()} para obtener y almacenar en
+     * {@link #listenerMap} el Listener que manejará los datos de la lista de amigos del usuario
+     * actual.
+     */
     public static void loadUsersFromFriends() {
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
@@ -100,6 +149,11 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Usa {@link UsersFirebaseSync#getListenerToLoadUsersFromFriendsRequestsSent()} para obtener
+     * y almacenar en {@link #listenerMap} el Listener que manejará los datos de la lista de
+     * peticiones de amistad enviadas por el usuario actual.
+     */
     public static void loadUsersFromFriendsRequestsSent() {
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
@@ -116,6 +170,11 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Usa {@link UsersFirebaseSync#getListenerToLoadUsersFromFriendsRequestsReceived()} para obtener
+     * y almacenar en {@link #listenerMap} el Listener que manejará los datos de la lista de
+     * peticiones de amistad recibidas por el usuario actual.
+     */
     public static void loadUsersFromFriendsRequestsReceived() {
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
@@ -132,6 +191,11 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Usa {@link EventsFirebaseSync#getListenerToLoadEventsFromMyOwnEvents()} para obtener
+     * y almacenar en {@link #listenerMap} el Listener que manejará los datos de la lista de
+     * partidos creados por el usuario actual.
+     */
     public static void loadEventsFromMyOwnEvents() {
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
@@ -148,6 +212,11 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Usa {@link EventsFirebaseSync#getListenerToLoadEventsFromEventsParticipation()} para obtener
+     * y almacenar en {@link #listenerMap} el Listener que manejará los datos de la lista de
+     * partidos en los que participa el usuario actual.
+     */
     public static void loadEventsFromEventsParticipation() {
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
@@ -164,6 +233,13 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Usa {@link UsersFirebaseSync#getListenerToLoadUsersFromInvitationsSent()} para obtener
+     * y almacenar en {@link #listenerMap} el Listener que manejará los datos de la lista de
+     * usuarios que han recibido una invitación para un partido del usuario actual.
+     *
+     * @param eventId identificador del partido al que referencia la invitación
+     */
     public static void loadUsersFromInvitationsSent(String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -177,6 +253,11 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Usa {@link EventsFirebaseSync#getListenerToLoadEventsFromInvitationsReceived()} para obtener
+     * y almacenar en {@link #listenerMap} el Listener que manejará los datos de la lista de
+     * partidos para los que el usuario actual ha recibido una invitación.
+     */
     public static void loadEventsFromInvitationsReceived() {
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
@@ -193,6 +274,13 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Usa {@link UsersFirebaseSync#getListenerToLoadUsersFromUserRequests()} para obtener
+     * y almacenar en {@link #listenerMap} el Listener que manejará los datos de la lista de
+     * los usuarios que han mandado una petición de participación a algún partido del usuario actual.
+     *
+     * @param eventId identificador del partido para el que es la petición de participación
+     */
     public static void loadUsersFromUserRequests(String eventId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -206,6 +294,11 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Usa {@link EventsFirebaseSync#getListenerToLoadEventsFromEventsRequests()} para obtener
+     * y almacenar en {@link #listenerMap} el Listener que manejará los datos de la lista de
+     * partidos para los que el usuario actual ha mandado una petición de participación.
+     */
     public static void loadEventsFromEventsRequests() {
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
@@ -222,6 +315,11 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Usa {@link AlarmsFirebaseSync#getListenerToLoadAlarmsFromMyAlarms()} para obtener
+     * y almacenar en {@link #listenerMap} el Listener que manejará los datos de la lista de
+     * alarmas del usuario actual.
+     */
     public static void loadAlarmsFromMyAlarms() {
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;
@@ -238,6 +336,20 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Usa {@link FieldsFirebaseSync#getListenerToLoadFieldsFromCity()} para obtener
+     * y almacenar en {@link #listenerMap} el Listener que manejará los datos de la lista de
+     * instalaciones de la ciudad del usuario actual.
+     * <p>
+     * Primero, si lo indica el parámetro <var>shouldResetFieldsData</var>, borra el Listener
+     * anterior y las instalaciones de la ciudad antigua del Proveedor de Contenido. Esto ocurre si
+     * es la primera vez que se invoca este método o bien porque la ciudad del usuario actual acaba
+     * de ser actualizada.
+     *
+     * @param city                  ciudad del usuario actual
+     * @param shouldResetFieldsData true si se debe actualizar la lista de instalaciones, false en
+     *                              otro caso
+     */
     public static void loadFieldsFromCity(String city, boolean shouldResetFieldsData) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference fieldsRef = database.getReference(FirebaseDBContract.TABLE_FIELDS);
@@ -266,6 +378,25 @@ public class FirebaseSync {
         }
     }
 
+    /**
+     * Realiza una única consulta sobre la rama de notificaciones del usuario actual. El Listener
+     * establecido puede ser pasado por parámetros o puede vincularse uno por defecto. El Listener
+     * por defecto comprueba la lista de notificaciones, comprueba que los datos a los que hace
+     * referencia se encuentren en el Proveedor de Contenido y si hay alguna sin comprobar la muestra
+     * mediante {@link UtilesNotification}.
+     * <p>
+     * Este método se invoca desde {@link #syncFirebaseDatabase(LoginActivity)}, de esta forma las
+     * notificaciones son comprobadas al iniciar sesión.
+     * <p>
+     * Este Listener no es necesario guardarlo sobre {@link #listenerMap} porque sólo se vincula
+     * una vez ya que las notificaciones son comprobadas desde el servidor mediante Firebase Cloud
+     * Functions y Firebase Cloud Messaging.
+     *
+     * @param listener Listener que se vincula a la rama de notificaciones para una única consulta,
+     *                 o null.
+     * @see <a href= "https://firebase.google.com/docs/functions/">Firebase Cloud Functions</a>
+     * @see <a href= "https://firebase.google.com/docs/cloud-messaging/">Firebase Cloud Messaging</a>
+     */
     public static void loadMyNotifications(ValueEventListener listener) {
         String myUserID = Utiles.getCurrentUserId();
         if (TextUtils.isEmpty(myUserID)) return;

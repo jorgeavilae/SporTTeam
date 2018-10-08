@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.network.firebase.sync;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
+import com.usal.jorgeav.sportapp.mainactivities.LoginActivity;
 import com.usal.jorgeav.sportapp.network.firebase.AppExecutor;
 import com.usal.jorgeav.sportapp.network.firebase.ExecutorChildEventListener;
 import com.usal.jorgeav.sportapp.network.firebase.ExecutorValueEventListener;
@@ -29,15 +31,47 @@ import com.usal.jorgeav.sportapp.widget.UpdateEventsWidgetService;
 
 import java.util.Map;
 
-@SuppressWarnings("WeakerAccess")
+/**
+ * Los métodos de esta clase contienen la funcionalidad necesaria para sincronizar los datos de
+ * Firebase Realtime Database con el Proveedor de Contenido. Concretamente, los datos relativos a
+ * partidos.
+ * <p>
+ * Proporciona tanto métodos para sincronizar datos en una sola consulta, como métodos para obtener
+ * los Listeners que se vincularán a los datos que necesiten una escucha continuada, en
+ * {@link FirebaseSync#syncFirebaseDatabase(LoginActivity)}
+ *
+ * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+ * FirebaseDatabase</a>
+ */
 public class EventsFirebaseSync {
+    /**
+     * Nombre de la clase
+     */
     private static final String TAG = EventsFirebaseSync.class.getSimpleName();
 
+    /**
+     * Invoca {@link #loadAnEvent(String, boolean)} indicando que no es necesario actualizar los
+     * datos del Widget.
+     *
+     * @param eventId identificador del partido que se debe sincronizar
+     */
     public static void loadAnEvent(@NonNull String eventId) {
         loadAnEvent(eventId, false);
     }
 
-    public static void loadAnEvent(@NonNull String eventId, final boolean shouldUpdateWidget) {
+    /**
+     * Sincroniza los datos de un partido, incluidos sus usuarios simulados y los datos de los
+     * usuarios participantes. Si el creador es el usuario actual y el partido es pasado, borra
+     * las peticiones de participación y las invitaciones que estuvieran pendientes del servidor.
+     * <p>
+     * En ocasiones, será necesario que este método actualice los datos de los partidos contenidos
+     * en el Widget de esta aplicación.
+     *
+     * @param eventId            identificador del partido que se debe sincronizar
+     * @param shouldUpdateWidget true si debe actualizarse el Widget, falso en caso contrario.
+     * @see UpdateEventsWidgetService#startActionUpdateEvents(Context)
+     */
+    private static void loadAnEvent(@NonNull String eventId, final boolean shouldUpdateWidget) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventRef = database.getReference(FirebaseDBContract.TABLE_EVENTS).child(eventId);
 
@@ -91,6 +125,16 @@ public class EventsFirebaseSync {
         });
     }
 
+    /**
+     * Sincroniza los datos de un partido cuyo identificador ha venido insertado en una notificación
+     * desde Firebase Cloud Messaging. Para mostrar los datos de dicho partido al pulsar la
+     * notificación, primero deben estar en el Proveedor de Contenido, por lo que se sincronizan.
+     * A continuación, se invoca
+     * {@link UtilesNotification#createNotification(Context, MyNotification, Event)}
+     *
+     * @param notificationRef identificador de la notificación
+     * @param notification    objeto notificación del que extraer el identificador de usuario
+     */
     public static void loadAnEventAndNotify(final String notificationRef, final MyNotification notification) {
         if (notification.getExtra_data_one() != null) {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -138,7 +182,16 @@ public class EventsFirebaseSync {
         }
     }
 
-    public static void loadUsersFromParticipants(String eventId, Map<String, Boolean> participants) {
+    /**
+     * Inserta la relación de participación entre usuario y partido en el Proveedor de Contenido. A
+     * continuación, sincroniza los datos de los usuarios mediante
+     * {@link UsersFirebaseSync#loadAProfile(LoginActivity, String, boolean)}.
+     *
+     * @param eventId      identificador del partido
+     * @param participants lista de usuarios participantes. La clave es el identificador de usuario,
+     *                     el valor es true si participa o false si está bloqueado.
+     */
+    private static void loadUsersFromParticipants(String eventId, Map<String, Boolean> participants) {
         MyApplication.getAppContext().getContentResolver().delete(
                 SportteamContract.EventsParticipationEntry.CONTENT_EVENTS_PARTICIPATION_URI,
                 SportteamContract.EventsParticipationEntry.EVENT_ID + " = ? ",
@@ -157,7 +210,14 @@ public class EventsFirebaseSync {
             }
     }
 
-    public static void loadSimulatedParticipants(String eventId, Map<String, SimulatedUser> simulatedParticipants) {
+    /**
+     * Inserta los usuarios simulados de un partido en el Proveedor de Contenido.
+     *
+     * @param eventId               identificador del partido
+     * @param simulatedParticipants lista de usuarios simulados. La clave es el identificador de
+     *                              usuario simulado, el valor es el objeto {@link SimulatedUser}.
+     */
+    private static void loadSimulatedParticipants(String eventId, Map<String, SimulatedUser> simulatedParticipants) {
         MyApplication.getAppContext().getContentResolver().delete(
                 SportteamContract.SimulatedParticipantEntry.CONTENT_SIMULATED_PARTICIPANT_URI,
                 SportteamContract.SimulatedParticipantEntry.EVENT_ID + " = ? ",
@@ -177,53 +237,68 @@ public class EventsFirebaseSync {
             }
     }
 
+    /**
+     * Sincroniza los datos de los partidos de una ciudad dada. Al finalizar, comprueba si los
+     * nuevos partidos coinciden con alguna de las alarmas con
+     * {@link NotificationsFirebaseActions#checkAlarmsAndNotify()}
+     *
+     * @param city ciudad
+     */
     public static void loadEventsFromCity(String city) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference eventsRef = database.getReference(FirebaseDBContract.TABLE_EVENTS);
         String filter = FirebaseDBContract.DATA + "/" + FirebaseDBContract.Event.CITY;
 
-        eventsRef.orderByChild(filter).equalTo(city).addListenerForSingleValueEvent(new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
-            @Override
-            public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        Event e = data.child(FirebaseDBContract.DATA).getValue(Event.class);
-                        if (e == null) {
-                            Log.e(TAG, "loadEventsFromCity: onDataChangeExecutor: Error parsing Event");
-                            continue;
-                        }
-                        e.setEvent_id(data.getKey());
+        eventsRef.orderByChild(filter).equalTo(city).addListenerForSingleValueEvent(
+                new ExecutorValueEventListener(AppExecutor.getInstance().getExecutor()) {
+                    @Override
+                    public void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                Event e = data.child(FirebaseDBContract.DATA).getValue(Event.class);
+                                if (e == null) {
+                                    Log.e(TAG, "loadEventsFromCity: onDataChangeExecutor: Error parsing Event");
+                                    continue;
+                                }
+                                e.setEvent_id(data.getKey());
 
-                        // Check if I am not participant nor owner
-                        String myUserId = Utiles.getCurrentUserId();
-                        if (!TextUtils.isEmpty(myUserId) && !myUserId.equals(e.getOwner())
-                                && (e.getParticipants() == null || !e.getParticipants().containsKey(myUserId))) {
+                                // Check if I am not participant nor owner
+                                String myUserId = Utiles.getCurrentUserId();
+                                if (!TextUtils.isEmpty(myUserId) && !myUserId.equals(e.getOwner())
+                                        && (e.getParticipants() == null || !e.getParticipants().containsKey(myUserId))) {
 
-                            ContentValues cv = UtilesContentValues.eventToContentValues(e);
-                            MyApplication.getAppContext().getContentResolver().insert(
-                                    SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
-                            UsersFirebaseSync.loadAProfile(null, e.getOwner(), false);
-                            FieldsFirebaseSync.loadAField(e.getField_id());
+                                    ContentValues cv = UtilesContentValues.eventToContentValues(e);
+                                    MyApplication.getAppContext().getContentResolver().insert(
+                                            SportteamContract.EventEntry.CONTENT_EVENT_URI, cv);
+                                    UsersFirebaseSync.loadAProfile(null, e.getOwner(), false);
+                                    FieldsFirebaseSync.loadAField(e.getField_id());
 
-                            // Load users participants with data
-                            loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
+                                    // Load users participants with data
+                                    loadUsersFromParticipants(e.getEvent_id(), e.getParticipants());
 
-                            // Load simulated users participants with data
-                            loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
+                                    // Load simulated users participants with data
+                                    loadSimulatedParticipants(e.getEvent_id(), e.getSimulated_participants());
+                                }
+                            }
+                            NotificationsFirebaseActions.checkAlarmsAndNotify();
                         }
                     }
-                    NotificationsFirebaseActions.checkAlarmsAndNotify();
-                }
-            }
 
-            @Override
-            public void onCancelledExecutor(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelledExecutor(DatabaseError databaseError) {
 
-            }
-        });
+                    }
+                });
     }
 
-    public static ExecutorChildEventListener getListenerToLoadEventsFromMyOwnEvents() {
+    /**
+     * Crea un Listener para vincularlo sobre la lista de partidos creados por el usuario actual y
+     * sincronizarlos con el Proveedor de Contenido
+     *
+     * @return una nueva instancia de {@link ExecutorChildEventListener}
+     * @see FirebaseSync#loadEventsFromMyOwnEvents()
+     */
+    static ExecutorChildEventListener getListenerToLoadEventsFromMyOwnEvents() {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
@@ -284,7 +359,14 @@ public class EventsFirebaseSync {
         };
     }
 
-    public static ExecutorChildEventListener getListenerToLoadEventsFromEventsParticipation() {
+    /**
+     * Crea un Listener para vincularlo sobre la lista de partidos en los que participa el usuario
+     * actual y sincronizarlos con el Proveedor de Contenido
+     *
+     * @return una nueva instancia de {@link ExecutorChildEventListener}
+     * @see FirebaseSync#loadEventsFromEventsParticipation()
+     */
+    static ExecutorChildEventListener getListenerToLoadEventsFromEventsParticipation() {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
@@ -343,7 +425,14 @@ public class EventsFirebaseSync {
         };
     }
 
-    public static ExecutorChildEventListener getListenerToLoadEventsFromInvitationsReceived() {
+    /**
+     * Crea un Listener para vincularlo sobre la lista de partidos para los que el usuario actual ha
+     * recibido una invitación y sincronizarlos con el Proveedor de Contenido
+     *
+     * @return una nueva instancia de {@link ExecutorChildEventListener}
+     * @see FirebaseSync#loadEventsFromInvitationsReceived()
+     */
+    static ExecutorChildEventListener getListenerToLoadEventsFromInvitationsReceived() {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
@@ -395,7 +484,14 @@ public class EventsFirebaseSync {
         };
     }
 
-    public static ExecutorChildEventListener getListenerToLoadEventsFromEventsRequests() {
+    /**
+     * Crea un Listener para vincularlo sobre la lista de partidos a los que el usuario actual ha
+     * enviado una petición de participación y sincronizarlos con el Proveedor de Contenido
+     *
+     * @return una nueva instancia de {@link ExecutorChildEventListener}
+     * @see FirebaseSync#loadEventsFromEventsRequests()
+     */
+    static ExecutorChildEventListener getListenerToLoadEventsFromEventsRequests() {
         return new ExecutorChildEventListener(AppExecutor.getInstance().getExecutor()) {
             @Override
             public void onChildAddedExecutor(DataSnapshot dataSnapshot, String s) {
