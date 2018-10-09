@@ -23,10 +23,32 @@ import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Los métodos de esta clase contienen la funcionalidad necesaria para actuar sobre los datos de
+ * Firebase Realtime Database. Concretamente, sobre los datos relativos a las invitaciones a
+ * partidos que puede recibir o enviar el usuario actual.
+ *
+ * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+ * FirebaseDatabase</a>
+ */
 public class InvitationFirebaseActions {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = InvitationFirebaseActions.class.getSimpleName();
 
+    /**
+     * Invocado para insertar la invitación en la base de datos del servidor. Obtiene las
+     * referencias a las ramas del usuario emisor, receptor y del partido al que refiere para
+     * insertar la invitación en las tres. Además, crea e inserta una notificación en el usuario
+     * receptor para avisarle de que tiene una invitación nueva. Todas las inserciones se llevan a
+     * cabo de forma atómica {@link DatabaseReference#updateChildren(Map)}.
+     *
+     * @param myUid    identificador del usuario que envía la invitación, el usuario actual
+     * @param eventId  identificador del partido al que va referida la invitación
+     * @param otherUid identificador del usuario que recibe la invitación
+     */
     public static void sendInvitationToThisEvent(String myUid, String eventId, String otherUid) {
         //Set Invitation Sent in myUid
         String userInvitationSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
@@ -71,6 +93,17 @@ public class InvitationFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
+    /**
+     * Invocado para borrar una invitación enviada en la base de datos del servidor. Obtiene las
+     * referencias a las ramas del usuario emisor, receptor y del partido al que refiere para
+     * borrar la invitación en las tres. Además, borra la notificación en el usuario receptor.
+     * Todas las eliminaciones se llevan a cabo de forma atómica
+     * {@link DatabaseReference#updateChildren(Map)}.
+     *
+     * @param myUid    identificador del usuario que envía la invitación, el usuario actual
+     * @param eventId  identificador del partido al que va referida la invitación
+     * @param otherUid identificador del usuario que recibe la invitación
+     */
     public static void deleteInvitationToThisEvent(String myUid, String eventId, String otherUid) {
         //Delete Invitation Sent in myUid
         String userInvitationSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
@@ -98,7 +131,31 @@ public class InvitationFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
-    public static void acceptEventInvitation(final BaseFragment fragment, final String myUid, final String eventId, final String sender) {
+    /**
+     * Invocado para aceptar una invitación de la base de datos del servidor.
+     * <p>
+     * Obtiene la referencia a la rama del partido al que refiere para realizar una transacción
+     * {@link DatabaseReference#runTransaction(Transaction.Handler)} sobre el partido. Con ella, se
+     * consultan los datos del partido, se modifican y se reinsertan en la base de datos de forma
+     * atómica. Esto es necesario para aumentar el número de participantes, que sumará uno debido
+     * a la aceptación de esta invitación.
+     * <p>
+     * Además de sumar la participación y añadir al participante, inserta el partido en dicho rama
+     * del participante nuevo. Inserta también, una notificación para avisar al emisor de la
+     * invitación de que fue aceptada. Por último, borra la invitación, ya respondida, de la base
+     * de datos del servidor.
+     * <p>
+     * En caso de que el partido esté lleno, se aborta la transacción y se borra la invitación de la
+     * base de datos del servidor.
+     *
+     * @param fragment referencial al Fragmento que invoca este método para los casos en los que
+     *                 sea necesario mostrar un mensaje de error en la interfaz.
+     * @param myUid    identificador del usuario que recibe la invitación, el usuario actual
+     * @param eventId  identificador del partido al que va referida la invitación
+     * @param sender   identificador del usuario que envía la invitación
+     */
+    public static void acceptEventInvitation(final BaseFragment fragment, final String myUid,
+                                             final String eventId, final String sender) {
         //Add Assistant User to that Event
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -180,8 +237,9 @@ public class InvitationFirebaseActions {
                 return Transaction.success(mutableData);
             }
 
+            @SuppressWarnings("SameParameterValue")
             private void displayMessage(int msgResource) {
-                if (fragment != null && fragment instanceof DetailEventContract.View)
+                if (fragment instanceof DetailEventContract.View)
                     ((DetailEventContract.View) fragment).showMsgFromBackgroundThread(msgResource);
                 else
                     Log.e(TAG, "acceptEventInvitation: doTransaction: " +
@@ -224,6 +282,15 @@ public class InvitationFirebaseActions {
         });
     }
 
+    /**
+     * Invocado para rechazar una invitación de la base de datos del servidor. Borra la invitación,
+     * ya respondida, de la base de datos del servidor. También inserta una notificación para
+     * avisar al emisor de la invitación de que fue rechazada.
+     *
+     * @param myUid   identificador del usuario que recibe la invitación, el usuario actual
+     * @param eventId identificador del partido al que va referida la invitación
+     * @param sender  identificador del usuario que envía la invitación
+     */
     public static void declineEventInvitation(String myUid, String eventId, String sender) {
         //Delete Invitation Received in my User
         String userInvitationReceived = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid

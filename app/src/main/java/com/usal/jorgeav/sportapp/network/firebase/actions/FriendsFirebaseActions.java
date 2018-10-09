@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.network.firebase.actions;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
@@ -10,10 +11,31 @@ import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Los métodos de esta clase contienen la funcionalidad necesaria para actuar sobre los datos de
+ * Firebase Realtime Database. Concretamente, sobre los datos relativos a las peticiones de amistad
+ * y amigos del usuario actual.
+ *
+ * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+ * FirebaseDatabase</a>
+ */
 public class FriendsFirebaseActions {
+    /**
+     * Nombre de la clase
+     */
     @SuppressWarnings("unused")
     private static final String TAG = FriendsFirebaseActions.class.getSimpleName();
 
+    /**
+     * Invocado para insertar una petición de amistad en la base de datos del servidor. Obtiene las
+     * referencias a las ramas del usuario emisor y receptor para insertar la petición en las dos.
+     * Además, crea e inserta una notificación en el usuario receptor para avisarle de que tiene
+     * una petición de amistad nueva. Todas las inserciones se llevan a
+     * cabo de forma atómica {@link DatabaseReference#updateChildren(Map)}.
+     *
+     * @param myUid    identificador del usuario que envía la petición, el usuario actual
+     * @param otherUid identificador del usuario que recibe la petición
+     */
     public static void sendFriendRequest(String myUid, String otherUid) {
         //Set Friend Request Sent in my User
         String userFriendRequestSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid + "/"
@@ -49,6 +71,15 @@ public class FriendsFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
+    /**
+     * Invocado para borrar una petición de amistad de la base de datos del servidor. Obtiene las
+     * referencias a las ramas del usuario emisor y receptor para insertar la petición en las dos.
+     * Además, borra la notificación en el usuario receptor. Todas las eliminaciones se llevan a
+     * cabo de forma atómica {@link DatabaseReference#updateChildren(Map)}.
+     *
+     * @param myUid    identificador del usuario que envía la petición, el usuario actual
+     * @param otherUid identificador del usuario que recibe la petición
+     */
     public static void cancelFriendRequest(String myUid, String otherUid) {
         //Delete Friend Request Sent in my User
         String userFriendRequestSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid + "/"
@@ -71,6 +102,15 @@ public class FriendsFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
+    /**
+     * Invocado para aceptar una petición de amistad de la base de datos del servidor. Establece
+     * mutuamente a cada usuario en la rama de amigos del otro. Además, inserta una notificación
+     * para avisar al emisor de la petición de que fue aceptada y tiene un nuevo amigo. Por último,
+     * borra la petición, ya respondida, de la base de datos del servidor.
+     *
+     * @param myUid    identificador del usuario que recibe la petición, el usuario actual
+     * @param otherUid identificador del usuario que envía la petición
+     */
     public static void acceptFriendRequest(String myUid, String otherUid) {
         //Add Friend to my User
         String myUserFriends = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
@@ -121,6 +161,14 @@ public class FriendsFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
+    /**
+     * Invocado para rechazar una petición de amistad de la base de datos del servidor. Borra la
+     * petición, ya respondida, de la base de datos del servidor. En este caso, no notifica al
+     * emisor de que su petición de amistad fue rechazada.
+     *
+     * @param myUid    identificador del usuario que recibe la petición, el usuario actual
+     * @param otherUid identificador del usuario que envía la petición
+     */
     public static void declineFriendRequest(String myUid, String otherUid) {
         //No need to notify otherUid that myUid decline his friend request
 
@@ -145,6 +193,13 @@ public class FriendsFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
+    /**
+     * Invocado para borrar una amistad entre dos usuarios de la base de datos del servidor. Borra
+     * a cada usuario de la lista de amigos del otro en cada rama correspondiente.
+     *
+     * @param myUid    identificador del usuario que recibe la petición, el usuario actual
+     * @param otherUid identificador del usuario que envía la petición
+     */
     public static void deleteFriend(String myUid, String otherUid) {
         //Delete Friend new MyNotification in other User
         String notificationFriendId = myUid + FirebaseDBContract.User.FRIENDS;

@@ -21,20 +21,43 @@ import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Los métodos de esta clase contienen la funcionalidad necesaria para actuar sobre los datos de
+ * Firebase Realtime Database. Concretamente, sobre los datos relativos a las peticiones de
+ * participación del usuario actual.
+ *
+ * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+ * FirebaseDatabase</a>
+ */
 public class EventRequestFirebaseActions {
+    /**
+     * Nombre de la clase
+     */
     private static final String TAG = EventRequestFirebaseActions.class.getSimpleName();
 
-    public static void sendEventRequest(String uid, String eventId, String ownerId) {
+    /**
+     * Invocado para insertar una petición de participación en la base de datos del servidor.
+     * Obtiene las referencias a las ramas del usuario emisor y del partido al que refiere para
+     * insertar la petición en ambas. Además, crea e inserta una notificación en el usuario
+     * creador del partido para avisarle de que tiene una petición de participación que necesita
+     * respuesta. Todas las inserciones se llevan a cabo de forma atómica
+     * {@link DatabaseReference#updateChildren(Map)}.
+     *
+     * @param myUid   identificador del usuario que envía la petición, el usuario actual
+     * @param eventId identificador del partido al que va referida la petición
+     * @param ownerId identificador del usuario que recibe la petición, el creador del partido
+     */
+    public static void sendEventRequest(String myUid, String eventId, String ownerId) {
         //Set Event Request Sent in my User
-        String userRequestsEventSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
+        String userRequestsEventSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
                 + "/" + FirebaseDBContract.User.EVENTS_REQUESTS + "/" + eventId;
 
         //Set User Request in that Event
         String eventRequestsUser = "/" + FirebaseDBContract.TABLE_EVENTS + "/" + eventId
-                + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + uid;
+                + "/" + FirebaseDBContract.Event.USER_REQUESTS + "/" + myUid;
 
         //Set User Request MyNotification in ownerId
-        String notificationId = uid + FirebaseDBContract.User.EVENTS_REQUESTS + eventId;
+        String notificationId = myUid + FirebaseDBContract.User.EVENTS_REQUESTS + eventId;
         String userRequestsEventReceivedNotification = "/" + FirebaseDBContract.TABLE_USERS + "/"
                 + ownerId + "/" + FirebaseDBContract.User.NOTIFICATIONS + "/" + notificationId;
 
@@ -59,6 +82,16 @@ public class EventRequestFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
+    /**
+     * Invocado para borrar una petición de participación de la base de datos del servidor. Obtiene
+     * las referencias a las ramas del usuario emisor y del partido al que refiere para borrar la
+     * petición en ambas. Además, borra la notificación en el usuario creador del partido. Todas las
+     * eliminaciones se llevan a cabo de forma atómica {@link DatabaseReference#updateChildren(Map)}.
+     *
+     * @param myUid   identificador del usuario que envía la petición, el usuario actual
+     * @param eventId identificador del partido al que va referida la petición
+     * @param ownerId identificador del usuario que recibe la petición, el creador del partido
+     */
     public static void cancelEventRequest(String myUid, String eventId, String ownerId) {
         // Delete Event Request in that my User
         String userRequestsSent = "/" + FirebaseDBContract.TABLE_USERS + "/" + myUid
@@ -81,7 +114,30 @@ public class EventRequestFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
-    public static void acceptUserRequestToThisEvent(final BaseFragment fragment, final String otherUid, final String eventId) {
+    /**
+     * Invocado para aceptar una petición de participación de la base de datos del servidor.
+     * <p>
+     * Obtiene la referencia a la rama del partido al que refiere para realizar una transacción
+     * {@link DatabaseReference#runTransaction(Transaction.Handler)} sobre el partido. Con ella, se
+     * consultan los datos del partido, se modifican y se reinsertan en la base de datos de forma
+     * atómica. Esto es necesario para aumentar el número de participantes, que sumará uno debido
+     * a la aceptación de esta petición.
+     * <p>
+     * Además de sumar la participación y añadir al participante, inserta el partido en dicho rama
+     * del participante nuevo. Inserta también, una notificación para avisar al emisor de la
+     * petición de que fue aceptada y es participante en un nuevo partido. Por último, borra la
+     * petición, ya respondida, de la base de datos del servidor.
+     * <p>
+     * En caso de que el partido esté lleno, se aborta la transacción y se borra la petición de la
+     * base de datos del servidor.
+     *
+     * @param fragment referencial al Fragmento que invoca este método para los casos en los que
+     *                 sea necesario mostrar un mensaje de error en la interfaz.
+     * @param otherUid identificador del usuario que envió la petición y va a ser aceptado
+     * @param eventId  identificador del partido al que va referida la petición
+     */
+    public static void acceptUserRequestToThisEvent(final BaseFragment fragment,
+                                                    final String otherUid, final String eventId) {
         //Add Assistant User to my Event
         DatabaseReference eventRef = FirebaseDatabase.getInstance()
                 .getReference(FirebaseDBContract.TABLE_EVENTS)
@@ -160,8 +216,9 @@ public class EventRequestFirebaseActions {
                 return Transaction.success(mutableData);
             }
 
+            @SuppressWarnings("SameParameterValue")
             private void displayMessage(int msgResource) {
-                if (fragment != null && fragment instanceof UsersRequestsContract.View)
+                if (fragment instanceof UsersRequestsContract.View)
                     ((UsersRequestsContract.View) fragment).showMsgFromBackgroundThread(msgResource);
                 else
                     Log.e(TAG, "acceptUserRequestToThisEvent: doTransaction: " +
@@ -202,6 +259,17 @@ public class EventRequestFirebaseActions {
         });
     }
 
+    /**
+     * Invocado para rechazar una petición de participación de la base de datos del servidor.
+     * Añade al emisor como participante bloqueado y no podrá enviar más peticiones. También
+     * inserta el partido en la correspondiente rama del participante bloqueado nuevo. Borra la
+     * petición, ya respondida, de la base de datos del servidor. Por último, inserta una
+     * notificación para avisar al emisor de la invitación de que fue rechazada.
+     *
+     * @param otherUid identificador del usuario que envía la petición
+     * @param eventId  identificador del partido al que va referida la petición
+     * @param myUserID identificador del usuario que reciba la petición, el usuario actual
+     */
     public static void declineUserRequestToThisEvent(String otherUid, String eventId, String myUserID) {
         //Add Not Assistant Event to that User
         String userParticipationEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + otherUid
@@ -254,6 +322,14 @@ public class EventRequestFirebaseActions {
         FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
 
+    /**
+     * Invocado para desbloquear a un participante cuya petición de participación fue rechazada.
+     * Borra al participante bloqueado de la lista del partido y borra el partido de la lista de
+     * participaciones del usuario. En este caso no se envía ninguna notificación.
+     *
+     * @param uid     identificador del usuario que se va a desbloquear
+     * @param eventId identificador del partido en el que el usuario esta bloqueado
+     */
     public static void unblockUserParticipationRejectedToThisEvent(String uid, String eventId) {
         //Delete Assistant Event to that User
         String userParticipationEvent = "/" + FirebaseDBContract.TABLE_USERS + "/" + uid
