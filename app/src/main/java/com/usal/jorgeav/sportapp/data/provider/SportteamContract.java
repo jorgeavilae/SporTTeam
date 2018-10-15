@@ -214,11 +214,11 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del email
+         * Indice de la columna del email
          */
         public static final int COLUMN_EMAIL = 1;
 
@@ -348,39 +348,39 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador de usuario
+         * Indice de la columna del identificador de usuario
          */
         public static final int COLUMN_USER_ID = 1;
         /**
-         * Índice de la columna del email de usuario
+         * Indice de la columna del email de usuario
          */
         public static final int COLUMN_EMAIL = 2;
         /**
-         * Índice de la columna del nombre de usuario
+         * Indice de la columna del nombre de usuario
          */
         public static final int COLUMN_NAME = 3;
         /**
-         * Índice de la columna de la edad del usuario
+         * Indice de la columna de la edad del usuario
          */
         public static final int COLUMN_AGE = 4;
         /**
-         * Índice de la columna de la ciudad del usuario
+         * Indice de la columna de la ciudad del usuario
          */
         public static final int COLUMN_CITY = 5;
         /**
-         * Índice de la columna de la componente latitud de la ciudad del usuario
+         * Indice de la columna de la componente latitud de la ciudad del usuario
          */
         public static final int COLUMN_CITY_LATITUDE = 6;
         /**
-         * Índice de la columna de la componente longitud de la ciudad del usuario
+         * Indice de la columna de la componente longitud de la ciudad del usuario
          */
         public static final int COLUMN_CITY_LONGITUDE = 7;
         /**
-         * Índice de la columna de la foto de perfil del usuario
+         * Indice de la columna de la foto de perfil del usuario
          */
         public static final int COLUMN_PHOTO = 8;
 
@@ -450,19 +450,19 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador de usuario
+         * Indice de la columna del identificador de usuario
          */
         public static final int COLUMN_USER_ID = 1;
         /**
-         * Índice de la columna del identificador del deporte
+         * Indice de la columna del identificador del deporte
          */
         public static final int COLUMN_SPORT = 2;
         /**
-         * Índice de la columna del nivel de juego
+         * Indice de la columna del nivel de juego
          */
         public static final int COLUMN_LEVEL = 3;
 
@@ -596,43 +596,43 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador de la instalación
+         * Indice de la columna del identificador de la instalación
          */
         public static final int COLUMN_FIELD_ID = 1;
         /**
-         * Índice de la columna del nombre de la instalación
+         * Indice de la columna del nombre de la instalación
          */
         public static final int COLUMN_NAME = 2;
         /**
-         * Índice de la columna de la dirección de la instalación
+         * Indice de la columna de la dirección de la instalación
          */
         public static final int COLUMN_ADDRESS = 3;
         /**
-         * Índice de la columna de la componente latitud de las coordenadas de la dirección
+         * Indice de la columna de la componente latitud de las coordenadas de la dirección
          */
         public static final int COLUMN_ADDRESS_LATITUDE = 4;
         /**
-         * Índice de la columna de la componente longitud de las coordenadas de la dirección
+         * Indice de la columna de la componente longitud de las coordenadas de la dirección
          */
         public static final int COLUMN_ADDRESS_LONGITUDE = 5;
         /**
-         * Índice de la columna de la ciudad de la instalación
+         * Indice de la columna de la ciudad de la instalación
          */
         public static final int COLUMN_CITY = 6;
         /**
-         * Índice de la columna de la hora de apertura
+         * Indice de la columna de la hora de apertura
          */
         public static final int COLUMN_OPENING_TIME = 7;
         /**
-         * Índice de la columna de la hora de cierre
+         * Indice de la columna de la hora de cierre
          */
         public static final int COLUMN_CLOSING_TIME = 8;
         /**
-         * Índice de la columna del identificador del usuario creador
+         * Indice de la columna del identificador del usuario creador
          */
         public static final int COLUMN_CREATOR = 9;
 
@@ -722,23 +722,23 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador de la instalación
+         * Indice de la columna del identificador de la instalación
          */
         public static final int COLUMN_FIELD_ID = 1;
         /**
-         * Índice de la columna del identificador del deporte de la pista
+         * Indice de la columna del identificador del deporte de la pista
          */
         public static final int COLUMN_SPORT = 2;
         /**
-         * Índice de la columna de la puntuación de la pista
+         * Indice de la columna de la puntuación de la pista
          */
         public static final int COLUMN_PUNCTUATION = 3;
         /**
-         * Índice de la columna del número de votos emitidos para la pista
+         * Indice de la columna del número de votos emitidos para la pista
          */
         public static final int COLUMN_VOTES = 4;
 
@@ -899,55 +899,55 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador de la alarma
+         * Indice de la columna del identificador de la alarma
          */
         public static final int COLUMN_ALARM_ID = 1;
         /**
-         * Índice de la columna del identificador del deporte de la alarma
+         * Indice de la columna del identificador del deporte de la alarma
          */
         public static final int COLUMN_SPORT = 2;
         /**
-         * Índice de la columna del identificador de la instalación
+         * Indice de la columna del identificador de la instalación
          */
         public static final int COLUMN_FIELD = 3;
         /**
-         * Índice de la columna de la ciudad de la alarma
+         * Indice de la columna de la ciudad de la alarma
          */
         public static final int COLUMN_CITY = 4;
         /**
-         * Índice de la columna de la componente latitud de la ciudad o la instalación de la alarma
+         * Indice de la columna de la componente latitud de la ciudad o la instalación de la alarma
          */
         public static final int COLUMN_COORD_LATITUDE = 5;
         /**
-         * Índice de la columna de la componente longitud de la ciudad o la instalación de la alarma
+         * Indice de la columna de la componente longitud de la ciudad o la instalación de la alarma
          */
         public static final int COLUMN_COORD_LONGITUDE = 6;
         /**
-         * Índice de la columna del limite inferior del periodo de fechas de la alarma
+         * Indice de la columna del limite inferior del periodo de fechas de la alarma
          */
         public static final int COLUMN_DATE_FROM = 7;
         /**
-         * Índice de la columna del limite superior del periodo de fechas de la alarma
+         * Indice de la columna del limite superior del periodo de fechas de la alarma
          */
         public static final int COLUMN_DATE_TO = 8;
         /**
-         * Índice de la columna del limite inferior del rango de puestos totales de la alarma
+         * Indice de la columna del limite inferior del rango de puestos totales de la alarma
          */
         public static final int COLUMN_TOTAL_PLAYERS_FROM = 9;
         /**
-         * Índice de la columna del limite superior del rango de puestos totales de la alarma
+         * Indice de la columna del limite superior del rango de puestos totales de la alarma
          */
         public static final int COLUMN_TOTAL_PLAYERS_TO = 10;
         /**
-         * Índice de la columna del limite inferior del rango de puestos vacantes de la alarma
+         * Indice de la columna del limite inferior del rango de puestos vacantes de la alarma
          */
         public static final int COLUMN_EMPTY_PLAYERS_FROM = 11;
         /**
-         * Índice de la columna del limite superior del rango de puestos vacantes de la alarma
+         * Indice de la columna del limite superior del rango de puestos vacantes de la alarma
          */
         public static final int COLUMN_EMPTY_PLAYERS_TO = 12;
 
@@ -1108,57 +1108,57 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador del partido
+         * Indice de la columna del identificador del partido
          */
         public static final int COLUMN_EVENT_ID = 1;
         /**
-         * Índice de la columna del identificador del deporte del partido
+         * Indice de la columna del identificador del deporte del partido
          */
         public static final int COLUMN_SPORT = 2;
         /**
-         * Índice de la columna del identificador de la instalación del partido
+         * Indice de la columna del identificador de la instalación del partido
          */
         public static final int COLUMN_FIELD = 3;
         /**
-         * Índice de la columna de la dirección del partido
+         * Indice de la columna de la dirección del partido
          */
         public static final int COLUMN_ADDRESS = 4;
         /**
-         * Índice de la columna de la componente latitud de las coordenadas de la dirección
+         * Indice de la columna de la componente latitud de las coordenadas de la dirección
          * del partido
          */
         public static final int COLUMN_FIELD_LATITUDE = 5;
         /**
-         * Índice de la columna de la componente longitud de las coordenadas de la dirección
+         * Indice de la columna de la componente longitud de las coordenadas de la dirección
          * del partido
          */
         public static final int COLUMN_FIELD_LONGITUDE = 6;
         /**
-         * Índice de la columna del nombre del partido
+         * Indice de la columna del nombre del partido
          */
         public static final int COLUMN_NAME = 7;
         /**
-         * Índice de la columna de la ciudad del partido
+         * Indice de la columna de la ciudad del partido
          */
         public static final int COLUMN_CITY = 8;
         /**
-         * Índice de la columna de la fecha y hora del partido
+         * Indice de la columna de la fecha y hora del partido
          */
         public static final int COLUMN_DATE = 9;
         /**
-         * Índice de la columna del identificador del usuario creador del partido
+         * Indice de la columna del identificador del usuario creador del partido
          */
         public static final int COLUMN_OWNER = 10;
         /**
-         * Índice de la columna del número de puestos totales
+         * Indice de la columna del número de puestos totales
          */
         public static final int COLUMN_TOTAL_PLAYERS = 11;
         /**
-         * Índice de la columna del número de puestos vacantes
+         * Indice de la columna del número de puestos vacantes
          */
         public static final int COLUMN_EMPTY_PLAYERS = 12;
 
@@ -1261,31 +1261,31 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador del partido al que pertenece el usuario simulado
+         * Indice de la columna del identificador del partido al que pertenece el usuario simulado
          */
         public static final int COLUMN_EVENT_ID = 1;
         /**
-         * Índice de la columna del identificador del usuario simulado
+         * Indice de la columna del identificador del usuario simulado
          */
         public static final int COLUMN_SIMULATED_USER_ID = 2;
         /**
-         * Índice de la columna del nombre del usuario simulado
+         * Indice de la columna del nombre del usuario simulado
          */
         public static final int COLUMN_ALIAS = 3;
         /**
-         * Índice de la columna de la foto de perfil del usuario simulado
+         * Indice de la columna de la foto de perfil del usuario simulado
          */
         public static final int COLUMN_PROFILE_PICTURE = 4;
         /**
-         * Índice de la columna de la edad del usuario simulado
+         * Indice de la columna de la edad del usuario simulado
          */
         public static final int COLUMN_AGE = 5;
         /**
-         * Índice de la columna del identificador del usuario creador del usuario simulado
+         * Indice de la columna del identificador del usuario creador del usuario simulado
          */
         public static final int COLUMN_OWNER = 6;
 
@@ -1365,19 +1365,19 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador del usuario receptor de la petición de amistad
+         * Indice de la columna del identificador del usuario receptor de la petición de amistad
          */
         public static final int COLUMN_RECEIVER_ID = 1;
         /**
-         * Índice de la columna del identificador del usuario emisor de la petición de amistad
+         * Indice de la columna del identificador del usuario emisor de la petición de amistad
          */
         public static final int COLUMN_SENDER_ID = 2;
         /**
-         * Índice de la columna de la fecha y hora de la petición de amistad
+         * Indice de la columna de la fecha y hora de la petición de amistad
          */
         public static final int COLUMN_DATE = 3;
 
@@ -1464,19 +1464,19 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador del usuario actual
+         * Indice de la columna del identificador del usuario actual
          */
         public static final int COLUMN_MY_USER_ID = 1;
         /**
-         * Índice de la columna del identificador del usuario amigo
+         * Indice de la columna del identificador del usuario amigo
          */
         public static final int COLUMN_USER_ID = 2;
         /**
-         * Índice de la columna de la fecha y hora de la amistad
+         * Indice de la columna de la fecha y hora de la amistad
          */
         public static final int COLUMN_DATE = 3;
 
@@ -1569,19 +1569,19 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador del usuario
+         * Indice de la columna del identificador del usuario
          */
         public static final int COLUMN_USER_ID = 1;
         /**
-         * Índice de la columna del identificador del partido
+         * Indice de la columna del identificador del partido
          */
         public static final int COLUMN_EVENT_ID = 2;
         /**
-         * Índice de la columna de la participación (1=participante/0=bloqueado)
+         * Indice de la columna de la participación (1=participante/0=bloqueado)
          */
         public static final int COLUMN_PARTICIPATES = 3;
 
@@ -1692,23 +1692,23 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador del usuario receptor de la invitación
+         * Indice de la columna del identificador del usuario receptor de la invitación
          */
         public static final int COLUMN_RECEIVER_ID = 1;
         /**
-         * Índice de la columna del identificador del usuario emisor de la invitación
+         * Indice de la columna del identificador del usuario emisor de la invitación
          */
         public static final int COLUMN_SENDER_ID = 2;
         /**
-         * Índice de la columna del identificador del partido de la invitación
+         * Indice de la columna del identificador del partido de la invitación
          */
         public static final int COLUMN_EVENT_ID = 3;
         /**
-         * Índice de la columna de la fecha y hora de creación de la invitación
+         * Indice de la columna de la fecha y hora de creación de la invitación
          */
         public static final int COLUMN_DATE = 4;
 
@@ -1811,19 +1811,19 @@ public final class SportteamContract {
         };
 
         /**
-         * Índice de la columna del identificador
+         * Indice de la columna del identificador
          */
         public static final int COLUMN_ID = 0;
         /**
-         * Índice de la columna del identificador del partido de la petición de participación
+         * Indice de la columna del identificador del partido de la petición de participación
          */
         public static final int COLUMN_EVENT_ID = 1;
         /**
-         * Índice de la columna del identificador del usuario emisor de la petición de participación
+         * Indice de la columna del identificador del usuario emisor de la petición de participación
          */
         public static final int COLUMN_SENDER_ID = 2;
         /**
-         * Índice de la columna de la fecha y hora de creación de la petición de participación
+         * Indice de la columna de la fecha y hora de creación de la petición de participación
          */
         public static final int COLUMN_DATE = 3;
 

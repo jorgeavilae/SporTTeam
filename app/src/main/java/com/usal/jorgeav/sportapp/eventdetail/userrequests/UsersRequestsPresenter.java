@@ -17,13 +17,13 @@ import com.usal.jorgeav.sportapp.utils.Utiles;
  * al partido. En una lista muestra los usuarios que tiene la petición pendiente de contestar y en
  * otra lista se muestran los usuarios cuyas peticiones fueron rechazadas.
  * <p>
- * <p>Aquí se inicia la consulta al Proveedor de Contenido para obtener los datos de los usuarios
+ * Aquí se inicia la consulta al Proveedor de Contenido para obtener los datos de los usuarios
  * que tienen la petición pendiente de contestación y la lista de los usuarios cuya petición fue
  * rechazada y están bloqueados. Serán enviados a la Vista {@link UsersRequestsContract.View}.
  * También permite aceptar o rechazar las peticiones pendientes y desbloquear a los usuarios cuya
  * petición fue rechazada.
  * <p>
- * <p>Implementa la interfaz {@link UsersRequestsContract.Presenter} para la comunicación con
+ * Implementa la interfaz {@link UsersRequestsContract.Presenter} para la comunicación con
  * esta clase y la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los
  * callbacks de las consultas.
  */

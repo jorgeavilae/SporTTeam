@@ -54,7 +54,7 @@ public class EventListAdapterWidgetService extends RemoteViewsService {
      * Emplaza cada dato obtenido de la consulta al Proveedor de Contenido en sus respectivas
      * celdas de la lista, representadas por {@link android.widget.RemoteViews}.
      */
-    private class EventListRemoteViewsFactory implements
+    class EventListRemoteViewsFactory implements
             RemoteViewsService.RemoteViewsFactory {
         /**
          * Contexto bajo el que se ejecuta esta clase

@@ -25,7 +25,7 @@ import java.util.Map;
  *
  * @see <a href= "https://firebase.google.com/docs/database/">Firebase Realtime Database</a>
  * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/DataSnapshot">
- * DataSnapshot<a>
+ * DataSnapshot</a>
  */
 public class UtilesContentValues {
     /**

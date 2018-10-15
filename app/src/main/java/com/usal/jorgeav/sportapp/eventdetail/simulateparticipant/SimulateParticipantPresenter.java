@@ -43,7 +43,7 @@ class SimulateParticipantPresenter implements
      * partido indicado. Primero realiza una serie de comprobaciones sobre los datos: si surge
      * algún error lo manda a la Vista, si no surge ninguno continúa con el proceso.
      * <p>
-     * <p>Hace una distinción si se ha especificado una imagen para el usuario simulado, primero
+     * Hace una distinción si se ha especificado una imagen para el usuario simulado, primero
      * la guarda en el almacenamiento en la nube (Firebase Storage) y luego almacena el usuario
      * simulado, en la base de datos del servidor, con la foto como una URL hacia el archivo de
      * imagen en Firebase Storage.
@@ -52,7 +52,7 @@ class SimulateParticipantPresenter implements
      * @param name    nombre del usuario simulado
      * @param photo   imagen del usuario simulado
      * @param ageStr  edad del usuario simulado en formato texto
-     * @link <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/storage/FirebaseStorage">
+     * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/storage/FirebaseStorage">
      * FirebaseStorage
      * </a>
      */

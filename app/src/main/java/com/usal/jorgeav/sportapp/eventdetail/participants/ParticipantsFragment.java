@@ -38,17 +38,17 @@ import butterknife.ButterKnife;
  * Fragmento utilizado para mostrar la colección de participantes del partido, tanto usuarios
  * de la aplicación, como usuarios simulados añadidos por los primeros.
  * <p>
- * <p>Este Fragmento se encarga de inicializar los componentes de la interfaz para mostrar esa
+ * Este Fragmento se encarga de inicializar los componentes de la interfaz para mostrar esa
  * colección en dos listas, con la ayuda de {@link UsersAdapter} y {@link SimulatedUsersAdapter}.
  * En la instanciación, se le pasa el tipo de relación del partido con el usuario actual, si el
  * partido está lleno y si el partido pertenece al pasado; es necesario para permitir o no añadir
  * más usuarios simulados.
  * <p>
- * <p>Desde este Fragmento, el creador del partido puede expulsar usuarios y usuarios simulados.
+ * Desde este Fragmento, el creador del partido puede expulsar usuarios y usuarios simulados.
  * Además, cualquier participante puede añadir usuarios simulados, así como eliminarlos, pero sólo
  * a los usuarios simulados que añadió.
  * <p>
- * <p>Implementa la interfaz {@link ParticipantsContract.View} para la comunicación con esta clase,
+ * Implementa la interfaz {@link ParticipantsContract.View} para la comunicación con esta clase,
  * la interfaz {@link UsersAdapter.OnUserItemClickListener} para manejar la pulsación sobre cada
  * uno de los usuarios participantes y la interfaz
  * {@link SimulatedUsersAdapter.OnSimulatedUserItemClickListener}

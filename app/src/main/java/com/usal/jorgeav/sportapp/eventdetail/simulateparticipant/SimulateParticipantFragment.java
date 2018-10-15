@@ -31,7 +31,7 @@ import pl.aprilapps.easyphotopicker.EasyImage;
  * para incluir una foto para el usuario simulado. Esta Actividad es la que implementa los métodos
  * necesarios para utilizar las librerías uCrop y EasyImage.
  * <p>
- * <p>Implementa la interfaz {@link SimulateParticipantContract.View} para la comunicación con esta
+ * Implementa la interfaz {@link SimulateParticipantContract.View} para la comunicación con esta
  * clase.
  *
  * @see <a href= "https://github.com/Yalantis/uCrop">uCrop (Github)</a>

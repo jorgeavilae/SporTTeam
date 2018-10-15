@@ -112,6 +112,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * Convierte el mapa de pares clave valor proporcionado en un objeto {@link MyNotification}.
      *
      * @param data mapa de pares clave valor con los datos incorporados al mensaje del servidor.
+     * @return objeto {@link MyNotification} construido a partir de los datos del mapa
      */
     private MyNotification parseNotificationFromMap(Map<String, String> data) {
     /*

@@ -118,7 +118,7 @@ public class DetailEventFragment extends BaseFragment implements
      * Objeto principal de Google Maps API. Hace referencia al mapa que provee esta API.
      *
      * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap">
-     * GoogleMap<a>
+     * GoogleMap</a>
      */
     private GoogleMap mMap;
     /**

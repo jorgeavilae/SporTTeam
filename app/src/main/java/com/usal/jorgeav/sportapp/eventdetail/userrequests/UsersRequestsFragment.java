@@ -32,13 +32,13 @@ import butterknife.ButterKnife;
  * al partido. En una lista muestra los usuarios que tiene la petición pendiente de contestar y en
  * otra lista se muestran los usuarios cuyas peticiones fueron rechazadas.
  * <p>
- * <p>Este Fragmento se encarga de inicializar los componentes de la interfaz para mostrar esa
+ * Este Fragmento se encarga de inicializar los componentes de la interfaz para mostrar esa
  * colección en las dos listas, con la ayuda de dos {@link UsersAdapter}.
  * <p>
- * <p>Desde este Fragmento, el creador del partido puede aceptar o rechazar peticiones de
+ * Desde este Fragmento, el creador del partido puede aceptar o rechazar peticiones de
  * participación y desbloquear usuarios cuya petición fue rechazada.
  * <p>
- * <p>Implementa la interfaz {@link UsersRequestsContract.View} para la comunicación con esta clase.
+ * Implementa la interfaz {@link UsersRequestsContract.View} para la comunicación con esta clase.
  * También crea dos {@link UsersAdapter.OnUserItemClickListener} separados para mostrar un cuadro de
  * diálogo diferente según se pulse sobre un usuario con una petición pendiente o sobre un usuario
  * con una petición rechazada.

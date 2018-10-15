@@ -81,6 +81,7 @@ public class UtilesPreferences {
      * Obtiene de {@link SharedPreferences} la ciudad del usuario actual
      *
      * @param context contexto bajo el que se accede a {@link SharedPreferences}
+     * @return nombre de la ciudad del usuario actual
      */
     public static String getCurrentUserCity(Context context) {
         SharedPreferences settings = context.getSharedPreferences(PREFS_FILE, 0);
@@ -96,6 +97,7 @@ public class UtilesPreferences {
      * Obtiene de {@link SharedPreferences} las coordenadas de la ciudad del usuario actual
      *
      * @param context contexto bajo el que se accede a {@link SharedPreferences}
+     * @return coordenadas de la ciudad del usuario actual
      */
     public static LatLng getCurrentUserCityCoords(Context context) {
         SharedPreferences settings = context.getSharedPreferences(PREFS_FILE, 0);

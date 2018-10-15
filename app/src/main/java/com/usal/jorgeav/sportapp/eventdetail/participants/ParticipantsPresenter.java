@@ -18,12 +18,12 @@ import com.usal.jorgeav.sportapp.network.firebase.sync.EventsFirebaseSync;
  * Presentador utilizado para mostrar la colección de participantes del partido, tanto usuarios
  * de la aplicación, como usuarios simulados añadidos por los primeros.
  * <p>
- * <p>Aquí se inicia la consulta al Proveedor de Contenido para obtener los datos de los usuarios
+ * Aquí se inicia la consulta al Proveedor de Contenido para obtener los datos de los usuarios
  * que participan y la lista de los usuarios simulados asociados a ese partido. Serán enviados a la
  * Vista {@link ParticipantsContract.View}. También permite eliminar, tanto los participantes, como
  * los usuarios simulados.
  * <p>
- * <p>Implementa la interfaz {@link ParticipantsContract.Presenter} para la comunicación con
+ * Implementa la interfaz {@link ParticipantsContract.Presenter} para la comunicación con
  * esta clase y la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los
  * callbacks de las consultas.
  */

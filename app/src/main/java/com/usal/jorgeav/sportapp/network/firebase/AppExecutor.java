@@ -96,7 +96,7 @@ public class AppExecutor {
 
         /**
          * Invocado para comenzar la ejecución del hilo. Primero aplica la prioridad y luego
-         * inicia la ejecución con {@link #runnable#run()}
+         * inicia la ejecución con {@link Runnable#run()}
          */
         @Override
         public void run() {

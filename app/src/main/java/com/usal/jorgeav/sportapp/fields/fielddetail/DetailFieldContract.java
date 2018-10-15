@@ -30,6 +30,7 @@ abstract class DetailFieldContract {
          * @param fieldId identificador de la instalación
          * @param sportId identificador de la pista
          * @param rating  puntuación del voto
+         * @return true si los parámetros son correctos, false en otro caso
          */
         boolean voteSportInField(String fieldId, String sportId, float rating);
 
