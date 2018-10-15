@@ -22,29 +22,31 @@ import java.util.List;
  */
 public class SportSpinnerAdapter extends ArrayAdapter {
     /**
-     * Alamacena la coleccion de deportes que maneja este adapter.
+     * Almacena la colección de deportes que maneja este adapter.
      */
     ArrayList<String> mDataset;
 
     /**
-     *
-     * @param context Context de la Actividad que contiene el Spinner
+     * @param context  Context de la Actividad que contiene el Spinner
      * @param resource Identificador de layout para cada celda
-     * @param objects Conjunto de deportes
+     * @param objects  Conjunto de deportes
      */
-    public SportSpinnerAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<String> objects) {
+    public SportSpinnerAdapter(@NonNull Context context, @LayoutRes int resource,
+                               @NonNull List<String> objects) {
+        //noinspection unchecked
         super(context, resource, objects);
         this.mDataset = (ArrayList<String>) objects;
     }
 
     /**
      * Establece los valores que deben mostrar los elementos de cada celda del Spinner
-     * @param position posicion de la celda
+     *
+     * @param position    posición de la celda
      * @param convertView View en la que emplazar los elementos. Puede reusarse si no es null
-     * @param parent View padre de la View que representa la celda
+     * @param parent      View padre de la View que representa la celda
      * @return View con los datos emplazados en cada elemento
      */
-    private View getCustomView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
+    private View getCustomView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         String sportId = mDataset.get(position);
 
         if (convertView == null) {
@@ -57,19 +59,35 @@ public class SportSpinnerAdapter extends ArrayAdapter {
         icon.setImageResource(sportDrawableResource);
 
         int sportStringResource = parent.getContext().getResources()
-                .getIdentifier(sportId , "string", parent.getContext().getPackageName());
+                .getIdentifier(sportId, "string", parent.getContext().getPackageName());
         TextView text = (TextView) convertView.findViewById(R.id.sport_spinner_item_text);
         text.setText(parent.getContext().getString(sportStringResource));
 
         return convertView;
     }
 
+    /**
+     * Invoca {@link #getCustomView(int, View, ViewGroup)}
+     *
+     * @param position    posición de la celda
+     * @param convertView View en la que emplazar los elementos. Puede reusarse si no es null
+     * @param parent      View padre de la View que representa la celda
+     * @return View con los datos emplazados en cada elemento
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         return getCustomView(position, convertView, parent);
     }
 
+    /**
+     * Invoca {@link #getCustomView(int, View, ViewGroup)}
+     *
+     * @param position    posición de la celda
+     * @param convertView View en la que emplazar los elementos. Puede reusarse si no es null
+     * @param parent      View padre de la View que representa la celda
+     * @return View con los datos emplazados en cada elemento
+     */
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         return getCustomView(position, convertView, parent);

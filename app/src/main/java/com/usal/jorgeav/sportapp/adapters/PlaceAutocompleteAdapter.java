@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Adaptador para la lista de sugerencias de ciudades. Utiliza la interfaz {@link Filterable}
- * para filtrar las busquedas. Para las busquedas utiliza Google Places API
+ * para filtrar las búsquedas. Para las búsquedas utiliza Google Places API
  *
  * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
  * Google Places API
@@ -49,7 +49,7 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
     private static final CharacterStyle STYLE_BOLD = new StyleSpan(Typeface.BOLD);
 
     /**
-     * Colección de resultados una vez efectuada la busqueda
+     * Colección de resultados una vez efectuada la búsqueda
      */
     private ArrayList<AutocompletePrediction> mResultList;
     /**
@@ -62,11 +62,11 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
      */
     private GoogleApiClient mGoogleApiClient;
     /**
-     * Limites en coordenadas sobre los que efectuar la busqueda de lugares
+     * Limites en coordenadas sobre los que efectuar la búsqueda de lugares
      */
     private LatLngBounds mBounds;
     /**
-     * Filtro usado para restringir la busqueda a solo el nombre de ciudades
+     * Filtro usado para restringir la búsqueda a solo el nombre de ciudades
      */
     private AutocompleteFilter mPlaceFilter;
 
@@ -75,8 +75,8 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
      *
      * @param context         Contexto de la Actividad que aloja el adaptador
      * @param googleApiClient necesario para acceder a las funciones de la API
-     * @param bounds          limites sobre los que efectuar la busqueda
-     * @param filter          filtro de lugares para restringir la busqueda
+     * @param bounds          limites sobre los que efectuar la búsqueda
+     * @param filter          filtro de lugares para restringir la búsqueda
      */
     public PlaceAutocompleteAdapter(Context context, GoogleApiClient googleApiClient,
                                     LatLngBounds bounds, AutocompleteFilter filter) {
@@ -95,8 +95,8 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
     }
 
     /**
-     * @param position posicion dentro de la lista
-     * @return el elemento situado en esa posicion
+     * @param position posición dentro de la lista
+     * @return el elemento situado en esa posición
      */
     @Override
     public AutocompletePrediction getItem(int position) {
@@ -104,11 +104,11 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
     }
 
     /**
-     * Rellena los elementos de la celda con los datos de la ciudad de la posicion indicada
+     * Rellena los elementos de la celda con los datos de la ciudad de la posición indicada
      *
-     * @param position    posicion de la celda
-     * @param convertView View de la celda
-     * @param parent      View del padre donde se situa la celda
+     * @param position    posición de la celda
+     * @param convertView vista de la celda
+     * @param parent      vista del padre donde se aloja la celda
      * @return la celda con los datos emplazados
      */
     @NonNull
@@ -128,13 +128,24 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
     }
 
     /**
-     * Crea el {@link Filter} que realiza las  busquedas.
+     * Crea el {@link Filter} que realiza las búsquedas. Para el {@link Filter} se implementan tres
+     * métodos:
      * <p>
-     * El filtro creado utiliza una lista para almacenar los resultados de la consulta a Google
-     * en {@link Filter#performFiltering(CharSequence)} y luego los almacena
-     * en {@link #mResultList} en el metodo
+     * {@link Filter#performFiltering(CharSequence)}
+     * Invocado para realizar el filtrado. Dada la cadena de texto con la que se realiza la
+     * búsqueda, utiliza {@link android.widget.Filter.FilterResults} para almacenar los resultados
+     * de la consulta a Google proporcionados por
+     * {@link PlaceAutocompleteAdapter#getAutocomplete(CharSequence)} y los devuelve.
+     * <p>
+     * <p>
      * {@link Filter#publishResults(CharSequence, Filter.FilterResults)}
+     * Invocado cuando finaliza el filtrado. Dada la cadena de texto con la que se realiza la
+     * búsqueda y los resultado, se encarga de notificar el éxito o el fracaso (si los resultados
+     * están vacíos) de la búsqueda. Almacena el resultado en {@link #mResultList}.
      * <p>
+     * <p>
+     * {@link Filter#convertResultToString(Object)}
+     * Invocado para mostrar un texto legible que represente cada uno de los elementos del resultado.
      *
      * @return el filtro creado
      */
@@ -167,6 +178,7 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 if (results != null && results.count > 0) {
                     // The API returned at least one result, update the data.
+                    //noinspection unchecked
                     mResultList = (ArrayList<AutocompletePrediction>) results.values;
                     notifyDataSetChanged();
                 } else {
@@ -189,28 +201,25 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
     }
 
     /**
-     * Metodo encargado de realizar la consulta asíncrona a Google Places API con la cadena de
+     * Método encargado de realizar la consulta asíncrona a Google Places API con la cadena de
      * texto introducida por el usuario
+     * <p>
+     * Utiliza el método GeoDataApi.getAutocompletePredictions() para hacer las consultas.
+     * <p>
+     * A continuación, espera por el resultado, comprueba el código de error y cierra el
+     * AutocompletePredictionBuffer por el que recibía la respuesta.
+     * <p>
+     * Si el código es correcto devuelve una lista con los resultados que coinciden con la
+     * búsqueda
      *
-     * <p>Utiliza el metodo GeoDataApi.getAutocompletePredictions() para hacer las consultas.
-     *
-     * <p>A continuacion, espera por el resultado, comprueba el codigo de error y cierra el
-     * AutocompletePredictionBuffer por el que recibia la respuesta.
-     *
-     * <p>Si el codigo es correcto devuelve una lista con los resultados que coinciden con la
-     * busqueda
-     *
-     * @param constraint cadena de texto con la que se realiza la busqueda
-     * @return ArrayList con los resultados de la busqueda
+     * @param constraint cadena de texto con la que se realiza la búsqueda
+     * @return ArrayList con los resultados de la búsqueda
      * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     * Google Places API
-     * </a>
+     * Google Places API</a>
      * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi.html#getAutocompletePredictions(com.google.android.gms.common.api.GoogleApiClient,%20java.lang.String,%20com.google.android.gms.maps.model.LatLngBounds,%20com.google.android.gms.location.places.AutocompleteFilter)">
-     * GeoDataApi.getAutocompletePredictions()
-     * </a>
+     * GeoDataApi.getAutocompletePredictions()</a>
      * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompletePredictionBuffer">
-     * AutocompletePredictionBuffer
-     * </a>
+     * AutocompletePredictionBuffer</a>
      */
     private ArrayList<AutocompletePrediction> getAutocomplete(CharSequence constraint) {
         if (mGoogleApiClient.isConnected()) {

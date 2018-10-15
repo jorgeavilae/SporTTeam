@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.adapters;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,10 +20,8 @@ import java.util.List;
  * Adaptador para la colección de marcas que se posicionan sobre el mapa representando
  * partidos.
  *
- * @see
- * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter">
- *     GoogleMap.InfoWindowAdapter
- * </a>
+ * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter">
+ * GoogleMap.InfoWindowAdapter</a>
  */
 public class MapEventMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
@@ -31,25 +30,23 @@ public class MapEventMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
      */
     private View mContent;
     /**
-     * Almacena la coleccion de partidos que maneja este adapter
+     * Almacena la colección de partidos que maneja este adapter
      */
     private List<Event> mDataset;
 
     /**
-     *
      * @param layoutInflater Necesario para crear la View del cuadro de cada marca
-     * @param eventList Conjunto de partidos
+     * @param eventList      Conjunto de partidos
      */
+    @SuppressLint("InflateParams")
     public MapEventMarkerInfoAdapter(LayoutInflater layoutInflater, ArrayList<Event> eventList) {
         this.mContent = layoutInflater.inflate(R.layout.event_marker, null);
         this.mDataset = eventList;
     }
 
     /**
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoWindow(com.google.android.gms.maps.model.Marker)">
-     *     GoogleMap.InfoWindowAdapter.getInfoWindow(Marker)
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoWindow(com.google.android.gms.maps.model.Marker)">
+     * GoogleMap.InfoWindowAdapter.getInfoWindow(Marker)</a>
      */
     @Override
     public View getInfoWindow(Marker marker) {
@@ -59,10 +56,8 @@ public class MapEventMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
     /**
      * Obtiene el partido correspondiente a la marca seleccionada y lo emplaza en la View.
      *
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoContents(com.google.android.gms.maps.model.Marker)">
-     *     GoogleMap.InfoWindowAdapter.getInfoContents(Marker)
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoContents(com.google.android.gms.maps.model.Marker)">
+     * GoogleMap.InfoWindowAdapter.getInfoContents(Marker)</a>
      */
     @Override
     public View getInfoContents(Marker marker) {
@@ -76,7 +71,8 @@ public class MapEventMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
     /**
      * Emplaza los atributos de cada partido dentro de la View
-     * @param view View del cuadro que aparece sobre cada marca
+     *
+     * @param view  View del cuadro que aparece sobre cada marca
      * @param event Partido del que extraer los datos
      */
     private void populate(View view, Event event) {

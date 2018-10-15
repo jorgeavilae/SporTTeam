@@ -77,6 +77,14 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         this.mGlide = glide;
     }
 
+    /**
+     * Invocado cuando se necesita una nueva celda. Instancia la vista inflando el layout
+     * correspondiente.
+     *
+     * @param parent   el ViewGroup al que se añadirá la vista al crearse.
+     * @param viewType tipo de la vista
+     * @return una nueva instancia de {@link MyNotificationsAdapter.ViewHolder}
+     */
     @Override
     public MyNotificationsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -85,6 +93,14 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         return new MyNotificationsAdapter.ViewHolder(view);
     }
 
+    /**
+     * Invocado cuando es necesario emplazar los datos de un elemento de la colección en una celda.
+     * Extrae los datos del {@link #mDataset} en la posición indicada y los coloca en los elementos
+     * de {@link MyNotificationsAdapter.ViewHolder}
+     *
+     * @param holder   vista de la celda donde colocar los datos
+     * @param position posición de los datos que se van a mostrar
+     */
     @Override
     public void onBindViewHolder(final MyNotificationsAdapter.ViewHolder holder, int position) {
         Map.Entry<String, MyNotification> entry = getEntry(position);
@@ -173,6 +189,11 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         notifyDataSetChanged();
     }
 
+    /**
+     * Devuelve el número de elementos de la colección de datos de este Adaptador
+     *
+     * @return número de elementos de {@link #mDataset}
+     */
     @Override
     public int getItemCount() {
         if (mDataset != null) return mDataset.size();
@@ -184,31 +205,33 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
      */
     public class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener, AdapterView.OnLongClickListener {
         /**
-         * Imagen de la notificación
+         * Referencia al elemento de la celda donde se especifica la imagen de la notificación
          */
         @BindView(R.id.notification_item_icon)
         ImageView imageViewNotificationIcon;
         /**
-         * Titulo de la notificación
+         * Referencia al elemento de la celda donde se especifica el titulo de la notificación
          */
         @BindView(R.id.notification_item_title)
         TextView textViewNotificationTitle;
         /**
-         * Mensaje de la notificación
+         * Referencia al elemento de la celda donde se especifica el mensaje de la notificación
          */
         @BindView(R.id.notification_item_message)
         TextView textViewNotificationMessage;
         /**
-         * Fecha de la notificación
+         * Referencia al elemento de la celda donde se especifica la fecha de la notificación
          */
         @BindView(R.id.notification_item_date)
         TextView textViewNotificationDate;
 
         /**
+         * Inicializa y obtiene una referencia a los elementos de la celda con la ayuda de ButterKnife.
          * Se establece como {@link android.view.View.OnClickListener} y como
          * {@link android.view.View.OnLongClickListener} a sí mismo para la View
          *
          * @param itemView View de una celda de la lista
+         * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
          */
         public ViewHolder(View itemView) {
             super(itemView);
@@ -218,8 +241,8 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         }
 
         /**
-         * Obtiene la notificación de la posición de la celda pulsada y
-         * lo envía a {@link OnMyNotificationItemClickListener}
+         * Obtiene la notificación de la posición de la celda pulsada y lo envía a
+         * {@link OnMyNotificationItemClickListener}
          *
          * @param view View pulsada
          */
@@ -232,8 +255,8 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
         }
 
         /**
-         * Obtiene la notificación de la posición de la celda pulsada y
-         * lo envía a {@link OnMyNotificationItemClickListener}
+         * Obtiene la notificación de la posición de la celda pulsada y lo envía a
+         * {@link OnMyNotificationItemClickListener}
          *
          * @param view View pulsada
          * @return true si se utiliza la pulsación, false en caso contrario

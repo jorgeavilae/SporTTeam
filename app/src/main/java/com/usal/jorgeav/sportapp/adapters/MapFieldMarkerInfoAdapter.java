@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.adapters;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,13 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adaptador para la coleccion de marcas que se posicionan sobre el mapa representando
+ * Adaptador para la colección de marcas que se posicionan sobre el mapa representando
  * instalaciones.
  *
- * @see
- * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter">
- *     GoogleMap.InfoWindowAdapter
- * </a>
+ * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter">
+ * GoogleMap.InfoWindowAdapter</a>
  */
 public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
@@ -31,25 +30,23 @@ public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
      */
     private View mContent;
     /**
-     * Almacena la coleccion de instalaciones que maneja este adapter
+     * Almacena la colección de instalaciones que maneja este adapter
      */
     private List<Field> mDataset;
 
     /**
-     *
      * @param layoutInflater Necesario para crear la View del cuadro de cada marca
-     * @param fieldList Conjunto de instalaciones
+     * @param fieldList      Conjunto de instalaciones
      */
+    @SuppressLint("InflateParams")
     public MapFieldMarkerInfoAdapter(LayoutInflater layoutInflater, ArrayList<Field> fieldList) {
         this.mContent = layoutInflater.inflate(R.layout.field_marker, null);
         this.mDataset = fieldList;
     }
 
     /**
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoWindow(com.google.android.gms.maps.model.Marker)">
-     *     GoogleMap.InfoWindowAdapter.getInfoWindow(Marker)
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoWindow(com.google.android.gms.maps.model.Marker)">
+     * GoogleMap.InfoWindowAdapter.getInfoWindow(Marker)</a>
      */
     @Override
     public View getInfoWindow(Marker marker) {
@@ -57,12 +54,10 @@ public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
     }
 
     /**
-     * Obtiene la instalacion correspondiente a la marca seleccionada y la emplaza en la View.
+     * Obtiene la instalación correspondiente a la marca seleccionada y la emplaza en la View.
      *
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoContents(com.google.android.gms.maps.model.Marker)">
-     *     GoogleMap.InfoWindowAdapter.getInfoContents(Marker)
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter.html#getInfoContents(com.google.android.gms.maps.model.Marker)">
+     * GoogleMap.InfoWindowAdapter.getInfoContents(Marker)</a>
      */
     @Override
     public View getInfoContents(Marker marker) {
@@ -75,9 +70,10 @@ public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
     }
 
     /**
-     * Emplaza los atributos de cada instalacion dentro de la View
-     * @param view View del cuadro que aparece sobre cada marca
-     * @param field Instalacion de la que extraer los datos
+     * Emplaza los atributos de cada instalación dentro de la View
+     *
+     * @param view  View del cuadro que aparece sobre cada marca
+     * @param field instalación de la que extraer los datos
      */
     private void populate(View view, Field field) {
         TextView textViewFieldName = (TextView) view.findViewById(R.id.field_marker_name);
