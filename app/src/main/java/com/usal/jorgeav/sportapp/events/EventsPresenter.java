@@ -67,7 +67,7 @@ class EventsPresenter implements
      * @param id   identificador del Loader
      * @param args contenedor de posibles parámetros utilizados en la consulta
      * @return Loader que realiza la consulta.
-     * @see SportteamLoader#cursorLoaderMyEventsAndParticipation(Context, String, boolean)
+     * @see SportteamLoader#cursorLoaderMyEventsAndParticipation(Context, String)
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -77,7 +77,7 @@ class EventsPresenter implements
             case SportteamLoader.LOADER_MY_EVENTS_AND_PARTICIPATION_ID:
                 return SportteamLoader
                         .cursorLoaderMyEventsAndParticipation(
-                                mEventsView.getActivityContext(), currentUserID, true);
+                                mEventsView.getActivityContext(), currentUserID);
         }
         return null;
     }

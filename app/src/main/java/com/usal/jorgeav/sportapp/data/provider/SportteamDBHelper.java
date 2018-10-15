@@ -4,18 +4,40 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * Esta clase representa a la base de datos en SQLite del dispositivo, alojada en el Proveedor de
+ * Contenido.
+ * Aquí, se crea y se inicia la base de datos ejecutando sentencias SQL. Se especifica su nombre y
+ * su versión. También contiene la funcionalidad para actualizar el esquema de la base de datos.
+ */
 public class SportteamDBHelper extends SQLiteOpenHelper {
 
-    /* Name of database, should end with the .db extension */
+    /**
+     * Nombre del archivo de base de datos. Debe acabar en ".db"
+     */
     private static final String DATABASE_NAME = "sportteam.db";
 
-    /* Increment when change the database schema or the onUpgrade method will not be called */
+    /**
+     * Representa la versión de la base de datos. Al incrementarse, se ejecuta el método de
+     * actualización del esquema.
+     */
     private static final int DATABASE_VERSION = 27;
 
+    /**
+     * Constructor, llama al constructor de la superclase
+     *
+     * @param context contexto bajo el que se ejecuta.
+     */
     public SportteamDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    /**
+     * Invocado cuando es necesaria la creación de la base de datos, en la primera ejecución y al
+     * actualizar su esquema. Crea y ejecuta las sentencias SQL necesarias para conformar el esquema.
+     *
+     * @param sqLiteDatabase la base de datos
+     */
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         final String SQL_CREATE_EMAIL_LOGGED_TABLE = "CREATE TABLE " + SportteamContract.TABLE_EMAIL_LOGGED + " (" +
@@ -85,7 +107,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.UserSportEntry.USER_ID        + " TEXT NOT NULL,"             +
                 SportteamContract.UserSportEntry.SPORT          + " TEXT NOT NULL,"             +
                 SportteamContract.UserSportEntry.LEVEL          + " REAL NOT NULL,"             +
-                " UNIQUE (" + SportteamContract.UserSportEntry.USER_ID + ", "
+                " UNIQUE (" + SportteamContract.UserSportEntry.USER_ID  + ", "
                             + SportteamContract.UserSportEntry.SPORT    + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_FIELD_SPORT_TABLE = "CREATE TABLE " + SportteamContract.TABLE_FIELD_SPORTS + " (" +
@@ -112,7 +134,7 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.FriendRequestEntry._ID                + " INTEGER PRIMARY KEY,"       +
                 SportteamContract.FriendRequestEntry.RECEIVER_ID        + " TEXT NOT NULL,"             +
                 SportteamContract.FriendRequestEntry.SENDER_ID          + " TEXT NOT NULL,"             +
-                SportteamContract.FriendRequestEntry.DATE               + " INTEGER NOT NULL,"             +
+                SportteamContract.FriendRequestEntry.DATE               + " INTEGER NOT NULL,"          +
                 " UNIQUE (" + SportteamContract.FriendRequestEntry.RECEIVER_ID  + ", "
                             + SportteamContract.FriendRequestEntry.SENDER_ID    + ") ON CONFLICT REPLACE);";
 
@@ -120,25 +142,25 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
                 SportteamContract.FriendsEntry._ID              + " INTEGER PRIMARY KEY,"       +
                 SportteamContract.FriendsEntry.MY_USER_ID       + " TEXT NOT NULL,"             +
                 SportteamContract.FriendsEntry.USER_ID          + " TEXT NOT NULL,"             +
-                SportteamContract.FriendsEntry.DATE             + " INTEGER NOT NULL,"             +
+                SportteamContract.FriendsEntry.DATE             + " INTEGER NOT NULL,"          +
                 " UNIQUE (" + SportteamContract.FriendsEntry.USER_ID + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_EVENT_PARTICIPATION_TABLE = "CREATE TABLE " + SportteamContract.TABLE_EVENTS_PARTICIPATION + " (" +
                 SportteamContract.EventsParticipationEntry._ID              + " INTEGER PRIMARY KEY,"       +
                 SportteamContract.EventsParticipationEntry.USER_ID          + " TEXT NOT NULL,"             +
                 SportteamContract.EventsParticipationEntry.EVENT_ID         + " TEXT NOT NULL,"             +
-                SportteamContract.EventsParticipationEntry.PARTICIPATES     + " INTEGER NOT NULL,"             +
-                " UNIQUE (" + SportteamContract.EventsParticipationEntry.USER_ID     + ", "
-                            + SportteamContract.EventsParticipationEntry.EVENT_ID + ") ON CONFLICT REPLACE);";
+                SportteamContract.EventsParticipationEntry.PARTICIPATES     + " INTEGER NOT NULL,"          +
+                " UNIQUE (" + SportteamContract.EventsParticipationEntry.USER_ID    + ", "
+                            + SportteamContract.EventsParticipationEntry.EVENT_ID   + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_EVENT_INVITATIONS_TABLE = "CREATE TABLE " + SportteamContract.TABLE_EVENT_INVITATIONS + " (" +
                 SportteamContract.EventsInvitationEntry._ID         + " INTEGER PRIMARY KEY,"       +
-                SportteamContract.EventsInvitationEntry.RECEIVER_ID     + " TEXT NOT NULL,"             +
+                SportteamContract.EventsInvitationEntry.RECEIVER_ID + " TEXT NOT NULL,"             +
                 SportteamContract.EventsInvitationEntry.SENDER_ID   + " TEXT NOT NULL,"             +
                 SportteamContract.EventsInvitationEntry.EVENT_ID    + " TEXT NOT NULL,"             +
-                SportteamContract.EventsInvitationEntry.DATE        + " INTEGER NOT NULL,"             +
-                " UNIQUE (" + SportteamContract.EventsInvitationEntry.RECEIVER_ID  + ", "
-                            + SportteamContract.EventsInvitationEntry.EVENT_ID + ") ON CONFLICT REPLACE);";
+                SportteamContract.EventsInvitationEntry.DATE        + " INTEGER NOT NULL,"          +
+                " UNIQUE (" + SportteamContract.EventsInvitationEntry.RECEIVER_ID   + ", "
+                            + SportteamContract.EventsInvitationEntry.EVENT_ID      + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_EVENTS_REQUESTS_TABLE = "CREATE TABLE " + SportteamContract.TABLE_EVENTS_REQUESTS + " (" +
                 SportteamContract.EventRequestsEntry._ID                + " INTEGER PRIMARY KEY,"       +
@@ -163,8 +185,17 @@ public class SportteamDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_EVENTS_REQUESTS_TABLE);
     }
 
+    /**
+     * Invocado cuando es necesaria la actualización de la base de datos, al aumentar el número de
+     * la versión {@link #DATABASE_VERSION}. Ejecuta las sentencias SQL necesarias para
+     * borrar las tablas. A continuación se ejecuta {@link #onCreate(SQLiteDatabase)}
+     *
+     * @param sqLiteDatabase la base de datos
+     * @param oldVersion     la versión antigua de la base de datos
+     * @param newVersion     la versión nueva de la base de datos
+     */
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_EMAIL_LOGGED);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_USER);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SportteamContract.TABLE_EVENT);
