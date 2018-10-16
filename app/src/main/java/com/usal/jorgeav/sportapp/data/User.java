@@ -15,11 +15,11 @@ public class User {
      */
     private String uid;
     /**
-     * Dirección de correo eléctronico
+     * Dirección de correo electrónico
      */
     private String email;
     /**
-     * Nombre del ususario
+     * Nombre del usuario
      */
     private String alias;
     /**
@@ -43,18 +43,18 @@ public class User {
      */
     private String profile_picture;
     /**
-     * Deportes practicados. La clave es el identidicador del deporte y el valor es el nivel
+     * Deportes practicados. La clave es el identificador del deporte y el valor es el nivel
      * de juego que tiene en él. Sólo aparecen los que tienen una puntuación mayor que cero.
      */
     private Map<String, Double> sports_practiced;
 
     /**
-     * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
-     * Realtime Database con DataSnapshot.getValue(Class)
+     * Constructor sin argumentos. Permite transformar un datos obtenidos desde Firebase Realtime
+     * Database con DataSnapshot.getValue(Class), siempre y cuando las variables tengan el mismo
+     * nombre que las etiquetas de la base de datos del servidor.
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
-     *     DataSnapshot.getValue(Class)
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
+     * DataSnapshot.getValue(Class)
      * </a>
      */
     public User() {
@@ -64,14 +64,14 @@ public class User {
     /**
      * Constructor con argumentos
      *
-     * @param uid identificador de usuario
-     * @param email correo eléctronico
-     * @param alias nombre
-     * @param city ciudad
-     * @param coord_latitude coordenada latitud de la ciudad
-     * @param coord_longitude oordenada longitud de la ciudad
-     * @param age edad, en años
-     * @param profile_picture URL de la imagen de perfil
+     * @param uid              identificador de usuario
+     * @param email            correo electrónico
+     * @param alias            nombre
+     * @param city             ciudad
+     * @param coord_latitude   coordenada latitud de la ciudad
+     * @param coord_longitude  coordenada longitud de la ciudad
+     * @param age              edad, en años
+     * @param profile_picture  URL de la imagen de perfil
      * @param sports_practiced deportes practicados
      */
     public User(String uid, String email, String alias, String city,
@@ -154,6 +154,7 @@ public class User {
 
     /**
      * Representación del objeto en cadena de texto
+     *
      * @return la cadena de texto con los datos del objeto
      */
     @Override

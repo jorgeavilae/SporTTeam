@@ -28,13 +28,12 @@ public class SimulatedUser {
     private String owner;
 
     /**
-     * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
-     * Realtime Database con DataSnapshot.getValue(Class)
+     * Constructor sin argumentos. Permite transformar un datos obtenidos desde Firebase Realtime
+     * Database con DataSnapshot.getValue(Class), siempre y cuando las variables tengan el mismo
+     * nombre que las etiquetas de la base de datos del servidor.
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
-     *     DataSnapshot.getValue(Class)
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
+     * DataSnapshot.getValue(Class)</a>
      */
     public SimulatedUser() {
         // Default constructor required for calls to DataSnapshot.getValue(SimulatedUser.class)
@@ -43,10 +42,10 @@ public class SimulatedUser {
     /**
      * Constructor con argumentos
      *
-     * @param alias nombre del usuario simulado
+     * @param alias           nombre del usuario simulado
      * @param profile_picture foto de perfil del usuario simulado
-     * @param age edad del usuario
-     * @param owner identificador del usuario creador del usuario simulado
+     * @param age             edad del usuario
+     * @param owner           identificador del usuario creador del usuario simulado
      */
     public SimulatedUser(String alias, String profile_picture, Long age, String owner) {
         this.alias = alias;
@@ -89,6 +88,7 @@ public class SimulatedUser {
 
     /**
      * Representación del objeto en cadena de texto
+     *
      * @return la cadena de texto con los datos del objeto
      */
     @Override

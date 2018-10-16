@@ -17,10 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Representa una Instalación del modelo.
- *
- * <p>Implementa la interfaz Parcelable para poder guardar este {@link Object} en variables de
- * estado entre cambios de configuración
+ * Representa una Instalación del modelo. Implementa la interfaz Parcelable para poder guardar
+ * este {@link Object} en variables de estado entre cambios de configuración
  * ({@link android.app.Activity#onConfigurationChanged(Configuration)}), o en {@link Intent}
  * para enviarla a otra {@link android.app.Activity}
  *
@@ -73,13 +71,12 @@ public class Field implements Parcelable {
     private HashMap<String, SportCourt> sport;
 
     /**
-     * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
-     * Realtime Database con DataSnapshot.getValue(Class)
+     * Constructor sin argumentos. Permite transformar un datos obtenidos desde Firebase Realtime
+     * Database con DataSnapshot.getValue(Class), siempre y cuando las variables tengan el mismo
+     * nombre que las etiquetas de la base de datos del servidor.
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
-     *     DataSnapshot.getValue(Class)
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
+     * DataSnapshot.getValue(Class)</a>
      */
     public Field() {
         // Default constructor required for calls to DataSnapshot.getValue(Field.class)
@@ -88,16 +85,16 @@ public class Field implements Parcelable {
     /**
      * Constructor con argumentos
      *
-     * @param id Identificador de la instalación
-     * @param name Nombre de la instalación
-     * @param address Dirección de la instalación
-     * @param coord_latitude Latitud de la dirección de la instalación
+     * @param id              Identificador de la instalación
+     * @param name            Nombre de la instalación
+     * @param address         Dirección de la instalación
+     * @param coord_latitude  Latitud de la dirección de la instalación
      * @param coord_longitude Longitud de la dirección de la instalación
-     * @param city Nombre de la ciudad de la instalación
-     * @param opening_time Hora de apertura de la instalación
-     * @param closing_time Hora de cierre de la instalacion
-     * @param creator Identificador del usuario creador de la instalación
-     * @param sport Map de las pistas de la instalación
+     * @param city            Nombre de la ciudad de la instalación
+     * @param opening_time    Hora de apertura de la instalación
+     * @param closing_time    Hora de cierre de la instalación
+     * @param creator         Identificador del usuario creador de la instalación
+     * @param sport           Map de las pistas de la instalación
      */
     public Field(String id, String name, String address, Double coord_latitude, Double coord_longitude,
                  String city, Long opening_time, Long closing_time, String creator, List<SportCourt> sport) {
@@ -225,7 +222,7 @@ public class Field implements Parcelable {
     /**
      * Escribe este {@link Field} en un {@link Parcel}
      *
-     * @param dest Destino de la operación
+     * @param dest  Destino de la operación
      * @param flags opcional
      */
     @Override
@@ -247,6 +244,7 @@ public class Field implements Parcelable {
      *
      * @param in Parcel del que extraer los datos para {@link Field}
      */
+    @SuppressWarnings("unchecked")
     protected Field(Parcel in) {
         this.id = in.readString();
         this.name = in.readString();

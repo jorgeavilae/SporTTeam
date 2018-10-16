@@ -76,13 +76,12 @@ public class Event {
     private HashMap<String, SimulatedUser> simulated_participants;
 
     /**
-     * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
-     * Realtime Database con DataSnapshot.getValue(Class)
+     * Constructor sin argumentos. Permite transformar un datos obtenidos desde Firebase Realtime
+     * Database con DataSnapshot.getValue(Class), siempre y cuando las variables tengan el mismo
+     * nombre que las etiquetas de la base de datos del servidor.
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
-     *     DataSnapshot.getValue(Class)
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
+     * DataSnapshot.getValue(Class)</a>
      */
     public Event() {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
@@ -91,18 +90,18 @@ public class Event {
     /**
      * Constructor con argumentos
      *
-     * @param mId Identificador del partido
-     * @param mSport Identificador del deporte
-     * @param mField Identificador de la instalación o null
-     * @param address Dirección del partido
-     * @param coord Coordenadas de la dirección partido
-     * @param mName Nombre del partido
-     * @param mCity Ciudad del partido
-     * @param mDate Fecha y hora del partido en milisegundos
-     * @param mOwner Identificador del usuario creador del partido
-     * @param mTotalPlayers Puestos totales en el partido
-     * @param mEmptyPlayers Puestos vacantes para el partido
-     * @param participants Map de participantes
+     * @param mId                    Identificador del partido
+     * @param mSport                 Identificador del deporte
+     * @param mField                 Identificador de la instalación o null
+     * @param address                Dirección del partido
+     * @param coord                  Coordenadas de la dirección partido
+     * @param mName                  Nombre del partido
+     * @param mCity                  Ciudad del partido
+     * @param mDate                  Fecha y hora del partido en milisegundos
+     * @param mOwner                 Identificador del usuario creador del partido
+     * @param mTotalPlayers          Puestos totales en el partido
+     * @param mEmptyPlayers          Puestos vacantes para el partido
+     * @param participants           Map de participantes
      * @param simulated_participants Map de participantes simulados
      */
     public Event(String mId, String mSport, String mField, String address, LatLng coord, String mName,
@@ -162,7 +161,7 @@ public class Event {
     }
 
     public String getName() {
-        return (name!=null?name:"");
+        return (name != null ? name : "");
     }
 
     public Long getDate() {
@@ -196,7 +195,7 @@ public class Event {
     /**
      * Añade un participante a la lista
      *
-     * @param userId identificador del usuario participante
+     * @param userId       identificador del usuario participante
      * @param participates true si participa, false si está bloqueado
      */
     public void addToParticipants(String userId, Boolean participates) {
@@ -207,7 +206,7 @@ public class Event {
     /**
      * Elimina uno de los participantes de la lista
      *
-     * @param userId Ientificador del participante a eliminar
+     * @param userId Identificador del participante a eliminar
      */
     public void deleteParticipant(String userId) {
         if (this.participants != null) {
@@ -219,7 +218,7 @@ public class Event {
     /**
      * Añade un participante simulado a su lista
      *
-     * @param key identificador del usuario simulado
+     * @param key         identificador del usuario simulado
      * @param participant usuario simulado que se añade
      */
     public void addToSimulatedParticipants(String key, SimulatedUser participant) {
@@ -230,7 +229,7 @@ public class Event {
     /**
      * Elimina uno de los participantes simulados de la lista
      *
-     * @param key Ientificador del participante simulado a eliminar
+     * @param key Identificador del participante simulado a eliminar
      */
     public void deleteSimulatedParticipant(String key) {
         if (this.simulated_participants != null) {

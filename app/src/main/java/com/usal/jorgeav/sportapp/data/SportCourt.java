@@ -12,13 +12,13 @@ import java.util.HashMap;
 
 /**
  * Representa una pista de una instalación
- *
- * <p>Implementa la interfaz Parcelable para poder guardar este {@link Object} en variables de
+ * <p>
+ * Implementa la interfaz Parcelable para poder guardar este {@link Object} en variables de
  * estado entre cambios de configuración
  * ({@link android.app.Activity#onConfigurationChanged(Configuration)}, o en {@link android.content.Intent}
  * para enviarla a otra {@link android.app.Activity}
- *
- * <p>Implementa la interfaz Serializable para poder guardar este {@link Object} en Parcel
+ * <p>
+ * Implementa la interfaz Serializable para poder guardar este {@link Object} en Parcel
  * de {@link Field} en el método {@link Field#writeToParcel(Parcel, int)}
  *
  * @see com.usal.jorgeav.sportapp.mainactivities.FieldsActivity#onSaveInstanceState(Bundle)
@@ -39,13 +39,12 @@ public class SportCourt implements Parcelable, Serializable {
     private Long votes;
 
     /**
-     * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
-     * Realtime Database con DataSnapshot.getValue(Class)
+     * Constructor sin argumentos. Permite transformar un datos obtenidos desde Firebase Realtime
+     * Database con DataSnapshot.getValue(Class), siempre y cuando las variables tengan el mismo
+     * nombre que las etiquetas de la base de datos del servidor.
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
-     *     DataSnapshot.getValue(Class)
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
+     * DataSnapshot.getValue(Class)</a>
      */
     public SportCourt() {
         // Default constructor required for calls to DataSnapshot.getValue(SportCourt.class)
@@ -54,9 +53,9 @@ public class SportCourt implements Parcelable, Serializable {
     /**
      * Constructor con argumentos
      *
-     * @param sport_id identificador de deporte
-     * @param punctuation puntuacion
-     * @param votes número de votos
+     * @param sport_id    identificador de deporte
+     * @param punctuation puntuación
+     * @param votes       número de votos
      */
     public SportCourt(String sport_id, Double punctuation, Long votes) {
         this.sport_id = sport_id;
@@ -126,7 +125,7 @@ public class SportCourt implements Parcelable, Serializable {
     /**
      * Escribe este {@link SportCourt} en un {@link Parcel}
      *
-     * @param dest Destino de la operación
+     * @param dest  Destino de la operación
      * @param flags opcional
      */
     @Override

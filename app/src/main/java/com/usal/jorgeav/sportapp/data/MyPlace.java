@@ -11,25 +11,21 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Representa un lugar del mapa. Utilizado en la selección manual de direcciones en el mapa,
  * durante la geocodificación inversa.
- *
- * <p>Se crea a partir de la respuesta obtenida de la consulta a Google Geocoding API. Mas
+ * <p>
+ * Se crea a partir de la respuesta obtenida de la consulta a Google Geocoding API. Mas
  * información en Geocoding Responses.
- *
- * <p>Implementa la interfaz Parcelable para poder guardar este {@link Object} en variables de
+ * <p>
+ * Implementa la interfaz Parcelable para poder guardar este {@link Object} en variables de
  * estado entre cambios de configuración
  * ({@link android.app.Activity#onConfigurationChanged(Configuration)}, o en {@link Intent}
  * para enviarla a otra {@link android.app.Activity}
  *
  * @see com.usal.jorgeav.sportapp.mainactivities.MapsActivity#onOptionsItemSelected(MenuItem)
  * @see com.usal.jorgeav.sportapp.mainactivities.EventsActivity#onActivityResult(int, int, Intent)
- * @see
- * <a href= "https://developers.google.com/maps/documentation/geocoding/start">
- *     Google Geocoding API
- * </a>
- * @see
- * <a href= "https://developers.google.com/maps/documentation/geocoding/intro#GeocodingResponses">
- *     Geocoding Responses
- * </a>
+ * @see <a href= "https://developers.google.com/maps/documentation/geocoding/start">
+ * Google Geocoding API</a>
+ * @see <a href= "https://developers.google.com/maps/documentation/geocoding/intro#GeocodingResponses">
+ * Geocoding Responses</a>
  */
 @SuppressWarnings("unused")
 public class MyPlace implements Parcelable {
@@ -69,12 +65,12 @@ public class MyPlace implements Parcelable {
     /**
      * Constructor con argumentos
      *
-     * @param status código de estado de la respuesta del servidor
-     * @param placeId identificador del lugar
-     * @param address dirección del lugar
+     * @param status            código de estado de la respuesta del servidor
+     * @param placeId           identificador del lugar
+     * @param address           dirección del lugar
      * @param shortNameLocality nombre de la ciudad o pueblo
-     * @param city nombre de la provincia
-     * @param coordinates coordenadas del lugar
+     * @param city              nombre de la provincia
+     * @param coordinates       coordenadas del lugar
      * @param viewPortNortheast coordenadas del noreste del marco para mostrar el lugar
      * @param viewPortSouthwest coordenadas del sudoeste del marco para mostrar el lugar
      */
@@ -108,7 +104,7 @@ public class MyPlace implements Parcelable {
      *
      * @return true si el código del estado de la respuesta es correcto, falso en otro caso
      */
-    public boolean isSucceed(){
+    public boolean isSucceed() {
         return this.status.equals("OK");
     }
 
@@ -172,7 +168,7 @@ public class MyPlace implements Parcelable {
     /**
      * Escribe este {@link MyPlace} en un {@link Parcel}
      *
-     * @param dest Destino de la operación
+     * @param dest  Destino de la operación
      * @param flags opcional
      */
     @Override

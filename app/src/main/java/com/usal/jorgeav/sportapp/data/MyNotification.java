@@ -13,6 +13,7 @@ import java.util.Map;
 public class MyNotification {
     /**
      * Tipo de notificación, indica qué notifica
+     *
      * @see UtilesNotification.NotificationType
      */
     private Long notification_type;
@@ -41,6 +42,7 @@ public class MyNotification {
     private String extra_data_two;
     /**
      * Indica el tipo de dato almacenado en {@link #extra_data_one} y en {@link #extra_data_two}
+     *
      * @see FirebaseDBContract.NotificationDataTypes
      */
     private Long data_type;
@@ -50,13 +52,12 @@ public class MyNotification {
     private Long date;
 
     /**
-     * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
-     * Realtime Database con DataSnapshot.getValue(Class)
+     * Constructor sin argumentos.  Permite transformar un datos obtenidos desde Firebase Realtime
+     * Database con DataSnapshot.getValue(Class), siempre y cuando las variables tengan el mismo
+     * nombre que las etiquetas de la base de datos del servidor.
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
-     *     DataSnapshot.getValue(Class)
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
+     * DataSnapshot.getValue(Class)</a>
      */
     public MyNotification() {
         // Default constructor required for calls to DataSnapshot.getValue(MyNotification.class)
@@ -66,13 +67,14 @@ public class MyNotification {
      * Constructor con argumentos
      *
      * @param notification_type tipo de notificación
-     * @param checked true si ha sido mostrada en la barra de notificacion, false en otro caso
-     * @param title título de la notificación
-     * @param message mensaje de la notificación
-     * @param extra_data_one identificador del dato que acompaña la notificación
-     * @param extra_data_two identificador del segundo dato que acompaña la notificación
-     * @param data_type tipo de datos que acompaña la notificación
-     * @param date fecha de creación de la notificación
+     * @param checked           true si ha sido mostrada en la barra de notificación,
+     *                          false en otro caso
+     * @param title             título de la notificación
+     * @param message           mensaje de la notificación
+     * @param extra_data_one    identificador del dato que acompaña la notificación
+     * @param extra_data_two    identificador del segundo dato que acompaña la notificación
+     * @param data_type         tipo de datos que acompaña la notificación
+     * @param date              fecha de creación de la notificación
      */
     public MyNotification(Long notification_type, Boolean checked, String title, String message,
                           String extra_data_one, String extra_data_two, Long data_type, Long date) {
@@ -210,6 +212,7 @@ public class MyNotification {
 
     /**
      * Representación del objeto en cadena de texto
+     *
      * @return la cadena de texto con los datos del objeto
      */
     @Override

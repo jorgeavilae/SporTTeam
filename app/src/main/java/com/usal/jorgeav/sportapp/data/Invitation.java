@@ -28,13 +28,12 @@ public class Invitation {
     private Long date;
 
     /**
-     * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
-     * Realtime Database con DataSnapshot.getValue(Class)
+     * Constructor sin argumentos.  Permite transformar un datos obtenidos desde Firebase Realtime
+     * Database con DataSnapshot.getValue(Class), siempre y cuando las variables tengan el mismo
+     * nombre que las etiquetas de la base de datos del servidor.
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
-     *     DataSnapshot.getValue(Class)
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
+     * DataSnapshot.getValue(Class)</a>
      */
     public Invitation() {
         // Default constructor required for calls to DataSnapshot.getValue(Invitation.class)
@@ -43,10 +42,10 @@ public class Invitation {
     /**
      * Constructor con argumentos
      *
-     * @param sender identificador del usuario emisor
+     * @param sender   identificador del usuario emisor
      * @param receiver identificador del usuario receptor
-     * @param event identificador del evento al que refiere
-     * @param date fecha y hora de creación de la invitación, en milisegundos
+     * @param event    identificador del evento al que refiere
+     * @param date     fecha y hora de creación de la invitación, en milisegundos
      */
     public Invitation(String sender, String receiver, String event, Long date) {
         this.sender = sender;
@@ -89,6 +88,7 @@ public class Invitation {
 
     /**
      * Representación del objeto en cadena de texto
+     *
      * @return la cadena de texto con los datos del objeto
      */
     @Override

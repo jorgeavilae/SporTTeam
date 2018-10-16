@@ -68,32 +68,31 @@ public class Alarm {
     private Long empty_players_to;
 
     /**
-     * Constructor sin argumentos. Necesario para el parseo de este objeto desde Firebase
-     * Realtime Database con DataSnapshot.getValue(Class)
+     * Constructor sin argumentos. Permite transformar un datos obtenidos desde Firebase Realtime
+     * Database con DataSnapshot.getValue(Class), siempre y cuando las variables tengan el mismo
+     * nombre que las etiquetas de la base de datos del servidor.
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
-     *     DataSnapshot.getValue(Class)
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DataSnapshot.html#getValue(com.google.firebase.database.GenericTypeIndicator%3CT%3E)">
+     * DataSnapshot.getValue(Class)</a>
      */
-    public Alarm(){
+    public Alarm() {
         // Default constructor required for calls to DataSnapshot.getValue(Alarm.class)
     }
 
     /**
      * Constructor con argumentos
      *
-     * @param id identificador de alarma
-     * @param sport_id identificador de deporte
-     * @param field_id identificador de instalacion o null
-     * @param city nombre de ciudad
-     * @param coord coordenadas del lugar de la alarma
-     * @param date_from limite inferior del periodo de fechas
-     * @param date_to limite superior del periodo de fechas
+     * @param id                 identificador de alarma
+     * @param sport_id           identificador de deporte
+     * @param field_id           identificador de instalación o null
+     * @param city               nombre de ciudad
+     * @param coord              coordenadas del lugar de la alarma
+     * @param date_from          limite inferior del periodo de fechas
+     * @param date_to            limite superior del periodo de fechas
      * @param total_players_from limite inferior de puestos totales
-     * @param total_players_to limite superior de puestos totales
+     * @param total_players_to   limite superior de puestos totales
      * @param empty_players_from limite inferior de puestos vacantes
-     * @param empty_players_to limite superior de puestos vacantes
+     * @param empty_players_to   limite superior de puestos vacantes
      */
     public Alarm(String id, String sport_id, String field_id, String city, LatLng coord,
                  Long date_from, Long date_to,
@@ -239,6 +238,7 @@ public class Alarm {
 
     /**
      * Representación del objeto en cadena de texto
+     *
      * @return la cadena de texto con los datos del objeto
      */
     @Override
