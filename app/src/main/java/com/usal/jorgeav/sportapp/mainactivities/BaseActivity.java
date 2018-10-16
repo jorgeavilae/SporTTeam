@@ -47,29 +47,25 @@ import butterknife.ButterKnife;
  * Actividad principal dónde se desarrolla la mayoría de la funcionalidad de la aplicación.
  * Casi todas las Actividades derivan de esta para, de esta forma, alojar en BaseActivity
  * el código común a todas.
- *
- * <p>Inicializa las referencias a la interfaz común a la mayoría de las Actividades. Configura
+ * <p>
+ * Inicializa las referencias a la interfaz común a la mayoría de las Actividades. Configura
  * la barra superior y el menú lateral de navegación. Implementa la interfaz de
  * {@link ActivityContracts.NavigationDrawerManagement} para controlar estos elementos desde
  * los Fragmentos.
- *
- * <p>Implementa también, {@link ActivityContracts.FragmentManagement} para resolver transiciones
+ * <p>
+ * Implementa también, {@link ActivityContracts.FragmentManagement} para resolver transiciones
  * entre Fragmentos y establecer cuál de ellos está siendo mostrado, almacenando ese estado.
- *
- * <p>Inicializa los listeners de FirebaseAuth. Invoca la incialización y la finalización, según
+ * <p>
+ * Inicializa los listeners de FirebaseAuth. Invoca la inicialización y la finalización, según
  * corresponda, de la carga de datos desde FirebaseDatabase
  *
- * @see
- * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
- *     FirebaseAuth
- * </a>
- * @see
- * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
- *     FirebaseDatabase
- * </a>
+ * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+ * FirebaseAuth</a>
+ * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+ * FirebaseDatabase</a>
  */
-public abstract class BaseActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
+public abstract class BaseActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
         ActivityContracts.NavigationDrawerManagement,
         ActivityContracts.FragmentManagement {
     /**
@@ -122,10 +118,8 @@ public abstract class BaseActivity extends AppCompatActivity
      * Referencia al Fragmento que se está mostrando actualmente, o null si es un Fragmento
      * no derivado de {@link BaseFragment} como SupportMapFragment
      *
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
-     *     SupportMapFragment
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
+     * SupportMapFragment</a>
      */
     BaseFragment mDisplayedFragment;
     /**
@@ -137,10 +131,8 @@ public abstract class BaseActivity extends AppCompatActivity
     /**
      * Referencia a FirebaseAuth para establecer el listener del inicio y cierre de sesión
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
-     *     FirebaseAuth
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+     * FirebaseAuth</a>
      */
     private FirebaseAuth mAuth;
     /**
@@ -155,10 +147,8 @@ public abstract class BaseActivity extends AppCompatActivity
      * {@link #onCreate(Bundle)}, y es true para indicar que hay un Fragmento guardado esperando
      * a ser cargado y false en caso contrario.
      *
-     * @see
-     * <a href= "https://developer.android.com/guide/components/activities/activity-lifecycle#restore-activity-ui-state-using-saved-instance-state">
-     *     Restore activity UI state using saved instance state
-     * </a>
+     * @see <a href= "https://developer.android.com/guide/components/activities/activity-lifecycle#restore-activity-ui-state-using-saved-instance-state">
+     * Restore activity UI state using saved instance state</a>
      */
     private boolean mIsFragmentOnSavedInstance;
 
@@ -176,11 +166,7 @@ public abstract class BaseActivity extends AppCompatActivity
      *
      * @param savedInstanceState estado de la Actividad guardado en una posible rotación de
      *                           la pantalla, o null.
-     *
-     * @see
-     * <a href= "http://jakewharton.github.io/butterknife/">
-     *     ButterKnife
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,10 +194,10 @@ public abstract class BaseActivity extends AppCompatActivity
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser fuser = firebaseAuth.getCurrentUser();
-                if (fuser != null) {
+                FirebaseUser fUser = firebaseAuth.getCurrentUser();
+                if (fUser != null) {
                     // User is signed in
-                    Log.i(TAG, "FirebaseUser logged ID: "+fuser.getUid());
+                    Log.i(TAG, "FirebaseUser logged ID: " + fUser.getUid());
                     setUserInfoInNavigationDrawer();
 
                     // Initialization for populate Content Provider and init Service if needed
@@ -245,10 +231,8 @@ public abstract class BaseActivity extends AppCompatActivity
      * Extrae la información del usuario almacenada en su perfil de FirebaseUser y la coloca sobre
      * la cabecera del menú lateral de navegación
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser">
-     *     FirebaseUser
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser">
+     * FirebaseUser</a>
      */
     @Override
     public void setUserInfoInNavigationDrawer() {
@@ -268,13 +252,11 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     /**
-     * Método usado para mostra más detalles de algunos errores que pueden suceder durante el
+     * Método usado para mostrar más detalles de algunos errores que pueden suceder durante el
      * desarrollo. TODO Decidir si borrar este método
      *
-     * @see
-     * <a href= "https://developer.android.com/reference/android/os/StrictMode">
-     *     Enable StrictMode for Debug Version
-     * </a>
+     * @see <a href= "https://developer.android.com/reference/android/os/StrictMode">
+     * Enable StrictMode for Debug Version</a>
      */
     @SuppressWarnings("unused")
     private void debugTrickyErrors() {
@@ -309,7 +291,7 @@ public abstract class BaseActivity extends AppCompatActivity
         if (getSupportFragmentManager() != null) {
             if (mDisplayedFragment != null)
                 getSupportFragmentManager().putFragment(outState,
-                    BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
+                        BUNDLE_SAVE_FRAGMENT_INSTANCE, mDisplayedFragment);
             else if (getSupportFragmentManager()
                     .findFragmentByTag(FRAGMENT_TAG_IS_FIELDS_MAP) != null)
                 outState.putInt(FRAGMENT_TAG_IS_FIELDS_MAP, 1);
@@ -335,8 +317,10 @@ public abstract class BaseActivity extends AppCompatActivity
             try {
                 mDisplayedFragment = (BaseFragment) getSupportFragmentManager()
                         .getFragment(savedInstanceState, BUNDLE_SAVE_FRAGMENT_INSTANCE);
-            } catch (IllegalStateException e) { e.printStackTrace(); }
-        } else if(savedInstanceState.containsKey(FRAGMENT_TAG_IS_FIELDS_MAP)) {
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        } else if (savedInstanceState.containsKey(FRAGMENT_TAG_IS_FIELDS_MAP)) {
             onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_fields));
         } else {
             onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_search_events));
@@ -344,7 +328,7 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     /**
-     * Método sobreescrito para poder introducir la llamada a
+     * Método sobrescrito para poder introducir la llamada a
      * {@link ActionBarDrawerToggle#syncState()} que {@link #mToggle} necesita.
      *
      * @param savedInstanceState Bundle de estado
@@ -356,7 +340,7 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     /**
-     * Método sobreescrito para cerrar el menú lateral de navegación al invocar la navegación
+     * Método sobrescrito para cerrar el menú lateral de navegación al invocar la navegación
      * hacia atrás, en caso de que estuviese abierto.
      */
     @Override
@@ -369,7 +353,7 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     /**
-     * Método sobreescrito para poder introducir la llamada a
+     * Método sobrescrito para poder introducir la llamada a
      * {@link ActionBarDrawerToggle#onConfigurationChanged(Configuration)}
      * que {@link #mToggle} necesita.
      *
@@ -386,7 +370,7 @@ public abstract class BaseActivity extends AppCompatActivity
      * Se invoca cuando se pulsa sobre una de las entradas del menú lateral de navegación.
      * Se distingue entre el inicio de la Actividad de preferencias {@link SettingsActivity},
      * el cierre de sesión, y el cambio de Actividad por otra de las principales.<br>
-     *     En este último caso se invoca {@link #simulateNavigationItemSelected(int, String, String)}
+     * En este último caso se invoca {@link #simulateNavigationItemSelected(int, String, String)}
      *
      * @param item elemento del menú pulsado
      * @return true para mostrar el ítem del parámetro como seleccionado
@@ -413,9 +397,9 @@ public abstract class BaseActivity extends AppCompatActivity
      * Comienza una Actividad con un {@link Intent} e inicia el proceso de finalización
      * de la Actividad actual.
      *
-     * @param menuItemId identificador de la entrada del menú que simula ser pulsada
-     * @param intentExtraKey clave del valor pasado a la nueva Actividad mediante el Intent.
-     *                      También puede ser null.
+     * @param menuItemId       identificador de la entrada del menú que simula ser pulsada
+     * @param intentExtraKey   clave del valor pasado a la nueva Actividad mediante el Intent.
+     *                         También puede ser null.
      * @param intentExtraValue valor pasado a la nueva Actividad mediante el Intent. También
      *                         puede ser null.
      */
@@ -425,20 +409,28 @@ public abstract class BaseActivity extends AppCompatActivity
                                                String intentExtraValue) {
         Intent intent;
         switch (menuItemId) {
-            default: case R.id.nav_profile:
-                intent = new Intent(this, ProfileActivity.class); break;
+            default:
+            case R.id.nav_profile:
+                intent = new Intent(this, ProfileActivity.class);
+                break;
             case R.id.nav_events:
-                intent = new Intent(this, EventsActivity.class); break;
+                intent = new Intent(this, EventsActivity.class);
+                break;
             case R.id.nav_search_events:
-                intent = new Intent(this, SearchEventsActivity.class); break;
+                intent = new Intent(this, SearchEventsActivity.class);
+                break;
             case R.id.nav_notifications:
-                intent = new Intent(this, NotificationsActivity.class); break;
+                intent = new Intent(this, NotificationsActivity.class);
+                break;
             case R.id.nav_friends:
-                intent = new Intent(this, FriendsActivity.class); break;
+                intent = new Intent(this, FriendsActivity.class);
+                break;
             case R.id.nav_alarms:
-                intent = new Intent(this, AlarmsActivity.class); break;
+                intent = new Intent(this, AlarmsActivity.class);
+                break;
             case R.id.nav_fields:
-                intent = new Intent(this, FieldsActivity.class); break;
+                intent = new Intent(this, FieldsActivity.class);
+                break;
         }
         // Do not invoke detachListeners in onPause if it's a
         // navigation between activities
@@ -455,15 +447,12 @@ public abstract class BaseActivity extends AppCompatActivity
      * Cuando una notificación inicia una Actividad que estaba parada en segundo plano, el
      * {@link Intent} con el que esa Actividad dice que fue iniciada ({@link Activity#getIntent()})
      * no es el mismo que el que se establece en la notificación. Para cambiarlo un Intent por otro
-     * y así pasar datos en él, se sobreescribe este método para establecer el Intent nuevo de la
+     * y así pasar datos en él, se sobrescribe este método para establecer el Intent nuevo de la
      * notificación.
      *
-     * @see
-     * <a href= "https://stackoverflow.com/a/6357330/4235666">
-     *     StackOverflow: getIntent() Extras always NULL
-     * </a>
-     *
      * @param intent el Intent nuevo que abre la Actividad
+     * @see <a href= "https://stackoverflow.com/a/6357330/4235666">
+     * StackOverflow: getIntent() Extras always NULL</a>
      */
     @Override
     protected void onNewIntent(Intent intent) {
@@ -502,9 +491,9 @@ public abstract class BaseActivity extends AppCompatActivity
      * poder ser encontrado posteriormente con
      * {@link android.support.v4.app.FragmentManager#findFragmentByTag(String)}
      *
-     * @param fragment Fragmento que va a mostrarse
+     * @param fragment       Fragmento que va a mostrarse
      * @param addToBackStack true si debe almacenarse en la pila de Fragmentos
-     * @param tag etiqueta asociada al Fragmento en la transición
+     * @param tag            etiqueta asociada al Fragmento en la transición
      */
     @Override
     public void initFragment(@NonNull Fragment fragment, boolean addToBackStack, String tag) {
@@ -519,7 +508,7 @@ public abstract class BaseActivity extends AppCompatActivity
     /**
      * Establece el titulo en la Toolbar y almacena la referencia al Fragmento mostrado actualmente
      *
-     * @param title título del Fragmento
+     * @param title    título del Fragmento
      * @param fragment referencia al Fragmento
      */
     @Override
@@ -577,7 +566,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
     /**
      * Handler para ejecutar la animación del icono de la Toolbar. Se va a simular la
-     * apertura o cierre del menú mediante el aumento o disminición del desfase en la posición
+     * apertura o cierre del menú mediante el aumento o disminución del desfase en la posición
      * del menú. Para que se produzca este cambio del desfase de manera continua e incremental,
      * se establece esa tarea recursivamente sobre este Handler, cambiando sucesivamente el
      * desfase hasta la apertura (1) o cierre (0) total.
@@ -630,10 +619,8 @@ public abstract class BaseActivity extends AppCompatActivity
     /**
      * Establece el Listener para los inicios y cierres de sesión de FirebaseAuth
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
-     *     FirebaseAuth
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+     * FirebaseAuth</a>
      */
     @Override
     public void onStart() {
@@ -646,10 +633,8 @@ public abstract class BaseActivity extends AppCompatActivity
      * También borra el Listener sobre el inicio y cierre de sesión. Y elimina las animaciones que
      * pudieran estar en proceso sobre el icono de la Toolbar.
      *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
-     *     FirebaseDatabase
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+     * FirebaseDatabase</a>
      */
     @Override
     protected void onPause() {
@@ -706,6 +691,7 @@ public abstract class BaseActivity extends AppCompatActivity
      *
      * @param shouldI nuevo valor de {@link #shouldDetachFirebaseListener}
      */
+    @SuppressWarnings("unused")
     protected void shouldDetachFirebaseListener(boolean shouldI) {
         shouldDetachFirebaseListener = shouldI;
     }

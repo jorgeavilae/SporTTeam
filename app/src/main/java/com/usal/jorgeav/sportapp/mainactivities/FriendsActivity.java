@@ -21,7 +21,7 @@ public class FriendsActivity extends BaseActivity {
      * inicia esta Actividad desde una notificación. El dato añadido es el identificador del
      * usuario que debe mostrar esta Actividad al iniciarse, en lugar de la colección de amigos.
      */
-    public static final String USERID_PENDING_INTENT_EXTRA = "USERID_PENDING_INTENT_EXTRA";
+    public static final String USER_ID_PENDING_INTENT_EXTRA = "USER_ID_PENDING_INTENT_EXTRA";
 
     /**
      * Crea el Fragmento principal que debe mostrar en la pantalla. Comprueba, también, si
@@ -30,7 +30,7 @@ public class FriendsActivity extends BaseActivity {
      */
     @Override
     public void startMainFragment() {
-        String userId = getIntent().getStringExtra(USERID_PENDING_INTENT_EXTRA);
+        String userId = getIntent().getStringExtra(USER_ID_PENDING_INTENT_EXTRA);
 
         initFragment(FriendsFragment.newInstance(), false);
         if (userId != null) {

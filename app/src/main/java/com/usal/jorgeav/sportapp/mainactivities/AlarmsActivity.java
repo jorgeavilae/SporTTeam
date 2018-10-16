@@ -41,7 +41,7 @@ public class AlarmsActivity extends BaseActivity
      * de la alarma que debe mostrar esta Actividad al iniciarse, en lugar de la colección de
      * alarmas.
      */
-    public static final String ALARMID_PENDING_INTENT_EXTRA = "ALARMID_PENDING_INTENT_EXTRA";
+    public static final String ALARM_ID_PENDING_INTENT_EXTRA = "ALARM_ID_PENDING_INTENT_EXTRA";
     /**
      * Código con el que identificar el resultado de la Actividad de selección de lugar
      * {@link MapsActivity} en {@link #onActivityResult(int, int, Intent)}
@@ -83,7 +83,7 @@ public class AlarmsActivity extends BaseActivity
      */
     @Override
     public void startMainFragment() {
-        String alarmId = getIntent().getStringExtra(ALARMID_PENDING_INTENT_EXTRA);
+        String alarmId = getIntent().getStringExtra(ALARM_ID_PENDING_INTENT_EXTRA);
 
         initFragment(AlarmsFragment.newInstance(), false);
 
@@ -163,7 +163,7 @@ public class AlarmsActivity extends BaseActivity
     }
 
     /**
-     * Inicia la transición hacia la Actividad de selecciónd e lugar {@link MapsActivity}
+     * Inicia la transición hacia la Actividad de selección de lugar {@link MapsActivity}
      *
      * @param dataList colección de instalaciones que debe mostrar como opción {@link MapsActivity}
      */
@@ -180,8 +180,8 @@ public class AlarmsActivity extends BaseActivity
      * {@link android.app.Activity#startActivityForResult(Intent, int)}.
      *
      * @param requestCode código con el que se inicia e identifica la Actividad
-     * @param resultCode código representativo del resultado de la ejecución de la Actividad
-     * @param data datos extras incluidos como resultado de la ejecución de la Actividad
+     * @param resultCode  código representativo del resultado de la ejecución de la Actividad
+     * @param data        datos extras incluidos como resultado de la ejecución de la Actividad
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

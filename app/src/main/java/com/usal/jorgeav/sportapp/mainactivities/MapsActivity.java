@@ -35,25 +35,21 @@ import java.util.ArrayList;
 /**
  * Actividad para seleccionar direcciones o marcas de un mapa. Carga un SupportMapFragment donde
  * emplaza las instalaciones que recibe en la creación.
- *
- * <p>Implementa varios callbacks para
- * recibir eventos sobre el mapa, como por ejemplo pulsaciones sobre coordendas concretas con las
+ * <p>
+ * Implementa varios callbacks para
+ * recibir eventos sobre el mapa, como por ejemplo pulsaciones sobre coordenadas concretas con las
  * que se utilizará Google Places API para obtener la dirección seleccionada.
- *
- * <p>También es capaz de iniciar el proceso para crear una instalación nueva, en el caso de que no
+ * <p>
+ * También es capaz de iniciar el proceso para crear una instalación nueva, en el caso de que no
  * se encuentre en el mapa la instalación deseada por el usuario
  *
- * @see
- * <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
- *     SupportMapFragment
- * </a>
- * @see
- * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
- *     Google Places API
- * </a>
+ * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/maps/SupportMapFragment">
+ * SupportMapFragment</a>
+ * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+ * Google Places API</a>
  */
-public class MapsActivity extends AppCompatActivity
-        implements OnMapReadyCallback,
+public class MapsActivity extends AppCompatActivity implements
+        OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMarkerClickListener {
     /**
@@ -75,7 +71,7 @@ public class MapsActivity extends AppCompatActivity
     /**
      * Clave para identificar el dato añadido al {@link Intent}, cuando se inicia esta Actividad.
      * El dato añadido es un booleano que indica si esta Actividad fue iniciada por
-     * {@link FieldsActivity} y en ese caso cargar un menú direferente en la Toolbar
+     * {@link FieldsActivity} y en ese caso cargar un menú diferente en la Toolbar
      */
     public static final String INTENT_EXTRA_PARENT_FIELDS_ACTIVITY = "INTENT_EXTRA_PARENT_FIELDS_ACTIVITY";
     /**
@@ -90,7 +86,7 @@ public class MapsActivity extends AppCompatActivity
     public static final String FIELD_SELECTED_EXTRA = "FIELD_SELECTED_EXTRA";
     /**
      * Clave para identificar el resultado, cuando finaliza esta Actividad. Añadirlo significa
-     * que el usuario seleccionó la opción de crear una instalción nueva porque no encontraba
+     * que el usuario seleccionó la opción de crear una instalación nueva porque no encontraba
      * la que quería.
      */
     public static final String ADD_FIELD_SELECTED_EXTRA = "ADD_FIELD_SELECTED_EXTRA";
@@ -107,11 +103,11 @@ public class MapsActivity extends AppCompatActivity
      */
     ArrayList<Field> mFieldsList;
     /**
-     * Conlección de marcas sobre el mapa, cada una indicando la posición de una instalación
+     * Colección de marcas sobre el mapa, cada una indicando la posición de una instalación
      */
     ArrayList<Marker> mMarkersList;
     /**
-     * True si sólo se pueden seleccionar instalaciones o false si tambíen direcciones
+     * True si sólo se pueden seleccionar instalaciones o false si también direcciones
      */
     boolean mOnlyField;
     /**
@@ -164,7 +160,6 @@ public class MapsActivity extends AppCompatActivity
      * {@link FieldsActivity} u otra diferente
      *
      * @param menu menú en el que se emplazan las opciones
-     *
      * @return true para mostrar el menú, false para no mostrarlo.
      */
     @Override
@@ -182,9 +177,8 @@ public class MapsActivity extends AppCompatActivity
      * esta Actividad.
      *
      * @param item el ítem que fue seleccionado
-     *
      * @return false para seguir invocando esta llamada a Actividades superiores,
-     *          true para parar e indicar que la puslación se procesó aquí.
+     * true para parar e indicar que la pulsación se procesó aquí.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -328,8 +322,10 @@ public class MapsActivity extends AppCompatActivity
             mFieldSelected = mFieldsList.get(position);
 
             // Move camera
-            LatLng southwest = new LatLng(mFieldSelected.getCoord_latitude()-0.00135, mFieldSelected.getCoord_longitude()-0.00135);
-            LatLng northeast = new LatLng(mFieldSelected.getCoord_latitude()+0.00135, mFieldSelected.getCoord_longitude()+0.00135);
+            LatLng southwest = new LatLng(mFieldSelected.getCoord_latitude() - 0.00135,
+                    mFieldSelected.getCoord_longitude() - 0.00135);
+            LatLng northeast = new LatLng(mFieldSelected.getCoord_latitude() + 0.00135,
+                    mFieldSelected.getCoord_longitude() + 0.00135);
             LatLngBounds llb = new LatLngBounds(southwest, northeast);
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(llb, 0));
             marker.showInfoWindow();
@@ -340,16 +336,13 @@ public class MapsActivity extends AppCompatActivity
 
     /**
      * Invocado cuando se produce una pulsación larga sobre un punto del mapa. Utilizado para
-     * seleccinar direcciones en lugar de instalaciones. Busca instalaciones cercanas a las que
+     * seleccionar direcciones en lugar de instalaciones. Busca instalaciones cercanas a las que
      * podría haberse referido el usuario y, si no las encuentra, inicia una tarea en segundo
      * plano para usar Google Places API y obtener la dirección a partir de las coordenadas.
      *
      * @param latLng coordenadas de la pulsación larga sobre el mapa.
-     *
-     * @see
-     * <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     *     Google Places API
-     * </a>
+     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
+     * Google Places API</a>
      */
     @Override
     public void onMapLongClick(LatLng latLng) {
@@ -365,8 +358,8 @@ public class MapsActivity extends AppCompatActivity
     /**
      * Clase interna derivada de {@link AsyncTask} para realizar la tarea en segundo plano de
      * geocodificación inversa a través de una petición HTTP.
-     *
-     * <p>Esta clase es estática para evitar pérdidas de memoria en el caso de que la Activiad
+     * <p>
+     * Esta clase es estática para evitar pérdidas de memoria en el caso de que la Actividad
      * sufra un proceso de recreación.
      */
     private static class MyAsyncTask extends AsyncTask<LatLng, Void, MyPlace> {
@@ -376,15 +369,13 @@ public class MapsActivity extends AppCompatActivity
          * resultados de la consulta. La referencia es débil para poder ser recolectada por el
          * Garbage Collector
          *
-         * @see
-         * <a href= "https://developer.android.com/reference/java/lang/ref/WeakReference">
-         *     WeakReference
-         * </a>
+         * @see <a href= "https://developer.android.com/reference/java/lang/ref/WeakReference">
+         * WeakReference</a>
          */
         private WeakReference<MapsActivity> mActivity;
 
         /**
-         * Contructor con la referencia a la Actividad
+         * Constructor con la referencia a la Actividad
          *
          * @param mapsActivity referencia a la Actividad contenedora de la clase
          */
@@ -393,7 +384,7 @@ public class MapsActivity extends AppCompatActivity
         }
 
         /**
-         * Realiza la consulta de la dirección. Método ejecutado en segndo plano.
+         * Realiza la consulta de la dirección. Método ejecutado en segundo plano.
          *
          * @param latLng coordenadas de la consulta
          * @return {@link MyPlace} con el resultado de la consulta
@@ -421,8 +412,8 @@ public class MapsActivity extends AppCompatActivity
 
     /**
      * Recibe y muestra la dirección seleccionada con una pulsación larga del usuario.
-     *
-     * <p>Comprueba que no hay errores (si los hay los muestra) y crea una marca para la dirección
+     * <p>
+     * Comprueba que no hay errores (si los hay los muestra) y crea una marca para la dirección
      * seleccionada que muestre el nombre de la dirección escrita.
      *
      * @param selectedPlace {@link MyPlace} resultado de la consulta

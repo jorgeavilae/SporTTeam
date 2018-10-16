@@ -167,7 +167,7 @@ public class UtilesNotification {
      */
     private static PendingIntent contentProfileIntent(Context context, String userId) {
         Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, FriendsActivity.class));
-        startActivityIntent.putExtra(FriendsActivity.USERID_PENDING_INTENT_EXTRA, userId);
+        startActivityIntent.putExtra(FriendsActivity.USER_ID_PENDING_INTENT_EXTRA, userId);
         return PendingIntent.getActivity(
                 context,
                 (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */
@@ -217,7 +217,7 @@ public class UtilesNotification {
      */
     private static PendingIntent contentDetailEventIntent(Context context, String eventId) {
         Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, EventsActivity.class));
-        startActivityIntent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);
+        startActivityIntent.putExtra(EventsActivity.EVENT_ID_PENDING_INTENT_EXTRA, eventId);
         return PendingIntent.getActivity(
                 context,
                 (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */
@@ -264,7 +264,7 @@ public class UtilesNotification {
      */
     private static PendingIntent contentAlarmIntent(Context context, String alarmId) {
         Intent startActivityIntent = Intent.makeRestartActivityTask(new ComponentName(context, AlarmsActivity.class));
-        startActivityIntent.putExtra(AlarmsActivity.ALARMID_PENDING_INTENT_EXTRA, alarmId);
+        startActivityIntent.putExtra(AlarmsActivity.ALARM_ID_PENDING_INTENT_EXTRA, alarmId);
         return PendingIntent.getActivity(
                 context,
                 (int) System.currentTimeMillis(), /* To ensure every PendingIntent is unique */

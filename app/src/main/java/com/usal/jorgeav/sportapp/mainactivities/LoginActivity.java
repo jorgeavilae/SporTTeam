@@ -52,10 +52,13 @@ import butterknife.ButterKnife;
 /**
  * Actividad para el inicio de sesión. Se encarga de comprobar el email de usuario y su
  * contraseña.
+ * <p>
  * Incorpora una funcionalidad para sugerir direcciones de email que ya hayan sido utilizadas para
  * iniciar sesión.
+ * <p>
  * También contiene la funcionalidad que permite recibir un email para recuperar contraseñas
  * olvidadas.
+ * <p>
  * Por último, contiene un botón para acceder a la pantalla de creación de usuarios.
  * <p>
  * Implementa {@link LoaderCallbacks} para permitir consultar, al Proveedor de Contenido,
@@ -363,7 +366,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (fUser != null) {
 
             //TODO isEmailVerified()
-            @SuppressWarnings("unused")Boolean b = checkIfEmailIsVerified;
+            @SuppressWarnings("unused") Boolean b = checkIfEmailIsVerified;
 //            if (!checkIfEmailIsVerified || fUser.isEmailVerified()) {
 
             deleteContentProvider();

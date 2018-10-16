@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,7 +28,6 @@ import com.usal.jorgeav.sportapp.network.firebase.actions.FieldsFirebaseActions;
 import com.usal.jorgeav.sportapp.sportselection.SportsListFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,7 +61,7 @@ public class FieldsActivity extends BaseActivity
     /**
      * Código con el que identificar el resultado de la Actividad de selección de lugar
      * {@link MapsActivity} en {@link #onActivityResult(int, int, Intent)}. Utilizado para
-     * aceptar sólo direcciones con las que actualizar la dirección actual de la instalción
+     * aceptar sólo direcciones con las que actualizar la dirección actual de la instalación
      */
     public static final int REQUEST_CODE_JUST_ADDRESS = 24;
 
@@ -195,16 +195,16 @@ public class FieldsActivity extends BaseActivity
      * Método invocado para recuperar los deportes escogidos para las pistas de la instalación
      * que se va a crear o se está editando. Pertenece a la interfaz
      * {@link SportsListFragment.OnSportsSelected}
-     *
-     * <p>Cuando se está editando, <code>fieldId != null</code> por lo que se actualizan las pistas
+     * <p>
+     * Cuando se está editando, <code>fieldId != null</code> por lo que se actualizan las pistas
      * en el servidor y se vuelve al Fragmento anterior. Cuando <code>fieldId == null</code>
      * es un proceso de creación de instalación y ya se tienen la dirección y la lista de deportes
      * por lo que se inicia {@link NewFieldFragment}
      *
-     * @param fieldId identificador de la instalación a la que pertenecen estos deportes
+     * @param fieldId        identificador de la instalación a la que pertenecen estos deportes
      * @param sportsSelected lista de deportes seleccionados
-     * @param votesList lista del número de votos de cada pista. Se utiliza en el caso de que
-     *                  se esté modificando una instalación, para no perder los votos en la edición.
+     * @param votesList      lista del número de votos de cada pista. Se utiliza en el caso de que
+     *                       se esté modificando una instalación, para no perder los votos en la edición.
      */
     @Override
     public void retrieveSportsSelected(String fieldId,
@@ -241,7 +241,7 @@ public class FieldsActivity extends BaseActivity
     /**
      * Inicia la transición hacia la Actividad de selección de lugar {@link MapsActivity}
      *
-     * @param dataList colección de instalaciones que debe mostrar como opción {@link MapsActivity}
+     * @param dataList      colección de instalaciones que debe mostrar como opción {@link MapsActivity}
      * @param startNewField false si sólo pueden escogerse direcciones para actualizar la que
      *                      ya fue escogida, true si pueden escogerse direcciones para iniciar el
      *                      proceso de creación de una nueva instalación o pueden escogerse
@@ -296,6 +296,7 @@ public class FieldsActivity extends BaseActivity
 //            }
 //        }
 //    }
+
     /**
      * Recupera el lugar seleccionado para la instalación en {@link MapsActivity} o la
      * instalación seleccionada para incluir una nueva pista. <br>
@@ -303,10 +304,10 @@ public class FieldsActivity extends BaseActivity
      * {@link android.app.Activity#startActivityForResult(Intent, int)}.
      *
      * @param requestCode código con el que se inicia e identifica la Actividad
-     * @param resultCode código representativo del resultado de la ejecución de la Actividad
-     * @param data datos extras incluidos como resultado de la ejecución de la Actividad
+     * @param resultCode  código representativo del resultado de la ejecución de la Actividad
+     * @param data        datos extras incluidos como resultado de la ejecución de la Actividad
      */
-    //todo testear
+    //todo testear pq he quitado mFieldId ¿y he reorganizado el código?
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -347,9 +348,10 @@ public class FieldsActivity extends BaseActivity
      *
      * @param field Instalación a la que se va a añadir la pista
      */
+    @SuppressLint("InflateParams")
     private void startDialogToAddSport(final Field field) {
         // Prepare list
-        List<String> sportsResources = Arrays.asList(getResources().getStringArray(R.array.sport_id_values));
+        String[] sportsResources = getResources().getStringArray(R.array.sport_id_values);
         ArrayList<String> sportsLeft = new ArrayList<>();
         for (String sportId : sportsResources)
             if (!field.getSport().containsKey(sportId))

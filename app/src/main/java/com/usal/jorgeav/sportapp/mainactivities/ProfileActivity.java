@@ -36,14 +36,8 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  * los permisos para acceder a las imágenes y así de utilizar las librerías que se encargan
  * de cambiar la foto de perfil uCrop y EasyImage.
  *
- * @see
- * <a href= "https://github.com/Yalantis/uCrop">
- *      uCrop (Github)
- * </a>
- * @see
- * <a href= "https://github.com/jkwiecien/EasyImage">
- *      EasyImage (Github)
- * </a>
+ * @see <a href= "https://github.com/Yalantis/uCrop">uCrop (Github)</a>
+ * @see <a href= "https://github.com/jkwiecien/EasyImage">EasyImage (Github)</a>
  */
 public class ProfileActivity extends BaseActivity
         implements SportsListFragment.OnSportsSelected {
@@ -83,10 +77,10 @@ public class ProfileActivity extends BaseActivity
      * Método invocado para recuperar los deportes escogidos como colección de deportes que
      * practica el usuario. Pertenece a la interfaz {@link SportsListFragment.OnSportsSelected}
      *
-     * @param userID identificador del usuario al que pertenecen estos deportes
+     * @param userID         identificador del usuario al que pertenecen estos deportes
      * @param sportsSelected lista de deportes seleccionados
-     * @param votesList no se utiliza este parámetro cuando se refiere a deportes practicados por
-     *                  el usuario
+     * @param votesList      no se utiliza este parámetro cuando se refiere a deportes practicados por
+     *                       el usuario
      */
     @Override
     public void retrieveSportsSelected(String userID,
@@ -104,15 +98,15 @@ public class ProfileActivity extends BaseActivity
 
     /**
      * Dependiendo del código de la consulta: <br>
-     *  - Recupera la imagen seleccionada en {@link EasyImage} <br>
-     *  - Recupera la imagen recortada y almacenada por {@link UCrop} para enviarla al servidor.
-     *
-     *  <p>Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
+     * - Recupera la imagen seleccionada en {@link EasyImage} <br>
+     * - Recupera la imagen recortada y almacenada por {@link UCrop} para enviarla al servidor.
+     * <p>
+     * Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
      * {@link android.app.Activity#startActivityForResult(Intent, int)}.
      *
      * @param requestCode código con el que se inicia e identifica la Actividad
-     * @param resultCode código representativo del resultado de la ejecución de la Actividad
-     * @param data datos extras incluidos como resultado de la ejecución de la Actividad
+     * @param resultCode  código representativo del resultado de la ejecución de la Actividad
+     * @param data        datos extras incluidos como resultado de la ejecución de la Actividad
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -151,8 +145,8 @@ public class ProfileActivity extends BaseActivity
      * Método invocado después de iniciar el proceso de petición de permisos de
      * {@link Utiles#isStorageCameraPermissionGranted(Activity)}.
      *
-     * @param requestCode código con el que se identifica la petición
-     * @param permissions permisos requeridos. Nunca es null.
+     * @param requestCode  código con el que se identifica la petición
+     * @param permissions  permisos requeridos. Nunca es null.
      * @param grantResults Resultado de la petición, que puede ser
      *                     {@link android.content.pm.PackageManager#PERMISSION_GRANTED} o
      *                     {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Nunca es null.

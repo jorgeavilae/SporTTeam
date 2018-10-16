@@ -174,7 +174,7 @@ public class EventListAdapterWidgetService extends RemoteViewsService {
                 //Set PendingIntent
                 String eventId = mCursor.getString(SportteamContract.EventEntry.COLUMN_EVENT_ID);
                 Intent fillInIntent = new Intent();
-                fillInIntent.putExtra(EventsActivity.EVENTID_PENDING_INTENT_EXTRA, eventId);
+                fillInIntent.putExtra(EventsActivity.EVENT_ID_PENDING_INTENT_EXTRA, eventId);
                 listItem.setOnClickFillInIntent(R.id.event_item_widget_container, fillInIntent);
 
                 return listItem;

@@ -40,17 +40,11 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  * con el deporte escogido en {@link SelectSportFragment} o recibiendo el resultado de la
  * Actividad de selección de lugares {@link MapsActivity} para utilizarlo en la creación
  * de partidos. <br>
- *     También se encarga de comprobar los permisos para acceder a las imágenes, y de controlar
- *     las librerías que se encargan de ellas uCrop y EasyImage.
+ * También se encarga de comprobar los permisos para acceder a las imágenes, y de controlar
+ * las librerías que se encargan de ellas uCrop y EasyImage.
  *
- * @see
- * <a href= "https://github.com/Yalantis/uCrop">
- *      uCrop (Github)
- * </a>
- * @see
- * <a href= "https://github.com/jkwiecien/EasyImage">
- *      EasyImage (Github)
- * </a>
+ * @see <a href= "https://github.com/Yalantis/uCrop">uCrop (Github)</a>
+ * @see <a href= "https://github.com/jkwiecien/EasyImage">EasyImage (Github)</a>
  */
 public class EventsActivity extends BaseActivity
         implements SelectSportFragment.OnSportSelectedListener {
@@ -64,7 +58,7 @@ public class EventsActivity extends BaseActivity
      * se inicia esta Actividad desde una notificación. El dato añadido es el identificador
      * del partido que debe mostrar esta Actividad al iniciarse, en lugar del calendario.
      */
-    public static final String EVENTID_PENDING_INTENT_EXTRA = "EVENTID_PENDING_INTENT_EXTRA";
+    public static final String EVENT_ID_PENDING_INTENT_EXTRA = "EVENT_ID_PENDING_INTENT_EXTRA";
     /**
      * Clave para identificar un dato añadido al {@link android.app.PendingIntent}, cuando
      * se inicia esta Actividad. El dato añadido es nulo, y este identificador se utiliza para
@@ -121,7 +115,7 @@ public class EventsActivity extends BaseActivity
      */
     @Override
     public void startMainFragment() {
-        String eventId = getIntent().getStringExtra(EVENTID_PENDING_INTENT_EXTRA);
+        String eventId = getIntent().getStringExtra(EVENT_ID_PENDING_INTENT_EXTRA);
 
         initFragment(EventsFragment.newInstance(), false);
         if (eventId != null)
@@ -206,7 +200,7 @@ public class EventsActivity extends BaseActivity
     /**
      * Inicia la transición hacia la Actividad de selección de lugar {@link MapsActivity}
      *
-     * @param dataList colección de instalaciones que debe mostrar como opción {@link MapsActivity}
+     * @param dataList  colección de instalaciones que debe mostrar como opción {@link MapsActivity}
      * @param onlyField true si sólo puede escogerse instalaciones, false si también pueden
      *                  seleccionarse direcciones.
      */
@@ -219,22 +213,22 @@ public class EventsActivity extends BaseActivity
 
     /**
      * Dependiendo del código de la consulta: <br>
-     *  - Recupera el lugar seleccionado para la alarma en {@link MapsActivity} <br>
-     *  - Recupera la imagen seleccionada en {@link EasyImage} <br>
-     *  - Recupera la imagen recortada y almacenada por {@link UCrop} para enviarla al servidor.
-     *
-     *  <p>Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
+     * - Recupera el lugar seleccionado para la alarma en {@link MapsActivity} <br>
+     * - Recupera la imagen seleccionada en {@link EasyImage} <br>
+     * - Recupera la imagen recortada y almacenada por {@link UCrop} para enviarla al servidor.
+     * <p>
+     * Método invocado cuando se vuelve a esta Actividad desde otra que fue iniciada con
      * {@link android.app.Activity#startActivityForResult(Intent, int)}.
      *
      * @param requestCode código con el que se inicia e identifica la Actividad
-     * @param resultCode código representativo del resultado de la ejecución de la Actividad
-     * @param data datos extras incluidos como resultado de la ejecución de la Actividad
+     * @param resultCode  código representativo del resultado de la ejecución de la Actividad
+     * @param data        datos extras incluidos como resultado de la ejecución de la Actividad
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == REQUEST_CODE_ADDRESS) {
+        if (requestCode == REQUEST_CODE_ADDRESS) {
             if (resultCode == RESULT_OK) {
                 // Expect a Field where play a new Event,
                 // or an address (MyPlace) to meet for non-field sports
@@ -293,8 +287,8 @@ public class EventsActivity extends BaseActivity
      * Método invocado después de iniciar el proceso de petición de permisos de
      * {@link Utiles#isStorageCameraPermissionGranted(Activity)}.
      *
-     * @param requestCode código con el que se identifica la petición
-     * @param permissions permisos requeridos. Nunca es null.
+     * @param requestCode  código con el que se identifica la petición
+     * @param permissions  permisos requeridos. Nunca es null.
      * @param grantResults Resultado de la petición, que puede ser
      *                     {@link android.content.pm.PackageManager#PERMISSION_GRANTED} o
      *                     {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Nunca es null.
@@ -319,7 +313,7 @@ public class EventsActivity extends BaseActivity
         }
     }
 
-    // todo Son estos metodos necesarios??
+    // todo Son estos métodos necesarios??
 //    @Override
 //    protected void onResume() {
 //        super.onResume();

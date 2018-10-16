@@ -21,7 +21,7 @@ public abstract class ActivityContracts {
         /**
          * Debe invocar {@link #initFragment(Fragment, boolean, String)} con un tag nulo.
          *
-         * @param fragment Fragmento que va a mostrarse
+         * @param fragment       Fragmento que va a mostrarse
          * @param addToBackStack true si debe almacenarse en la pila de Fragmentos
          */
         void initFragment(@NotNull Fragment fragment, boolean addToBackStack);
@@ -32,9 +32,9 @@ public abstract class ActivityContracts {
          * poder ser encontrado posteriormente con
          * {@link android.support.v4.app.FragmentManager#findFragmentByTag(String)}
          *
-         * @param fragment Fragmento que va a mostrarse
+         * @param fragment       Fragmento que va a mostrarse
          * @param addToBackStack true si debe almacenarse en la pila de Fragmentos
-         * @param tag etiqueta asociada al Fragmento en la transición
+         * @param tag            etiqueta asociada al Fragmento en la transición
          */
         void initFragment(@NotNull Fragment fragment, boolean addToBackStack, String tag);
 
@@ -42,7 +42,7 @@ public abstract class ActivityContracts {
          * El Fragmento invoca este método para indicar que se está mostrando actualmente.
          * Así, la Actividad pueda actuar en consecuencia.
          *
-         * @param title título del Fragmento
+         * @param title    título del Fragmento
          * @param fragment referencia al Fragmento
          */
         void setCurrentDisplayedFragment(String title, BaseFragment fragment);
@@ -84,6 +84,7 @@ public abstract class ActivityContracts {
 
         /**
          * Invocado para establecer el título de la Toolbar
+         *
          * @param title Cadena de texto del título
          */
         void setActionBarTitle(String title);
@@ -99,9 +100,9 @@ public abstract class ActivityContracts {
          * menú lateral de navegación. Esto servirá para iniciar desde el Fragmento la
          * navegación desde una Actividad a otra, mediante un {@link android.content.Intent}.
          *
-         * @param menuItemId identificador de la entrada del menú que simula ser pulsada
-         * @param intentExtraKey clave del valor pasado a la nueva Actividad mediante el Intent.
-         *                      También puede ser null.
+         * @param menuItemId       identificador de la entrada del menú que simula ser pulsada
+         * @param intentExtraKey   clave del valor pasado a la nueva Actividad mediante el Intent.
+         *                         También puede ser null.
          * @param intentExtraValue valor pasado a la nueva Actividad mediante el Intent. También
          *                         puede ser null.
          */
