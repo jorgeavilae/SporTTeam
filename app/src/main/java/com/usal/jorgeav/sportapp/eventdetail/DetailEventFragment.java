@@ -699,7 +699,7 @@ public class DetailEventFragment extends BaseFragment implements
     public void showEventField(Field field, String address, LatLng coord) {
         showContent();
         if (field != null) {
-            this.detailEventPlace.setText(field.getName() + ", " + field.getCity());
+            this.detailEventPlace.setText(String.format("%s, %s", field.getName(), field.getCity()));
             this.detailEventPlaceIcon.setVisibility(View.VISIBLE);
             final String fieldId = field.getId();
             this.detailEventPlace.setOnClickListener(new View.OnClickListener() {

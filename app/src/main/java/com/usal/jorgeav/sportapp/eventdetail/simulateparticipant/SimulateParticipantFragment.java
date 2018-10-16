@@ -94,7 +94,6 @@ public class SimulateParticipantFragment extends BaseFragment implements
     public SimulateParticipantFragment() {
     }
 
-
     /**
      * Método de instanciación del Fragmento
      *

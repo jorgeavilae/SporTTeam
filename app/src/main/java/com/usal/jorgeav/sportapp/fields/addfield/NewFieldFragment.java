@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.fields.addfield;
 
+import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -96,7 +97,7 @@ public class NewFieldFragment extends BaseFragment implements
      */
     private GoogleMap mMap;
     /**
-     * Referencia al elemeto de la interfaz utilizado para mostrar la dirección postal escogida para
+     * Referencia al elemento de la interfaz utilizado para mostrar la dirección postal escogida para
      * la instalación
      */
     @BindView(R.id.new_field_address)
@@ -207,6 +208,7 @@ public class NewFieldFragment extends BaseFragment implements
      * @param item elemento del menú pulsado
      * @return true si se aceptó la pulsación, false en otro caso
      */
+    @SuppressLint("SetTextI18n")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
@@ -354,7 +356,7 @@ public class NewFieldFragment extends BaseFragment implements
         mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
-    //todo comparar con newEventFragment: no es igual pq? parece q se puede escribir este metodo con menos lineas
+    //todo comparar con newEventFragment: no es igual pq? parece q se puede escribir este método con menos lineas
 
     /**
      * Pide al Presentador que recupere las instalaciones de la ciudad actual en caso de que el

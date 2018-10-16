@@ -49,6 +49,7 @@ import butterknife.ButterKnife;
  * Fragmento utilizado para mostrar los detalles de una alarma. Se encarga de inicializar
  * los componentes de la interfaz y utilizarlos para mostrar los parámetros de la alarma recuperados
  * de la base de datos.
+ * <p>
  * Implementa la interfaz {@link DetailAlarmContract.View} para la comunicación con esta clase y la
  * interfaz {@link EventsAdapter.OnEventItemClickListener} para manejar las pulsaciones sobre los
  * eventos encontrados que coincidan con la alarma mostrada.
@@ -368,7 +369,7 @@ public class DetailAlarmFragment extends BaseFragment implements
     public void showAlarmPlace(Field field, String city, LatLng coords) {
         if (field != null) {
             final String fieldId = field.getId();
-            this.textViewAlarmPlace.setText(field.getName() + ", " + field.getCity());
+            this.textViewAlarmPlace.setText(String.format("%s, %s", field.getName(), field.getCity()));
             this.textViewAlarmPlace.setClickable(true);
             this.textViewAlarmPlace.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -510,7 +511,7 @@ public class DetailAlarmFragment extends BaseFragment implements
     }
 
     /**
-     * Alamacena en la variable de estado del Fragmento las coordenadas correspondientes al lugar
+     * Almacena en la variable de estado del Fragmento las coordenadas correspondientes al lugar
      * sobre el que está establecida la alarma.
      *
      * @param outState donde se guarda estado del Fragmento en una posible rotación de la pantalla.

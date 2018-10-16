@@ -91,7 +91,7 @@ public class NewEventFragment extends BaseFragment implements
      */
     private static boolean sInitialize;
 
-    // todo en vez de consultar borrar el loader y guardar fields en instanceState; pq no consultar y recuperar la consulta del loader sin borrarlo? newfieldfragment no lo tiene
+    // todo en vez de consultar borrar el loader y guardar fields en instanceState; pq no consultar y recuperar la consulta del loader sin borrarlo? newFieldFragment no lo tiene
     /**
      * Etiqueta utilizada para guardar, en el estado del Fragmento, las instalaciones encontradas
      * en la consulta a la base de datos.

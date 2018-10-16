@@ -77,7 +77,7 @@ class NewFieldPresenter implements
     @Override
     public void addField(String id, String name, String address, LatLng coords, String city,
                          String openTime, String closeTime, String creator, List<SportCourt> sports) {
-        // Store in DDBB times in millis (without day) needs a baseDay to parse back to String properly
+        // Store in database times in millis (without day) needs a baseDay to parse back to String properly
         Long baseDay = UtilesTime.stringDateToMillis("11/07/92");
         Long openMillis = UtilesTime.stringTimeToMillis(openTime);
         if (openMillis != null) openMillis += baseDay;

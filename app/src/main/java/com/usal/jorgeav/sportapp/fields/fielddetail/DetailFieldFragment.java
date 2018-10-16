@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.fields.fielddetail;
 
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -294,6 +295,7 @@ public class DetailFieldFragment extends BaseFragment implements
      *
      * @param sportId identificador del deporte correspondiente a la pista pulsada
      */
+    @SuppressLint("InflateParams")
     private void displayVoteCourtDialog(final String sportId) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.vote_dialog, null);
@@ -448,7 +450,7 @@ public class DetailFieldFragment extends BaseFragment implements
     }
 
     /**
-     * Avisa al mapa de este método del ciclo de vida del Fragmento, y borra las pstas del Adaptador
+     * Avisa al mapa de este método del ciclo de vida del Fragmento, y borra las pistas del Adaptador
      * para evitar que se almacenen en el estado del Fragmento
      */
     @Override

@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.profile;
 
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -305,7 +306,7 @@ public class ProfileFragment extends BaseFragment implements
 
         initDefaultLayout();
 
-        //todo mover a initDefaultLayout()?? habria que sacar lo de poner el menu de este método y
+        //todo mover a initDefaultLayout()?? habría que sacar lo de poner el menu de este método y
         // ponerlo en initDefaultLayout().
         mProfilePresenter.getRelationTypeBetweenThisUserAndI();
 
@@ -370,6 +371,7 @@ public class ProfileFragment extends BaseFragment implements
      * Una vez escrito, con ayuda del Presentador, se comprueba que ese nombre no exista ya en la
      * base de datos y se establece como nuevo nombre del usuario.
      */
+    @SuppressLint("InflateParams")
     private void showDialogForEditName() {
         // Prepare View
         final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edit_text_change_dialog, null);
@@ -431,6 +433,7 @@ public class ProfileFragment extends BaseFragment implements
      * Crea y muestra un cuadro de diálogo en el que escribir la nueva edad del usuario actual.
      * Una vez escrita, con ayuda del Presentador, se establece como nueva edad del usuario.
      */
+    @SuppressLint("InflateParams")
     private void showDialogForEditAge() {
         // Prepare View
         final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.edit_text_change_dialog, null);
@@ -499,6 +502,7 @@ public class ProfileFragment extends BaseFragment implements
      *
      * @param relation tipo de relación entre el usuario actual y el usuario mostrado
      */
+    @SuppressLint("SwitchIntDef")
     @Override
     public void uiSetupForUserRelation(@ProfilePresenter.UserRelationType int relation) {
         if (relation == ProfilePresenter.RELATION_TYPE_ME) {
@@ -630,6 +634,7 @@ public class ProfileFragment extends BaseFragment implements
      * FirebaseStorage</a>
      * @see <a href= "https://bumptech.github.io/glide/javadocs/380/index.html">Glide</a>
      */
+    @SuppressLint("InflateParams")
     @Override
     public void showUserImage(String image) {
         userImage.setVisibility(View.VISIBLE);

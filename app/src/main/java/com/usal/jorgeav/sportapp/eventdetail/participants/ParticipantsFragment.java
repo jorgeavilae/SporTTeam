@@ -226,9 +226,7 @@ public class ParticipantsFragment extends BaseFragment implements
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
      * @return la vista de la interfaz inicializada
-     * @see <a href= "http://jakewharton.github.io/butterknife/">
-     * ButterKnife
-     * </a>
+     * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -419,9 +417,10 @@ public class ParticipantsFragment extends BaseFragment implements
 
     /**
      * Al realizar una pulsación larga sobre un usuario: se crea y muestra un cuadro de diálogo
-     * preguntando si se le quiere expulsar. También ofrece la opción de mostrar el perfil del usuario
-     * pulsado.
-     * <p>Si se expulsa al usuario, se crea y muestra otro cuadro de diálogo preguntando si también
+     * preguntando si se le quiere expulsar. También ofrece la opción de mostrar el perfil del
+     * usuario pulsado.
+     * <p>
+     * Si se expulsa al usuario, se crea y muestra otro cuadro de diálogo preguntando si también
      * se desea borrar a los usuarios simulados que fueron añadidos por el usuario recién expulsado.
      *
      * @param uid Identificador del usuario pulsado

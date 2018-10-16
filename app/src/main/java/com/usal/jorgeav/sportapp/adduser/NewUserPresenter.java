@@ -89,7 +89,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    if(mView.getThis().isAdded()) //check if Fragment its attached to Activity
+                                    if (mView.getThis().isAdded()) //check if Fragment its attached to Activity
                                         mView.setEmailError(R.string.error_not_unique_email);
                                 } else isEmailUnique = true;
                             }
@@ -110,7 +110,6 @@ class NewUserPresenter implements NewUserContract.Presenter {
      * de email.
      *
      * @param email cadena de texto usada como email
-     *
      * @return true si concuerda, false en caso contrario
      */
     private boolean isEmailValid(@NonNull String email) {
@@ -131,7 +130,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                if(mView.getThis().isAdded()) //check if Fragment its attached to Activity
+                                if (mView.getThis().isAdded()) //check if Fragment its attached to Activity
                                     mView.setNameError(R.string.error_not_unique_name);
                             } else isNameUnique = true;
                         }
@@ -148,30 +147,24 @@ class NewUserPresenter implements NewUserContract.Presenter {
     /**
      * Crea el usuario con los parámetros dados en FirebaseAuth. Luego utiliza FirebaseStorage para
      * almacenar la foto de perfil del usuario en el servidor.
-     *
-     * <p> Si el proceso finaliza con éxito, se invoca
+     * <p>
+     * Si el proceso finaliza con éxito, se invoca
      * {@link #storeUserDataAndFinish(Uri, String, String, LatLng, Long, ArrayList)}
      * para almacenar el usuario en la base de datos.
      *
-     * @param email dirección de email
-     * @param pass contraseña
-     * @param name nombre
+     * @param email                     dirección de email
+     * @param pass                      contraseña
+     * @param name                      nombre
      * @param croppedImageFileSystemUri ruta del archivo de imagen utilizado como foto de perfil
-     * @param age edad
-     * @param city ciudad
-     * @param coords coordenadas de la ciudad
-     * @param sportsList lista de {@link Sport} que practica el usuario
-     *
+     * @param age                       edad
+     * @param city                      ciudad
+     * @param coords                    coordenadas de la ciudad
+     * @param sportsList                lista de {@link Sport} que practica el usuario
      * @return true si los argumentos son válidos, false en caso contrario.
-     *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
-     *     FirebaseAuth
-     * </a>
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/storage/FirebaseStorage">
-     *     FirebaseStorage
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/auth/FirebaseAuth">
+     * FirebaseAuth</a>
+     * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/storage/FirebaseStorage">
+     * FirebaseStorage</a>
      */
     @Override
     public boolean createAuthUser(final String email, String pass, final String name,
@@ -191,7 +184,8 @@ class NewUserPresenter implements NewUserContract.Presenter {
                                 mView.getActivityContext().getContentResolver()
                                         .insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
 
-                                if (croppedImageFileSystemUri != null) {
+                                if (croppedImageFileSystemUri != null
+                                        && croppedImageFileSystemUri.getLastPathSegment() != null) {
                                     // Get a reference to store file at chat_photos/<FILENAME>
                                     StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()
                                             .child(FirebaseDBContract.Storage.PROFILE_PICTURES);
@@ -244,12 +238,12 @@ class NewUserPresenter implements NewUserContract.Presenter {
                             }
                         }
                     }).addOnFailureListener(mView.getHostActivity(), new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(mView.getActivityContext(),
-                                    R.string.toast_create_user_fail, Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
-                        }
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(mView.getActivityContext(),
+                            R.string.toast_create_user_fail, Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
             });
             return true;
         } else return false;
@@ -258,15 +252,14 @@ class NewUserPresenter implements NewUserContract.Presenter {
     /**
      * Método utilizado en la creación de usuario para validar los datos antes de la creación.
      *
-     * @param email dirección de email
-     * @param pass contraseña
-     * @param name nombre
+     * @param email                     dirección de email
+     * @param pass                      contraseña
+     * @param name                      nombre
      * @param croppedImageFileSystemUri ruta del archivo de imagen utilizado como foto de perfil
-     * @param age edad
-     * @param city ciudad
-     * @param coords coordenadas de la ciudad
-     * @param sportsList lista de {@link Sport} que practica el usuario
-     *
+     * @param age                       edad
+     * @param city                      ciudad
+     * @param coords                    coordenadas de la ciudad
+     * @param sportsList                lista de {@link Sport} que practica el usuario
      * @return true si los argumentos son válidos, false en caso contrario.
      */
     private boolean validateArguments(String email, String pass, String name,
@@ -292,11 +285,14 @@ class NewUserPresenter implements NewUserContract.Presenter {
         }
 
         if (croppedImageFileSystemUri != null) {
-            File file = new File(croppedImageFileSystemUri.getPath());
-            if (!file.exists()) {
-                Toast.makeText(mView.getActivityContext(), R.string.error_invalid_photo, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "validateArguments: Photo error " + croppedImageFileSystemUri);
-                return false;
+            String path = croppedImageFileSystemUri.getPath();
+            if (path != null) {
+                File file = new File(path);
+                if (!file.exists()) {
+                    Toast.makeText(mView.getActivityContext(), R.string.error_invalid_photo, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "validateArguments: Photo error " + croppedImageFileSystemUri);
+                    return false;
+                }
             }
         }
 
@@ -333,21 +329,16 @@ class NewUserPresenter implements NewUserContract.Presenter {
      * ejecución de la Actividad contenedora dado que el proceso de creación de usuario finaliza
      * correctamente.
      *
-     * @param photoUri ruta del archivo de imagen utilizado como foto de perfil
-     * @param name nombre
-     * @param city ciudad
-     * @param coords coordenadas de la ciudad
-     * @param age edad
+     * @param photoUri   ruta del archivo de imagen utilizado como foto de perfil
+     * @param name       nombre
+     * @param city       ciudad
+     * @param coords     coordenadas de la ciudad
+     * @param age        edad
      * @param sportsList lista de {@link Sport} que practica el usuario
-     *
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
-     *     FirebaseDatabase
-     * </a>
-     * @see
-     * <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser">
-     *     FirebaseUser
-     * </a>
+     * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/database/FirebaseDatabase">
+     * FirebaseDatabase</a>
+     * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser">
+     * FirebaseUser</a>
      */
     private void storeUserDataAndFinish(Uri photoUri, String name, String city, LatLng coords,
                                         Long age, ArrayList<Sport> sportsList) {
@@ -385,7 +376,6 @@ class NewUserPresenter implements NewUserContract.Presenter {
      * Transforma un array de {@link Sport} en un {@link Map} utilizado para la creación del usuario
      *
      * @param sports lista de deportes practicados
-     *
      * @return lista de deportes practicados en un objeto Map
      */
     private Map<String, Double> sportsArrayToHashMap(List<Sport> sports) {

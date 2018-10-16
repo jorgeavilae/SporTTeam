@@ -26,6 +26,7 @@ import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
  * coinciden con los parámetros de la alarma, en ambos casos el resultado será enviado a la
  * Vista {@link DetailAlarmContract.View}. También se encarga de iniciar el borrado de una alarma
  * de los servidores de la aplicación.
+ * <p>
  * Implementa la interfaz {@link DetailAlarmContract.Presenter} para la comunicación con esta clase
  * y la interfaz {@link LoaderManager.LoaderCallbacks} para ser notificado por los callbacks de la
  * consulta.
@@ -59,7 +60,7 @@ class DetailAlarmPresenter implements
      *
      * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
      *                      de Contenido
-     * @param b contenedor de posibles parámetros utilizados en la consulta
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
      */
     @Override
     public void openAlarm(LoaderManager loaderManager, Bundle b) {
@@ -92,9 +93,8 @@ class DetailAlarmPresenter implements
     /**
      * Invocado por {@link LoaderManager} para crear el Loader usado para la consulta
      *
-     * @param id identificador del Loader
+     * @param id   identificador del Loader
      * @param args contenedor de posibles parámetros utilizados en la consulta
-     *
      * @return Loader que realiza la consulta.
      * @see SportteamLoader#cursorLoaderOneAlarm(Context, String)
      * @see SportteamLoader#cursorLoaderAlarmCoincidence(Context, String, String)
@@ -120,7 +120,7 @@ class DetailAlarmPresenter implements
      * forma de {@link Cursor} o envía los partidos encontrados a la Vista para que los muestre.
      *
      * @param loader Loader utilizado para la consulta
-     * @param data resultado de la consulta
+     * @param data   resultado de la consulta
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {

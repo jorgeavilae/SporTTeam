@@ -83,17 +83,17 @@ public class NewAlarmFragment extends BaseFragment implements
     public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
 
     // todo en vez de consultar borrar el loader y guardar fields en instanceState; pq no consultar y recuperar la consulta del loader sin borrarlo?
-    //puede que se carguen unos fields diferentes: si cambia el deporte se debn cargar los fields del deporte nuevo no los del deporte de getArguments()
+    //puede que se carguen unos fields diferentes: si cambia el deporte se deben cargar los fields del deporte nuevo no los del deporte de getArguments()
     /**
      * Etiqueta utilizada para guardar, en el estado del Fragmento, las instalaciones encontradas
      * en la consulta a la base de datos.
      */
     public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
     //todo necesario?
-    /**
-     * Etiqueta utilizada para guardar, en el estado del Fragmento, el deporte establecido para la
-     * alarma.
-     */
+//    /**
+//     * Etiqueta utilizada para guardar, en el estado del Fragmento, el deporte establecido para la
+//     * alarma.
+//     */
 //    public static final String INSTANCE_SPORT_IMAGE_ID = "INSTANCE_SPORT_IMAGE_ID";
     /**
      * Almacena las instalaciones encontradas en la consulta, que serán sobre las que se pueda
@@ -709,11 +709,11 @@ public class NewAlarmFragment extends BaseFragment implements
         if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof AlarmsActivity) {
             Field f = UtilesContentProvider.getFieldFromContentProvider(fieldId);
             if (f != null) {
-                newAlarmField.setText(f.getName() + ", " + f.getCity());
+                newAlarmField.setText(String.format("%s, %s", f.getName(), f.getCity()));
                 newAlarmCity.setText("");
 
                 if (mMarker != null) mMarker.remove();
-                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords,false);
+                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords, false);
             }
         } else if (city != null && !TextUtils.isEmpty(city) && getActivity() instanceof AlarmsActivity) {
             newAlarmField.setText("");

@@ -75,9 +75,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     /**
      * Ruta del archivo de imagen resultante después del proceso de recorte con uCrop
      *
-     * @see <a href= "https://github.com/Yalantis/uCrop">
-     * uCrop (Github)
-     * </a>
+     * @see <a href= "https://github.com/Yalantis/uCrop">uCrop (Github)</a>
      */
     Uri croppedImageUri;
 

@@ -53,8 +53,7 @@ class SimulateParticipantPresenter implements
      * @param photo   imagen del usuario simulado
      * @param ageStr  edad del usuario simulado en formato texto
      * @see <a href= "https://firebase.google.com/docs/reference/android/com/google/firebase/storage/FirebaseStorage">
-     * FirebaseStorage
-     * </a>
+     * FirebaseStorage</a>
      */
     @Override
     public void addSimulatedParticipant(String eventId, String name, Uri photo, String ageStr) {

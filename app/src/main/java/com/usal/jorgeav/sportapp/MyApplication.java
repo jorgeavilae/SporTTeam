@@ -1,21 +1,23 @@
 package com.usal.jorgeav.sportapp;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 
 /**
- * Clase heredera de {@link Application} que representa toda la aplicacion.
+ * Clase heredera de {@link Application} que representa toda la aplicación.
  * <p>
- * Usada para guardar una referencia estatica al {@link Context} de Aplicacion
+ * Usada para guardar una referencia estática al {@link Context} de Aplicación
  */
 public class MyApplication extends Application {
     /**
-     * Referncia estatica a {@link Context} de Aplicacion
+     * Referencia estática a {@link Context} de Aplicación
      */
+    @SuppressLint("StaticFieldLeak")
     private static Context context;
 
     /**
-     * Invocado cuando la aplicacion esta iniciandose, guarda la referencia a Context
+     * Invocado cuando la aplicación esta iniciándose, guarda la referencia a Context
      */
     @Override
     public void onCreate() {
@@ -24,7 +26,8 @@ public class MyApplication extends Application {
     }
 
     /**
-     * Metodo de acceso a la variable estatica {@link Context} de Aplicacion
+     * Método de acceso a la variable estática {@link Context} de Aplicación
+     *
      * @return {@link MyApplication#context}
      */
     public static Context getAppContext() {

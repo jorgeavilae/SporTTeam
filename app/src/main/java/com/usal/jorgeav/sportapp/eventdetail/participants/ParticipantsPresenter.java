@@ -173,8 +173,9 @@ class ParticipantsPresenter implements
      * @param data {@link Cursor} con el resto de participantes
      * @param uid  identificador del usuario que se quiere añadir a la colección
      * @return un Cursor con los usuarios de la consulta al Loader más el que se acaba de añadir
+     * @see <a href= "https://stackoverflow.com/a/16440093/4235666">
+     * (StackOverflow) Adding rows into Cursor manually</a>
      */
-    /* https://stackoverflow.com/a/16440093/4235666 */
     private Cursor addParticipantToCursor(Cursor data, String uid) {
         Cursor uidCursor = MyApplication.getAppContext().getContentResolver().query(
                 SportteamContract.UserEntry.CONTENT_USER_URI,
