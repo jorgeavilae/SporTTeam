@@ -131,20 +131,18 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
      * Crea el {@link Filter} que realiza las búsquedas. Para el {@link Filter} se implementan tres
      * métodos:
      * <p>
-     * {@link Filter#performFiltering(CharSequence)}
+     * - {@link Filter#performFiltering(CharSequence)}:
      * Invocado para realizar el filtrado. Dada la cadena de texto con la que se realiza la
-     * búsqueda, utiliza {@link android.widget.Filter.FilterResults} para almacenar los resultados
+     * búsqueda, utiliza FilterResults clase interna de {@link Filter} para almacenar los resultados
      * de la consulta a Google proporcionados por
      * {@link PlaceAutocompleteAdapter#getAutocomplete(CharSequence)} y los devuelve.
      * <p>
-     * <p>
-     * {@link Filter#publishResults(CharSequence, Filter.FilterResults)}
+     * - {@link Filter#publishResults(CharSequence, Filter.FilterResults)}:
      * Invocado cuando finaliza el filtrado. Dada la cadena de texto con la que se realiza la
      * búsqueda y los resultado, se encarga de notificar el éxito o el fracaso (si los resultados
      * están vacíos) de la búsqueda. Almacena el resultado en {@link #mResultList}.
      * <p>
-     * <p>
-     * {@link Filter#convertResultToString(Object)}
+     * - {@link Filter#convertResultToString(Object)}:
      * Invocado para mostrar un texto legible que represente cada uno de los elementos del resultado.
      *
      * @return el filtro creado

@@ -10,15 +10,12 @@ import java.util.Calendar;
 /**
  * Objeto de datos que representa un {@link Event} situado en el calendario de la interfaz
  *
- * @see
- * <a href= "https://github.com/Tibolte/AgendaCalendarView/tree/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview">
- *     AgendaCalendarView implementation
- * </a>
- * @see
- * <a href= "https://github.com/Tibolte/AgendaCalendarView/blob/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview/models/BaseCalendarEvent.java">
- *     BaseCalendarEvent implementation
- * </a>
+ * @see <a href= "https://github.com/Tibolte/AgendaCalendarView/tree/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview">
+ * AgendaCalendarView implementation</a>
+ * @see <a href= "https://github.com/Tibolte/AgendaCalendarView/blob/master/agendacalendarview/src/main/java/com/github/tibolte/agendacalendarview/models/BaseCalendarEvent.java">
+ * BaseCalendarEvent implementation</a>
  */
+@SuppressWarnings("WeakerAccess")
 public class MyCalendarEvent extends BaseCalendarEvent {
     /**
      * Identificador del partido
@@ -29,7 +26,7 @@ public class MyCalendarEvent extends BaseCalendarEvent {
      */
     private String sport_id;
     /**
-     * Identificador de la instalacion donde se juega el partido
+     * Identificador de la instalación donde se juega el partido
      */
     private String field_name;
     /**
@@ -163,9 +160,10 @@ public class MyCalendarEvent extends BaseCalendarEvent {
     public static class Builder {
         /**
          * Crea una nueva instancia de {@link MyCalendarEvent} a partir de un partido
-         * y una instalacion donde se juega
+         * y una instalación donde se juega
+         *
          * @param event partido
-         * @param field instalacion
+         * @param field instalación
          * @param color color de fondo de la celda
          * @return nueva instancia de MyCalendarEvent
          */
@@ -201,6 +199,7 @@ public class MyCalendarEvent extends BaseCalendarEvent {
 
         /**
          * Copia un {@link MyCalendarEvent} en una instancia nueva.
+         *
          * @param myCalendarEvent partido a copiar
          * @return la nueva instancia con los mismo datos
          */
@@ -223,6 +222,11 @@ public class MyCalendarEvent extends BaseCalendarEvent {
         }
     }
 
+    /**
+     * Representación del objeto en cadena de texto
+     *
+     * @return la cadena de texto con los datos del objeto
+     */
     @Override
     public String toString() {
         return "MyCalendarEvent{" +
