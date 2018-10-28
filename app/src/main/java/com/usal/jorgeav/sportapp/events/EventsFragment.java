@@ -267,14 +267,8 @@ public class EventsFragment extends BaseFragment implements
     @Override
     public void onEventSelected(CalendarEvent event) {
         if (event instanceof MyCalendarEvent) {
-            //todo comprobar si funciona
-            //MyCalendarEvent myCalendarEvent = mEventList.getItemAtPosition((int) event.getId());
-            //
-            //getLoaderManager().destroyLoader(SportteamLoader.LOADER_MY_EVENTS_AND_PARTICIPATION_ID);
-            //
-            //Fragment newFragment = DetailEventFragment.newInstance(myCalendarEvent.getEvent_id());
-
-            Fragment newFragment = DetailEventFragment.newInstance(Long.valueOf(event.getId()).toString());
+            MyCalendarEvent myCalendarEvent = mEventList.getItemAtPosition((int) event.getId());
+            Fragment newFragment = DetailEventFragment.newInstance(myCalendarEvent.getEvent_id());
             mFragmentManagementListener.initFragment(newFragment, true);
         }
     }

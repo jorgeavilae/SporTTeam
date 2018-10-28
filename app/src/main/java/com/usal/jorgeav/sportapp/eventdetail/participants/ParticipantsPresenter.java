@@ -167,8 +167,8 @@ class ParticipantsPresenter implements
 
     /**
      * Añade un usuario participante al {@link Cursor} proporcionado como parámetro. Utiliza el
-     * objeto {@link MergeCursor} para fusionar en uno el Cursor de la consulta del Loader y el
-     * Cursor obtenido al consultar los datos identificador de usuario <var>uid</var>
+     * objeto {@link MergeCursor} para fusionar el Cursor de la consulta del Loader y el
+     * Cursor obtenido al consultar los datos del identificador de usuario <var>uid</var>
      *
      * @param data {@link Cursor} con el resto de participantes
      * @param uid  identificador del usuario que se quiere añadir a la colección
@@ -183,9 +183,7 @@ class ParticipantsPresenter implements
                 SportteamContract.UserEntry.USER_ID + " = ? ",
                 new String[]{uid},
                 null);
-        //todo comprobar este cambio: uidCursor puede cerrarse?
         MergeCursor result = new MergeCursor(new Cursor[]{uidCursor, data});
-        if (uidCursor != null) uidCursor.close();
         return result;
     }
 
