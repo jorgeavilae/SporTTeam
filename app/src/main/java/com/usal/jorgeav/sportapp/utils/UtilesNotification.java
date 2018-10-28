@@ -120,7 +120,6 @@ public class UtilesNotification {
      *
      * @param context contexto bajo el que se ejecuta esta acción
      */
-    //todo borra las notificaciones de sportteam o todas las q haya en ese momento?
     public static void clearAllNotifications(Context context) {
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);

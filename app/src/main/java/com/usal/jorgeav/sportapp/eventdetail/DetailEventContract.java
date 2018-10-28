@@ -33,7 +33,6 @@ public abstract class DetailEventContract {
          * Invocado para obtener la relación que el usuario actual mantiene con el partido que
          * se muestra
          */
-        //todo debería aceptar un listener como parámetro donde se especificara loq hace con la relation
         void getRelationTypeBetweenThisEventAndI();
 
         /**

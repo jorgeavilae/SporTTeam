@@ -33,7 +33,6 @@ public abstract class ProfileContract {
          * Invocado para obtener la relación que el usuario actual mantiene con el usuario que
          * se muestra
          */
-        //todo debería aceptar un listener como parámetro donde se especificara loq hace con la relation"
         void getRelationTypeBetweenThisUserAndI();
 
         /**

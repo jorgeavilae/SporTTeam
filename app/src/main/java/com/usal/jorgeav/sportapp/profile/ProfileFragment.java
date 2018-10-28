@@ -280,7 +280,7 @@ public class ProfileFragment extends BaseFragment implements
     /**
      * Inicializa y obtiene una referencia a los elementos de la interfaz con la ayuda de
      * ButterKnife. Además, establece el Adaptador para la lista de deportes, extrae el identificador
-     * del usuario mostrado e inicia el proceso para determinar la relación con el usuario actual.
+     * del usuario mostrado e inicia el proceso para determinar el aspecto de la interfaz.
      *
      * @param inflater           utilizado para inflar el archivo de layout
      * @param container          contenedor donde se va a incluir la interfaz o null
@@ -306,19 +306,18 @@ public class ProfileFragment extends BaseFragment implements
 
         initDefaultLayout();
 
-        //todo mover a initDefaultLayout()?? habría que sacar lo de poner el menu de este método y
-        // ponerlo en initDefaultLayout().
-        mProfilePresenter.getRelationTypeBetweenThisUserAndI();
-
         return root;
     }
 
     /**
-     * Inicializa el aspecto de la interfaz antes de determinar la relación contra la base de datos.
-     * Comprueba si el identificador del usuario que se muestra es el mismo que el de el usuario
-     * actual para mostrar la interfaz, para mostrar la interfaz con los detalles del propio usuario.
+     * Inicializa el aspecto de la interfaz antes de determinar el tipo de relación gracias a la
+     * base de datos.
+     * Comprueba si el identificador del usuario que se muestra es el mismo que el del usuario
+     * actual, para mostrar la interfaz con los detalles del propio usuario.
      * Si no, se establece una interfaz por defecto esperando por el resultado de la consulta a la
-     * base de datos sobre el tipo de relación.
+     * base de datos sobre el tipo de relación, que se inicia al final.
+     *
+     * @see ProfilePresenter#getRelationTypeBetweenThisUserAndI()
      */
     private void initDefaultLayout() {
         String currentUserId = Utiles.getCurrentUserId();
@@ -364,6 +363,8 @@ public class ProfileFragment extends BaseFragment implements
 
             userFriendRequestsButton.setVisibility(View.INVISIBLE);
         }
+
+        mProfilePresenter.getRelationTypeBetweenThisUserAndI();
     }
 
     /**
