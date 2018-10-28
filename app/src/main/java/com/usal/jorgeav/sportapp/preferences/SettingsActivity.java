@@ -55,9 +55,8 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * Finaliza la Actividad.
+     * Finaliza la Actividad cuando se invoca esta acción desde {@link SettingsFragment}
      */
-    //todo necesario?
     @Override
     public void onBackPressed() {
         super.onBackPressed();

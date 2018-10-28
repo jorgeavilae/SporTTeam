@@ -312,19 +312,4 @@ public class EventsActivity extends BaseActivity
                 EasyImage.openChooserWithGallery(this, getString(R.string.pick_photo_from), SimulateParticipantFragment.RC_PHOTO_PICKER);
         }
     }
-
-    // todo Son estos métodos necesarios??
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        // This prevent from detach listeners on orientation changes and activity back transition
-//        shouldDetachFirebaseListener(false);
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        // This prevent from detach listeners on orientation changes and activity back transition
-//        shouldDetachFirebaseListener(true);
-//    }
 }

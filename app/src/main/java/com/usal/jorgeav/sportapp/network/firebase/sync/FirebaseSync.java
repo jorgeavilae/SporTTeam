@@ -74,6 +74,7 @@ public class FirebaseSync {
      *
      * @param loginActivity referencia a la Actividad de inicio de sesión en caso de que este método
      *                      haya sido invocado desde ella, o null.
+     * @see #attachListeners()
      */
     public static void syncFirebaseDatabase(LoginActivity loginActivity) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null && listenerMap.isEmpty()) {
@@ -85,6 +86,17 @@ public class FirebaseSync {
             // Load current user profile and sports
             UsersFirebaseSync.loadAProfile(loginActivity, myUserID, true);
 
+            attachListeners();
+        }
+    }
+
+    /**
+     * Método invocado para vincular todos los Listeners utilizados para mantener los
+     * datos actualizados, almacenándolos en {@link #listenerMap}. Es invocado desde
+     * {@link #syncFirebaseDatabase(LoginActivity)} o al iniciar la aplicación.
+     */
+    public static void attachListeners() {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && listenerMap != null) {
             // Load friends list and user data
             loadUsersFromFriends();
 

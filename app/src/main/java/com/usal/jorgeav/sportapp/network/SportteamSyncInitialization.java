@@ -66,8 +66,11 @@ public class SportteamSyncInitialization {
     synchronized public static void initialize(@NonNull final Context context) {
         Log.i(TAG, "initialize: " + sScheduled);
 
-        // Only perform schedule once per app lifetime.
-        if (sScheduled) return;
+        // Only perform schedule once per app lifetime, but asure Listeners are attached.
+        if (sScheduled) {
+            FirebaseSync.attachListeners();
+            return;
+        }
         sScheduled = true;
 
         //Populate Content Provider with data and pass LoginActivity if needed
