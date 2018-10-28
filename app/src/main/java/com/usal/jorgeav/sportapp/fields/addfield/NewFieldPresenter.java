@@ -18,6 +18,7 @@ import com.usal.jorgeav.sportapp.data.provider.SportteamLoader;
 import com.usal.jorgeav.sportapp.mainactivities.FieldsActivity;
 import com.usal.jorgeav.sportapp.network.firebase.actions.FieldsFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.sync.FirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
@@ -71,18 +72,19 @@ class NewFieldPresenter implements
      * @param city      ciudad de la instalación
      * @param openTime  hora de apertura de la instalación en formato HH:mm
      * @param closeTime hora de cierre de la instalación en formato HH:mm
-     * @param creator   identificador del usuario actual que está creado/editando la instalación
      * @param sports    lista de pistas en las que se indica el deporte y la puntuación inicial
      */
     @Override
     public void addField(String id, String name, String address, LatLng coords, String city,
-                         String openTime, String closeTime, String creator, List<SportCourt> sports) {
+                         String openTime, String closeTime, List<SportCourt> sports) {
         // Store in database times in millis (without day) needs a baseDay to parse back to String properly
         Long baseDay = UtilesTime.stringDateToMillis("11/07/92");
         Long openMillis = UtilesTime.stringTimeToMillis(openTime);
         if (openMillis != null) openMillis += baseDay;
         Long closeMillis = UtilesTime.stringTimeToMillis(closeTime);
         if (closeMillis != null) closeMillis += baseDay;
+
+        String creator = Utiles.getCurrentUserId();
 
         if (isValidAddress(address, city) && isValidName(name) && isValidCoords(coords)
                 && isTimesCorrect(openMillis, closeMillis) && isValidCreator(creator)) {
@@ -309,8 +311,6 @@ class NewFieldPresenter implements
             long openTime = data.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
             long closeTime = data.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
             mNewFieldView.showFieldTimes(openTime, closeTime);
-
-            mNewFieldView.showFieldCreator(data.getString(SportteamContract.FieldEntry.COLUMN_CREATOR));
         } else {
             mNewFieldView.clearUI();
         }

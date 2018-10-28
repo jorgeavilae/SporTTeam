@@ -53,11 +53,10 @@ public abstract class NewFieldContract {
          * @param city      ciudad de la instalación
          * @param openTime  hora de apertura de la instalación en formato HH:mm
          * @param closeTime hora de cierre de la instalación en formato HH:mm
-         * @param creator   identificador del usuario actual que está creado/editando la instalación
          * @param sports    lista de pistas en las que se indica el deporte y la puntuación inicial
          */
         void addField(String id, String name, String address, LatLng coords, String city,
-                      String openTime, String closeTime, String creator, List<SportCourt> sports);
+                      String openTime, String closeTime, List<SportCourt> sports);
 
         /**
          * Invocado para detener el proceso de consulta a la base de datos de la instalación que se
@@ -96,13 +95,6 @@ public abstract class NewFieldContract {
          * @param closeTimes hora de cierre en milisegundos
          */
         void showFieldTimes(long openTime, long closeTimes);
-
-        /**
-         * Invocado para mostrar en la interfaz el usuario creador de la instalación
-         *
-         * @param creator identificador del usuario creador de la instalación
-         */
-        void showFieldCreator(String creator);
 
         /**
          * Invocado para establecer en la Vista las pistas de la instalación y sus puntuaciones en

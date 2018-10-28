@@ -75,9 +75,6 @@ public class NewFieldFragment extends BaseFragment implements
      */
     private static boolean sInitialize;
 
-    //todo borrar, innecesario
-    private String mCreator = "";
-
     /**
      * Almacena las instalaciones encontradas en la consulta, necesarias para mostrarlas en el mapa
      * de selección de sitio en el caso de que el usuario desee cambiar la dirección.
@@ -218,8 +215,6 @@ public class NewFieldFragment extends BaseFragment implements
             if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID))
                 fieldId = getArguments().getString(BUNDLE_FIELD_ID);
 
-            if (mCreator == null || TextUtils.isEmpty(mCreator))
-                mCreator = Utiles.getCurrentUserId();
             if (newFieldAllDayTime.isChecked()) {
                 newFieldOpenTime.setText("00:00");
                 newFieldCloseTime.setText("00:00");
@@ -232,7 +227,7 @@ public class NewFieldFragment extends BaseFragment implements
                     ((FieldsActivity) getActivity()).mCity,
                     newFieldOpenTime.getText().toString(),
                     newFieldCloseTime.getText().toString(),
-                    mCreator, mSports);
+                    mSports);
             return true;
         }
         return false;
@@ -462,19 +457,6 @@ public class NewFieldFragment extends BaseFragment implements
         }
     }
 
-    //todo innecesario este método
-
-    /**
-     * Almacena el identificador del usuario creador
-     *
-     * @param creator identificador del usuario creador de la instalación
-     */
-    @Override
-    public void showFieldCreator(String creator) {
-        if (creator != null && !TextUtils.isEmpty(creator))
-            mCreator = creator;
-    }
-
     /**
      * Almacena las pistas de la instalación que se está editando
      *
@@ -496,7 +478,6 @@ public class NewFieldFragment extends BaseFragment implements
         newFieldOpenTime.setText("");
         newFieldCloseTime.setText("");
         mSports = null;
-        mCreator = null;
     }
 
     /**
