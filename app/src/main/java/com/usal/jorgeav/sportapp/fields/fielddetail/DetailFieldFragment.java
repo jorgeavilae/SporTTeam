@@ -362,13 +362,6 @@ public class DetailFieldFragment extends BaseFragment implements
     public void showFieldPlace(String address, String city, LatLng coords) {
         showContent();
         this.detailFieldAddress.setText(address);
-
-        if (getActivity() instanceof FieldsActivity) {
-            ((FieldsActivity) getActivity()).mAddress = address;
-            ((FieldsActivity) getActivity()).mCity = city;
-            ((FieldsActivity) getActivity()).mCoord = coords;
-        }
-
         Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords);
     }
 
@@ -458,18 +451,6 @@ public class DetailFieldFragment extends BaseFragment implements
         super.onPause();
         detailFieldMap.onPause();
         sportsAdapter.replaceData(null);
-    }
-
-    //todo esto porque???
-    @Override
-    public void onDetach() {
-        super.onDetach();
-
-        if (getActivity() instanceof FieldsActivity) {
-            ((FieldsActivity) getActivity()).mAddress = null;
-            ((FieldsActivity) getActivity()).mCity = null;
-            ((FieldsActivity) getActivity()).mCoord = null;
-        }
     }
 
     /**

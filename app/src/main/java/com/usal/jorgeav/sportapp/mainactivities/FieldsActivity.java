@@ -321,7 +321,6 @@ public class FieldsActivity extends BaseActivity
                     startDialogToAddSport(field);
                 } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
                     MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
-//                    mFieldId = null;
                     mAddress = myPlace.getAddress();
                     mCity = myPlace.getCity();
                     mCoord = myPlace.getCoordinates();
@@ -334,10 +333,19 @@ public class FieldsActivity extends BaseActivity
                             getString(R.string.toast_should_select_place),
                             Toast.LENGTH_SHORT).show();
                 }
-            } else if (requestCode == REQUEST_CODE_JUST_ADDRESS) {
-                //Address requested by NewFieldFragment to get a new one
-                if (mDisplayedFragment instanceof NewFieldContract.View)
-                    ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
+            } else if (requestCode == REQUEST_CODE_JUST_ADDRESS) { //Address requested by NewFieldFragment to get a new one
+                if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
+                    MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
+                    mAddress = myPlace.getAddress();
+                    mCity = myPlace.getCity();
+                    mCoord = myPlace.getCoordinates();
+                    if (mDisplayedFragment instanceof NewFieldContract.View)
+                        ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
+                } else {
+                    Toast.makeText(this,
+                            getString(R.string.toast_should_select_place),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

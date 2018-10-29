@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SporTTeam</string>
+    <string name="app_name">Sportteam</string>
 
     <string name="profile">Profile</string>
     <string name="search_events">Search Events</string>
@@ -64,7 +64,7 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="reauthenticate">Reauthenticate</string>
+    <string name="reauthenticate">Re-authenticate</string>
     <string name="email_sent">Email sent</string>
     <string name="dialog_title_verify_email">You have to verify your email</string>
     <string name="dialog_msg_verify_email">Do you want to resend a verification email? Make sure you check
@@ -92,7 +92,7 @@
     <!--Strings for notification messages-->
     <string name="dialog_msg_delete_all_notifications">All notifications will be deleted</string>
     <string name="dialog_msg_delete_one_notification">This notification will be deleted</string>
-    <string name="toast_notification_load_error">Notifications couldn\'t be loaded</string>
+    <string name="toast_notification_load_error">Notifications could not be loaded</string>
 
     <string name="notification_title_friend_request_received">New friend request</string>
     <string name="notification_title_friend_request_accepted">New friend!!</string>

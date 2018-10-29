@@ -487,7 +487,7 @@ public class SettingsFragment extends PreferenceFragment implements
                                         public void onFailure(@NonNull Exception e) {
                                             //TODO re-authenticate cierra la sesión automáticamente. Mirar API del método para ver si se puede evitar
                                             // If fails, logout is automatic
-                                            Log.d(TAG, "User re-authenticated fails.");
+                                            Log.d(TAG, "User re-authenticated fails: "+e.getLocalizedMessage());
                                             Toast.makeText(getActivity(), R.string.error_incorrect_password,
                                                     Toast.LENGTH_SHORT).show();
 
