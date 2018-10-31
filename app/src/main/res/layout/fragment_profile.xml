@@ -46,8 +46,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                    app:layout_constraintEnd_toStartOf="@+id/textView31"
-                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Name" />
 
@@ -94,7 +93,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/user_name"
                     tools:text="City of user" />
             </android.support.constraint.ConstraintLayout>
