@@ -11,6 +11,9 @@
     <string name="alarms">Alarmas</string>
     <string name="settings">Opciones</string>
 
+    <string name="channel_name">Canal general</string>
+    <string name="channel_description">Todas las notificaciones de la aplicación usan este canal</string>
+
     <string name="action_clear_filter">Borrar filtros</string>
     <string name="action_clear_notifications">Borrar notificaciones</string>
     <string name="action_edit">Editar</string>

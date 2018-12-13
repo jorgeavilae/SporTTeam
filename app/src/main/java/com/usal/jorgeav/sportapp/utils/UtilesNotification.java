@@ -34,6 +34,12 @@ public class UtilesNotification {
     public static final String TAG = UtilesNotification.class.getSimpleName();
 
     /**
+     * Nombre para el canal de notificaciones. Se usa el mismo que el del paquete de la aplicación
+     * porque sólo es necesario establecer un canal. Debe ser único.
+     */
+    public static final String NOTIFICATION_CHANNEL_ID = "com.usal.jorgeav.sportapp";
+
+    /**
      * Modificador que, aplicado a una variable, le permite adquirir como valor solamente el
      * siguiente conjunto de constantes que representan los distintos tipos de notificación que
      * pueden darse en el sistema.
@@ -136,7 +142,7 @@ public class UtilesNotification {
      */
     public static void createNotification(Context context, MyNotification fNotification, User user) {
         if (!fNotification.getChecked()) {
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_logo_white)  /* Notification icons must be entirely white */
                     .setContentTitle(fNotification.getTitle())
@@ -150,7 +156,6 @@ public class UtilesNotification {
             NotificationManager notificationManager = (NotificationManager)
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            // Pass in a unique ID of your choosing for the notification
             if (notificationManager != null)
                 notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
         }
@@ -183,7 +188,7 @@ public class UtilesNotification {
      */
     public static void createNotification(Context context, MyNotification fNotification, Event event) {
         if (!fNotification.getChecked()) {
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_logo_white)  /* Notification icons must be entirely white */
                     .setContentTitle(fNotification.getTitle())
@@ -197,7 +202,6 @@ public class UtilesNotification {
             NotificationManager notificationManager = (NotificationManager)
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            // Pass in a unique ID of your choosing for the notification
             if (notificationManager != null)
                 notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
         }
@@ -233,7 +237,7 @@ public class UtilesNotification {
      */
     public static void createNotification(Context context, MyNotification fNotification, Alarm alarm) {
         if (!fNotification.getChecked()) {
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_logo_white)  /* Notification icons must be entirely white */
                     .setContentTitle(fNotification.getTitle())
@@ -247,7 +251,6 @@ public class UtilesNotification {
             NotificationManager notificationManager = (NotificationManager)
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            // Pass in a unique ID of your choosing for the notification
             if (notificationManager != null)
                 notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
         }
@@ -279,7 +282,7 @@ public class UtilesNotification {
      */
     public static void createNotification(Context context, MyNotification fNotification) {
         if (!fNotification.getChecked()) {
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_logo_white) /* Notification icons must be entirely white */
                     .setContentTitle(fNotification.getTitle())
@@ -293,7 +296,6 @@ public class UtilesNotification {
             NotificationManager notificationManager = (NotificationManager)
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            // Pass in a unique ID of your choosing for the notification
             if (notificationManager != null)
                 notificationManager.notify(fNotification.getNotification_type(), notificationBuilder.build());
         }

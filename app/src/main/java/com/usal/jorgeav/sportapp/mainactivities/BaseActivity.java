@@ -1,9 +1,12 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -183,6 +186,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
         hideContent();
 
+        createNotificationChannel();
+
         // To know if onRestoreInstance() are going to init a Fragment before
         // onStart() method attach the FirebaseAuth listener and start a main Fragment
         // Repeat this onRestoreInstance() when onCreate() are not 
@@ -228,6 +233,34 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     /**
+     * Se establece el canal para las notificaciones, obligatorio a partir de Android 8 (Oreo).
+     * Crea un canal con un identificador único y un nombre, una descripción y una prioridad que
+     * pueden cambiarse desde la aplicación de opciones del dispositivo.
+     * <p>
+     * Si al invocar este método el canal ya está creado, no realiza ninguna acción.
+     *
+     * @see <a href= "https://developer.android.com/training/notify-user/channels">
+     * Create and Manage Notification Channels (Android Documentation)</a>
+     */
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            String channelID = UtilesNotification.NOTIFICATION_CHANNEL_ID;
+            NotificationChannel channel = new NotificationChannel(channelID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            if (notificationManager != null)
+                notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    /**
      * Extrae la información del usuario almacenada en su perfil de FirebaseUser y la coloca sobre
      * la cabecera del menú lateral de navegación
      *
@@ -238,9 +271,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void setUserInfoInNavigationDrawer() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser == null) return;
-        ImageView image = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_image);
-        TextView title = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_title);
-        TextView subtitle = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_subtitle);
+        ImageView image = mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_image);
+        TextView title = mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_title);
+        TextView subtitle = mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_subtitle);
 
         title.setText(firebaseUser.getDisplayName());
         subtitle.setText(firebaseUser.getEmail());
