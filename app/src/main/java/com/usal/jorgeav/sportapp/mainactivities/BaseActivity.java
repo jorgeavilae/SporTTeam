@@ -186,8 +186,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
         hideContent();
 
-        createNotificationChannel();
-
         // To know if onRestoreInstance() are going to init a Fragment before
         // onStart() method attach the FirebaseAuth listener and start a main Fragment
         // Repeat this onRestoreInstance() when onCreate() are not 
@@ -204,6 +202,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
                     // User is signed in
                     Log.i(TAG, "FirebaseUser logged ID: " + fUser.getUid());
                     setUserInfoInNavigationDrawer();
+
+                    createNotificationChannel();
 
                     // Initialization for populate Content Provider and init Service if needed
                     SportteamSyncInitialization.initialize(BaseActivity.this);
