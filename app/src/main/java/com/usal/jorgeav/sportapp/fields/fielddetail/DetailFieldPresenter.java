@@ -80,30 +80,29 @@ class DetailFieldPresenter implements
      * y, si no los encuentra, borra la instalación de la base de datos del servidor.
      *
      * @param fieldId identificador de la instalación
-     * @see FieldsFirebaseActions#getFieldNextEventsReferenceWithId(String)
+     * @see FieldsFirebaseSync#queryNextEventsFromField(String, ValueEventListener)
      * @see FieldsFirebaseActions#deleteField(String)
      */
     @Override
     public void deleteField(final String fieldId) {
         if (fieldId != null && !TextUtils.isEmpty(fieldId)) {
-            FieldsFirebaseActions.getFieldNextEventsReferenceWithId(fieldId)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                Toast.makeText(mView.getActivityContext(),
-                                        R.string.toast_msg_error_there_is_next_events,
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                FieldsFirebaseActions.deleteField(fieldId);
-                                ((BaseFragment) mView).resetBackStack();
-                            }
-                        }
+            FieldsFirebaseSync.queryNextEventsFromField(fieldId, new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        Toast.makeText(mView.getActivityContext(),
+                                R.string.toast_msg_error_there_is_next_events,
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        FieldsFirebaseActions.deleteField(fieldId);
+                        ((BaseFragment) mView).resetBackStack();
+                    }
+                }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
         }
     }
 

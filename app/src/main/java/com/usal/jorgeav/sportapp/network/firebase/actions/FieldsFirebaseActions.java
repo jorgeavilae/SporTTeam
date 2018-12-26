@@ -118,14 +118,6 @@ public class FieldsFirebaseActions {
                 .child(FirebaseDBContract.Field.SPORT).child(sport.getSport_id()).setValue(sport.toMap());
     }
 
-    //todo cambiar por un método en sync que acepte un listener creado desde la vista que borre el field si no tiene next_events
-    // todo también se puede juntar con el método de abajo y hacer la comprobación dentro de el
-    //Return reference to NextEvents in Field for checks.
-    public static DatabaseReference getFieldNextEventsReferenceWithId(String fieldId) {
-        return FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS)
-                .child(fieldId).child(FirebaseDBContract.Field.NEXT_EVENTS);
-    }
-
     /**
      * Invocado para borrar la instalación de la base de datos del servidor.
      *

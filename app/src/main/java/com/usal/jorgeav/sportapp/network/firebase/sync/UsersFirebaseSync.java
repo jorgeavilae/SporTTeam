@@ -581,7 +581,7 @@ public class UsersFirebaseSync {
      * de usuario y aplica el {@link ValueEventListener} proporcionado.
      * Utilizado para comprobar la existencia de ese email en la base de datos.
      *
-     * @param email email buscado
+     * @param email              email buscado
      * @param valueEventListener listener con las acciones a realizar al recibir los resultados
      *                           de la consulta
      */
@@ -597,7 +597,7 @@ public class UsersFirebaseSync {
      * de usuario y aplica el {@link ValueEventListener} proporcionado.
      * Utilizado para comprobar la existencia de ese nombre en la base de datos.
      *
-     * @param name nombre buscado
+     * @param name               nombre buscado
      * @param valueEventListener listener con las acciones a realizar al recibir los resultados
      *                           de la consulta
      */

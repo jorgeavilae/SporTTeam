@@ -8,6 +8,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
@@ -163,5 +164,20 @@ public class FieldsFirebaseSync {
 
             }
         };
+    }
+
+    /**
+     * Realiza una única consulta a la base de datos de Firebase buscando los próximos partidos
+     * de una instalación concreta y aplica el {@link ValueEventListener} proporcionado.
+     * Utilizado para comprobar la existencia de próximos partidos en la instalación.
+     *
+     * @param fieldId            identificador de la instalación buscada
+     * @param valueEventListener listener con las acciones a realizar al recibir los resultados
+     *                           de la consulta
+     */
+    public static void queryNextEventsFromField(String fieldId, ValueEventListener valueEventListener) {
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_FIELDS)
+                .child(fieldId).child(FirebaseDBContract.Field.NEXT_EVENTS)
+                .addListenerForSingleValueEvent(valueEventListener);
     }
 }
