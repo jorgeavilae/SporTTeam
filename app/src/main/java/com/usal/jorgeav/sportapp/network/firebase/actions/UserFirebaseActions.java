@@ -45,22 +45,6 @@ public class UserFirebaseActions {
      */
     private static final String TAG = UserFirebaseActions.class.getSimpleName();
 
-    //todo cambiar por un método en sync que acepte un listener creado desde la vista
-    //Return reference to users with same email for checks.
-    public static Query getUserEmailReferenceEqualTo(String email) {
-        String userEmailPath = FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.EMAIL;
-        return FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
-                .orderByChild(userEmailPath).equalTo(email);
-    }
-
-    //todo cambiar por un método en sync que acepte un listener creado desde la vista
-    //Return reference to users with same name for checks.
-    public static Query getUserNameReferenceEqualTo(String name) {
-        String userNamePath = FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.ALIAS;
-        return FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
-                .orderByChild(userNamePath).equalTo(name);
-    }
-
     /**
      * Invocado para insertar el usuario especificado en la base de datos del servidor.
      * Obtiene una referencia a la rama correspondiente del archivo JSON y establece el usuario

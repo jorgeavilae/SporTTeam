@@ -30,6 +30,7 @@ import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.data.provider.SportteamContract;
 import com.usal.jorgeav.sportapp.network.firebase.FirebaseDBContract;
 import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.sync.UsersFirebaseSync;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -84,8 +85,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
         isEmailUnique = false;
         if (email != null && !TextUtils.isEmpty(email)) {
             if (isEmailValid(email))
-                UserFirebaseActions.getUserEmailReferenceEqualTo(email)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                UsersFirebaseSync.queryUserEmail(email, new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
@@ -125,8 +125,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
     public void checkUserNameExists(String name) {
         isNameUnique = false;
         if (name != null && !TextUtils.isEmpty(name))
-            UserFirebaseActions.getUserNameReferenceEqualTo(name)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
+            UsersFirebaseSync.queryUserName(name, new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {

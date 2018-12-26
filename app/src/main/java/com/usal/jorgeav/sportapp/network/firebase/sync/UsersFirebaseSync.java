@@ -12,6 +12,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.data.Invitation;
 import com.usal.jorgeav.sportapp.data.MyNotification;
@@ -573,5 +574,37 @@ public class UsersFirebaseSync {
 
             }
         };
+    }
+
+    /**
+     * Realiza una única consulta a la base de datos de Firebase buscando un email concreto
+     * de usuario y aplica el {@link ValueEventListener} proporcionado.
+     * Utilizado para comprobar la existencia de ese email en la base de datos.
+     *
+     * @param email email buscado
+     * @param valueEventListener listener con las acciones a realizar al recibir los resultados
+     *                           de la consulta
+     */
+    public static void queryUserEmail(String email, ValueEventListener valueEventListener) {
+        String userEmailPath = FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.EMAIL;
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                .orderByChild(userEmailPath).equalTo(email)
+                .addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    /**
+     * Realiza una única consulta a la base de datos de Firebase buscando un nombre concreto
+     * de usuario y aplica el {@link ValueEventListener} proporcionado.
+     * Utilizado para comprobar la existencia de ese nombre en la base de datos.
+     *
+     * @param name nombre buscado
+     * @param valueEventListener listener con las acciones a realizar al recibir los resultados
+     *                           de la consulta
+     */
+    public static void queryUserName(String name, ValueEventListener valueEventListener) {
+        String userNamePath = FirebaseDBContract.DATA + "/" + FirebaseDBContract.User.ALIAS;
+        FirebaseDatabase.getInstance().getReference(FirebaseDBContract.TABLE_USERS)
+                .orderByChild(userNamePath).equalTo(name)
+                .addListenerForSingleValueEvent(valueEventListener);
     }
 }

@@ -434,13 +434,12 @@ class ProfilePresenter implements
      * @param newName  nombre del que se comprueba la existencia
      * @param listener Listener con el que se especifica la acción a realizar una vez se
      *                 realice la consulta.
-     * @see UserFirebaseActions#getUserNameReferenceEqualTo(String)
+     * @see UsersFirebaseSync#queryUserName(String, ValueEventListener)
      */
     @Override
     public void checkUserName(String newName, ValueEventListener listener) {
         if (newName != null && !TextUtils.isEmpty(newName))
-            UserFirebaseActions.getUserNameReferenceEqualTo(newName)
-                    .addListenerForSingleValueEvent(listener);
+            UsersFirebaseSync.queryUserName(newName, listener);
     }
 
     /**
