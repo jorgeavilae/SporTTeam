@@ -87,6 +87,8 @@ class NewEventPresenter implements
      * @see EventsFirebaseActions#addEvent(Event, ArrayList)
      * @see EventsFirebaseActions#editEvent(Event)
      */
+    //todo editar un evento del pasado lo crea dos veces
+    //todo editar un evento del pasado lo borra del pasado
     @Override
     public void addEvent(String id, String sport, String field, String address, LatLng coord, String name, String city,
                          String date, String time, String total, String empty,
