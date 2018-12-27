@@ -89,12 +89,7 @@ public class NewAlarmFragment extends BaseFragment implements
      * en la consulta a la base de datos.
      */
     public static final String INSTANCE_FIELD_LIST_ID = "INSTANCE_FIELD_LIST_ID";
-    //todo necesario?
-//    /**
-//     * Etiqueta utilizada para guardar, en el estado del Fragmento, el deporte establecido para la
-//     * alarma.
-//     */
-//    public static final String INSTANCE_SPORT_IMAGE_ID = "INSTANCE_SPORT_IMAGE_ID";
+
     /**
      * Almacena las instalaciones encontradas en la consulta, que serán sobre las que se pueda
      * establecer la alarma
