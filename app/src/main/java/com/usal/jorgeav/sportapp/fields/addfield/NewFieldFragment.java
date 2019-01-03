@@ -23,6 +23,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
@@ -86,6 +87,10 @@ public class NewFieldFragment extends BaseFragment implements
      */
     @BindView(R.id.new_field_map)
     MapView newFieldMap;
+    /**
+     * Marca sobre el mapa de la interfaz
+     */
+    private Marker nMarker;
     /**
      * Objeto principal de Google Maps API. Hace referencia al mapa que provee esta API.
      *
@@ -263,7 +268,8 @@ public class NewFieldFragment extends BaseFragment implements
                 mMap = googleMap;
 
                 // Coordinates selected previously
-                Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((FieldsActivity) getActivity()).mCoord);
+                if (nMarker != null) nMarker.remove();
+                nMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((FieldsActivity) getActivity()).mCoord);
             }
         });
 
@@ -328,6 +334,13 @@ public class NewFieldFragment extends BaseFragment implements
             }
         });
 
+        /* Show field´s place only when create new field.
+        Need it cause when setting address, this fragment is not created */
+        if (getArguments() == null || !getArguments().containsKey(BUNDLE_FIELD_ID))
+            showFieldPlace(((FieldsActivity) getActivity()).mAddress,
+                    ((FieldsActivity) getActivity()).mCity,
+                    ((FieldsActivity) getActivity()).mCoord);
+
         return root;
     }
 
@@ -362,6 +375,7 @@ public class NewFieldFragment extends BaseFragment implements
             mNewFieldPresenter.openField(getLoaderManager(), getArguments());
             sInitialize = true;
         } else {
+            mNewFieldPresenter.destroyOpenFieldLoader(getLoaderManager());
             setSportCourts(((FieldsActivity) getActivity()).mSports);
             showContent();
         }
@@ -425,7 +439,8 @@ public class NewFieldFragment extends BaseFragment implements
         if (address != null && !TextUtils.isEmpty(address))
             newFieldAddress.setText(address);
 
-        Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords);
+        if (nMarker != null) nMarker.remove();
+        nMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords);
 
         ((FieldsActivity) getActivity()).mAddress = address;
         ((FieldsActivity) getActivity()).mCity = city;

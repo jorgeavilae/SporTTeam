@@ -288,6 +288,17 @@ class NewFieldPresenter implements
      */
     @Override
     public void onLoaderReset(Loader loader) {
+        switch (loader.getId()) {
+            case SportteamLoader.LOADER_FIELDS_FROM_CITY:
+                mNewFieldView.retrieveFields(null);
+                break;
+            case SportteamLoader.LOADER_FIELD_ID:
+                showFieldDetail(null);
+                break;
+            case SportteamLoader.LOADER_FIELD_SPORTS_ID:
+                mNewFieldView.setSportCourts(null);
+                break;
+        }
     }
 
     /**
@@ -311,8 +322,6 @@ class NewFieldPresenter implements
             long openTime = data.getLong(SportteamContract.FieldEntry.COLUMN_OPENING_TIME);
             long closeTime = data.getLong(SportteamContract.FieldEntry.COLUMN_CLOSING_TIME);
             mNewFieldView.showFieldTimes(openTime, closeTime);
-        } else {
-            mNewFieldView.clearUI();
         }
     }
 }

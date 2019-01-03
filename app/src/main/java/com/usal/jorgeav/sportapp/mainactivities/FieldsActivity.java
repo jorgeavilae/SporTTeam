@@ -250,45 +250,6 @@ public class FieldsActivity extends BaseActivity
         else
             startActivityForResult(intent, REQUEST_CODE_JUST_ADDRESS);
     }
-//todo borrar
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_CODE_ADDRESS_TO_RETRIEVE || requestCode == REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT) {
-//            if (resultCode == RESULT_OK) {
-//                // Expect a Field where to add a new Sport,
-//                // or an address (MyPlace) where to add a new Field
-//                if (data.hasExtra(MapsActivity.FIELD_SELECTED_EXTRA)) {
-//                    Field field = data.getParcelableExtra(MapsActivity.FIELD_SELECTED_EXTRA);
-//                    mFieldId = field.getId();
-//                    mAddress = field.getAddress();
-//                    mCity = field.getCity();
-//                    mCoord = new LatLng(field.getCoord_latitude(), field.getCoord_longitude());
-//
-//                    //Start dialog to add sport to this Field
-//                    startDialogToAddSport(field);
-//                } else if (data.hasExtra(MapsActivity.PLACE_SELECTED_EXTRA)) {
-//                    MyPlace myPlace = data.getParcelableExtra(MapsActivity.PLACE_SELECTED_EXTRA);
-//                    mFieldId = null;
-//                    mAddress = myPlace.getAddress();
-//                    mCity = myPlace.getCity();
-//                    mCoord = myPlace.getCoordinates();
-//
-//                    //When select a place from FieldsFragment's addFieldButton
-//                    if (requestCode == REQUEST_CODE_ADDRESS_TO_START_NEW_FRAGMENT) {
-//                        //Select sports and later, in retrieveFields(), start new Field fragment flow
-//                        Fragment fragment = SportsListFragment.newInstance("", null, null);
-//                        initFragment(fragment, true);
-//                    } else { //When edit Field's place from NewFieldFragment's button
-//                        if (mDisplayedFragment instanceof NewFieldContract.View)
-//                            ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
-//                    }
-//                }
-//            } else {
-//                Toast.makeText(this, getString(R.string.toast_should_select_place), Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
 
     /**
      * Recupera el lugar seleccionado para la instalación en {@link MapsActivity} o la
@@ -300,7 +261,6 @@ public class FieldsActivity extends BaseActivity
      * @param resultCode  código representativo del resultado de la ejecución de la Actividad
      * @param data        datos extras incluidos como resultado de la ejecución de la Actividad
      */
-    //todo testear pq he quitado mFieldId ¿y he reorganizado el código?
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
