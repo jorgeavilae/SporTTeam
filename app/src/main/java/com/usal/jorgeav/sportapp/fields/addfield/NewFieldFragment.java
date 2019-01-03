@@ -328,11 +328,6 @@ public class NewFieldFragment extends BaseFragment implements
             }
         });
 
-        // Show map if with place selected previously
-        showFieldPlace(((FieldsActivity) getActivity()).mAddress,
-                ((FieldsActivity) getActivity()).mCity,
-                ((FieldsActivity) getActivity()).mCoord);
-
         return root;
     }
 
@@ -351,8 +346,6 @@ public class NewFieldFragment extends BaseFragment implements
         mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 
-    //todo comparar con newEventFragment: no es igual pq? parece q se puede escribir este método con menos lineas
-
     /**
      * Pide al Presentador que recupere las instalaciones de la ciudad actual en caso de que el
      * usuario quiera cambiar la dirección. Si es una edición, también pide al Presentador los
@@ -365,17 +358,12 @@ public class NewFieldFragment extends BaseFragment implements
         //Do always to have Fields to populate Map
         mNewFieldPresenter.loadNearbyFields(getLoaderManager(), getArguments());
 
-        //Do when edit a Field
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_FIELD_ID)) {
-            if (sInitialize) {
-                //To prevent double initialization on edits
-                mNewFieldPresenter.destroyOpenFieldLoader(getLoaderManager());
-                return;
-            }
+        if (!sInitialize) {
             mNewFieldPresenter.openField(getLoaderManager(), getArguments());
             sInitialize = true;
-        } else { //Do when create a new Field
+        } else {
             setSportCourts(((FieldsActivity) getActivity()).mSports);
+            showContent();
         }
     }
 
@@ -386,6 +374,7 @@ public class NewFieldFragment extends BaseFragment implements
      */
     @Override
     public void retrieveFields(ArrayList<Field> fieldList) {
+        showContent();
         mFieldList = fieldList;
     }
 
@@ -396,7 +385,6 @@ public class NewFieldFragment extends BaseFragment implements
     @Override
     public void onResume() {
         super.onResume();
-        mFragmentManagementListener.showContent();
         newFieldMap.onResume();
     }
 
@@ -434,13 +422,14 @@ public class NewFieldFragment extends BaseFragment implements
      */
     @Override
     public void showFieldPlace(String address, String city, LatLng coords) {
-        if (address != null && !TextUtils.isEmpty(address)
-                && city != null && !TextUtils.isEmpty(city)
-                && coords != null) {
+        if (address != null && !TextUtils.isEmpty(address))
             newFieldAddress.setText(address);
 
-            Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords);
-        }
+        Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords);
+
+        ((FieldsActivity) getActivity()).mAddress = address;
+        ((FieldsActivity) getActivity()).mCity = city;
+        ((FieldsActivity) getActivity()).mCoord = coords;
     }
 
     /**

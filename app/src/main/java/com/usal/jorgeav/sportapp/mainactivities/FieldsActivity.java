@@ -65,9 +65,6 @@ public class FieldsActivity extends BaseActivity
      */
     public static final int REQUEST_CODE_JUST_ADDRESS = 24;
 
-    //todo mFieldId innecesario???
-//    private static final String INSTANCE_FIELD_ID_SELECTED = "INSTANCE_FIELD_ID_SELECTED";
-//    public String mFieldId;
     /**
      * Clave para mantener la dirección seleccionada en rotaciones del dispositivo en
      * el {@link Bundle} de estado.
@@ -147,8 +144,6 @@ public class FieldsActivity extends BaseActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-//        if (mFieldId != null)
-//            outState.putString(INSTANCE_FIELD_ID_SELECTED, mFieldId);
         if (mAddress != null)
             outState.putString(INSTANCE_ADDRESS_SELECTED, mAddress);
         if (mCity != null)
@@ -170,8 +165,6 @@ public class FieldsActivity extends BaseActivity
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-//        if (savedInstanceState.containsKey(INSTANCE_FIELD_ID_SELECTED))
-//            mFieldId = savedInstanceState.getString(INSTANCE_FIELD_ID_SELECTED);
         if (savedInstanceState.containsKey(INSTANCE_ADDRESS_SELECTED))
             mAddress = savedInstanceState.getString(INSTANCE_ADDRESS_SELECTED);
         if (savedInstanceState.containsKey(INSTANCE_CITY_SELECTED))
@@ -179,13 +172,13 @@ public class FieldsActivity extends BaseActivity
         if (savedInstanceState.containsKey(INSTANCE_COORD_SELECTED))
             mCoord = savedInstanceState.getParcelable(INSTANCE_COORD_SELECTED);
 
-        if (mDisplayedFragment instanceof NewFieldContract.View)
-            ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
+        if (mAddress != null || mCity != null || mCoord != null)
+            if (mDisplayedFragment instanceof NewFieldContract.View)
+                ((NewFieldContract.View) mDisplayedFragment).showFieldPlace(mAddress, mCity, mCoord);
 
 
         if (savedInstanceState.containsKey(INSTANCE_SPORTS_COURT_SELECTED)) {
             mSports = savedInstanceState.getParcelableArrayList(INSTANCE_SPORTS_COURT_SELECTED);
-
             if (mDisplayedFragment instanceof NewFieldContract.View)
                 ((NewFieldContract.View) mDisplayedFragment).setSportCourts(mSports);
         }
