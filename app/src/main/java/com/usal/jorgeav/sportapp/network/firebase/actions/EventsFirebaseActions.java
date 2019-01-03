@@ -233,6 +233,7 @@ public class EventsFirebaseActions {
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
                 Log.i(TAG, "addSimulatedParticipant: onComplete:" + databaseError);
+                fragment.getActivity().onBackPressed();
             }
         });
     }

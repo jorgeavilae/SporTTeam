@@ -92,7 +92,6 @@ public class FieldsMapFragment extends SupportMapFragment implements
      */
     FieldsContract.Presenter mFieldsPresenter;
 
-    //todo es necesaria?? que pasa si la borro
     /**
      * Variable estática utilizada para comprobar sólo una vez si este Fragmento fue instanciado
      * para crear una instalación.

@@ -82,8 +82,6 @@ public class NewAlarmFragment extends BaseFragment implements
      */
     public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
 
-    // todo en vez de consultar borrar el loader y guardar fields en instanceState; pq no consultar y recuperar la consulta del loader sin borrarlo?
-    //puede que se carguen unos fields diferentes: si cambia el deporte se deben cargar los fields del deporte nuevo no los del deporte de getArguments()
     /**
      * Etiqueta utilizada para guardar, en el estado del Fragmento, las instalaciones encontradas
      * en la consulta a la base de datos.
