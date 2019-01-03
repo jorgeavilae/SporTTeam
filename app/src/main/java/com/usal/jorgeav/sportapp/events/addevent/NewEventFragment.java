@@ -28,6 +28,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.usal.jorgeav.sportapp.BaseFragment;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.Field;
@@ -123,6 +124,10 @@ public class NewEventFragment extends BaseFragment implements
      */
     @BindView(R.id.new_event_map)
     MapView newEventMap;
+    /**
+     * Marca sobre el mapa de la interfaz
+     */
+    private Marker nMarker;
     /**
      * Objeto principal de Google Maps API. Hace referencia al mapa que provee esta API.
      *
@@ -323,7 +328,8 @@ public class NewEventFragment extends BaseFragment implements
                 mMap = googleMap;
 
                 // Coordinates selected previously
-                Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((EventsActivity) getActivity()).mCoord);
+                if (nMarker != null) nMarker.remove();
+                nMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((EventsActivity) getActivity()).mCoord);
             }
         });
 
@@ -442,6 +448,7 @@ public class NewEventFragment extends BaseFragment implements
 
             sInitialize = true;
         } else {
+            mNewEventPresenter.destroyOpenEventLoader(getLoaderManager());
             showContent();
         }
     }
@@ -500,7 +507,8 @@ public class NewEventFragment extends BaseFragment implements
         if (address != null && !TextUtils.isEmpty(address))
             newEventAddress.setText(address);
 
-        Utiles.setCoordinatesInMap(getActivityContext(), mMap, coordinates);
+        if (nMarker != null) nMarker.remove();
+        nMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, coordinates);
 
         ((EventsActivity) getActivity()).mFieldId = fieldId;
         ((EventsActivity) getActivity()).mAddress = address;

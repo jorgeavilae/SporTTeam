@@ -199,6 +199,7 @@
     <string name="total_players">Puestos totales</string>
     <string name="total_players_label">Puestos totales:\u0020</string>
     <string name="new_alarm_title">Nueva alarma</string>
+    <string name="toast_city_invalid">Ciudad inválida</string>
     <string name="toast_place_invalid">Sitio inválido</string>
     <string name="toast_date_period_invalid">Periodo de fechas inválido</string>
     <string name="toast_date_invalid">Fecha inválida</string>

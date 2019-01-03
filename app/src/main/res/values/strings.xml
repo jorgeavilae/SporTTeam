@@ -204,6 +204,7 @@
     <string name="total_players">Total players</string>
     <string name="total_players_label">Total players:\u0020</string>
     <string name="new_alarm_title">New Alarm</string>
+    <string name="toast_city_invalid">Invalid city</string>
     <string name="toast_place_invalid">Invalid place</string>
     <string name="toast_date_period_invalid">Invalid date period</string>
     <string name="toast_date_invalid">Invalid date</string>

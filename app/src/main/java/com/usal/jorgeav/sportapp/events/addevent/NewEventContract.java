@@ -85,6 +85,15 @@ public abstract class NewEventContract {
                       ArrayList<String> friendsId);
 
         /**
+         * Invocado para detener el proceso de consulta a la base de datos del partido que se
+         * quiere editar
+         *
+         * @param loaderManager objeto {@link LoaderManager} utilizado para detener la consulta al
+         *                      Proveedor de Contenido
+         */
+        void destroyOpenEventLoader(LoaderManager loaderManager);
+
+        /**
          * Invocado para detener el proceso de consulta de la base de datos de instalaciones
          *
          * @param loaderManager objeto {@link LoaderManager} utilizado para detener la consulta al

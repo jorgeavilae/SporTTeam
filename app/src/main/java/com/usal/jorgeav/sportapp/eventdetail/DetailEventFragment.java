@@ -778,7 +778,8 @@ public class DetailEventFragment extends BaseFragment implements
         if (emptyPlayers > -1 && totalPlayers > -1) {
             this.detailEventEmpty.setText(String.format(Locale.getDefault(), "%d", emptyPlayers));
             this.detailEventTotal.setText(String.format(Locale.getDefault(), "%d", totalPlayers));
-            this.detailEventProportion.setImageResource(Utiles.getPlayerIconFromResource(emptyPlayers, totalPlayers));
+            int playerIcon = Utiles.getPlayerIconFromResource(emptyPlayers, totalPlayers);
+            if (playerIcon != -1) this.detailEventProportion.setImageResource(playerIcon);
 
             //Change UI if emptyPlayer is 0 and doesn't need teams.
             isFull = emptyPlayers == 0 && Utiles.sportNeedsTeams(mSportId);

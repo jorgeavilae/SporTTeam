@@ -155,6 +155,13 @@ class NewEventPresenter implements
      * @return true si es válido, false en caso contrario
      */
     private boolean isValidField(String fieldId, String address, String sportId, String city, LatLng coordinates) {
+        String prefCity = UtilesPreferences.getCurrentUserCity(mNewEventView.getActivityContext());
+        if (!prefCity.equals(city)){
+            Toast.makeText(mNewEventView.getActivityContext(), R.string.toast_city_invalid, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "isValidField: not valid");
+            return false;
+        }
+
         // Check if the sport doesn't need a field and address is valid
         if (!Utiles.sportNeedsField(sportId) && address != null && !TextUtils.isEmpty(address))
             return true;
@@ -226,9 +233,9 @@ class NewEventPresenter implements
      * @return true si es válido, false en caso contrario
      */
     private boolean isPlayersCorrect(String total, String empty, String sportId) {
-        // If total is grater than empty OR infinite is checked and sport doesn't need a field
+        // If total is grater than 0 and empty OR infinite is checked and sport doesn't need a field
         if (!TextUtils.isEmpty(total) && !TextUtils.isEmpty(empty))
-            if (Integer.valueOf(total) >= Integer.valueOf(empty)
+            if ((Integer.valueOf(total) > 0 && Integer.valueOf(total) > Integer.valueOf(empty))
                     || (empty.equals("0") && !Utiles.sportNeedsField(sportId)))
                 return true;
         Toast.makeText(mNewEventView.getActivityContext(), R.string.toast_players_relation_invalid, Toast.LENGTH_SHORT).show();
@@ -247,9 +254,22 @@ class NewEventPresenter implements
     public void openEvent(LoaderManager loaderManager, Bundle b) {
         if (b != null && b.containsKey(NewEventFragment.BUNDLE_EVENT_ID)) {
             loaderManager.initLoader(SportteamLoader.LOADER_EVENT_ID, b, this);
-            loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID, b, this);
             loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
+            loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID, b, this);
         }
+    }
+
+    /**
+     * Detiene el proceso de consulta a la base de datos del partido que se va a editar
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     */
+    @Override
+    public void destroyOpenEventLoader(LoaderManager loaderManager) {
+        loaderManager.destroyLoader(SportteamLoader.LOADER_EVENT_ID);
+        loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID);
+        loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID);
     }
 
     /**
@@ -413,8 +433,6 @@ class NewEventPresenter implements
             mNewEventView.showEventDate(data.getLong(SportteamContract.EventEntry.COLUMN_DATE));
             mNewEventView.showEventTotalPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_TOTAL_PLAYERS));
             mNewEventView.showEventEmptyPlayers(data.getInt(SportteamContract.EventEntry.COLUMN_EMPTY_PLAYERS));
-        } else {
-            mNewEventView.clearUI();
         }
     }
 }

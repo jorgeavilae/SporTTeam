@@ -215,10 +215,10 @@ public class Utiles {
         double haversine_dR = haversine_latitude_difference +
                 Math.cos(latitude1_radians) * Math.cos(latitude2_radians) * haversine_longitude_difference;
 
-        double arcosinOf_haversine_dR = Math.asin(Math.sqrt(haversine_dR));
+        double arcSinOf_haversine_dR = Math.asin(Math.sqrt(haversine_dR));
 
         // Distance in earthRadius's units.
-        double distance = 2 * EARTH_RADIUS * arcosinOf_haversine_dR;
+        double distance = 2 * EARTH_RADIUS * arcSinOf_haversine_dR;
 
         return distance;
     }
@@ -306,7 +306,7 @@ public class Utiles {
      * @return identificador del recurso de imagen correspondiente al porcentaje
      */
     public static int getPlayerIconFromResource(long empty_players, long total_players) {
-        if (empty_players >= 0 && total_players >= 0 && empty_players <= total_players) {
+        if (empty_players >= 0 && total_players > 0 && empty_players <= total_players) {
             float proportion = ((float) empty_players / (float) total_players) * 100;
             if (proportion == 0)
                 return R.drawable.logo_full;
