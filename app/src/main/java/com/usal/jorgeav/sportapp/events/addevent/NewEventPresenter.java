@@ -84,17 +84,17 @@ class NewEventPresenter implements
      * @param simulatedParticipants listado de participantes simulados ya inscritos en el
      *                              momento de la edición, o null en el caso de la creación.
      * @param friendsId             listado de amigos del usuario creador del partido, a los que
+     * @param isEditFromPast        true si se está editando un partido del pasado, en cuyo caso
+     *                              se copia a uno nuevo en vez de modificarlo     *
      * @see EventsFirebaseActions#addEvent(Event, ArrayList)
      * @see EventsFirebaseActions#editEvent(Event)
      */
-    //todo editar un evento del pasado lo crea dos veces
-    //todo editar un evento del pasado lo borra del pasado
     @Override
     public void addEvent(String id, String sport, String field, String address, LatLng coord, String name, String city,
                          String date, String time, String total, String empty,
                          HashMap<String, Boolean> participants,
                          HashMap<String, SimulatedUser> simulatedParticipants,
-                         ArrayList<String> friendsId) {
+                         ArrayList<String> friendsId, boolean isEditFromPast) {
         // Parse date & time
         Long dateMillis = UtilesTime.stringDateToMillis(date);
         Long timeMillis = UtilesTime.stringTimeToMillis(time);
@@ -109,15 +109,25 @@ class NewEventPresenter implements
         if (isValidSport(sport) && isValidField(field, address, sport, city, coord) && isValidName(name)
                 && isValidOwner(myUid) && isDateTimeCorrect(dateMillis, timeMillis) && isPlayersCorrect(total, empty, sport)) {
 
-            Event event = new Event(id, sport, field, address, coord, name, city,
-                    dateMillis + timeMillis, myUid, Long.valueOf(total), Long.valueOf(empty),
-                    participants, simulatedParticipants);
-
-            Log.d(TAG, "addEvent: " + event);
-            if (TextUtils.isEmpty(event.getEvent_id()))
+            Event event;
+            if (TextUtils.isEmpty(id)) {
+                event = new Event(id, sport, field, address, coord, name, city,
+                        dateMillis + timeMillis, myUid, Long.valueOf(total), Long.valueOf(empty),
+                        participants, simulatedParticipants);
                 EventsFirebaseActions.addEvent(event, friendsId);
-            else
-                EventsFirebaseActions.editEvent(event);
+            } else {
+                if (isEditFromPast) {
+                    event = new Event("", sport, field, address, coord, name, city,
+                            dateMillis + timeMillis, myUid, Long.valueOf(total), Long.valueOf(empty),
+                            null, null);
+                    EventsFirebaseActions.addEvent(event, friendsId);
+                } else {
+                    event = new Event(id, sport, field, address, coord, name, city,
+                            dateMillis + timeMillis, myUid, Long.valueOf(total), Long.valueOf(empty),
+                            participants, simulatedParticipants);
+                    EventsFirebaseActions.editEvent(event);
+                }
+            }
 
             ((EventsActivity) mNewEventView.getActivityContext()).mFieldId = null;
             ((EventsActivity) mNewEventView.getActivityContext()).mAddress = null;
@@ -156,7 +166,7 @@ class NewEventPresenter implements
      */
     private boolean isValidField(String fieldId, String address, String sportId, String city, LatLng coordinates) {
         String prefCity = UtilesPreferences.getCurrentUserCity(mNewEventView.getActivityContext());
-        if (!prefCity.equals(city)){
+        if (!prefCity.equals(city)) {
             Toast.makeText(mNewEventView.getActivityContext(), R.string.toast_city_invalid, Toast.LENGTH_SHORT).show();
             Log.e(TAG, "isValidField: not valid");
             return false;
@@ -260,6 +270,22 @@ class NewEventPresenter implements
     }
 
     /**
+     * Inicia el proceso de consulta de participantes y participantes simulados
+     * del partido de la base de datos que se quiere editar
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     * @param b             contenedor de posibles parámetros utilizados en la consulta
+     */
+    @Override
+    public void loadParticipants(LoaderManager loaderManager, Bundle b) {
+        if (b != null && b.containsKey(NewEventFragment.BUNDLE_EVENT_ID)) {
+            loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID, b, this);
+            loaderManager.initLoader(SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID, b, this);
+        }
+    }
+
+    /**
      * Detiene el proceso de consulta a la base de datos del partido que se va a editar
      *
      * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
@@ -268,8 +294,6 @@ class NewEventPresenter implements
     @Override
     public void destroyOpenEventLoader(LoaderManager loaderManager) {
         loaderManager.destroyLoader(SportteamLoader.LOADER_EVENT_ID);
-        loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_PARTICIPANTS_ID);
-        loaderManager.destroyLoader(SportteamLoader.LOADER_EVENTS_SIMULATED_PARTICIPANTS_ID);
     }
 
     /**

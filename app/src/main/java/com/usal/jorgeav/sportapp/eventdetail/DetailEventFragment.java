@@ -252,7 +252,7 @@ public class DetailEventFragment extends BaseFragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.action_edit) {
-            Fragment fragment = NewEventFragment.newInstance(mEventId, mSportId);
+            Fragment fragment = NewEventFragment.newInstance(mEventId, mSportId, isPast);
             mFragmentManagementListener.initFragment(fragment, true);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {

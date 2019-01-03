@@ -193,7 +193,7 @@ public class EventsActivity extends BaseActivity
      */
     @Override
     public void onSportSelected(String sportId) {
-        Fragment fragment = NewEventFragment.newInstance(null, sportId);
+        Fragment fragment = NewEventFragment.newInstance(null, sportId, false);
         initFragment(fragment, true);
     }
 

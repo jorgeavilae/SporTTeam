@@ -79,6 +79,11 @@ public class NewEventFragment extends BaseFragment implements
      * el paso previo
      */
     public static final String BUNDLE_SPORT_SELECTED_ID = "BUNDLE_SPORT_SELECTED_ID";
+    /**
+     * Etiqueta utilizada en la instanciación del Fragmento para indicar si el partido pertenece al
+     * pasado en caso de que se esté editando
+     */
+    public static final String BUNDLE_IS_EDIT_FROM_PAST = "BUNDLE_IS_EDIT_FROM_PAST";
 
     /**
      * Presentador correspondiente a esta Vista
@@ -92,7 +97,6 @@ public class NewEventFragment extends BaseFragment implements
      */
     private static boolean sInitialize;
 
-    // todo en vez de consultar borrar el loader y guardar fields en instanceState; pq no consultar y recuperar la consulta del loader sin borrarlo? newFieldFragment no lo tiene
     /**
      * Etiqueta utilizada para guardar, en el estado del Fragmento, las instalaciones encontradas
      * en la consulta a la base de datos.
@@ -103,7 +107,7 @@ public class NewEventFragment extends BaseFragment implements
      * establecer el partido.
      */
     ArrayList<Field> mFieldList;
-    // todo en vez de consultar borrar el loader y guardar fields en instanceState; pq no consultar y recuperar la consulta del loader sin borrarlo?
+
     /**
      * Etiqueta utilizada para guardar, en el estado del Fragmento, los amigos encontrados en la
      * consulta a la base de datos.
@@ -114,6 +118,7 @@ public class NewEventFragment extends BaseFragment implements
      * creación del partido
      */
     ArrayList<String> mFriendsList;
+
     /**
      * Almacena el deporte seleccionado para el partido
      */
@@ -224,13 +229,15 @@ public class NewEventFragment extends BaseFragment implements
      * @param sportId identificador del deportes escogido para el partido
      * @return una nueva instancia de NewEventFragment
      */
-    public static NewEventFragment newInstance(@Nullable String eventId, @Nullable String sportId) {
+    public static NewEventFragment newInstance(@Nullable String eventId, @Nullable String sportId, boolean isEditFromPast) {
         NewEventFragment nef = new NewEventFragment();
         Bundle b = new Bundle();
         if (eventId != null)
             b.putString(BUNDLE_EVENT_ID, eventId);
         if (sportId != null)
             b.putString(BUNDLE_SPORT_SELECTED_ID, sportId);
+        if (isEditFromPast)
+            b.putBoolean(BUNDLE_IS_EDIT_FROM_PAST, true);
         nef.setArguments(b);
         sInitialize = false;
         return nef;
@@ -278,6 +285,9 @@ public class NewEventFragment extends BaseFragment implements
             String eventId = "";
             if (getArguments() != null && getArguments().containsKey(BUNDLE_EVENT_ID))
                 eventId = getArguments().getString(BUNDLE_EVENT_ID);
+            boolean isEditFromPast = false;
+            if (getArguments() != null && getArguments().containsKey(BUNDLE_IS_EDIT_FROM_PAST))
+                isEditFromPast = getArguments().getBoolean(BUNDLE_IS_EDIT_FROM_PAST);
 
             mNewEventPresenter.addEvent(
                     eventId,
@@ -291,7 +301,7 @@ public class NewEventFragment extends BaseFragment implements
                     newEventTime.getText().toString(),
                     newEventTotal.getText().toString(),
                     newEventEmpty.getText().toString(),
-                    mParticipants, mSimulatedParticipants, mFriendsList);
+                    mParticipants, mSimulatedParticipants, mFriendsList, isEditFromPast);
             return true;
         }
         return false;
@@ -436,6 +446,10 @@ public class NewEventFragment extends BaseFragment implements
     public void onStart() {
         super.onStart();
         newEventMap.onStart();
+
+        //Always load participants
+        mNewEventPresenter.loadParticipants(getLoaderManager(), getArguments());
+
         if (!sInitialize) {
             mNewEventPresenter.openEvent(getLoaderManager(), getArguments());
 

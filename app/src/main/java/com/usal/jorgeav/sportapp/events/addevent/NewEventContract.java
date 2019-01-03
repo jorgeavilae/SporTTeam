@@ -23,36 +23,6 @@ public abstract class NewEventContract {
      */
     public interface Presenter {
         /**
-         * Invocado para iniciar el proceso de consulta del partido de la base de datos que se
-         * quiere editar
-         *
-         * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
-         *                      de Contenido
-         * @param b             contenedor de posibles parámetros utilizados en la consulta
-         */
-        void openEvent(LoaderManager loaderManager, Bundle b);
-
-        /**
-         * Invocado para iniciar el proceso de consulta de instalaciones de la base de datos donde
-         * situar el partido
-         *
-         * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
-         *                      de Contenido
-         * @param b             contenedor de posibles parámetros utilizados en la consulta
-         */
-        void loadFields(LoaderManager loaderManager, Bundle b);
-
-        /**
-         * Invocado para iniciar el proceso de consulta de la base de datos de amigos del usuario
-         * actual a los que se debe avisar de la creación del partido
-         *
-         * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
-         *                      de Contenido
-         * @param b             contenedor de posibles parámetros utilizados en la consulta
-         */
-        void loadFriends(LoaderManager loaderManager, Bundle b);
-
-        /**
          * Invocado para crear el partido en la base de datos con los parámetros especificados
          *
          * @param id                    identificador del partido que se está editando, o null si es
@@ -77,12 +47,54 @@ public abstract class NewEventContract {
          *                              momento de la edición, o null en el caso de la creación.
          * @param friendsId             listado de amigos del usuario creador del partido, a los que
          *                              avisar de la creación del partido.
+         * @param isEditFromPast        true si se está editando un partido del pasado, en cuyo caso
+         *                              se copia a uno nuevo en vez de modificarlo
          */
         void addEvent(String id, String sport, String field, String address, LatLng coord, String name, String city,
                       String date, String time, String total, String empty,
                       HashMap<String, Boolean> participants,
                       HashMap<String, SimulatedUser> simulatedParticipants,
-                      ArrayList<String> friendsId);
+                      ArrayList<String> friendsId, boolean isEditFromPast);
+
+        /**
+         * Invocado para iniciar el proceso de consulta del partido de la base de datos que se
+         * quiere editar
+         *
+         * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+         *                      de Contenido
+         * @param b             contenedor de posibles parámetros utilizados en la consulta
+         */
+        void openEvent(LoaderManager loaderManager, Bundle b);
+
+        /**
+         * Invocado para iniciar el proceso de consulta de participantes y participantes simulados
+         * del partido de la base de datos que se quiere editar
+         *
+         * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+         *                      de Contenido
+         * @param b             contenedor de posibles parámetros utilizados en la consulta
+         */
+        void loadParticipants(LoaderManager loaderManager, Bundle b);
+
+        /**
+         * Invocado para iniciar el proceso de consulta de instalaciones de la base de datos donde
+         * situar el partido
+         *
+         * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+         *                      de Contenido
+         * @param b             contenedor de posibles parámetros utilizados en la consulta
+         */
+        void loadFields(LoaderManager loaderManager, Bundle b);
+
+        /**
+         * Invocado para iniciar el proceso de consulta de la base de datos de amigos del usuario
+         * actual a los que se debe avisar de la creación del partido
+         *
+         * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+         *                      de Contenido
+         * @param b             contenedor de posibles parámetros utilizados en la consulta
+         */
+        void loadFriends(LoaderManager loaderManager, Bundle b);
 
         /**
          * Invocado para detener el proceso de consulta a la base de datos del partido que se
