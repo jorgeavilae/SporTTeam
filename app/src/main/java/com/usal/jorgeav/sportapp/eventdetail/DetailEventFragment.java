@@ -856,17 +856,9 @@ public class DetailEventFragment extends BaseFragment implements
     @Override
     public void onPause() {
         super.onPause();
-        detailEventMap.onPause();
+        if (detailEventMap != null)
+            detailEventMap.onPause();
         mPresenter.unregisterUserRelationObserver();
-    }
-
-    /**
-     * Avisa al mapa de este método del ciclo de vida del Fragmento.
-     */
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        detailEventMap.onDestroy();
     }
 
     /**
@@ -875,7 +867,18 @@ public class DetailEventFragment extends BaseFragment implements
     @Override
     public void onStop() {
         super.onStop();
-        detailEventMap.onStop();
+        if (detailEventMap != null)
+            detailEventMap.onStop();
+    }
+
+    /**
+     * Avisa al mapa de este método del ciclo de vida del Fragmento.
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (detailEventMap != null)
+            detailEventMap.onDestroy();
     }
 
     /**
@@ -884,6 +887,7 @@ public class DetailEventFragment extends BaseFragment implements
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        detailEventMap.onLowMemory();
+        if (detailEventMap != null)
+            detailEventMap.onLowMemory();
     }
 }

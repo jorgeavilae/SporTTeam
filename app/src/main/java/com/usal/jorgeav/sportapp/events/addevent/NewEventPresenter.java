@@ -362,12 +362,10 @@ class NewEventPresenter implements
                 mNewEventView.setSimulatedParticipants(UtilesContentProvider.cursorToMultipleSimulatedParticipants(data));
                 break;
             case SportteamLoader.LOADER_FIELDS_FROM_CITY_WITH_SPORT:
-                ArrayList<Field> dataList = UtilesContentProvider.cursorToMultipleField(data);
-                mNewEventView.retrieveFields(dataList);
+                mNewEventView.retrieveFields(UtilesContentProvider.cursorToMultipleField(data));
                 break;
             case SportteamLoader.LOADER_FRIENDS_ID:
-                ArrayList<String> friendsList = UtilesContentProvider.cursorToMultipleFriendsID(data);
-                mNewEventView.retrieveFriendsID(friendsList);
+                mNewEventView.retrieveFriendsID(UtilesContentProvider.cursorToMultipleFriendsID(data));
                 break;
         }
     }
