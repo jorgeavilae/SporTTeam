@@ -29,6 +29,15 @@ public abstract class NewAlarmContract {
         void openAlarm(LoaderManager loaderManager, Bundle b);
 
         /**
+         * Invocado para detener el proceso de consulta a la base de datos de la alarma que se
+         * quiere editar
+         *
+         * @param loaderManager objeto {@link LoaderManager} utilizado para detener la consulta al
+         *                      Proveedor de Contenido
+         */
+        void destroyOpenAlarmLoader(LoaderManager loaderManager);
+
+        /**
          * Invocado para crear la alarma en la base de datos con los parámetros especificados
          *
          * @param alarmId   identificador de la alarma si se está editando o null si se está creando

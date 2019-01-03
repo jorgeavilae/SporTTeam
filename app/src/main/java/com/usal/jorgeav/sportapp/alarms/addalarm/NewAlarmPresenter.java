@@ -99,10 +99,12 @@ class NewAlarmPresenter implements
         }
 
         // field could be null, but not city
-        if (city == null || TextUtils.isEmpty(city))
+        if (city == null || TextUtils.isEmpty(city)
+                || coords == null || (coords.latitude == 0 && coords.longitude == 0)) {
             city = UtilesPreferences.getCurrentUserCity(mNewAlarmView.getActivityContext());
-        if (coords == null || (coords.latitude == 0 && coords.longitude == 0))
             coords = UtilesPreferences.getCurrentUserCityCoords(mNewAlarmView.getActivityContext());
+            mNewAlarmView.showAlarmField(field, city, coords);
+        }
 
         if (isValidField(city, field, sport, coords)) {
             a.setField_id(field);
@@ -199,16 +201,8 @@ class NewAlarmPresenter implements
             return false;
         }
 
-        // Check if the sport doesn't need a field
-        String[] arraySports = mNewAlarmView.getActivityContext().getResources().getStringArray(R.array.sport_id_values);
-        if (sportId.equals(arraySports[0]) || sportId.equals(arraySports[1]))
+        if (fieldId == null || TextUtils.isEmpty(fieldId))
             return true;
-
-        //If sport needs a field, couldn't be null
-        if (fieldId == null || TextUtils.isEmpty(fieldId)) {
-            Log.e(TAG, "isValidField: field not valid");
-            return false;
-        }
 
         // Query database for the fieldId and checks if this sport exists
         Field field = UtilesContentProvider.getFieldFromContentProvider(fieldId);
@@ -271,9 +265,8 @@ class NewAlarmPresenter implements
      * @return true si es válido, false si no lo es
      */
     private boolean isEmptyPlayersCorrect(String emptyFrom, String emptyTo) {
-        return !TextUtils.isEmpty(emptyFrom) && Integer.valueOf(emptyFrom) >= 0 &&
+        return !TextUtils.isEmpty(emptyFrom) && Integer.valueOf(emptyFrom) > 0 &&
                 (TextUtils.isEmpty(emptyTo) || Integer.valueOf(emptyFrom) <= Integer.valueOf(emptyTo));
-
     }
 
     /**
@@ -285,9 +278,20 @@ class NewAlarmPresenter implements
      */
     @Override
     public void openAlarm(LoaderManager loaderManager, Bundle b) {
-        if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_ALARM_ID)) {
+        if (b != null && b.containsKey(NewAlarmFragment.BUNDLE_ALARM_ID))
             loaderManager.initLoader(SportteamLoader.LOADER_ALARM_ID, b, this);
-        }
+    }
+
+    /**
+     * Detiene el proceso de consulta a la base de datos de la alarma que se
+     * quiere editar
+     *
+     * @param loaderManager objeto {@link LoaderManager} utilizado para consultar el Proveedor
+     *                      de Contenido
+     */
+    @Override
+    public void destroyOpenAlarmLoader(LoaderManager loaderManager) {
+        loaderManager.destroyLoader(SportteamLoader.LOADER_ALARM_ID);
     }
 
     /**
@@ -391,16 +395,11 @@ class NewAlarmPresenter implements
             if (a.getCoord_latitude() != null && a.getCoord_longitude() != null)
                 coords = new LatLng(a.getCoord_latitude(), a.getCoord_longitude());
 
-            ((AlarmsActivity) mNewAlarmView.getActivityContext()).mFieldId = a.getField_id();
-            ((AlarmsActivity) mNewAlarmView.getActivityContext()).mCity = a.getCity();
-            ((AlarmsActivity) mNewAlarmView.getActivityContext()).mCoord = coords;
             mNewAlarmView.showAlarmField(a.getField_id(), a.getCity(), coords);
 
             mNewAlarmView.showAlarmDate(a.getDate_from(), a.getDate_to());
             mNewAlarmView.showAlarmTotalPlayers(a.getTotal_players_from(), a.getTotal_players_to());
             mNewAlarmView.showAlarmEmptyPlayers(a.getEmpty_players_from(), a.getEmpty_players_to());
-        } else {
-            mNewAlarmView.clearUI();
         }
     }
 }

@@ -50,7 +50,6 @@
             android:maxLines="2"
             android:hint="@string/select_field"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/new_alarm_sport"
             app:layout_constraintLeft_toRightOf="@+id/new_alarm_sport"
             app:layout_constraintRight_toLeftOf="@+id/new_alarm_field_button"
@@ -63,27 +62,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:visibility="invisible"
             android:text="@string/select_field"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/new_alarm_sport"
             app:layout_constraintTop_toTopOf="@+id/new_alarm_sport" />
-
-        <AutoCompleteTextView
-            android:id="@+id/new_alarm_city"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:hint="@string/prompt_city"
-            android:inputType="textPostalAddress|textAutoComplete|textCapSentences"
-            android:maxLines="1"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/new_alarm_sport"
-            app:layout_constraintLeft_toRightOf="@+id/new_alarm_sport"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/new_alarm_sport" />
-
 
         <!-- Date period -->
 

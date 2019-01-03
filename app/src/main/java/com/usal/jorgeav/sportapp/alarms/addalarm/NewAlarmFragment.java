@@ -48,6 +48,7 @@ import com.usal.jorgeav.sportapp.data.Field;
 import com.usal.jorgeav.sportapp.mainactivities.AlarmsActivity;
 import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
+import com.usal.jorgeav.sportapp.utils.UtilesPreferences;
 import com.usal.jorgeav.sportapp.utils.UtilesTime;
 
 import java.util.ArrayList;
@@ -99,17 +100,6 @@ public class NewAlarmFragment extends BaseFragment implements
     String mSportId = "";
 
     /**
-     * Variable que identifica esta aplicación como cliente autorizado de la API de Google utilizada
-     * para sugerir de ciudades.
-     */
-    // Static prevent double initialization with same ID
-    private static GoogleApiClient mGoogleApiClient;
-    /**
-     * Adaptador para el {@link AutoCompleteTextView} de ciudades
-     */
-    PlaceAutocompleteAdapter mAdapter;
-
-    /**
      * Presentador correspondiente a esta Vista
      */
     NewAlarmContract.Presenter mNewAlarmPresenter;
@@ -150,11 +140,6 @@ public class NewAlarmFragment extends BaseFragment implements
      */
     @BindView(R.id.new_alarm_field_button)
     Button newAlarmFieldButton;
-    /**
-     * Referencia al elemento de la interfaz para indicar la ciudad mediante auto-completado
-     */
-    @BindView(R.id.new_alarm_city)
-    AutoCompleteTextView newAlarmCity;
     /**
      * Referencia al elemento de la interfaz para indicar el limite inferior del rango de fechas
      */
@@ -237,8 +222,7 @@ public class NewAlarmFragment extends BaseFragment implements
     }
 
     /**
-     * En este método se inicializan la variable que permite utilizar la API de Google y el
-     * Presentador correspondiente a esta Vista.
+     * En este método se inicializa el Presentador correspondiente a esta Vista.
      *
      * @param savedInstanceState estado del Fragmento guardado en una posible rotación de
      *                           la pantalla, o null.
@@ -247,19 +231,6 @@ public class NewAlarmFragment extends BaseFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        if (mGoogleApiClient == null)
-            mGoogleApiClient = new GoogleApiClient
-                    .Builder(getActivity())
-                    .addApi(Places.GEO_DATA_API)
-                    .enableAutoManage(getActivity(), new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                            Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
-                        }
-                    })
-                    .build();
-        else mGoogleApiClient.connect();
 
         mNewAlarmPresenter = new NewAlarmPresenter(this);
     }
@@ -340,8 +311,9 @@ public class NewAlarmFragment extends BaseFragment implements
                 mMap = googleMap;
 
                 // Coordinates selected previously
+                boolean coordsAreCity = ((AlarmsActivity) getActivity()).mFieldId == null;
                 if (mMarker != null) mMarker.remove();
-                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity) getActivity()).mCoord, false);
+                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, ((AlarmsActivity) getActivity()).mCoord, coordsAreCity);
             }
         });
 
@@ -465,81 +437,6 @@ public class NewAlarmFragment extends BaseFragment implements
     }
 
     /**
-     * Establece los controles para regular el comportamiento del {@link AutoCompleteTextView}
-     * donde se escribe la ciudad de la alarma. Crea un {@link TextWatcher} para reaccionar a los
-     * cambios en el texto y así realizar nuevas búsquedas con el {@link PlaceAutocompleteAdapter}.
-     * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la Google
-     * Places API para obtener la coordenadas de dicha ciudad.
-     *
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     * Google Places API</a>
-     */
-    private void setAutocompleteTextView() {
-        // Set up the adapter that will retrieve suggestions from
-        // the Places Geo Data API that cover Spain
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
-                /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
-                .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
-                .build();
-
-        mAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, null, typeFilter);
-        newAlarmCity.setAdapter(mAdapter);
-
-        newAlarmCity.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                ((AlarmsActivity) getActivity()).mFieldId = null;
-                ((AlarmsActivity) getActivity()).mCity = null;
-                ((AlarmsActivity) getActivity()).mCoord = null;
-            }
-        });
-
-        newAlarmCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                /*
-                 Retrieve the place ID of the selected item from the Adapter.
-                 The adapter stores each Place suggestion in a AutocompletePrediction from which we
-                 read the place ID and title.
-                  */
-                AutocompletePrediction item = mAdapter.getItem(position);
-                if (item != null) {
-                    Log.i(TAG, "Autocomplete item selected: " + item.getPlaceId());
-                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, item.getPlaceId())
-                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                                @Override
-                                public void onResult(@NonNull PlaceBuffer places) {
-                                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                                        Place myPlace = places.get(0);
-                                        showAlarmField(null, myPlace.getName().toString(), myPlace.getLatLng());
-                                        ((AlarmsActivity) getActivity()).mFieldId = null;
-                                        ((AlarmsActivity) getActivity()).mCity = myPlace.getName().toString();
-                                        ((AlarmsActivity) getActivity()).mCoord = myPlace.getLatLng();
-                                        Log.i(TAG, "Place found: Name - " + myPlace.getName()
-                                                + " LatLng - " + myPlace.getLatLng());
-                                    } else {
-                                        Log.e(TAG, "Place not found");
-                                    }
-                                    places.release();
-                                }
-                            });
-                }
-            }
-        });
-    }
-
-    /**
      * Al finalizar el proceso de creación de la Actividad contenedora, se invoca este método que
      * establece un título para la barra superior y la acción que debe realizar: navegar hacia
      * atrás.
@@ -562,22 +459,23 @@ public class NewAlarmFragment extends BaseFragment implements
     public void onStart() {
         super.onStart();
         newAlarmMap.onStart();
-        showContent();
-        showAlarmField(((AlarmsActivity) getActivity()).mFieldId,
-                ((AlarmsActivity) getActivity()).mCity,
-                ((AlarmsActivity) getActivity()).mCoord);
 
-        if (sInitialize) return;
+        if (!sInitialize) {
+            if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
+                setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
 
-        if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID))
-            setSportLayout(getArguments().getString(BUNDLE_SPORT_SELECTED_ID));
-        mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
-        sInitialize = true;
+            mNewAlarmPresenter.openAlarm(getLoaderManager(), getArguments());
+
+            sInitialize = true;
+        } else {
+            mNewAlarmPresenter.destroyOpenAlarmLoader(getLoaderManager());
+            showContent();
+        }
     }
 
     /**
      * Establece el tipo de interfaz dependiendo de si el deporte acepta un número infinito de
-     * jugadores y de si requiere de una pista para ser practicado.
+     * jugadores e inicia la carga de instalaciones.
      *
      * @param sportId identificador del deporte
      */
@@ -586,34 +484,20 @@ public class NewAlarmFragment extends BaseFragment implements
         showAlarmSport(sportId);
 
         // Check if the sport doesn't need a field
-        if (!Utiles.sportNeedsField(sportId)) {
-            showContent();
-
-            newAlarmCity.setVisibility(View.VISIBLE);
+        if (Utiles.sportNeedsField(sportId))
+            newAlarmInfinitePlayers.setVisibility(View.INVISIBLE);
+        else
             newAlarmInfinitePlayers.setVisibility(View.VISIBLE);
 
-            newAlarmField.setVisibility(View.INVISIBLE);
-            newAlarmFieldButton.setVisibility(View.INVISIBLE);
-
-            //Set AutocompleteTextView for cities
-            setAutocompleteTextView();
-        } else {
-            newAlarmInfinitePlayers.setVisibility(View.INVISIBLE);
-            newAlarmCity.setVisibility(View.INVISIBLE);
-
-            newAlarmField.setVisibility(View.VISIBLE);
-            newAlarmFieldButton.setVisibility(View.VISIBLE);
-
-            // Sport needs a Field so load from ContentProvider and store it in retrieveFields()
-            Bundle b = new Bundle();
-            b.putString(BUNDLE_SPORT_SELECTED_ID, sportId);
-            mNewAlarmPresenter.loadFields(getLoaderManager(), b);
-        }
+        // Sport needs a Field so load from ContentProvider and store it in retrieveFields()
+        Bundle b = new Bundle();
+        b.putString(BUNDLE_SPORT_SELECTED_ID, sportId);
+        mNewAlarmPresenter.loadFields(getLoaderManager(), b);
     }
 
     /**
      * Almacena la lista de instalaciones encontradas para el deporte seleccionado. Si la lista
-     * está vacía, muestra un diálogo crear una nueva.
+     * está vacía y el deporte la necesita, muestra un diálogo para crear una nueva.
      *
      * @param dataList lista de instalaciones
      */
@@ -621,12 +505,12 @@ public class NewAlarmFragment extends BaseFragment implements
     public void retrieveFields(ArrayList<Field> dataList) {
         mFieldList = dataList;
         showContent();
-        if (mFieldList != null)
-            if (mFieldList.size() == 0)
-                startNewFieldDialog();
-        /* else startMapForPickAField();
-         * Not necessary since isn't needed a Field to create a new Alarm
-         */
+        if (mFieldList != null && mFieldList.size() == 0)
+            if (getArguments() != null && getArguments().containsKey(BUNDLE_SPORT_SELECTED_ID)) {
+                String sportId = getArguments().getString(BUNDLE_SPORT_SELECTED_ID);
+                if (Utiles.sportNeedsField(sportId))
+                    startNewFieldDialog();
+            }
 
         //Since mFieldList are retained in savedInstance no need to load again
         mNewAlarmPresenter.stopLoadFields(getLoaderManager());
@@ -700,28 +584,42 @@ public class NewAlarmFragment extends BaseFragment implements
     @Override
     public void showAlarmField(String fieldId, String city, LatLng coords) {
         if (fieldId != null && !TextUtils.isEmpty(fieldId) && getActivity() instanceof AlarmsActivity) {
+            // Set as field
             Field f = UtilesContentProvider.getFieldFromContentProvider(fieldId);
             if (f != null) {
                 newAlarmField.setText(String.format("%s, %s", f.getName(), f.getCity()));
-                newAlarmCity.setText("");
 
+                LatLng fCoords = new LatLng(f.getCoord_latitude(), f.getCoord_longitude());
                 if (mMarker != null) mMarker.remove();
-                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords, false);
+                mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, fCoords, false);
+
+                ((AlarmsActivity) getActivityContext()).mFieldId = fieldId;
+                ((AlarmsActivity) getActivityContext()).mCity = f.getCity();
+                ((AlarmsActivity) getActivityContext()).mCoord = fCoords;
             }
         } else if (city != null && !TextUtils.isEmpty(city) && getActivity() instanceof AlarmsActivity) {
-            newAlarmField.setText("");
-            newAlarmCity.setText(city);
+            // Set as city
+            newAlarmField.setText(city);
 
             if (mMarker != null) mMarker.remove();
             mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, coords, true);
             if (mMarker != null) mMarker.remove();
+
+            ((AlarmsActivity) getActivityContext()).mFieldId = null;
+            ((AlarmsActivity) getActivityContext()).mCity = city;
+            ((AlarmsActivity) getActivityContext()).mCoord = coords;
         } else {
-            newAlarmField.setText("");
-            newAlarmCity.setText("");
+            String prefCity = UtilesPreferences.getCurrentUserCity(getActivityContext());
+            LatLng prefCoords = UtilesPreferences.getCurrentUserCityCoords(getActivityContext());
+            newAlarmField.setText(prefCity);
 
             if (mMarker != null) mMarker.remove();
-            mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, null, true);
+            mMarker = Utiles.setCoordinatesInMap(getActivityContext(), mMap, prefCoords, true);
             if (mMarker != null) mMarker.remove();
+
+            ((AlarmsActivity) getActivityContext()).mFieldId = null;
+            ((AlarmsActivity) getActivityContext()).mCity = prefCity;
+            ((AlarmsActivity) getActivityContext()).mCoord = prefCoords;
         }
     }
 
@@ -780,7 +678,6 @@ public class NewAlarmFragment extends BaseFragment implements
         ((AlarmsActivity) getActivity()).mCity = null;
         ((AlarmsActivity) getActivity()).mCoord = null;
         newAlarmField.setText("");
-        newAlarmCity.setText("");
         newAlarmDateFrom.setText("");
         newAlarmDateTo.setText("");
         newAlarmTotalFrom.setText("");
