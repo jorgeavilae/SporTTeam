@@ -319,4 +319,92 @@ public class UtilesNotification {
                 startActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
+
+    /**
+     * Obtiene el recurso de cadena de texto correspondiente al título de una notificación
+     * dependiendo del tipo de notificación indicado.
+     *
+     * @param type tipo de notificación
+     * @return recurso de cadena de texto del título de la notificación
+     */
+    public static int parseNotificationTypeToTitle(@NotificationType int type) {
+        switch (type) {
+            case NOTIFICATION_ID_ALARM_EVENT:
+                return R.string.notification_title_alarm_event;
+            case NOTIFICATION_ID_EVENT_COMPLETE:
+                return R.string.notification_title_event_complete;
+            case NOTIFICATION_ID_EVENT_CREATE:
+                return R.string.notification_title_event_create;
+            case NOTIFICATION_ID_EVENT_DELETE:
+                return R.string.notification_title_event_delete;
+            case NOTIFICATION_ID_EVENT_EDIT:
+                return R.string.notification_title_event_edit;
+            case NOTIFICATION_ID_EVENT_EXPELLED:
+                return R.string.notification_title_event_expelled;
+            case NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED:
+                return R.string.notification_title_event_invitation_accepted;
+            case NOTIFICATION_ID_EVENT_INVITATION_DECLINED:
+                return R.string.notification_title_event_invitation_declined;
+            case NOTIFICATION_ID_EVENT_INVITATION_RECEIVED:
+                return R.string.notification_title_event_invitation_received;
+            case NOTIFICATION_ID_EVENT_REQUEST_ACCEPTED:
+                return R.string.notification_title_event_request_accepted;
+            case NOTIFICATION_ID_EVENT_REQUEST_DECLINED:
+                return R.string.notification_title_event_request_declined;
+            case NOTIFICATION_ID_EVENT_REQUEST_RECEIVED:
+                return R.string.notification_title_event_request_received;
+            case NOTIFICATION_ID_EVENT_SOMEONE_QUIT:
+                return R.string.notification_title_event_someone_quit;
+            case NOTIFICATION_ID_FRIEND_REQUEST_ACCEPTED:
+                return R.string.notification_title_friend_request_accepted;
+            case NOTIFICATION_ID_FRIEND_REQUEST_RECEIVED:
+                return R.string.notification_title_friend_request_received;
+            default: case NOTIFICATION_ID_ERROR:
+                return -1;
+        }
+    }
+
+    /**
+     * Obtiene el recurso de cadena de texto correspondiente al mensaje de una notificación
+     * dependiendo del tipo de notificación indicado.
+     *
+     * @param type tipo de notificación
+     * @return recurso de cadena de texto del mensaje de la notificación
+     */
+    public static int parseNotificationTypeToMessage(@NotificationType int type) {
+        switch (type) {
+            case NOTIFICATION_ID_ALARM_EVENT:
+                return R.string.notification_msg_alarm_event;
+            case NOTIFICATION_ID_EVENT_COMPLETE:
+                return R.string.notification_msg_event_complete;
+            case NOTIFICATION_ID_EVENT_CREATE:
+                return R.string.notification_msg_event_create;
+            case NOTIFICATION_ID_EVENT_DELETE:
+                return R.string.notification_msg_event_delete;
+            case NOTIFICATION_ID_EVENT_EDIT:
+                return R.string.notification_msg_event_edit;
+            case NOTIFICATION_ID_EVENT_EXPELLED:
+                return R.string.notification_msg_event_expelled;
+            case NOTIFICATION_ID_EVENT_INVITATION_ACCEPTED:
+                return R.string.notification_msg_event_invitation_accepted;
+            case NOTIFICATION_ID_EVENT_INVITATION_DECLINED:
+                return R.string.notification_msg_event_invitation_declined;
+            case NOTIFICATION_ID_EVENT_INVITATION_RECEIVED:
+                return R.string.notification_msg_event_invitation_received;
+            case NOTIFICATION_ID_EVENT_REQUEST_ACCEPTED:
+                return R.string.notification_msg_event_request_accepted;
+            case NOTIFICATION_ID_EVENT_REQUEST_DECLINED:
+                return R.string.notification_msg_event_request_declined;
+            case NOTIFICATION_ID_EVENT_REQUEST_RECEIVED:
+                return R.string.notification_msg_event_request_received;
+            case NOTIFICATION_ID_EVENT_SOMEONE_QUIT:
+                return R.string.notification_msg_event_someone_quit;
+            case NOTIFICATION_ID_FRIEND_REQUEST_ACCEPTED:
+                return R.string.notification_msg_friend_request_accepted;
+            case NOTIFICATION_ID_FRIEND_REQUEST_RECEIVED:
+                return R.string.notification_msg_friend_request_received;
+            default: case NOTIFICATION_ID_ERROR:
+                return -1;
+        }
+    }
 }
