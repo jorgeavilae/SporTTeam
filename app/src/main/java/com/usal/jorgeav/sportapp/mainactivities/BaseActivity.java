@@ -285,29 +285,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     /**
-     * Método usado para mostrar más detalles de algunos errores que pueden suceder durante el
-     * desarrollo. TODO Decidir si borrar este método
-     *
-     * @see <a href= "https://developer.android.com/reference/android/os/StrictMode">
-     * Enable StrictMode for Debug Version</a>
-     */
-    @SuppressWarnings("unused")
-    private void debugTrickyErrors() {
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectDiskReads()
-                .detectDiskWrites()
-                .detectAll()
-                .penaltyLog()
-                .build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
-                .penaltyLog()
-                .penaltyDeath()
-                .build());
-    }
-
-    /**
      * Se invoca este método al destruir la Actividad. Guarda el {@link BaseFragment} que se
      * esté mostrando en ese momento para mostrarlo en la recreación de la Actividad. Si el
      * que se está mostrando es {@link com.usal.jorgeav.sportapp.fields.FieldsMapFragment},
