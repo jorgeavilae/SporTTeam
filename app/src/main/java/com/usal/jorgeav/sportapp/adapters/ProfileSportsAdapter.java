@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.adapters;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,8 +91,9 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
      * @param viewType tipo de la vista
      * @return una nueva instancia de {@link ProfileSportsAdapter.ViewHolder}
      */
+    @NonNull
     @Override
-    public ProfileSportsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProfileSportsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.sport_profile_item_list, parent, false);
 
@@ -107,7 +109,7 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
      * @param position posición de los datos que se van a mostrar
      */
     @Override
-    public void onBindViewHolder(ProfileSportsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ProfileSportsAdapter.ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
             String sportId = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
 

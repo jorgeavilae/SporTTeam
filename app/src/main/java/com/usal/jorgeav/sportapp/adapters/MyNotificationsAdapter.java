@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.adapters;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
@@ -85,8 +86,9 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
      * @param viewType tipo de la vista
      * @return una nueva instancia de {@link MyNotificationsAdapter.ViewHolder}
      */
+    @NonNull
     @Override
-    public MyNotificationsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyNotificationsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.notification_item_list, parent, false);
 
@@ -102,7 +104,7 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
      * @param position posición de los datos que se van a mostrar
      */
     @Override
-    public void onBindViewHolder(final MyNotificationsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyNotificationsAdapter.ViewHolder holder, int position) {
         Map.Entry<String, MyNotification> entry = getEntry(position);
         if (entry != null) {
             MyNotification n = entry.getValue();

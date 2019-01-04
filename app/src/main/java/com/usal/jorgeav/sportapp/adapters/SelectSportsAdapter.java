@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,8 +70,9 @@ public class SelectSportsAdapter extends RecyclerView.Adapter<SelectSportsAdapte
      * @param viewType tipo de la vista
      * @return una nueva instancia de {@link SelectSportsAdapter.ViewHolder}
      */
+    @NonNull
     @Override
-    public SelectSportsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SelectSportsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.sport_select_item_list, parent, false);
 
@@ -86,7 +88,7 @@ public class SelectSportsAdapter extends RecyclerView.Adapter<SelectSportsAdapte
      * @param position posición de los datos que se van a mostrar
      */
     @Override
-    public void onBindViewHolder(SelectSportsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SelectSportsAdapter.ViewHolder holder, int position) {
         Sport s = mDataset.get(position);
         if (s != null) {
             // Set icon

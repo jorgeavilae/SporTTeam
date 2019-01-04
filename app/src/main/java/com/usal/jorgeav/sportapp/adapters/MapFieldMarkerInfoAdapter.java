@@ -76,19 +76,19 @@ public class MapFieldMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
      * @param field instalación de la que extraer los datos
      */
     private void populate(View view, Field field) {
-        TextView textViewFieldName = (TextView) view.findViewById(R.id.field_marker_name);
+        TextView textViewFieldName = view.findViewById(R.id.field_marker_name);
         textViewFieldName.setText(field.getName());
 
-        TextView textViewFieldAddress = (TextView) view.findViewById(R.id.field_marker_address);
+        TextView textViewFieldAddress = view.findViewById(R.id.field_marker_address);
         textViewFieldAddress.setText(field.getAddress());
 
-        TextView textViewSportMore = (TextView) view.findViewById(R.id.field_marker_sport_more);
+        TextView textViewSportMore = view.findViewById(R.id.field_marker_sport_more);
         textViewSportMore.setVisibility(View.GONE);
-        ImageView imageViewFieldSport1 = (ImageView) view.findViewById(R.id.field_marker_sport1);
+        ImageView imageViewFieldSport1 = view.findViewById(R.id.field_marker_sport1);
         imageViewFieldSport1.setVisibility(View.GONE);
-        ImageView imageViewFieldSport2 = (ImageView) view.findViewById(R.id.field_marker_sport2);
+        ImageView imageViewFieldSport2 = view.findViewById(R.id.field_marker_sport2);
         imageViewFieldSport2.setVisibility(View.GONE);
-        ImageView imageViewFieldSport3 = (ImageView) view.findViewById(R.id.field_marker_sport3);
+        ImageView imageViewFieldSport3 = view.findViewById(R.id.field_marker_sport3);
         imageViewFieldSport3.setVisibility(View.GONE);
 
         // Set first sport icon

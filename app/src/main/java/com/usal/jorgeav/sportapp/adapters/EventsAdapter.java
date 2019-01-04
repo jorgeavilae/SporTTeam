@@ -1,6 +1,7 @@
 package com.usal.jorgeav.sportapp.adapters;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -72,8 +73,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
      * @param viewType tipo de la vista
      * @return una nueva instancia de {@link EventsAdapter.ViewHolder}
      */
+    @NonNull
     @Override
-    public EventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EventsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View eventView = inflater.inflate(R.layout.events_item_list, parent, false);
 
@@ -89,7 +91,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
      * @param position posición de los datos que se van a mostrar
      */
     @Override
-    public void onBindViewHolder(EventsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull EventsAdapter.ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
             // Set icon
             String sportId = mDataset.getString(SportteamContract.EventEntry.COLUMN_SPORT);

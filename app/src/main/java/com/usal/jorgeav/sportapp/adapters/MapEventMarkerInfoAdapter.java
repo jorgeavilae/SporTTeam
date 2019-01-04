@@ -76,17 +76,17 @@ public class MapEventMarkerInfoAdapter implements GoogleMap.InfoWindowAdapter {
      * @param event Partido del que extraer los datos
      */
     private void populate(View view, Event event) {
-        ImageView imageViewEventSport = (ImageView) view.findViewById(R.id.event_marker_sport);
+        ImageView imageViewEventSport = view.findViewById(R.id.event_marker_sport);
         imageViewEventSport.setVisibility(View.VISIBLE);
         imageViewEventSport.setImageResource(Utiles.getSportIconFromResource(event.getSport_id()));
 
-        TextView textViewEventName = (TextView) view.findViewById(R.id.event_marker_name);
+        TextView textViewEventName = view.findViewById(R.id.event_marker_name);
         textViewEventName.setText(event.getName());
 
-        TextView textViewEventAddress = (TextView) view.findViewById(R.id.event_marker_address);
+        TextView textViewEventAddress = view.findViewById(R.id.event_marker_address);
         textViewEventAddress.setText(event.getAddress());
 
-        TextView textViewEventDate = (TextView) view.findViewById(R.id.events_marker_date);
+        TextView textViewEventDate = view.findViewById(R.id.events_marker_date);
         textViewEventDate.setText(UtilesTime.millisToDateTimeString(event.getDate()));
     }
 }

@@ -241,7 +241,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
      * @see <a href= "http://jakewharton.github.io/butterknife/">ButterKnife</a>
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_new_user, container, false);
         ButterKnife.bind(this, root);

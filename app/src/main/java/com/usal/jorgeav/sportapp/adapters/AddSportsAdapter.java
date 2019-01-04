@@ -1,5 +1,6 @@
 package com.usal.jorgeav.sportapp.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,8 +66,9 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
      * @param viewType tipo de la vista
      * @return una nueva instancia de {@link AddSportsAdapter.ViewHolder}
      */
+    @NonNull
     @Override
-    public AddSportsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AddSportsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.sport_add_item_list, parent, false);
 
@@ -82,7 +84,7 @@ public class AddSportsAdapter extends RecyclerView.Adapter<AddSportsAdapter.View
      * @param position posición de los datos que se van a mostrar
      */
     @Override
-    public void onBindViewHolder(AddSportsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AddSportsAdapter.ViewHolder holder, int position) {
         Sport s = mDataset.get(position);
         if (s != null) {
             mGlide.load(s.getIconDrawableId()).into(holder.imageViewSportIcon);

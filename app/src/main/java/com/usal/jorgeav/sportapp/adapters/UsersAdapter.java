@@ -2,6 +2,7 @@ package com.usal.jorgeav.sportapp.adapters;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,8 +71,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
      * @param viewType tipo de la vista
      * @return una nueva instancia de {@link UsersAdapter.ViewHolder}
      */
+    @NonNull
     @Override
-    public UsersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public UsersAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.user_item_grid, parent, false);
 
@@ -87,7 +89,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
      * @param position posición de los datos que se van a mostrar
      */
     @Override
-    public void onBindViewHolder(final UsersAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final UsersAdapter.ViewHolder holder, int position) {
         if (mDataset.moveToPosition(position)) {
             // Set icon
             String userPicture = mDataset.getString(SportteamContract.UserEntry.COLUMN_PHOTO);

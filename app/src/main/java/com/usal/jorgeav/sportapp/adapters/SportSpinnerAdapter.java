@@ -55,12 +55,12 @@ public class SportSpinnerAdapter extends ArrayAdapter {
         }
 
         int sportDrawableResource = Utiles.getSportIconFromResource(sportId);
-        ImageView icon = (ImageView) convertView.findViewById(R.id.sport_spinner_item_icon);
+        ImageView icon = convertView.findViewById(R.id.sport_spinner_item_icon);
         icon.setImageResource(sportDrawableResource);
 
         int sportStringResource = parent.getContext().getResources()
                 .getIdentifier(sportId, "string", parent.getContext().getPackageName());
-        TextView text = (TextView) convertView.findViewById(R.id.sport_spinner_item_text);
+        TextView text = convertView.findViewById(R.id.sport_spinner_item_text);
         text.setText(parent.getContext().getString(sportStringResource));
 
         return convertView;

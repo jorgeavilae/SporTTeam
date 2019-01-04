@@ -3,11 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.usal.jorgeav.sportapp">
 
-    <!--todo nombre del paquete-->
-    <!--todo si quitas el atributo android: depurable de la etiqueta <application> en tu archivo de manifiesto o fijas el atributo android:debuggable en false -->
-    <!--todo metodo de depuracion en baseactivity-->
-    <!--todo limpiar directorios https://developer.android.com/studio/publish/preparing-->
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
