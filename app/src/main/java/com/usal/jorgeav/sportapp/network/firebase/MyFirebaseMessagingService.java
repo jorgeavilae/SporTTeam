@@ -136,18 +136,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             checked = Boolean.parseBoolean(data.get(FirebaseDBContract.Notification.CHECKED));
 
         String title = null;
-        if (notification_type != null)
-            title = getResources().getString(
-                    UtilesNotification.parseNotificationTypeToTitle(notification_type.intValue()));
-        else /* If notification_type doesn't determine title */
+        if (notification_type != null) {
+            int strRes = UtilesNotification.parseNotificationTypeToTitle(notification_type.intValue());
+            if (strRes != -1) title = getResources().getString(strRes);
+        }
+        if (title == null) /* If notification_type doesn't determine title */
             if (data.containsKey(FirebaseDBContract.Notification.TITLE))
                 title = data.get(FirebaseDBContract.Notification.TITLE);
 
         String message = null;
-        if (notification_type != null)
-            message = getResources().getString(
-                    UtilesNotification.parseNotificationTypeToMessage(notification_type.intValue()));
-        else /* If notification_type doesn't determine message */
+        if (notification_type != null) {
+            int strRes = UtilesNotification.parseNotificationTypeToMessage(notification_type.intValue());
+            if (strRes != -1) message = getResources().getString(strRes);
+        }
+        if (message == null) /* If notification_type doesn't determine title */
             if (data.containsKey(FirebaseDBContract.Notification.MESSAGE))
                 message = data.get(FirebaseDBContract.Notification.MESSAGE);
 
