@@ -362,50 +362,47 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      *                               usuario)
      */
     private void initLoadMyProfile(boolean checkIfEmailIsVerified) {
-        final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
         if (fUser != null) {
+            if (!checkIfEmailIsVerified || fUser.isEmailVerified()) {
+                deleteContentProvider();
 
-            //TODO isEmailVerified()
-            @SuppressWarnings("unused") Boolean b = checkIfEmailIsVerified;
-//            if (!checkIfEmailIsVerified || fUser.isEmailVerified()) {
+                //Add email to emails logged table
+                ContentValues cv = new ContentValues();
+                cv.put(SportteamContract.EmailLoggedEntry.EMAIL, fUser.getEmail());
+                getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
 
-            deleteContentProvider();
-
-            //Add email to emails logged table
-            ContentValues cv = new ContentValues();
-            cv.put(SportteamContract.EmailLoggedEntry.EMAIL, fUser.getEmail());
-            getContentResolver().insert(SportteamContract.EmailLoggedEntry.CONTENT_EMAIL_LOGGED_URI, cv);
-
-            // The user is logged and his data is in Firebase. Retrieve that data and
-            // populate Content Provider. Later finishLoadMyProfile() will be invoked
-            SportteamSyncInitialization.initialize(LoginActivity.this);
-//            } else {
-//                showProgress(false);
-//                AlertDialog.Builder builder = new AlertDialog.Builder(this)
-//                        .setTitle(R.string.dialog_title_verify_email)
-//                        .setMessage(R.string.dialog_msg_verify_email)
-//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                fUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<Void> task) {
-//                                        Log.d(TAG, "sendEmailVerification: onComplete: "+task.isSuccessful());
-//                                        Toast.makeText(LoginActivity.this, R.string.email_sent,
-//                                                Toast.LENGTH_SHORT).show();
-//                                    }
-//                                });
-//                            }
-//                        })
-//                        .setNegativeButton(android.R.string.no, null)
-//                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                            @Override
-//                            public void onDismiss(DialogInterface dialogInterface) {
-//                                FirebaseAuth.getInstance().signOut();
-//                            }
-//                        });
-//                builder.create().show();
-//            }
+                // The user is logged and his data is in Firebase. Retrieve that data and
+                // populate Content Provider. Later finishLoadMyProfile() will be invoked
+                SportteamSyncInitialization.initialize(LoginActivity.this);
+            } else {
+                showProgress(false);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                        .setTitle(R.string.dialog_title_verify_email)
+                        .setMessage(R.string.dialog_msg_verify_email)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Log.d(TAG, "sendEmailVerification: onComplete: " + task.isSuccessful());
+                                        Toast.makeText(LoginActivity.this, R.string.email_sent,
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                FirebaseAuth.getInstance().signOut();
+                            }
+                        });
+                builder.create().show();
+            }
         }
     }
 
