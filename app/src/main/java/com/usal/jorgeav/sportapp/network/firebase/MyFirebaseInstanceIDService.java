@@ -36,7 +36,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Refreshed token: " + refreshedToken);
+        Log.i(TAG, "Refreshed token: " + refreshedToken);
 
         String myUserID = Utiles.getCurrentUserId();
         if (!TextUtils.isEmpty(myUserID))

@@ -387,7 +387,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Log.d(TAG, "sendEmailVerification: onComplete: " + task.isSuccessful());
+                                        Log.i(TAG, "sendEmailVerification: onComplete: " + task.isSuccessful());
                                         Toast.makeText(LoginActivity.this, R.string.email_sent,
                                                 Toast.LENGTH_SHORT).show();
                                     }

@@ -287,7 +287,7 @@ public class EventsFirebaseActions {
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
                 if (b)
-                    Log.d(TAG, "deleteSimulatedParticipant: onComplete: Transaction completed");
+                    Log.i(TAG, "deleteSimulatedParticipant: onComplete: Transaction completed");
                 else
                     Log.e(TAG, "deleteSimulatedParticipant: onComplete: Transaction error " + databaseError);
                 EventsFirebaseSync.loadAnEvent(eventId);

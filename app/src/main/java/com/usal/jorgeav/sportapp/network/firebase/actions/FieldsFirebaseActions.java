@@ -186,7 +186,7 @@ public class FieldsFirebaseActions {
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
-                Log.d(TAG, "voteField: onComplete:" + databaseError);
+                Log.i(TAG, "voteField: onComplete:" + databaseError);
             }
         });
     }

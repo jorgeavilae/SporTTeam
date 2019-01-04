@@ -99,7 +99,6 @@ class NewFieldPresenter implements
             Field field = new Field(id, name, address, coords.latitude, coords.longitude, city,
                     openMillis, closeMillis, creator, sports);
 
-            Log.d(TAG, "addField: " + field);
             if (TextUtils.isEmpty(field.getId()))
                 FieldsFirebaseActions.addField(field);
             else

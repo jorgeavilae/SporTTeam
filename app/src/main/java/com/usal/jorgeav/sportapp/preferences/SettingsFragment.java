@@ -486,7 +486,7 @@ public class SettingsFragment extends PreferenceFragment implements
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
                                             // If fails, logout is automatic
-                                            Log.d(TAG, "User re-authenticated fails: "+e.getLocalizedMessage());
+                                            Log.i(TAG, "User re-authenticated fails: "+e.getLocalizedMessage());
                                             Toast.makeText(getActivity(), R.string.error_incorrect_password,
                                                     Toast.LENGTH_SHORT).show();
 
