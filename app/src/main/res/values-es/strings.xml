@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SporTTeam</string>
+    <string name="app_name">SportApp</string>
 
     <string name="profile">Perfil</string>
     <string name="search_events">Buscar partidos</string>

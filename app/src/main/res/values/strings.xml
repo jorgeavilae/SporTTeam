@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sportteam</string>
+    <string name="app_name">SportApp</string>
 
     <string name="profile">Profile</string>
     <string name="search_events">Search Events</string>
