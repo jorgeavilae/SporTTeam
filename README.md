@@ -3,6 +3,9 @@ Android app for organizing team sports matches.
 
 Project developed as a Final Degree Project in Computer Science at University of Salamanca in 2017-2018.
 
+#### Javadoc
+https://jorgeavilae.github.io/SporTTeam/
+
 ## Abstract
 In this Final Degree Project, an application for Android mobile devices has been developed, with a certain character of social network, capable of helping its users to organize sporting events for a certain number of people. Thanks to it, users are able to capture the number of players needed to fill the vacancies of the matches they organize. Through their devices, users publish in the social network games of different sports that they want to play in the future, along with the number of players they need to play them. Other users, through different protocols, can join them as participants. It also adds a function of alarms that warn the user if a match is created with the features his is looking for. The system manages user accounts, the relationships between them, the matches they create, the fields where matches are played and the alarms set. In addition, it has a notification system that shows notifications to the user, about events that occur in the system, or about relevant actions performed by his friends.
 
