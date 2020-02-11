@@ -142,7 +142,7 @@ public class MyNotificationsAdapter extends RecyclerView.Adapter<MyNotifications
                 case FirebaseDBContract.NOTIFICATION_TYPE_USER:
                     String userPicture = UtilesContentProvider.getUserPictureFromContentProvider(n.getExtra_data_one());
                     if (userPicture != null && !TextUtils.isEmpty(userPicture))
-                        mGlide.load(Uri.parse(userPicture)).asBitmap().into(new BitmapImageViewTarget(holder.imageViewNotificationIcon) {
+                        mGlide.asBitmap().load(Uri.parse(userPicture)).into(new BitmapImageViewTarget(holder.imageViewNotificationIcon) {
                             @Override
                             protected void setResource(Bitmap resource) {
                                 RoundedBitmapDrawable circularBitmapDrawable =

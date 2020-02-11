@@ -114,7 +114,7 @@ public class ProfileSportsAdapter extends RecyclerView.Adapter<ProfileSportsAdap
             String sportId = mDataset.getString(SportteamContract.UserSportEntry.COLUMN_SPORT);
 
             // Set icon
-            mGlide.load(Utiles.getSportIconFromResource(sportId)).asBitmap().into(holder.imageViewSportIcon);
+            mGlide.asBitmap().load(Utiles.getSportIconFromResource(sportId)).into(holder.imageViewSportIcon);
 
             // Set title
             int nameResource = MyApplication.getAppContext().getResources()

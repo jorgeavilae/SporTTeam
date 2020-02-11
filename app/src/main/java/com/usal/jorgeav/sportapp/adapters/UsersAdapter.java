@@ -93,7 +93,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         if (mDataset.moveToPosition(position)) {
             // Set icon
             String userPicture = mDataset.getString(SportteamContract.UserEntry.COLUMN_PHOTO);
-            mGlide.load(Uri.parse(userPicture)).asBitmap()
+            mGlide.asBitmap().load(Uri.parse(userPicture))
                     .placeholder(R.drawable.profile_picture_placeholder)
                     .into(holder.imageViewUserPhoto);
 

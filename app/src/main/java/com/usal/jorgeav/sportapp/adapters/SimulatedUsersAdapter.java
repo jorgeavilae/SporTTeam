@@ -100,7 +100,7 @@ public class SimulatedUsersAdapter extends RecyclerView.Adapter<SimulatedUsersAd
             // Set icon
             String userPicture = mDataset.getString(SportteamContract.SimulatedParticipantEntry.COLUMN_PROFILE_PICTURE);
             if (userPicture != null && !TextUtils.isEmpty(userPicture))
-                mGlide.load(Uri.parse(userPicture)).asBitmap().into(new BitmapImageViewTarget(holder.imageViewSimulatedUserPhoto) {
+                mGlide.asBitmap().load(Uri.parse(userPicture)).into(new BitmapImageViewTarget(holder.imageViewSimulatedUserPhoto) {
                     @Override
                     protected void setResource(Bitmap resource) {
                         RoundedBitmapDrawable circularBitmapDrawable =

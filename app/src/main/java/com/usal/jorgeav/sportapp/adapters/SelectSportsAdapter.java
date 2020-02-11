@@ -92,7 +92,7 @@ public class SelectSportsAdapter extends RecyclerView.Adapter<SelectSportsAdapte
         Sport s = mDataset.get(position);
         if (s != null) {
             // Set icon
-            mGlide.load(s.getIconDrawableId()).asBitmap().into(holder.imageViewSportIcon);
+            mGlide.asBitmap().load(s.getIconDrawableId()).into(holder.imageViewSportIcon);
 
             // Set title
             int nameResource = MyApplication.getAppContext().getResources()

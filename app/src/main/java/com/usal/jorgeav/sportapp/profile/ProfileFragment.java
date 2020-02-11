@@ -639,7 +639,7 @@ public class ProfileFragment extends BaseFragment implements
     @Override
     public void showUserImage(String image) {
         userImage.setVisibility(View.VISIBLE);
-        Glide.with(this).load(image).asBitmap()
+        Glide.with(this).asBitmap().load(image)
                 .error(R.drawable.profile_picture_placeholder)
                 .placeholder(R.drawable.profile_picture_placeholder)
                 .into(new BitmapImageViewTarget(userImage) {

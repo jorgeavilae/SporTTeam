@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -143,7 +144,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         Glide.with(this)
                 .load(R.drawable.logo_name)
-                .animate(android.R.anim.fade_in)
                 .into(loginLogo);
 
         populateAutoCompleteTextViewEmail();
