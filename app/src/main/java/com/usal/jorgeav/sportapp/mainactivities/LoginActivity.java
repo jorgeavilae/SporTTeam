@@ -72,6 +72,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     /**
+     * Variable incluida para activar o desactivar la comprobación que se realiza al iniciar sesión
+     * sobre si la dirección de email ha sido verificada. Para cambiar su estado se realiza una
+     * pulsación larga sobre la imagen SporTTeam.
+     */
+    private boolean checkIfEmailIsVerified;
+
+    /**
      * Imagen del logo de la aplicación
      */
     @BindView(R.id.login_logo_name)
@@ -145,6 +152,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Glide.with(this)
                 .load(R.drawable.logo_name)
                 .into(loginLogo);
+
+        checkIfEmailIsVerified = true;
+        loginLogo.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                checkIfEmailIsVerified = !checkIfEmailIsVerified;
+                CharSequence msg = "Check if email is verified: "+checkIfEmailIsVerified;
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
 
         populateAutoCompleteTextViewEmail();
 
@@ -318,7 +336,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 Toast.makeText(LoginActivity.this, R.string.error_incorrect_password,
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                initLoadMyProfile(true);
+                                initLoadMyProfile(checkIfEmailIsVerified);
                             }
                         }
                     });
