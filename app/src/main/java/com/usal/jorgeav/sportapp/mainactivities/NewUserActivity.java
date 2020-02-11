@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -265,7 +265,7 @@ public class NewUserActivity extends AppCompatActivity implements
      * Inicia la transición hacia el Fragmento especificado y lo almacena en
      * la pila de de Fragmentos si corresponde. Asocia una etiqueta al Fragmento para
      * poder ser encontrado posteriormente con
-     * {@link android.support.v4.app.FragmentManager#findFragmentByTag(String)}
+     * {@link androidx.fragment.app.FragmentManager#findFragmentByTag(String)}
      *
      * @param fragment       Fragmento que va a mostrarse
      * @param addToBackStack true si debe almacenarse en la pila de Fragmentos

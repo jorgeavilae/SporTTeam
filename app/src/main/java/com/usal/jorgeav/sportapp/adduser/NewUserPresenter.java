@@ -2,7 +2,7 @@ package com.usal.jorgeav.sportapp.adduser;
 
 import android.content.ContentValues;
 import android.net.Uri;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;

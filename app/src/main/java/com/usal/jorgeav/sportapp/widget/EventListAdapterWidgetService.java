@@ -3,7 +3,7 @@ package com.usal.jorgeav.sportapp.widget;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -132,7 +132,7 @@ public class EventListAdapterWidgetService extends RemoteViewsService {
          * {@link RemoteViews#setOnClickFillInIntent(int, Intent)}.
          * <p>
          * Método equivalente a
-         * {@link android.support.v7.widget.RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
+         * {@link androidx.recyclerview.widget.RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
          *
          * @param position posición de la celda que debe cargarse
          * @return {@link RemoteViews} representando al ítem del partido en esa posición

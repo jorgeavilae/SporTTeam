@@ -1,6 +1,6 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.MenuItem;
 
 import com.usal.jorgeav.sportapp.R;

@@ -7,7 +7,7 @@
     android:layout_marginTop="?android:attr/actionBarSize"
     tools:context="com.usal.jorgeav.sportapp.alarms.addalarm.NewAlarmFragment">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -299,5 +299,5 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

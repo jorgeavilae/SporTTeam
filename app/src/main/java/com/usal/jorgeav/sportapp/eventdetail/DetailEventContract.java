@@ -2,7 +2,7 @@ package com.usal.jorgeav.sportapp.eventdetail;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
+import androidx.loader.app.LoaderManager;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.usal.jorgeav.sportapp.BaseFragment;

@@ -1,7 +1,7 @@
 package com.usal.jorgeav.sportapp.network.firebase;
 
 import android.os.Process;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

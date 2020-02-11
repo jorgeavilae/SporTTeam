@@ -1,6 +1,6 @@
 package com.usal.jorgeav.sportapp.mainactivities;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.usal.jorgeav.sportapp.BaseFragment;
 
@@ -30,7 +30,7 @@ public abstract class ActivityContracts {
          * Inicia la transición hacia el Fragmento especificado y lo almacena en
          * la pila de de Fragmentos si corresponde. Asocia una etiqueta al Fragmento para
          * poder ser encontrado posteriormente con
-         * {@link android.support.v4.app.FragmentManager#findFragmentByTag(String)}
+         * {@link androidx.fragment.app.FragmentManager#findFragmentByTag(String)}
          *
          * @param fragment       Fragmento que va a mostrarse
          * @param addToBackStack true si debe almacenarse en la pila de Fragmentos

@@ -3,7 +3,7 @@ package com.usal.jorgeav.sportapp.fields.fielddetail;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
+import androidx.loader.app.LoaderManager;
 
 import com.google.android.gms.maps.model.LatLng;
 

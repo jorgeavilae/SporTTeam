@@ -3,7 +3,7 @@ package com.usal.jorgeav.sportapp.data.provider;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.content.CursorLoader;
+import androidx.loader.content.CursorLoader;
 import android.text.TextUtils;
 
 import com.usal.jorgeav.sportapp.data.Alarm;

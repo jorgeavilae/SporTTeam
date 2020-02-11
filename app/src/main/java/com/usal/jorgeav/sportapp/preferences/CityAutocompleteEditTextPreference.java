@@ -3,7 +3,7 @@ package com.usal.jorgeav.sportapp.preferences;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.preference.EditTextPreference;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;

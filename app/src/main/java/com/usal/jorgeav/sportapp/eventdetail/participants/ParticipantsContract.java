@@ -3,7 +3,7 @@ package com.usal.jorgeav.sportapp.eventdetail.participants;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
+import androidx.loader.app.LoaderManager;
 
 /**
  * Clase abstracta donde se declaran las interfaces por las que se comunican Vista y Presentador
