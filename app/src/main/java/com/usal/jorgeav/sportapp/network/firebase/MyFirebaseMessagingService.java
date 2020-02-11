@@ -2,7 +2,11 @@ package com.usal.jorgeav.sportapp.network.firebase;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.usal.jorgeav.sportapp.MyApplication;
@@ -11,9 +15,11 @@ import com.usal.jorgeav.sportapp.data.Event;
 import com.usal.jorgeav.sportapp.data.MyNotification;
 import com.usal.jorgeav.sportapp.data.User;
 import com.usal.jorgeav.sportapp.network.firebase.actions.NotificationsFirebaseActions;
+import com.usal.jorgeav.sportapp.network.firebase.actions.UserFirebaseActions;
 import com.usal.jorgeav.sportapp.network.firebase.sync.AlarmsFirebaseSync;
 import com.usal.jorgeav.sportapp.network.firebase.sync.EventsFirebaseSync;
 import com.usal.jorgeav.sportapp.network.firebase.sync.UsersFirebaseSync;
+import com.usal.jorgeav.sportapp.utils.Utiles;
 import com.usal.jorgeav.sportapp.utils.UtilesContentProvider;
 import com.usal.jorgeav.sportapp.utils.UtilesNotification;
 
@@ -28,8 +34,7 @@ import java.util.Map;
  * <p>
  * En concreto, en esta aplicación es usada para recibir los datos de una notificación recién
  * insertada en la rama correspondiente al usuario cuya sesión está iniciada. Este mensaje ha sido
- * dirigido a este dispositivo por haber guardado el token de esta aplicación cliente en la clase
- * {@link MyFirebaseInstanceIDService}.
+ * dirigido a este dispositivo por haber guardado el token de esta aplicación cliente.
  *
  * @see <a href= "https://firebase.google.com/docs/cloud-messaging/android/client">
  * Firebase Cloud Messaging for Android</a>
@@ -42,6 +47,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     @SuppressWarnings("unused")
     private static final String TAG = "MyFirebaseMsgService";
+
+    @Override
+    public void onNewToken(@NonNull String token) {
+        Log.i(TAG, "Refreshed token: " + token);
+
+        String myUserID = Utiles.getCurrentUserId();
+        if (!TextUtils.isEmpty(myUserID))
+            UserFirebaseActions.updateUserToken(myUserID, token);
+    }
 
     /**
      * Invocado al recibir un mensaje. Ejecuta {@link #notify(Map)} para mostrar el mensaje
