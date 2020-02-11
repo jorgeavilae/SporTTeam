@@ -108,7 +108,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/password"
             app:layout_constraintRight_toRightOf="@+id/password" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -63,7 +63,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
 
-    <androidx.constraintlayout.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
