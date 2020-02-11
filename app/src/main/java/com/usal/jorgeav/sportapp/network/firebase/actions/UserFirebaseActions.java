@@ -310,10 +310,10 @@ public class UserFirebaseActions {
      *                 dispositivo
      * @param listener Listener que se ejecutará si la subida del archivo tiene éxito
      */
-    public static void storePhotoOnFirebase(Uri photo, OnSuccessListener<UploadTask.TaskSnapshot> listener) {
+    public static void storePhotoOnFirebase(Uri photo, final OnCompleteListener<Uri> listener) {
         String lastPathSegment = photo.getLastPathSegment();
         if (lastPathSegment == null) return;
-        StorageReference photoRef = FirebaseStorage.getInstance()
+        final StorageReference photoRef = FirebaseStorage.getInstance()
                 .getReferenceFromUrl(Utiles.getFirebaseStorageRootReference())
                 .child(FirebaseDBContract.Storage.PROFILE_PICTURES)
                 .child(lastPathSegment);
@@ -327,13 +327,12 @@ public class UserFirebaseActions {
         UploadTask uploadTask = photoRef.putFile(photo, metadata);
 
         // Listen for state changes, errors, and completion of the upload.
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                Log.e(TAG, "storePhotoOnFirebase:putFile:onFailure: ", exception);
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                photoRef.getDownloadUrl().addOnCompleteListener(listener);
             }
-        }).addOnSuccessListener(listener);
+        });
     }
 
     /**

@@ -188,7 +188,7 @@ class NewUserPresenter implements NewUserContract.Presenter {
                                     // Get a reference to store file at chat_photos/<FILENAME>
                                     StorageReference mChatPhotosStorageReference = FirebaseStorage.getInstance().getReference()
                                             .child(FirebaseDBContract.Storage.PROFILE_PICTURES);
-                                    StorageReference photoRef = mChatPhotosStorageReference
+                                    final StorageReference photoRef = mChatPhotosStorageReference
                                             .child(croppedImageFileSystemUri.getLastPathSegment());
 
                                     // Create the file metadata
@@ -210,20 +210,21 @@ class NewUserPresenter implements NewUserContract.Presenter {
                                         @Override
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                             // Handle successful uploads on complete
-                                            /* https://stackoverflow.com/a/42616488/4235666 */
-                                            @SuppressWarnings("VisibleForTests")
-                                            StorageMetadata metadata = taskSnapshot.getMetadata();
-                                            if (metadata != null) {
-                                                final Uri downloadUrl = metadata.getDownloadUrl();
-                                                if (downloadUrl != null)
-                                                    storeUserDataAndFinish(downloadUrl, name,
-                                                            city, coords, Long.parseLong(age), sportsList);
-                                                else
-                                                    storeUserDataAndFinish(null, name,
-                                                            city, coords, Long.parseLong(age), sportsList);
-                                            } else
-                                                storeUserDataAndFinish(null, name,
-                                                        city, coords, Long.parseLong(age), sportsList);
+                                            photoRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Uri> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Uri downloadUri = task.getResult();
+                                                        if (downloadUri != null)
+                                                            storeUserDataAndFinish(downloadUri, name,
+                                                                    city, coords, Long.parseLong(age), sportsList);
+                                                        else
+                                                            storeUserDataAndFinish(null, name,
+                                                                    city, coords, Long.parseLong(age), sportsList);
+                                                    }
+                                                }
+                                            });
+
                                         }
                                     });
                                 } else {

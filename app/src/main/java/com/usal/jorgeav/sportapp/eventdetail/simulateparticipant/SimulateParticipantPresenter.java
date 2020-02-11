@@ -3,8 +3,10 @@ package com.usal.jorgeav.sportapp.eventdetail.simulateparticipant;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.UploadTask;
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.data.SimulatedUser;
 import com.usal.jorgeav.sportapp.network.firebase.actions.EventsFirebaseActions;
@@ -105,19 +107,19 @@ class SimulateParticipantPresenter implements
         final String fEventId = eventId;
         final String fName = name;
         final Long fAge = age;
-        UserFirebaseActions.storePhotoOnFirebase(photo,
-                new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Handle successful uploads on complete
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+        UserFirebaseActions.storePhotoOnFirebase(photo, new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
 
-                        String myUserID = Utiles.getCurrentUserId();
-                        if (TextUtils.isEmpty(myUserID)) return;
-                        String photo = downloadUrl != null ? downloadUrl.toString() : null;
-                        SimulatedUser su = new SimulatedUser(fName, photo, fAge, myUserID);
-                        EventsFirebaseActions.addSimulatedParticipant(mView.getThis(), fEventId, su);
-                    }
-                });
+                    String myUserID = Utiles.getCurrentUserId();
+                    if (TextUtils.isEmpty(myUserID)) return;
+                    String photo = downloadUri != null ? downloadUri.toString() : null;
+                    SimulatedUser su = new SimulatedUser(fName, photo, fAge, myUserID);
+                    EventsFirebaseActions.addSimulatedParticipant(mView.getThis(), fEventId, su);
+                }
+            }
+        });
     }
 }

@@ -7,12 +7,17 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
+
 import android.text.TextUtils;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -501,36 +506,38 @@ class ProfilePresenter implements
      */
     @Override
     public void updateUserPhoto(Uri photoCroppedUri) {
-        UserFirebaseActions.storePhotoOnFirebase(photoCroppedUri, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        UserFirebaseActions.storePhotoOnFirebase(photoCroppedUri, new OnCompleteListener<Uri>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // Handle successful uploads on complete
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                if (downloadUrl != null) {
-                    String oldPhotoUrl = Utiles.getCurrentUserPhoto();
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    // Handle successful uploads on complete
+                    Uri downloadUri = task.getResult();
+                    if (downloadUri != null) {
+                        String oldPhotoUrl = Utiles.getCurrentUserPhoto();
 
-                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                    if (fUser == null) return;
+                        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (fUser == null) return;
 
-                    // Update photo URL in Firebase Auth profile
-                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                            .setPhotoUri(downloadUrl)
-                            .build();
-                    fUser.updateProfile(profileUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // Update NavigationDrawer header
-                            if (mUserView.getActivityContext() instanceof ActivityContracts.NavigationDrawerManagement)
-                                ((ActivityContracts.NavigationDrawerManagement) mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
-                        }
-                    });
+                        // Update photo URL in Firebase Auth profile
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setPhotoUri(downloadUri)
+                                .build();
+                        fUser.updateProfile(profileUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                // Update NavigationDrawer header
+                                if (mUserView.getActivityContext() instanceof ActivityContracts.NavigationDrawerManagement)
+                                    ((ActivityContracts.NavigationDrawerManagement) mUserView.getActivityContext()).setUserInfoInNavigationDrawer();
+                            }
+                        });
 
-                    // Update photo URL in Firebase Database
-                    UserFirebaseActions.updateUserPhoto(fUser.getUid(), downloadUrl.toString());
-                    UsersFirebaseSync.loadAProfile(null, fUser.getUid(), false);
+                        // Update photo URL in Firebase Database
+                        UserFirebaseActions.updateUserPhoto(fUser.getUid(), downloadUri.toString());
+                        UsersFirebaseSync.loadAProfile(null, fUser.getUid(), false);
 
-                    // Delete old photo in Firebase Storage
-                    UserFirebaseActions.deleteOldUserPhoto(oldPhotoUrl);
+                        // Delete old photo in Firebase Storage
+                        UserFirebaseActions.deleteOldUserPhoto(oldPhotoUrl);
+                    }
                 }
             }
         });
