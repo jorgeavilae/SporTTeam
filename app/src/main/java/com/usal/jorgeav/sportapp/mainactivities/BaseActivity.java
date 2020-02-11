@@ -193,6 +193,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                         || savedInstanceState.containsKey(FRAGMENT_TAG_IS_FIELDS_MAP)));
 
         mAuth = FirebaseAuth.getInstance();
+        //TODO no se cierra la sesión https://firebase.google.com/docs/auth/android/password-auth
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
