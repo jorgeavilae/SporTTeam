@@ -219,6 +219,7 @@ public class SportsListFragment extends BaseFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFragmentManagementListener.setCurrentDisplayedFragment(getString(R.string.pick_sports), this);
+        //TODO Attempt to invoke interface method setToolbarAsUp() on a null object reference
         mNavigationDrawerManagementListener.setToolbarAsUp();
     }
 

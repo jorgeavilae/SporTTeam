@@ -16,17 +16,22 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceResponse;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Clase derivada de {@link EditTextPreference} con el objetivo de usarla como tal pero añadiendo
@@ -58,14 +63,9 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
     LatLng citySelectedCoord = null;
 
     /**
-     * Objeto GoogleApiClient necesario para utilizar Google Places API
-     *
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient">
-     * GoogleApiClient</a>
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     * Google Places API</a>
+     * Objeto PlacesClient necesario para utilizar Google Places API
      */
-    private static GoogleApiClient mGoogleApiClient;
+    private static PlacesClient mPlacesClient;
 
     /**
      * Constructor
@@ -82,39 +82,22 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
     }
 
     /**
-     * Inicializa el cliente GoogleApiClient para poder utilizar Google Places API. Establece los
+     * Inicializa el cliente PlacesClient para poder utilizar Google Places API. Establece los
      * controles para regular el comportamiento del {@link #mEditText} donde se
      * escribe la ciudad. Crea un {@link TextWatcher} para reaccionar a los cambios en el texto y
      * así realizar nuevas búsquedas con el {@link PlaceAutocompleteAdapter}.
      * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la Google
      * Places API para obtener la coordenadas de dicha ciudad.
      *
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     * Google Places API</a>
+     * @see <a href= "https://developers.google.com/places/android-sdk/intro">
+     * Places SDK for Android</a>
      */
     private void setAutocompleteTextView() {
-        if (mGoogleApiClient == null)
-            mGoogleApiClient = new GoogleApiClient
-                    .Builder(getContext())
-                    .addApi(Places.GEO_DATA_API)
-                    .enableAutoManage(((SettingsActivity) getContext()), new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                            Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
-                        }
-                    })
-                    .build();
-        else mGoogleApiClient.connect();
+        Context context = MyApplication.getAppContext();
+        Places.initialize(context, context.getString(R.string.google_maps_and_geocoding_key));
+        mPlacesClient = Places.createClient(context);
 
-        // Set up the adapter that will retrieve suggestions from
-        // the Places Geo Data API that cover Spain
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
-                /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
-                .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
-                .build();
-
-        final PlaceAutocompleteAdapter adapter = new PlaceAutocompleteAdapter(getContext(), mGoogleApiClient, null, typeFilter);
+        final PlaceAutocompleteAdapter adapter = new PlaceAutocompleteAdapter(getContext(), mPlacesClient, null);
         mEditText.setAdapter(adapter);
 
         mEditText.addTextChangedListener(new TextWatcher() {
@@ -148,26 +131,40 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
                     Log.i(TAG, "Autocomplete item selected: " + item.getPlaceId());
                     final ProgressDialog progressDialog = new ProgressDialog(getContext());
                     progressDialog.show();
-                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, item.getPlaceId())
-                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
+
+                    // Fetch Place Details from Places API
+                    String placeId = item.getPlaceId();
+                    List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG);
+                    FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+
+                    mPlacesClient.fetchPlace(request).addOnSuccessListener(
+                            new OnSuccessListener<FetchPlaceResponse>() {
                                 @Override
-                                public void onResult(@NonNull PlaceBuffer places) {
+                                public void onSuccess(FetchPlaceResponse response) {
                                     // Stop UI until finish callback
                                     progressDialog.dismiss();
-                                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                                        Place myPlace = places.get(0);
-                                        citySelectedName = myPlace.getName().toString();
-                                        citySelectedCoord = myPlace.getLatLng();
-                                        Log.i(TAG, "Place found: Name - " + myPlace.getName()
-                                                + " LatLng - " + myPlace.getLatLng());
-                                    } else {
-                                        Log.e(TAG, "Place not found");
-                                        Toast.makeText(getContext(),
-                                                R.string.error_check_conn, Toast.LENGTH_SHORT).show();
-                                    }
-                                    places.release();
+
+                                    Place myPlace = response.getPlace();
+                                    citySelectedName = myPlace.getName();
+                                    citySelectedCoord = myPlace.getLatLng();
+                                    Log.i(TAG, "Place found: Name - " + myPlace.getName()
+                                            + " LatLng - " + myPlace.getLatLng());
                                 }
-                            });
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    // Stop UI until finish callback
+                                    progressDialog.dismiss();
+
+                                    Toast.makeText(getContext(),
+                                            R.string.error_check_conn, Toast.LENGTH_SHORT).show();
+
+                                    if (exception instanceof ApiException) {
+                                        ApiException apiException = (ApiException) exception;
+                                        Log.e(TAG, "Place not found: " + apiException.getMessage());
+                                    }
+                                }
+                    });
                 }
             }
         });
@@ -182,7 +179,7 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        EditText oldEditText = (EditText) view.findViewById(android.R.id.edit);
+        EditText oldEditText = view.findViewById(android.R.id.edit);
         ViewParent oldParent = oldEditText.getParent();
         String currentValue = oldEditText.getText().toString();
 

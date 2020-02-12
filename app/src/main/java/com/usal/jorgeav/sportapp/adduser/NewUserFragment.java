@@ -3,6 +3,7 @@ package com.usal.jorgeav.sportapp.adduser;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,21 +28,26 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceResponse;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.usal.jorgeav.sportapp.BaseFragment;
+import com.usal.jorgeav.sportapp.MyApplication;
 import com.usal.jorgeav.sportapp.R;
 import com.usal.jorgeav.sportapp.adapters.PlaceAutocompleteAdapter;
 import com.usal.jorgeav.sportapp.mainactivities.NewUserActivity;
 import com.usal.jorgeav.sportapp.sportselection.SportsListFragment;
 import com.usal.jorgeav.sportapp.utils.Utiles;
+
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -80,11 +86,10 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
     Uri croppedImageUri;
 
     /**
-     * Variable que identifica esta aplicación como cliente autorizado de la API de Google utilizada
-     * para sugerir de ciudades.
+     * Objeto PlacesClient necesario para utilizar Google Places API
      */
-    // Static prevent double initialization with same ID
-    static GoogleApiClient mGoogleApiClient;
+    private static PlacesClient mPlacesClient;
+
     /**
      * Adaptador para el {@link AutoCompleteTextView} de ciudades
      */
@@ -167,18 +172,9 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        if (mGoogleApiClient == null)
-            mGoogleApiClient = new GoogleApiClient
-                    .Builder(getActivity())
-                    .addApi(Places.GEO_DATA_API)
-                    .enableAutoManage(getActivity(), new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                            Log.e(TAG, "onConnectionFailed: Google Api Client is not connected");
-                        }
-                    })
-                    .build();
-        else mGoogleApiClient.connect();
+        Context context = MyApplication.getAppContext();
+        Places.initialize(getActivity(), getString(R.string.google_maps_and_geocoding_key));
+        mPlacesClient = Places.createClient(context);
 
         mPresenter = new NewUserPresenter(this);
     }
@@ -350,30 +346,22 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         });
     }
 
-
     /**
-     * Establece los controles para regular el comportamiento del {@link AutoCompleteTextView}
-     * donde se escribe la ciudad del usuario. Crea un {@link TextWatcher} para reaccionar a los
-     * cambios en el texto y así realizar nuevas búsquedas con el {@link PlaceAutocompleteAdapter}.
+     * Inicializa el cliente PlacesClient para poder utilizar Google Places API. Establece los
+     * controles para regular el comportamiento del {@link #newUserAutocompleteCity} donde se
+     * escribe la ciudad. Crea un {@link TextWatcher} para reaccionar a los cambios en el texto y
+     * así realizar nuevas búsquedas con el {@link PlaceAutocompleteAdapter}.
      * Cuando se selecciona una de las ciudades sugeridas, se realiza una consulta a la Google
      * Places API para obtener la coordenadas de dicha ciudad.
      *
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     * Google Places API</a>
+     * @see <a href= "https://developers.google.com/places/android-sdk/intro">
+     * Places SDK for Android</a>
      */
     private void setAutocompleteTextView() {
-        // Set up the adapter that will retrieve suggestions from
-        // the Places Geo Data API that cover Spain
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
-                /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
-                .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
-                .build();
+        final PlaceAutocompleteAdapter adapter = new PlaceAutocompleteAdapter(getContext(), mPlacesClient, null);
+        newUserAutocompleteCity.setAdapter(adapter);
 
-        mAdapter = new PlaceAutocompleteAdapter(getActivityContext(), mGoogleApiClient, null, typeFilter);
-        newUserAutocompleteCity.setAdapter(mAdapter);
-
-        TextWatcher tw = new TextWatcher() {
+        newUserAutocompleteCity.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -390,8 +378,7 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                 newUserCitySelectedCoord = null;
                 newUserAutocompleteCity.setError(getString(R.string.error_invalid_city));
             }
-        };
-        newUserAutocompleteCity.addTextChangedListener(tw);
+        });
 
         newUserAutocompleteCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -401,32 +388,46 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                  The adapter stores each Place suggestion in a AutocompletePrediction from which we
                  read the place ID and title.
                   */
-                AutocompletePrediction item = mAdapter.getItem(position);
+                AutocompletePrediction item = adapter.getItem(position);
                 if (item != null) {
                     Log.i(TAG, "Autocomplete item selected: " + item.getPlaceId());
                     final ProgressDialog progressDialog = new ProgressDialog(getContext());
                     progressDialog.show();
-                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, item.getPlaceId())
-                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
+
+                    // Fetch Place Details from Places API
+                    String placeId = item.getPlaceId();
+                    List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG);
+                    FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+
+                    mPlacesClient.fetchPlace(request).addOnSuccessListener(
+                            new OnSuccessListener<FetchPlaceResponse>() {
                                 @Override
-                                public void onResult(@NonNull PlaceBuffer places) {
+                                public void onSuccess(FetchPlaceResponse response) {
                                     // Stop UI until finish callback
                                     progressDialog.dismiss();
-                                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                                        Place myPlace = places.get(0);
-                                        newUserCitySelectedName = myPlace.getName().toString();
-                                        newUserCitySelectedCoord = myPlace.getLatLng();
-                                        newUserAutocompleteCity.setError(null);
-                                        Log.i(TAG, "Place found: Name - " + myPlace.getName()
-                                                + " LatLng - " + myPlace.getLatLng());
-                                    } else {
-                                        Log.e(TAG, "Place not found");
-                                        Toast.makeText(getContext(),
-                                                R.string.error_check_conn, Toast.LENGTH_SHORT).show();
-                                    }
-                                    places.release();
+
+                                    Place myPlace = response.getPlace();
+                                    newUserCitySelectedName = myPlace.getName();
+                                    newUserCitySelectedCoord = myPlace.getLatLng();
+                                    newUserAutocompleteCity.setError(null);
+                                    Log.i(TAG, "Place found: Name - " + myPlace.getName()
+                                            + " LatLng - " + myPlace.getLatLng());
                                 }
-                            });
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Stop UI until finish callback
+                            progressDialog.dismiss();
+
+                            Toast.makeText(getContext(),
+                                    R.string.error_check_conn, Toast.LENGTH_SHORT).show();
+
+                            if (exception instanceof ApiException) {
+                                ApiException apiException = (ApiException) exception;
+                                Log.e(TAG, "Place not found: " + apiException.getMessage());
+                            }
+                        }
+                    });
                 }
             }
         });

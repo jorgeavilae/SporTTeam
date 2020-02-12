@@ -30,27 +30,31 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.data.DataBufferUtils;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.AutocompletePredictionBuffer;
-import com.google.android.gms.location.places.Places;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.usal.jorgeav.sportapp.R;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Adaptador para la lista de sugerencias de ciudades. Utiliza la interfaz {@link Filterable}
  * para filtrar las búsquedas. Para las búsquedas utiliza Google Places API
  *
- * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
- * Google Places API
+ * @see <a href= "https://developers.google.com/places/android-sdk/intro">
+ * Places SDK for Android
  * </a>
  */
 public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePrediction> implements
@@ -68,38 +72,29 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
      * Colección de resultados una vez efectuada la búsqueda
      */
     private ArrayList<AutocompletePrediction> mResultList;
+
     /**
-     * Objeto GoogleApiClient necesario para utilizar Google Places API
-     *
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient">
-     * GoogleApiClient</a>
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     * Google Places API</a>
+     * Objeto PlacesClient necesario para utilizar Google Places API
      */
-    private GoogleApiClient mGoogleApiClient;
+    private PlacesClient mPlacesClient;
+
     /**
      * Limites en coordenadas sobre los que efectuar la búsqueda de lugares
      */
-    private LatLngBounds mBounds;
-    /**
-     * Filtro usado para restringir la búsqueda a solo el nombre de ciudades
-     */
-    private AutocompleteFilter mPlaceFilter;
+    private RectangularBounds mBounds;
 
     /**
      * Constructor
      *
      * @param context         Contexto de la Actividad que aloja el adaptador
-     * @param googleApiClient necesario para acceder a las funciones de la API
+     * @param placesClient    necesario para acceder a las funciones de la API
      * @param bounds          limites sobre los que efectuar la búsqueda
-     * @param filter          filtro de lugares para restringir la búsqueda
      */
-    public PlaceAutocompleteAdapter(Context context, GoogleApiClient googleApiClient,
-                                    LatLngBounds bounds, AutocompleteFilter filter) {
+    public PlaceAutocompleteAdapter(Context context, PlacesClient placesClient, LatLngBounds bounds) {
         super(context, android.R.layout.simple_expandable_list_item_2, android.R.id.text1);
-        this.mGoogleApiClient = googleApiClient;
-        this.mBounds = bounds;
-        this.mPlaceFilter = filter;
+        this.mPlacesClient = placesClient;
+        if (bounds == null) this.mBounds = null;
+        else this.mBounds = RectangularBounds.newInstance(bounds.northeast, bounds.southwest);
     }
 
     /**
@@ -147,13 +142,13 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
      * Crea el {@link Filter} que realiza las búsquedas. Para el {@link Filter} se implementan tres
      * métodos:
      * <p>
-     * - {@link Filter#performFiltering(CharSequence)}:
+     * - Filter#performFiltering(CharSequence):
      * Invocado para realizar el filtrado. Dada la cadena de texto con la que se realiza la
      * búsqueda, utiliza FilterResults clase interna de {@link Filter} para almacenar los resultados
      * de la consulta a Google proporcionados por
-     * {@link PlaceAutocompleteAdapter#getAutocomplete(CharSequence)} y los devuelve.
+     * PlaceAutocompleteAdapter#getAutocomplete(CharSequence) y los devuelve.
      * <p>
-     * - {@link Filter#publishResults(CharSequence, Filter.FilterResults)}:
+     * - Filter#publishResults(CharSequence, Filter.FilterResults):
      * Invocado cuando finaliza el filtrado. Dada la cadena de texto con la que se realiza la
      * búsqueda y los resultado, se encarga de notificar el éxito o el fracaso (si los resultados
      * están vacíos) de la búsqueda. Almacena el resultado en {@link #mResultList}.
@@ -178,12 +173,11 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
                 // Skip the autocomplete query if no constraints are given.
                 if (constraint != null) {
                     // Query the autocomplete API for the (constraint) search string.
-                    filterData = getAutocomplete(constraint);
+                    filterData.addAll(getAutocomplete(constraint.toString()));
                 }
 
                 results.values = filterData;
-                if (filterData != null) results.count = filterData.size();
-                else results.count = 0;
+                results.count = filterData.size();
 
                 return results;
             }
@@ -218,51 +212,55 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
      * Método encargado de realizar la consulta asíncrona a Google Places API con la cadena de
      * texto introducida por el usuario
      * <p>
-     * Utiliza el método GeoDataApi.getAutocompletePredictions() para hacer las consultas.
+     * Utiliza el método PlacesClient.findAutocompletePredictions() para hacer las consultas.
      * <p>
-     * A continuación, espera por el resultado, comprueba el código de error y cierra el
-     * AutocompletePredictionBuffer por el que recibía la respuesta.
+     * A continuación, espera por el resultado y comprueba el código de error.
      * <p>
      * Si el código es correcto devuelve una lista con los resultados que coinciden con la
      * búsqueda
      *
      * @param constraint cadena de texto con la que se realiza la búsqueda
-     * @return ArrayList con los resultados de la búsqueda
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi">
-     * Google Places API</a>
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/GeoDataApi.html#getAutocompletePredictions(com.google.android.gms.common.api.GoogleApiClient,%20java.lang.String,%20com.google.android.gms.maps.model.LatLngBounds,%20com.google.android.gms.location.places.AutocompleteFilter)">
-     * GeoDataApi.getAutocompletePredictions()</a>
-     * @see <a href= "https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompletePredictionBuffer">
-     * AutocompletePredictionBuffer</a>
+     * @return List con los resultados de la búsqueda
      */
-    private ArrayList<AutocompletePrediction> getAutocomplete(CharSequence constraint) {
-        if (mGoogleApiClient.isConnected()) {
-            // Submit the query to the autocomplete API and retrieve a PendingResult that will
-            // contain the results when the query completes.
-            PendingResult<AutocompletePredictionBuffer> results = Places.GeoDataApi
-                    .getAutocompletePredictions(mGoogleApiClient, constraint.toString(),
-                            mBounds, mPlaceFilter);
+    private List<AutocompletePrediction> getAutocomplete(String constraint) {
+        // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
+        // and once again when the user makes a selection (for example when calling fetchPlace()).
+        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
-            // This method should have been called off the main UI thread. Block and wait for 15s
-            AutocompletePredictionBuffer autocompletePredictions = results
-                    .await(15, TimeUnit.SECONDS);
+        // Use the builder to create a FindAutocompletePredictionsRequest.
+        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                .setLocationRestriction(mBounds)
+                /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
+                .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
+                .setTypeFilter(TypeFilter.CITIES)
+                .setSessionToken(token)
+                .setQuery(constraint)
+                .build();
 
-            final Status status = autocompletePredictions.getStatus();
-            if (!status.isSuccess()) {
-                if (status.getStatusCode() == CommonStatusCodes.NETWORK_ERROR)
-                    Toast.makeText(getContext(), R.string.error_check_conn, Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(getContext(), R.string.toast_error_autocomplete_city, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Error getting autocomplete prediction API call: " + status.toString());
-                autocompletePredictions.release();
-                return null;
-            }
-
-            // Freeze the results immutable representation to be stored safely
-            // and release the AutocompletePredictionBuffer
-            return DataBufferUtils.freezeAndClose(autocompletePredictions);
+        Task<FindAutocompletePredictionsResponse> autocompletePredictions =
+                mPlacesClient.findAutocompletePredictions(request);
+        try {
+            Tasks.await(autocompletePredictions, 15, TimeUnit.SECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            e.printStackTrace();
         }
-        Log.e(TAG, "Google API client is not connected for autocomplete query.");
+
+        if (!autocompletePredictions.isSuccessful()) {
+            Toast.makeText(getContext(), R.string.toast_error_autocomplete_city, Toast.LENGTH_SHORT).show();
+            if (autocompletePredictions.getException() instanceof ApiException) {
+                ApiException apiException = (ApiException) autocompletePredictions.getException();
+                Log.e(TAG, "Place not found: " + apiException.getMessage());
+            }
+        } else {
+            FindAutocompletePredictionsResponse response = autocompletePredictions.getResult();
+            if (response != null) {
+                for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                    Log.i(TAG, prediction.getPlaceId());
+                    Log.i(TAG, prediction.getPrimaryText(null).toString());
+                }
+                return response.getAutocompletePredictions();
+            }
+        }
         return null;
     }
 }

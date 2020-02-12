@@ -17,7 +17,7 @@
         android:layout_marginStart="@dimen/edittext_icon_margin"
         android:cropToPadding="true"
         android:paddingBottom="@dimen/edittext_icon_below"
-        android:src="@drawable/places_ic_search"
+        android:src="@drawable/ic_nav_search"
         app:layout_constraintBottom_toBottomOf="@+id/search_users_edit"
         app:layout_constraintLeft_toLeftOf="@+id/search_users_edit" />
 
