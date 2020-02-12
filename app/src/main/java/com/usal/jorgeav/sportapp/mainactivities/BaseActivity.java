@@ -193,7 +193,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                         || savedInstanceState.containsKey(FRAGMENT_TAG_IS_FIELDS_MAP)));
 
         mAuth = FirebaseAuth.getInstance();
-        //TODO no se cierra la sesión https://firebase.google.com/docs/auth/android/password-auth
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -203,6 +202,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                     Log.i(TAG, "FirebaseUser logged ID: " + fUser.getUid());
                     setUserInfoInNavigationDrawer();
 
+                    // Setup notifications
                     createNotificationChannel();
 
                     // Initialization for populate Content Provider and init Service if needed
@@ -219,6 +219,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                     // Finalize service
                     SportteamSyncInitialization.finalize(BaseActivity.this);
 
+                    // Clear notifications
                     UtilesNotification.clearAllNotifications(BaseActivity.this);
 
                     Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
