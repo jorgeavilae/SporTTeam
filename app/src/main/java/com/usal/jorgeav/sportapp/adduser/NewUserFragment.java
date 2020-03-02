@@ -464,6 +464,8 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
         setAgeEditText();
         setAutocompleteTextView();
 
+        showContent();
+
         if (((NewUserActivity) getActivity()).sports != null && ((NewUserActivity) getActivity()).sportsInitialize) {
             hideContent();
 
@@ -486,15 +488,6 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                 Toast.makeText(getActivity(), R.string.toast_invalid_arg, Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    /**
-     * Muestra el contenido del Fragmento
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        mFragmentManagementListener.showContent();
     }
 
     /**
