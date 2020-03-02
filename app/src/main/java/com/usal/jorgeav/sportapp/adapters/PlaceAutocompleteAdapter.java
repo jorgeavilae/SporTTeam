@@ -84,6 +84,11 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
     private RectangularBounds mBounds;
 
     /**
+     * Token para identificar una única sesión de Autocomplete API
+     */
+    private AutocompleteSessionToken mToken;
+
+    /**
      * Constructor
      *
      * @param context         Contexto de la Actividad que aloja el adaptador
@@ -95,6 +100,15 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
         this.mPlacesClient = placesClient;
         if (bounds == null) this.mBounds = null;
         else this.mBounds = RectangularBounds.newInstance(bounds.northeast, bounds.southwest);
+
+        mToken = AutocompleteSessionToken.newInstance();
+    }
+
+    /**
+     * @return el token de la sesión de Autocomplete API
+     */
+    public AutocompleteSessionToken getToken() {
+        return mToken;
     }
 
     /**
@@ -223,17 +237,13 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
      * @return List con los resultados de la búsqueda
      */
     private List<AutocompletePrediction> getAutocomplete(String constraint) {
-        // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
-        // and once again when the user makes a selection (for example when calling fetchPlace()).
-        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-
         // Use the builder to create a FindAutocompletePredictionsRequest.
         FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
                 .setLocationRestriction(mBounds)
                 /*https://developers.google.com/android/reference/com/google/android/gms/location/places/AutocompleteFilter.Builder.html#setCountry(java.lang.String)*/
                 .setCountry("ES"/*https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#ES*/)
                 .setTypeFilter(TypeFilter.CITIES)
-                .setSessionToken(token)
+                .setSessionToken(mToken)
                 .setQuery(constraint)
                 .build();
 

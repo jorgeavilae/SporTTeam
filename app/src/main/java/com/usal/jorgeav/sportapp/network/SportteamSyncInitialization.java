@@ -95,6 +95,8 @@ public class SportteamSyncInitialization {
     private static void scheduleFirebaseJobDispatcherSync(@NonNull final Context context) {
         /* Init GooglePlayDriver and FirebaseJobDispatcher */
         Driver driver = new GooglePlayDriver(context);
+        // TODO migrar FirebaseJobDispatcher to WorkManager
+        //  https://developer.android.com/topic/libraries/architecture/workmanager/migrating-fb
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
 
         /* Create the Job to periodically sync */

@@ -135,7 +135,8 @@ public class CityAutocompleteEditTextPreference extends EditTextPreference {
                     // Fetch Place Details from Places API
                     String placeId = item.getPlaceId();
                     List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG);
-                    FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+                    FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
+                            .setSessionToken(adapter.getToken()).build();
 
                     mPlacesClient.fetchPlace(request).addOnSuccessListener(
                             new OnSuccessListener<FetchPlaceResponse>() {

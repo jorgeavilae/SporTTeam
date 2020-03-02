@@ -358,7 +358,8 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
      * Places SDK for Android</a>
      */
     private void setAutocompleteTextView() {
-        final PlaceAutocompleteAdapter adapter = new PlaceAutocompleteAdapter(getContext(), mPlacesClient, null);
+        final PlaceAutocompleteAdapter adapter = new PlaceAutocompleteAdapter(
+                getContext(), mPlacesClient, null);
         newUserAutocompleteCity.setAdapter(adapter);
 
         newUserAutocompleteCity.addTextChangedListener(new TextWatcher() {
@@ -397,7 +398,8 @@ public class NewUserFragment extends BaseFragment implements NewUserContract.Vie
                     // Fetch Place Details from Places API
                     String placeId = item.getPlaceId();
                     List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG);
-                    FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+                    FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
+                            .setSessionToken(adapter.getToken()).build();
 
                     mPlacesClient.fetchPlace(request).addOnSuccessListener(
                             new OnSuccessListener<FetchPlaceResponse>() {
